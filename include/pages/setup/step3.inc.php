@@ -25,8 +25,8 @@
 
 $icons['php'] = 'tick';
 $icons['gd'] = 'tick';
-$icons['perm'] = 'tick';
 $icons['copy'] = 'tick';
+$icons['perm'] = 'tick';
 $icons['addons'] = 'tick';
 
 if (version_compare($CJO['PHP_VERSION'], phpversion(), ">")){
@@ -41,6 +41,12 @@ if ($gd_info["GD Version"] === false){
 	$icons['gd'] = 'exclamation';
 }
 
+cjoAssistance::copyDir($CJO['INSTALL_PATH'].'/structure', $CJO['HTDOCS_PATH']);
+    
+if (!cjoMessage::hasErrors()){
+    $icons['copy'] = 'exclamation';
+}
+
 $CJO['FRONTPAGE_PATH'] = $CJO['HTDOCS_PATH']."page";
 
 $writeable = array ($CJO['ADDON_PATH'],
@@ -48,7 +54,7 @@ $writeable = array ($CJO['ADDON_PATH'],
 					$CJO['FOLDER_GENERATED_ARTICLES'],
 					$CJO['FOLDER_GENERATED_TEMPLATES'],
 					$CJO['MEDIAFOLDER'],
-					$CJO['CACHEFOLDER']
+					$CJO['CACHEFOLDER'],
 					$CJO['UPLOADFOLDER'],
 					$CJO['TEMPFOLDER'],
 					$CJO['FRONTPAGE_PATH']."/tmpl",
@@ -57,49 +63,33 @@ $writeable = array ($CJO['ADDON_PATH'],
 					$CJO['FRONTPAGE_PATH']."/tmpl/templates"
 					);
 
-$copy_files = array($CJO['FILE_CONFIG_MASTER'],
-					$CJO['FILE_CONFIG_DB'],
-					$CJO['FILE_CONFIG_ADDONS'],
-					$CJO['FILE_CONFIG_CTYPES'],
-					$CJO['FILE_CONFIG_LANGS']);
+	// foreach ($copy_files as $item){
+// 
+		// if (!file_exists($item)){
+			// $item_info = pathinfo($item);
+			// $from = $CJO['INCLUDE_PATH']."/install/".str_replace('.php','.bak',$item_info['basename']);
+			// if (!@copy($from,$item)){
+				// $errors .= "<br/>".cjoAssistance::absPath($from);
+			// }
+			// else {
+			    // @chmod($item, octdec(777));
+			// }
+		// }
+	// }
 
 $errors = '';
 foreach ($writeable as $item) {
 
-	if ($item != '' && !cjoAssistance::isWritable($item)) {
-	    cjoMessage::removeLastError();
-		$errors .= "<br/>".$item;
-		continue;
-	}
+    if ($item != '' && !cjoAssistance::isWritable($item)) {
+        cjoMessage::removeLastError();
+        $errors .= "<br/>".$item;
+        continue;
+    }
 }
-
 
 if ($errors != '') {
-	cjoMessage::addError($I18N->msg("msg_setup_step3_err_perm",$errors));
-	$icons['perm'] = 'exclamation';
-}
-else {
-
-	foreach ($copy_files as $item){
-
-		if (!file_exists($item)){
-			$item_info = pathinfo($item);
-			$from = $CJO['INCLUDE_PATH']."/install/".str_replace('.php','.bak',$item_info['basename']);
-			if (!@copy($from,$item)){
-				$errors .= "<br/>".cjoAssistance::absPath($from);
-			}
-			else {
-			    @chmod($item, octdec(777));
-			}
-		}
-	}
-
-	if($errors != ''){
-		cjoMessage::addError($I18N->msg("msg_setup_step3_err_copy",
-		                     cjoAssistance::absPath($item_info['dirname']), $errors).
-							 '<br/><br/>'.$I18N->msg("msg_setup_step3_err_copy2"));
-		$icons['copy'] = 'exclamation';
-	}
+    cjoMessage::addError($I18N->msg("msg_setup_step3_err_perm",$errors));
+    $icons['perm'] = 'exclamation';
 }
 
 //Form
@@ -123,8 +113,8 @@ $fields['info']->setValue($I18N->msg("msg_setup_step3_info",
     					  			 '<img src="img/silk_icons/'.$icons['php'].'.png" alt="OK" />',
 									 phpversion(),
 									 '<img src="img/silk_icons/'.$icons['gd'].'.png" alt="OK" />',
+                                     '<img src="img/silk_icons/'.$icons['copy'].'.png" alt="OK" />',
     					  			 '<img src="img/silk_icons/'.$icons['perm'].'.png" alt="OK" />',
-    					  			 '<img src="img/silk_icons/'.$icons['copy'].'.png" alt="OK" />',
     					  			 '<img src="img/silk_icons/'.$icons['addons'].'.png" alt="OK" />'));
 
 $fields['test_again'] = new readOnlyField('test_again', '', array('style'=>'margin-left: 200px;'));

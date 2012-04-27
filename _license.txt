@@ -8,7 +8,7 @@
  *
  * @package     contejo
  * @subpackage  core
- * @version     2.5.2
+ * @version     2.6.0
  *
  * @author      Stefan Lehmann <sl@contejo.com>
  * @copyright   Copyright (c) 2008-2012 CONTEJO. All rights reserved. 
