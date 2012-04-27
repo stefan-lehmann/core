@@ -1,0 +1,974 @@
+de = deutsch
+gb = english
+edit_article_content = Inhalt
+select_color_and_font = Schriftart und -farbe auswählen
+black = schwarz
+green = grün
+red = rot
+
+dec_point     = ,
+thousands_sep = .
+
+##./contejo/connectmedia.php
+button_close = Schließen
+datetimeformat = %d.%m.%Y&nbsp;&nbsp;%H:%M:%S
+label_createdate = erstellt am
+label_createuser = erstellt von
+label_filename = Dateiname
+label_filesize = Dateigröße
+label_filetype = MIME-Typ
+label_updatedate = aktualisiert am
+label_updateuser = aktualisiert von
+msg_media_in_this_category = Keine Medien hier! Bitte Kategorie wechseln bzw. Medien auf den Server laden.
+
+##./contejo/include/classes/afc/classes/class.cjo_formatter.inc.php
+dateformat = %d.%m.%Y
+
+##./contejo/include/classes/afc/classes/form/class.cjo_form.inc.php
+htmlcharset = utf-8
+msg_data_not_saved = Die Eingaben wurden <u>nicht</u> gespeichert!
+msg_data_saved = Die Daten wurden gespeichert!
+msg_reset_to_defaults = Standard-Einstellungen wieder hergestellt.
+
+##./contejo/include/classes/afc/classes/form/fields/cjo/field.cjoLinkButtonField.inc.php
+label_edit_now = jetzt bearbeiten
+label_remove_link = Verlinkung aufheben
+
+##./contejo/include/classes/afc/classes/form/fields/cjo/field.cjoMediaButtonField.inc.php
+label_edit_media = Medium bearbeiten
+label_open_media = Medien verknüpfen
+label_remove_media = Verknüpfung aufheben
+
+##./contejo/include/classes/afc/classes/form/fields/cjo/field.cjoMediaListField.inc.php
+label_move_down = eine Position runter
+label_move_to_bottom = ans Ende
+label_move_to_top = an den Anfang
+label_move_up = eine Position hoch
+
+##./contejo/include/classes/afc/classes/form/fields/cjo/field.cjoSaveField.inc.php
+button_cancel = Abbrechen
+button_delete = Löschen
+button_update = Übernehmen
+
+##./contejo/include/classes/afc/classes/form/fields/field.saveField.inc.php
+button_save = Speichern
+
+##./contejo/include/classes/afc/classes/form/fields/field.selectField.inc.php
+ctrl = Bei Änderungen bitte <b>Strg</b> gedrückt halten
+
+##./contejo/include/classes/afc/classes/list/class.cjo_list.inc.php
+msg_af_empty = Keine Einträge vorhanden!
+msg_af_no_found = Die Datenbank enthält keine passenden Einträge! Bitte mit geänderten Einstellungen erneut versuchen!
+
+##./contejo/include/classes/afc/classes/list/columns/column.resultColumn.inc.php
+label_sort_asc = aufsteigend sortieren (A>Z)
+label_sort_desc = absteigend sortieren (Z>A)
+
+##./contejo/include/classes/afc/classes/list/toolbars/toolbar.browseBar.inc.php
+label_add_entry = Hinzufügen
+label_first_page = Erste Seite
+label_last_page = Letzte Seite
+label_next_page = Nächste Seite
+label_prev_page = Vorherige Seite
+
+##./contejo/include/classes/afc/classes/list/toolbars/toolbar.maxElementsBar.inc.php
+button_show = Anzeigen
+label_entries_per_page = Einträge pro Seite
+label_number = Anzahl
+
+##./contejo/include/classes/afc/classes/list/toolbars/toolbar.searchBar.inc.php
+label_exact_search_mode = Exakter Suchmodus
+label_in = in
+label_remove_search = Aufheben
+label_search = Suche
+label_search_column = Suchspalte
+label_search_key = Suchwort
+label_start_search = Suche starten
+
+##./contejo/include/classes/afc/classes/list/toolbars/toolbar.statusBar.inc.php
+label_entries_from_to = Datensätze {0} bis {1} von insgesamt {2}
+
+##./contejo/include/classes/cjo/class.cjo_article.inc.php
+add_block = Block hinzufügen
+button_edit = Bearbeiten
+button_move_down = nach unten verschieben
+button_move_up = nach oben verschieben
+label_slice_id = Block-Id: {0} 
+msg_article_inserted = Der Artikel wurde hinzugefügt!
+msg_article_width_name_inserted = Der Artikel <b>{0}</b> wurde hinzugefügt!
+msg_comments_updated = Der Kommentar-Status des Artikels wurde geändert!
+msg_navi_item_updated = Die Sichtbarkeit des Artikels in der Navigation wurde geändert.
+msg_no_editing_rights = Sie haben keine Editier-Erlaubnis!
+msg_no_permissions = Sie haben hier keine Bearbeitungsrechte!
+msg_no_such_article = Der Artikel existiert nicht!
+msg_status_updated = Der Online-Status des Artikels wurde geändert.
+msg_teaser_updated = Der Teaser-Status des Artikels wurde geändert.
+
+##./contejo/include/classes/cjo/class.cjo_assistance.inc.php
+msg_err_copy_file = Die Datei <b>{0}</b> konnte nicht nach "<b>{1}</b>" kopiert werden!
+msg_file_no_chmod = Die Datei <b>{0}</b> ist nicht beschreibbar!
+msg_file_not_found = Die Datei {0} existiert nicht!
+msg_folder_no_chmod = Das Verzeichnis <b>{0}</b> ist nicht beschreib- oder ausführbar!
+msg_links_not_ok = In folgenden Artikeln wurden fehlerhafte Verknüpfungen gefunden:
+msg_links_ok = Alle Verknüpfungen sind ok.
+msg_not_existing = Die Datei bzw. das Verzeichnis <b>{0}</b> exisitert nicht, bitte erstellen Sie es via FTP.
+msg_prio_not_updated = Die geänderte Reihenfolge konnte nicht übernommen werden!<br/>{0}
+msg_prio_updated = Die Reihenfolge wurde aktualisiert.
+err_start_page_not_repaired = Die Artikelstruktur konnte nicht repariert werden. <br/> {0}
+msg_start_page_repaired = Die Artikelstruktur wurde repariert.
+
+##.//contejo/include/classes/cjo/class.cjo_formgenerator.inc.php 
+msg_err_template_include = Das Template (ID={0}) konnte nicht eingebunden werden, da es nicht existiert!
+
+##./contejo/include/classes/cjo/class.cjo_generate.inc.php
+msg_article_could_not_be_deleted = Der Artikel <b>{0}</b> konnte nicht gelöscht werden!
+msg_article_could_not_be_generated = Der Artikel konnte nicht erstellt werden!
+msg_article_deleted = Der Artikel <b>{0}</b> wurde gelöscht.
+msg_article_doesnt_exist = Der Artikel existiert nicht!
+msg_article_still_contains_articles = Der Artikel enthält noch untergeordnete Artikel, die erst gelöscht werden müssen.
+msg_articles_generated = Cache gelöscht, Templates wurden neu generiert.
+msg_check_rights_in_directory = Bitte überprüfen Sie die Rechte im Ordner!
+msg_clang_deleted = Die Sprache wurde gelöscht!
+msg_clang_saved = Die Sprache wurde hinzugefügt!
+msg_clang_updated = Die Sprache wurde aktualisiert!
+msg_content_article_copied = Der Artikel <b>{0}</b> wurde nach "<b>{1}</b>" kopiert.
+msg_content_article_moved = Der Artikel <b>{0}</b> wurde nach "<b>{1}</b>" verschoben.
+msg_content_article_rcopied = Der Artikel <b>{0}</b> wurde mit allen untergeordneten Artikeln nach "<b>{1}</b>" kopiert.
+msg_copy_content = Die Inhalte aus Artikel <b>{0}</b> wurden in Artikel <b>{1}</b> kopiert. 
+msg_copy_content_ctype = Spalte <b>{2}</b> aus Artikel <b>{0}</b> wurde in Artikel <b>{1}</b> kopiert.
+msg_error_can_not_delete_notfound_article = Der Contejo-'404'-Artikel kann nicht gelöscht werden!
+msg_error_can_not_delete_start_article = Der Domain-Start-Artikel kann nicht gelöscht werden!
+msg_error_copy_article = Der Artikel konnte <u>nicht</u> kopiert werden!
+msg_error_copy_content = Das Kopieren der Inhalte war <u>nicht</u> möglich!
+msg_error_copy_content_template_mismatch = Das Kopieren der Inhalte <u>nicht</u> möglich! Quelle und Ziel haben verschiedene Templates.
+msg_error_copy_content_self = Das Kopieren von Inhalten kann nur zwischen verschiedenen Sprachen bzw. verschiedenen Artikeln erfolgen!
+msg_error_move_article = Der Artikel konnte <u>nicht</u> verschoben werden!
+msg_error_move_article_self = Die Artikel <b>{0}</b> konnte <u>nicht</u> verschoben werden! Bitte stellen Sie sicher, dass das Ziel außerhalb der zu verschiebenden Artikel-Baums liegt!
+msg_error_notfound_article_in_tree = Löschen nicht möglich! Der Contejo-'404'-Artikel befindet sich im zu löschenden Artikelbaum!
+msg_error_start_article_in_tree = Löschen nicht möglich! Der Domain-Start-Artikel befindet sich im zu löschenden Artikelbaum!
+msg_no_rights = Sie haben <u>nicht</u> die notwendigen Rechte für diese Aktion!
+msg_no_target_rights = Die Aktion ist nicht möglich! Sie haben <u>nicht die notwendigen Rechte</u> für den gewählten Ziel-Artikel.
+msg_old_articles_deleted = [Alte Artikel und Templates wurden gelöscht]
+root = ROOT
+
+##./contejo/include/classes/cjo/class.cjo_install.inc.php
+msg_module_not_found = Das Modul {0} existiert nicht!
+msg_template_not_found = Das Template wurde nicht gefunden!
+
+##./contejo/include/classes/cjo/class.cjo_login.inc.php
+msg_login_incorrect = Benutzername und/oder Passwort sind falsch!
+msg_maxlogins = <b>{0} fehlerhafte Login-Versuche</b>, der Zugang ist für 2 Stunden gesperrt!
+msg_please_login = Bitte einloggen.
+msg_relogindelay = Bitte vor dem nächsten Login-Versuch <strong>{0} Sekunden warten</strong>!
+msg_session_over = Session beendet!
+msg_user_not_activated = Der Zugang wurde noch nicht aktiviert, bitte wenden Sie sich ggf. an den Site-Administrator!
+msg_user_disabled = Der Zugang ist deaktiviert, bitte wenden Sie sich ggf. an den Site-Administrator!
+msg_user_id_not_found = User-ID nicht gefunden!
+msg_you_logged_out = Ausgeloggt!
+
+##./contejo/include/classes/cjo/class.cjo_media.inc.php
+label_delete = Löschen
+label_no_title = Ohne Titel
+label_preview = Vorschau anzeigen
+label_select_file = Datei auswählen
+label_show_watermark = Wasserzeichen
+label_use_original_size = Original verwenden (kein Resize)
+msg_all_files_moved = Alle Medien wurden verschoben.
+msg_all_media_repaired = {0} Medien wurden überprüft und davon {1} aktualisiert.
+msg_different_media_type = Der Dateityp der Upload-Datei entspricht <u>nicht</u> dem Original!
+msg_file_copy_not_possible = Das Medium <b>{0}</b> konnte <u>nicht</u> übernommen werden! Bitte auf dem Server die Schreibrechte des Medien-Ordners überprüfen!
+msg_file_delete_error_1 = Das Medium <b>{0}</b> kann nicht gelöscht werden!
+msg_file_delete_error_2 = Es wird derzeit von folgenden Artikeln verwendet:
+msg_file_deleted = Das Medium wurde gelöscht.
+msg_file_is_missing = Die Datei <b>{0}</b> ist <u>nicht</u> im Medien-Upload-Ordner!
+msg_file_not_deleted = Das Medium konnte nicht gelöscht werden!
+msg_file_saved = Das Medium <b>{0}</b> wurde übernommen!
+msg_no_files = Es wurde kein Medium ausgewählt!
+msg_pool_file_no_description = Keine Beschreibung eingegeben
+msg_wait_while_generating_images = msg_wait_while_generating_images = <b>ACHTUNG: DIE ANGEFORDERTE SEITE WIRD ERNEUT GELADEN!</b><br/><br/>Bitte haben Sie etwas Geduld, während die Bild-Einstellungen im Hintergrund aktualisiert werden.<br/>Der Prozeß auch mehrere Minuten dauern!
+msg_you_selected_the_current_category = Ausgangs- und Ziel-Kategorie sind identisch!
+
+msg_media_target_does_not_exist = Die Ziel-Kategorie existiert nicht!
+msg_error_move_media_cat_self = Die Medien-Kategortie <b>{0}</b> konnte <u>nicht</u> verschoben werden! Bitte stellen Sie sicher, dass das Ziel außerhalb der zu verschiebenden Medien-Kategortie-Baums liegt!
+msg_media_cat_moved = Die Medien-Kategorie <b>{0}</b> wurde verschoben!
+
+##.//contejo/include/classes/cjo/class.cjo_message.inc.php 
+msg_deactivated_function = Diese Funktion ist aus Sicherheitsgründen in der Demo-Installation von CONTEJO gesperrt.<br/> Vielen Dank für Ihr Verständnis.
+
+##.//contejo/include/classes/cjo/class.cjo_output.inc.php 
+label_page = Seite 
+
+##.//contejo/include/classes/cjo/class.cjo_selectarticle.inc.php 
+label_article_root = ARTIKEL
+
+##./contejo/include/classes/cjo/class.cjo_selectlang.inc.php
+label_article_view = Anzeigen
+label_article_view_title = Artikel im Frontend anzeigen
+label_go_back = zur vorherigen Seite
+msg_no_rights_to_edit = Sie haben keine Editiererlaubnis!
+
+##./contejo/include/classes/cjo/class.cjo_selectmediacat.inc.php
+label_media_root = MEDIEN
+
+##./contejo/include/classes/cjo/class.cjo_slice.inc.php
+msg_block_deleted = Der Block wurde gelöscht.
+msg_block_of_type_added = Im Artikel <b>{0}</b> wurde ein Block vom Typ "<b>{1}</b>" erstellt.
+msg_no_rights_to_this_function = Sie haben keine Rechte für diese Funktion!
+msg_slice_moved = Der Block wurde verschoben.
+msg_slice_moved_error = Der Block konnte <u>nicht</u> verschoben werden!
+msg_unable_to_delete_slice = Der Block konnte <u>nicht</u> gelöscht werden!
+
+##./contejo/include/classes/cjo/class.cjo_sql.inc.php
+msg_db_error = DATENBANK-FEHLER
+msg_no_db_connection = Die Verbindung zur Datenbank-Server konnte nicht aufgebaut werden!
+msg_cannot_find_db = Die Datenbank wurde nicht gefunden!
+
+##.//contejo/include/classes/cjo/class.cjo_subpages.inc.php 
+msg_no_permissions_redirected = Sie wurden weitergeleitet, da Sie für die letzte Aktion <u>nicht die notwendigen Rechte</u> besitzen!
+msg_edit_by_other_user_redirected = Die Aktion wurde abgebrochen, da der Artikel zur Zeit von einem anderen Redakteur bearbeitet wird!
+
+##./contejo/include/classes/cjo/class.cjo_template.inc.php
+msg_template_added = Das Template <b>{0}</b> wurde hinzugefügt.
+
+##.//contejo/include/classes/cjo/class.cjo_template.inc.php 
+msg_editor_updated = Der Redakteur {0} wurde aktualisiert.
+
+##./contejo/include/classes/oop/class.ooaddon.inc.php
+msg_addon_activated = Das AddOn <b>{0}</b> wurde aktiviert.
+msg_addon_bak_does_not_exist = Die Datei <b>{0}</b> existiert nicht! Bitte kopieren und benennen Sie die gleichnamige Datei von Hand in '{1}' um!
+msg_addon_deactivated = Das AddOn <b>{0}</b> wurde deaktiviert.
+msg_addon_deleted = Das AddOn <b>{0}</b> wurde gelöscht.
+msg_addon_installed = Das AddOn <b>{0}</b> wurde installiert.
+msg_addon_no_activation = Das AddOn <b>{0}</b> konnte <u>nicht</u> aktiviert werden!
+msg_addon_no_install = Das AddOn <b>{0}</b> konnte <u>nicht</u> installiert werden:
+msg_addon_no_reason = Es wurde kein Grund angegeben.
+msg_addon_no_show_menu = Das AddOn <b>{0}</b> kann nicht angezeigt werden!
+msg_addon_no_uninstall = Das AddOn <b>{0}</b> konnte aus folgendem Grund <u>nicht</u> deinstalliert werden:
+msg_addon_uninstall_not_found = Die Deinstallation dieses AddOns ist nicht möglich, da es Systemfunktionen bereitstellt!
+msg_addon_uninstalled = Das AddOn <b>{0}</b> wurde deinstalliert.
+
+##./contejo/include/classes/oop/class.ooarticle.inc.php
+label_article_state = Status
+label_author = Autor
+label_comment = Kommentar
+label_comments = Kommentare
+label_description = Beschreibung
+label_from_to = Online-Zeitraum
+label_keywords = Keywords
+label_meta_image = Meta-Image
+label_title = Titel
+msg_article_info_date_user = <b>{0}</b> von <b>{1}</b>
+
+##./contejo/include/classes/oop/class.oocontejo.inc.php
+label_no_name = ohne Namen
+
+##./contejo/include/classes/oop/class.oomedia.inc.php
+label_no_media_description = Ohne Beschreibung!
+
+##./contejo/include/classes/oop/class.oomediacategory.inc.php
+msg_category_not_found = Die Medien-Kategorie existiert nicht!
+msg_mediacat_deleted = Die Medien-Kategorie <b>{0}</b> wurde gelöscht.
+msg_mediacat_has_children = Die Medien-Kategorie enthält untergeordnete Kategorien, die erst gelöscht werden müssen!
+msg_mediacat_has_files = Die Medien-Kategorie <b>{0}</b> enthält Medien, die erst gelöscht werden müssen!
+
+##.//contejo/include/classes/oop/class.oonavigation.inc.php 
+label_back_to = zurück zu
+label_next_to = weiter zu
+label_of = von
+
+##./contejo/include/classes/var/class.cjo_var_link.inc.php
+label_linkbutton = Linkbutton
+
+##./contejo/include/classes/var/class.cjo_var_media.inc.php
+label_controls = Steuerung anzeigen
+label_autoplay = Autostart
+label_ext_link = Externer Link
+label_file = Datei
+label_flash_file = Flash-Datei
+label_flashbox = Flash im Overlay
+label_video_file = Video-Datei
+label_videobox = Video im Overlay
+label_functions = Funktionen
+label_get_param = GET-Parameter
+label_image = Bild
+label_image_add = Bild hinzufügen
+label_imagebox = Zoom-Bild im Overlay
+label_individual_description = individuelle Beschreibung
+label_int_link = Interner Link
+label_media_description = Beschreibung aus Medien
+label_mediabutton = Mediabutton
+label_medialist = Medialist
+label_size_format = Größe/Format
+label_style = Style-Angaben
+label_toggle_inserts = Einstellungen ein-/ausblenden
+label_width_x_height = Breite &times; Höhe
+label_without = ohne
+
+##./contejo/include/functions/function.cjo_setup.inc.php
+msg_im_export_addon_missing = Import/Export AddOn wurde nicht gefunden!
+msg_no_exports_found = Export-Dateien konnten nicht gefunden werden!
+
+##./contejo/include/layout/bottom.php
+adateformat = %d. %b. %Y
+
+##./contejo/include/layout/top.php
+htmllang = de
+label_logout = Logout
+title_addons = AddOns
+title_edit = Artikel
+title_media = Medien
+title_my_account = Account
+title_specials = System
+title_tools = Admintools
+title_users = Redakteure
+
+##./contejo/include/master.inc.php
+label_rights_actions = Actions verwalten
+label_rights_addmedia = Medien hinzufügen
+label_rights_addon_admin = AddOns verwalten
+label_rights_advancedmode = Modus für Fortgeschrittene
+label_rights_catgroups = Navigationen verwalten
+label_rights_copyarticle = Artikel kopieren
+label_rights_copycontent = Inhalte eines Artikels kopieren
+label_rights_ctypes = Spalten verwalten
+label_rights_deletearticle_tree = Artikel rekursiv löschen
+label_rights_langs = Frontend-Sprachen verwalten
+label_rights_media = Medien
+label_rights_media_categories = Medien-Kategorien verwalten
+label_rights_modules = Module verwalten
+label_rights_movearticle = Artikel verschieben
+label_rights_moveslice = Reihenfolge der Inhaltsblöcke ändern
+label_rights_only_edit = eingeschränkter "Nur Bearbeiten"-Modus
+label_rights_password = Eigenes Passwort ändern
+label_rights_publisharticle = Artikel veröffentlichen
+label_rights_setloginarticle = Artikeltyp ändern
+label_rights_specials = System
+label_rights_templates = Templates verwalten
+label_rights_tools = Admintools
+label_rights_types = Artikeltypen verwalten
+label_rights_users = Redakteure
+setlocale = de_DE@euro,de_DE,de,ge,German
+
+##./contejo/include/pages/addons/manage.inc.php
+addon_activate = AddOn aktivieren
+addon_deactivate = AddOn deaktivieren
+addon_install = AddOn installieren
+addon_main_menu = Hauptmenü
+addon_no_menu = --
+addon_reinstall = AddOn reinstallieren
+addon_uninstall = AddOn deinstallieren
+addon_uninstall_confirm = <br/><br/><b>ACHTUNG:</b> Alle Datenbank-Einträge dieses AddOns gehen verloren!
+label_addon_view = Anzeige des AddOns in
+label_name = Name
+label_version = Version
+msg_addon_menu_changed = Die Menü-Darstellung des AddOns wurde geändert.
+
+##./contejo/include/pages/addons/_addons.inc.php
+title_addon_admin = AddOn-Verwaltung
+
+##./contejo/include/pages/edit/content.inc.php
+msg_block_added = Der Block wurde erstellt.
+msg_block_updated = Der Block wurde aktualisiert.
+msg_template_has_no_ctype = Content ist nicht verfügbar, da dem Template des Artikels keine Spalten zugeordnet sind! ({0})
+
+##./contejo/include/pages/edit/metadata.inc.php
+label_meta_title = Meta-Titel
+title_metadata = Meta-Daten
+
+##./contejo/include/pages/edit/settings.inc.php
+label_cat_group = Navigationsstruktur
+label_redirect_to_add_article = anschl. einen weiteren Artikel erstellen
+label_redirect_type = Weiterleitung auf
+label_int_redirect = CONTEJO-Artikel
+label_ext_redirect = externe URL
+label_secure_level = Zugangsbeschränkung
+label_template = Template
+label_superadmin_only = Nur für Super-Admin editierbar
+label_type_id_all = kein Login <span>(immer sichtbar)</span>
+label_type_logged_in = logged in <span>(angemeldet sichtbar)</span>
+label_type_logged_out = logged out <span>(abgemeldet sichtbar)</span>
+label_preview_for_editors = Vorschau <span>(für angemeldete Redakteure sichtbar)</span>
+msg_article_settings_updated = Die Artikel-Einstellungen wurden aktualisiert.
+msg_help_change_template = Zum Ändern des Templates erst alle Blöcke des Artikels löschen.
+msg_help_online_from_to = Durch Ändern des Start- und End-Datums kann die Erreichbarkeit des Artikels zeitlich begrenzt werden.
+msg_name_notEmpty = Bitte einen Namen angeben!
+msg_int_redirect_not_self = Der Artikel kann nicht auf sich selbst weitergeleitet werden!
+msg_ext_redirect_not_valid = Die URL für Weiterleitung ist nicht valide!
+title_add_article = Artikel hinzufügen
+title_edit_settings = Einstellungen bearbeiten
+
+##./contejo/include/pages/edit/structure.inc.php
+button_add = Hinzufügen
+date_from = von
+date_to = bis
+label_all_ctypes = Alle Spalten
+label_article_do_offline = Artikel offline stellen
+label_article_do_online = Artikel online stellen
+label_article_hide_navi_item = Artikel in Navigation verstecken
+label_article_navi_item = sichtbar
+label_article_no_navi_item = versteckt
+label_article_offline = offline
+label_article_online = online
+label_article_show_navi_item = Artikel in Navigation sichtbar machen
+label_cancel = Abbrechen
+label_change_prio = Reihenfolge ändern
+label_comment_do_off = Kommentare für diesen Artikel ausschalten
+label_comment_do_on = Kommentare für diesen Artikel einschalten
+label_comment_off = nicht kommentierbar
+label_comment_on = kommentierbar
+label_copy_content = Inhalte zwischen Sprachen kopieren
+label_copy_content_to_article = Inhalte in Artikel kopieren
+label_copy_to = Kopieren
+label_delete_article = Artikel löschen
+label_edit_article_content = Content der Spalte: &quot;{0}&quot; bearbeiten
+label_edit_article_metadata = Meta-Daten des Artikels bearbeiten
+label_edit_article_settings = Einstellungen des Artikels bearbeiten
+label_edit_from_to = Online-Zeitraum des Artikels bearbeiten
+label_edit_login = Login-Einstellungen des Artikels bearbeiten
+label_id = ID
+label_level_up = Auf die nächst höhere Ebene wechseln
+label_login = Login
+label_ok = OK
+label_prio = Prio
+label_rcopy_to = Kopieren (rekursiv)
+label_rdelete = Löschen (rekursiv)
+label_rmove_to = Verschieben (rekursiv)
+label_run_process = Prozess starten
+label_select_deselect_all = Alles aus-/abwählen
+label_select_ctype = Spalte/n einschließen
+label_teaser_do_off = Teaser-Einstellung zurücksetzen
+label_teaser_do_on = Artikel in Teaser-Listings ausgeben
+label_teaser_off = Teaser
+label_teaser_on = kein Teaser
+label_update_selection = markierte:
+msg_confirm_copy_content_to_article = Wirklich Inhalte der markierten Artikel in einen anderen Artikel kopieren?
+msg_confirm_copy_content = Wirklich alle Inhalte der markierten Artikel in die gewählte Sprache kopieren?
+msg_confirm_copy_to = Wirklich alle markierten Artikel kopieren?
+msg_confirm_delete_article = Artikel löschen?<br/><br/><b>VORSICHT:</b> Die Aktion betrifft alle Sprachen und ist nicht umkehrbar!
+msg_confirm_rcopy_to = Wirklich alle markierten Artikel sowie deren untergeordnete Artikel kopieren?
+msg_confirm_rdelete = Wirklich alle markierten Artikel sowie deren untergeordnete Artikel löschen?<br/><br/><b>VORSICHT:</b> Die Aktion betrifft alle Sprachen und ist nicht umkehrbar!
+msg_confirm_rmove_to = Wirklich alle markierten Artikel sowie deren untergeordnete Artikel verschieben?
+msg_edit_by_user_redirected = Die Aktion wurde abgebrochen, da der Artikel zur Zeit von <b>{0}</b> bearbeitet wird!
+msg_edit_by_user = Wird aktuell von {0} bearbeitet
+title_content = Content
+title_settings = Einstellungen
+
+##./contejo/include/pages/edit/_edit.inc.php
+title_structure = Struktur
+
+##./contejo/include/pages/login/_login.inc.php
+label_user_login = Benutzer
+label_user_psw = Passwort
+title_login = Login
+
+##./contejo/include/pages/media/addmedia.inc.php
+button_cancel_upload = Abbrechen
+button_sync = Auswahl hinzufügen
+button_upload = Auswählen...
+label_add_media = Medien hinzufügen
+label_copyright = Copyright
+label_file_category = Medien-Kategorie
+label_file_upload = Medien-Upload
+label_uploaded_media = Hochgeladene Medien
+msg_first_upload_some_files = Bitte erst Medien hochladen!
+msg_install_or_upgrade_flash = <b>Initialisierung des Upload-Moduls ist fehlgeschlagen.</b><br/> Bitte stellen Sie sicher, dass in Ihrem Browser der <a href="http://get.adobe.com/flashplayer/" target="_blank">Adobe Flash Player</a> (Version {0}) installiert ist.
+
+##./contejo/include/pages/media/categories.inc.php
+dateformat_sort = %d.%m.%y :: %H:%M:%S
+label_category_comment = Kategorie-Kommentar
+label_delete_category = Medien-Kategorie löschen
+label_display_category_media = Medien der Kategorie anzeigen
+label_edit = Bearbeiten
+label_edit_category = Medien-Kategorie bearbeiten
+label_file_num = enthaltene Medien
+label_info = Infos
+label_media = Medien
+title_add_media_category = Medien-Kategorie hinzufügen
+title_addmedia = Medien hinzufügen
+msg_confirm_move_media_cat = Wirklich alle markierten Medien-Kategorien verschieben?
+msg_confirm_delete_media_cat = Wirklich alle markierten Medien-Kategorien löschen?<br/><br/><b>VORSICHT:</b> Die Aktion ist nicht umkehrbar!
+
+##./contejo/include/pages/media/details.inc.php
+button_browse = Durchsuchen...
+label_size = Größe
+label_update_file = Datei-Update
+label_select_uploaded_file = bereits hochgeladenes Medium auswählen
+title_details = Details
+
+##./contejo/include/pages/media/media.inc.php
+button_move = Verschieben
+label_delete_media = Medium Löschen
+label_thumb = Vorschau
+msg_confirm_delete_media = Medium löschen?<br/><br/><b>VORSICHT:</b> Die Aktion ist nicht umkehrbar!
+msg_confirm_rdelete_media = Wirklich alle markierten Medien löschen?<br/><br/><b>VORSICHT:</b> Die Aktion ist nicht umkehrbar!
+msg_confirm_rmove_media = Wirklich alle markierten Medien verschieben?
+
+##./contejo/include/pages/media/_media.inc.php
+title_categories = Kategorien
+title_media_categories = Medien-Kategorien
+
+##./contejo/include/pages/setup/step1.inc.php
+label_select_language = Sprache wählen
+
+##./contejo/include/pages/setup/step2.inc.php
+button_back = zurück
+button_next_step3 = weiter zu Schritt 2
+label_confirm_license = Ich habe die Lizenzbestimmungen gelesen und akzeptiere sie!
+label_license = Lizenzbestimmungen
+msg_confirm_license_notEmpty = Die Lizenzbestimmungen müssen akzeptiert werden!
+msg_setup_step2_info = - Das System und die Dateirechte werden überprüft<br/>- Eine Datenbank-Verbindung wird erstellt<br/>- Die Datenbank wird (neu) eingerichtet.<br/>- Ein Administrator-Zugang wird eingerichtet
+msg_setup_step2_label = Was passiert als nächstes?
+
+##./contejo/include/pages/setup/step3.inc.php
+button_next_step4 = weiter zu Schritt 3
+label_php_version = PHP-Versionscheck und Rechte-Überprüfung
+label_test_again = Prüfung wiederholen
+msg_setup_step3_err_copy = Folgende Setup-Dateien konnten nicht erstellt bzw. in das Verzeichnis ({0}) kopiert werden! {1}
+msg_setup_step3_err_copy2 = Bitte kopieren Sie die Dateien von Hand in das angegebene Verzeichnis und benennen Sie die Dateiendung in '.php' um!
+msg_setup_step3_err_gd = Die GD-Library ist nicht in der bundled Version verfügbar. Wichtige Bildbearbeitungsfunktionen stehen deshalb nicht zur Verfügung.
+msg_setup_step3_err_perm = Folgende Verzeichnisse sind nicht beschreib- bzw. ausführbar! Bitte ändern Sie die Rechte via FTP/SSH entsprechend (chmod 757 o. 777): {0}
+msg_setup_step3_err_php = Die PHP version des Servers ist zu alt (unter {0}), bitte updaten Sie auf die aktuellste Version!
+msg_setup_step3_info = {0} PHP Version ({1})<br/>{2} GD-Library <br/>{3} Zugriffsrechte (System-Verzeichnisse)<br/>{4} Kopieren der Setup-Files
+
+##./contejo/include/pages/setup/step4.inc.php
+button_next_step5 = weiter zu Schritt 4
+label_common_settings = CONTEJO-Einstellungen
+label_error_email = Admin-E-Mail
+label_server = Website-Domain
+label_servername = Website-Titel
+msg_config_master_does_not_exist = Die Datei <b>{0}</b> existiert nicht! Bitte kopieren Sie die gleichnamige Datei von Hand in das include Verzeichnis und benennen Sie die Dateiendung in '.php' um!
+msg_config_master_no_perm = Die Datei <b>{0}</b> ist nicht beschreibbar! Bitte ändern Sie die Rechte via FTP/SSH entsprechend! (chmod 757 o. 777).
+msg_no_vaild_email = Die eingegebene eMail-Adresse hat kein gültiges Format!
+
+##./contejo/include/pages/setup/step5.inc.php
+button_next_step6 = weiter zu Schritt 5
+label_db_host = DB-Host
+label_db_login = Benutzer
+label_db_name = DB-Name
+label_db_psw = Passwort
+label_mysql_db = Standard Datenbank-Verbindung
+label_mysql_db_local = Optionale Datenbank-Verbindung (für lokale Entwicklungsumgebung via http://{0})
+label_table_prefix = Tabellen-Präfix
+msg_config_db_does_not_exist = Die Datei <b>{0}</b> existiert nicht! Bitte kopieren Sie die gleichnamige Datei von Hand in das include Verzeichnis und benennen Sie die Dateiendung in '.php' um!
+msg_config_db_no_perm = Die Datei <b>{0}</b> ist nicht beschreibbar! Bitte ändern Sie die Rechte via FTP/SSH entsprechend (chmod 757 o. 777).
+msg_table_prefix_notEmpty = Bitte geben Sie ein Tabellen-Präfix ein (Standard: 'cjo_')!
+msg_cannot_create_db = Die Datenbank konnte nicht erstellt werden, bitte erstellen Sie sie von Hand.
+msg_cannot_find_db = Die Datenbank existiert nicht.
+msg_no_db_connection = Verbindung zu Datenbank nicht möglich.
+
+
+##./contejo/include/pages/setup/step6.inc.php
+button_next_step7 = weiter zu Schritt 6
+label_contejo_import_db_with_drop = CONTEJO-Datenbank einrichten und alte überschreiben
+label_contejo_import_db_without_drop = CONTEJO-Datenbank einrichten
+label_contejo_import_im_export_db = vorhandenen Export einspielen
+label_contejo_import_no_db = Weiter ohne Datenbankimport
+label_exports = vorhandene Exporte
+label_import_mode = Setup-Modus
+label_only_sql = (Export ohne Dateien)
+label_setup_mysql_db = Datenbank-Setup
+label_update_from_contejo = Update von CONTEJO {0} zu {1} (Backup erstellen!)
+msg_confirm_overwrite_db = Die Datenbank (falls vorhanden) wirklich überschreiben?<br/><br/><b>VORSICHT:</b> Die alte Seite wird unwiderruflich gelöscht.
+msg_import_notEmpty = Bitte wählen Sie ein Datenbank-Setup aus!
+msg_no_export_selected = Bitte wählen Sie einen vorhandenen Export aus!
+msg_table_not_found = Die Datenbank-Tabelle <b>{0}</b> wurde nicht gefunden!
+
+##./contejo/include/pages/setup/step7.inc.php
+button_next_step8 = weiter zu Schritt 7
+label_install_standard_addons = Aktivierung der System-AddOns
+msg_setup_step7_info = {0} Installation/Aktivierung
+
+##./contejo/include/pages/setup/step8.inc.php
+button_finish = Installation abschließen
+label_add_no_user = weiter ohne einen Administrator anzulegen
+label_admin_settings = Adimistrator anlegen
+msg_allready_in_use = Ein Benutzer mit diesem Namen existiert bereits!
+msg_user_login_notEmpty = Bitte einen Benutzer eingeben!
+msg_user_psw_notEmpty = Bitte ein Passwort eingeben!
+msg_setup_error_try_again = Fehler beim Anlegen des Benutzers, bitte versuchen Sie es erneut!
+
+##./contejo/include/pages/setup/_setup.inc.php
+label_setup_step2_title = Schritt 1 von 7
+label_setup_step3_title = Schritt 2 von 7
+label_setup_step4_title = Schritt 3 von 7
+label_setup_step5_title = Schritt 4 von 7
+label_setup_step6_title = Schritt 5 von 7
+label_setup_step7_title = Schritt 6 von 7
+label_setup_step8_title = Schritt 7 von 7
+title_setup = Installation
+
+##./contejo/include/pages/specials/settings.inc.php
+label_backend_language = Backend-Sprache
+label_change_db1_setup = Standard Datenbank-Verbindung (änderbar über Re-Setup)
+label_change_dblocal_setup = Optionale Datenbank-Verbindung für lokale Entwicklung (änderbar über Re-Setup)
+label_contejo_version = CONTEJO-Version
+label_general_info = Allgemeine Informationen
+label_notfound_article_id = '404'-Artikel
+label_special_features = System-Funktionen und -Einstellungen
+label_specials_others = Sonstiges
+label_start_article_id = Start-Artikel der Domain
+link_checker = Linkchecker
+link_re_setup = System-Setup erneut starten
+link_regenerate_articles = Regeneriere Artikel und Cache
+link_repair_media = Medien überprüfen und reparieren
+link_repair_startpage = Artikelstruktur reparieren
+msg_new_notfound_article_not_valid = Der geänderte 'Nicht gefunden'-Artikel existiert nicht!
+msg_new_start_article_not_valid = Der geänderte Domain-Start-Artikel existiert nicht!
+msg_repair_startpage = Sollte die Artikelstruktur Fehler aufweisen z.B. nach einem Versions-Upgrade, können diese hiermit korrigiert werden.
+msg_setup_accept = Setup aktiviert. Bitte klicken Sie auf ><a href="index.php">weiter</a>< und führen das Setup aus.
+msg_setup_error = Leider konnte die Datei <b>{0}</b> nicht beschrieben werden.<br/>Bitte tragen Sie dort \"\$CJO[SETUP] = true;\" ein
+text_checker = Wenn Sie überprüfen wollen, ob alle internen Links (<b>CJO_LINK[1...10]</b> bzw. <b>contejo://122</b>) funktionieren, dann klicken Sie bitte hier.
+text_re_setup = Hier können Sie das Setup erneut starten. Das sollten Sie nur im Notfall machen und ist unter normalen Umständen nicht nötig.
+text_regenerate_articles = Artikel und Templates werden neu generiert. Der gesamte Cache wird gelöscht. Bitte den Vorgang nicht abbrechen.
+text_repair_media = Sollten einzelne Medien-Daten beim Upload bzw. Synchronisieren nicht wie gewünscht automatisch generiert werden, kann das hier nachträglich korrigiert werden.
+
+##./contejo/include/pages/tools/actions.inc.php
+label_action_add = Add-Action
+label_action_delete = Delete-Action
+label_action_edit = Edit-Action
+label_add_action = Action hinzufügen
+label_edit_action = Action bearbeiten
+label_input = Eingabe
+msg_action_added = Die Action wurde hinzugefügt.
+msg_action_cannot_be_deleted = Die Action <b>{0}</b> konnte nicht gelöscht werden!
+msg_action_deleted = Die Action wurde gelöscht.
+msg_action_updated = Die Action wurde aktualisiert.
+
+##./contejo/include/pages/tools/catgroups.inc.php
+label_add_catgroup = Navigations-Struktur hinzufügen
+label_catgroup_name = Struktur-Name
+label_catgroup_structure = Struktur-Ebenen
+label_catgroup_style = Struktur-Farbe
+label_edit_catgroup = Navigations-Struktur bearbeiten
+msg_cat_group_name_notEmpty = Bitte einen Namen für die Navigations-Struktur vergeben!
+msg_catgroup_1_not_deleted = Die erste Navigationsstruktur kann <u>nicht</u> gelöscht werden!
+msg_catgroup_deleted = Die Navigations-Struktur wurde gelöscht!
+msg_catgroup_saved = Die Navigations-Struktur wurde hinzugefügt!
+msg_catgroup_still_used = Die Navigations-Struktur konnte <u>nicht</u> gelöscht werden, da sie noch verwendet wird:
+msg_catgroup_structure_notEmpty = Bitte die Struktur festlegen!
+msg_catgroup_style_notEmpty = Bitte eine Farbe für die Struktur angeben!
+msg_catgroup_updated = Die Navigations-Struktur wurde aktualisiert!
+
+##./contejo/include/pages/tools/ctypes.inc.php
+label_add_ctype = Spalte hinzufügen
+label_ctype = Spalte
+msg_ctype_name_notEmpty = Bitte einen Namen für die Spalte eingeben!
+
+##./contejo/include/pages/tools/langs.inc.php
+label_add_clang = Sprache hinzufügen
+label_edit_clang = Sprache bearbeiten
+label_iso = ISO-Ländercode
+label_sync_clang = Artikel-Einstellungen synchronisieren
+label_sync_clang_enable = ein
+label_sync_master = Quell-Sprache
+label_update_sync = synchronisiere
+label_update_prior =  Artikel-Reihenfolge (Prio)
+label_update_teaser =  Teaser-Einstellung
+label_update_navi_item =  Sichtbarkeit in der Navigation
+label_update_status =  Online-Status
+label_update_online_from_to =  Online-Zeitraum
+label_update_type_id =  Login
+label_update_cat_group =  Navigationsstruktur
+label_update_redirect =  Artikel-Weiterleitung
+label_update_admin_only =  Super-Admin-Sperre
+msg_clang_0_not_deleted = Die Standard-Sprache (ID=0) kann <u>nicht</u> gelöscht werden!
+msg_clang_name_notEmpty = Bitte einen Namen für die Sprache eingeben!
+msg_clang_not_deleted = Die Sprache konnte <u>nicht</u> gelöscht werden!
+msg_iso_not = Bitte einen Ländercode auswählen!
+
+##./contejo/include/pages/tools/modules.inc.php
+label_actions_connection = Actions
+label_add_module = Modul hinzufügen
+label_ctype_connection = Spalten-Zuordnung
+label_edit_module = Modul bearbeiten
+label_modul = Modul
+label_modul_actions = Modul-Actions
+label_modul_layouts = Modul-Layout
+label_modul_logic = Modul-Code
+label_modul_settings = Modul-Einstellungen
+label_template_connection = Template-Zuordnung
+msg_all_actions_deleted_from_modul = Action-Verknüpfungen wurden entfernt.
+msg_modul_all_layout_deleted = Modul-Layouts wurden gelöscht.
+msg_module_added = Das Modul wurde hinzugefügt.
+msg_module_cannot_be_deleted = Das Modul <b>{0}</b> konnte nicht gelöscht werden, da es bei folgenden Artikeln noch in Verwendung ist:
+msg_module_deleted = Das Modul wurde gelöscht.
+msg_module_updated = Das Modul wurde aktualisiert.
+msg_class_or_function_not_available = ACHTUNG: Die Funktion ist nicht verfügbar {0}!
+no_template = ohne Template
+
+##./contejo/include/pages/tools/modules_actions.inc.php
+label_actions = Actions
+msg_action_deleted_from_modul = Die Action-Verknüpfung wurde entfernt.
+msg_no_actions_connected_to_module = Keine Actions verknüpft.
+
+##./contejo/include/pages/tools/modules_layout.inc.php
+label_default = Default
+label_default_template = Template-Default
+label_help = Verwendung/Hilfe
+label_layout_default_vars = Standard-Vars
+label_layout_function = Functionsaufruf
+label_layout_if_then = if/then
+label_layout_sections = Abschnitte
+label_output = Ausgabe
+label_path = Datei-Pfad
+msg_modul_layout_added = Das Modul-Layout "{2}" für Template: {0} und Spalte: {1} wurde hinzugefügt.
+msg_modul_layout_deleted = Das Modul-Layout "{2}" für Template: {0} und Spalte: {1} wurde entfernt.
+msg_modul_layout_no_deleted_default = Das Standard-Modul-Layout kann nicht gelöscht werden.
+msg_modul_layout_not_added = Das Modul-Layout "{2}" für Template: {0} und Spalte: {1} konnte nicht angelegt werden.
+msg_modul_layout_not_deleted = Das Modul-Layout "{2}" für Template: {0} und Spalte: {1} konnte nicht entfernt werden.
+title_ctypes = Spalten
+title_templates = Templates
+
+##./contejo/include/pages/tools/modules_settings.inc.php
+msg_id_notEmpty = Bitte wählen Sie eine Modul-ID aus!
+
+##./contejo/include/pages/tools/templates.inc.php
+label_active = Artikel-Layout
+label_add_template = Template hinzufügen
+label_edit_template = Template bearbeiten
+label_icon = Icon
+msg_cant_delete_default_template = Das Default-Template kann nicht gelöscht werden!
+msg_cant_delete_template_in_use = Das Template konnte <u>nicht</u> gelöscht werden, da es noch verwendet wird:
+msg_template_deleted = Das Template wurde gelöscht.
+msg_template_updated = Das Template <b>{0}</b> wurde aktualisiert.
+
+##./contejo/include/pages/tools/types.inc.php
+label_add_type = Artikeltyp hinzufügen
+label_allow_to_all = Zugang für alle
+label_edit_type = Artikeltyp bearbeiten
+label_groups = Gruppen
+label_no_password = kein Passwort
+label_type_description = Beschreibung
+label_type_name = Artikeltyp-Name
+msg_article_type_deleted = Der Artikeltyp wurde gelöscht.
+msg_article_type_saved = Der Artikeltyp wurde hinzugefügt.
+msg_article_type_still_used = Der Artikeltyp konnte nicht gelöscht werden, da er bei folgenden Artikeln noch in Verwendung ist:
+msg_article_type_updated = Der Artikeltyp wurde aktualisiert.
+msg_type_description_notEmpty = Bitte eine Login-Beschreibung eingeben!
+msg_type_name_notEmpty = Bitte einen Namen eingeben!
+
+##./contejo/include/pages/tools/_tools.inc.php
+title_actions = Actions
+title_catgroups = Navigationen
+title_langs = Sprachen
+title_modules = Module
+title_types = Artikeltypen
+
+##./contejo/include/pages/users/manage.inc.php
+msg_editor_deleted = Der Redakteur wurde gelöscht.
+msg_editor_notdeleteself = Sie können sich nicht selbst löschen!
+msg_group_deleted = Die Gruppe wurde gelöscht.
+msg_group_has_children = Der Gruppe sind noch Redakteure zugeordnet!
+msg_user_status_updated = Der Status des Redakteurs wurde geändert.
+
+##./contejo/include/pages/users/manage_groups.inc.php
+label_add_group = Gruppe hinzufügen
+label_addon_perm = Zugriff auf AddOns
+label_backend_perm = Backend-Bereiche
+label_articles = Artikel
+label_categories = Kategorien
+label_common = Allgemein
+label_edit_group = Gruppe bearbeiten
+label_editors = Redakteure
+label_extra_perm = Spezielle Attribute
+label_extras = Extras
+label_group_name = Gruppen-Name
+label_media_perm = Medien-Kategorien
+label_mediafolder = Medien-Kategorien
+label_module_perm = Module
+label_modules = Module
+label_options = Optionen
+label_rights_all = alle
+label_structure_perm = Artikel-Struktur
+msg_group_name_notEmpty = Bitte einen Namen für die Gruppe eingeben!
+msg_group_updated = Die Gruppe wurde aktualisiert.
+msg_name_inUse = Der Name wird bereits verwendet!
+
+##./contejo/include/pages/users/manage_user.inc.php
+label_add_user = Redakteur hinzufügen
+label_admin = Admin-Zugang
+label_edit_user = Redakteur bearbeiten
+label_editor_admin = Super-Admin (Alle Rechte/ Alles sichtbar)
+label_group = Gruppen
+label_lang_perm = Sprachenzugriff
+label_last_login = Letzter Login
+label_logintries = Loginversuche
+label_reset_login_tries = Loginversuche zurücksetzen
+label_password = Passwort
+label_status = Zugangsberechtigung
+label_status_do_false = Zugang deaktivieren
+label_status_do_true = Zugang aktivieren
+label_status_false = inaktiv
+label_status_true = aktiv
+msg_editor_saved = Der Redakteur {0} wurde hinzugefügt.
+msg_login_inUse = Der Benutzer wird bereits verwendet!
+msg_login_notEmpty = Bitte einen Benutzernamen eingeben!
+msg_login_tries_reseted = Die protokollierten Loginversuche wurden zurückgesetzt!
+msg_new_psw_toShort = Das neue Passwort muss mindestens 6 Zeichen haben!
+note_psw_encrypted = Das Passwort ist verschlüsselt - bei Änderungen einfach neues Passwort eingeben
+
+##./contejo/include/pages/users/my_account.inc.php
+label_confirm_password = Passwort-Bestätigung
+label_new_password = neues Passwort
+label_old_password = aktuelles Passwort
+msg_confirm_psw_notEmpty = Das neue Passwort muß bestätigt werden!
+msg_confirm_psw_notEqual = Die Bestätigung ist nicht identisch mit der Eingabe für das Passwort!
+msg_new_psw_notEmpty = Bitte ein neues Passwort eingeben!
+msg_old_psw_notEmpty = Bitte das aktuelle Passwort eingeben!
+msg_old_psw_notEqual = Die Eingabe für das aktuelle Passwort ist nicht korrekt!
+
+msg_disabled_in_demo = Diese Funktion ist aus Sicherheitsgründen in der Demo-Installation von CONTEJO gesperrt.<br/> Vielen Dank für Ihr Verständnis.
+
+## ----------------------------------------------------------------
+
+##./page/tmpl/html/input/1.inhalte_standard.input.html
+article_ext_anchor_nav = Direktlinks zu Block-Überschriften
+article_ext_bottom_margin = Absatz am Blockende
+article_ext_display_infos = Artikel-Infos (Autor|Stand)
+article_ext_display_new = Neu/Updated anzeigen
+article_ext_link_to_top = Link zum Seitenanfang
+article_ext_settings = Frontend-Einstellungen
+article_headline = Artikel-Headline
+article_sub_headline = Artikel-Subheadline
+block_headline = Block-Headline
+block_text = Block-Text
+download_box = Dateien zum Download zur Verfügung stellen
+download_box_headline = Headline der Downloadbox
+
+##./page/tmpl/html/input/13.flash.input.html
+autostart_flash = Film automatisch starten
+basic_settings = Grundeinstellungen
+description = Bildunterschrift
+flash_vars = Flash-Vars
+flash_version = Flash-Version
+link_flash_file = Flash-Datei verknüpfen
+link_flv_file = FLV-Video verknüpfen
+optional = <span>(optional)</span>
+width_height_in_pixel = Breite × Höhe in Pixel
+preview_image = Vorschau-Bild
+preview_crop_selection = Bildausschnitt für Vorschau-Bild
+ipad_alternative_image = Alternativ Bild (iPad &amp; Co.)
+ipad_alternative_image = Bildausschnitt für Alternativ-Bild
+
+##./page/tmpl/html/input/14.formular_generator.input.html
+attachments_to_sender = Attachments
+disable_recipient_email = Empfänger löschen und nur eMail-Bestätigung an Absender senden?
+email_configuration = eMail-Konfiguration
+email_recipient = eMail-Empfänger
+email_subject = Betreff
+enable_mail_function = Formular mit eMail-Versand
+form_fields = Formular-Felder
+form_is_login = Login-Formular
+form_settings = Formular-Einstellungen
+form_title = Titel des Formulars
+include_script_template = Script via Template einbinden
+message_after_submit = Danksagung nach Absenden
+message_to_sender = Nachricht an den Absender
+required_fields_label = Hinweis für benötigte Angaben
+select_phpmail_account = PHPmail-Account
+send_mail_to_sender = eMail-Bestätigung an den Absender senden
+separate_by_comma = Mehrere Empfänger durch Komma trennen.
+show_form_title = Formular-Titel anzeigen
+submit_button_title = Titel für Senden-Button
+syntax_examples = Syntax-Beispiele
+template_selection = Template-Auswahl
+
+##./page/tmpl/html/input/2.inhaltsbox.input.html
+box_headline = Box-Headline
+box_text = Box-Text
+display_in_listing = Box im Teaser-Listing anzeigen
+frontend_settings = Frontend-Einstellungen
+
+##./page/tmpl/html/input/4.listen_ausgabe.input.html
+label_ctype = Spalte
+listing_art_per_page = Anzahl der Artikel pro Seite
+listing_back_to_list = "Zurück zur Liste"-Button einblenden
+listing_cat_sel = Kategorie-Ausgabe
+listing_content_settings = Einstellungen für Content-Ausgabe
+listing_crop_settings = Bildausschnitt
+listing_debug_mode = Debuging-Modus
+listing_image = Teaser-Image
+listing_modul_sel = Inhaltstyp(en)
+listing_no_result_info = Info bei leerem Ergebnis
+listing_not_use_cats = NIE BERÜCKSICHTIGEN:
+listing_only_new = Nur neueste Teaser anzeigen?
+listing_order_by = Sortierung
+listing_pagination = Mehrere Artikelseiten anzeigen (Pagination)
+listing_query_settings = Einstellungen für Datenbank-Abfrage
+listing_settings = Einstellungen für Listing-Ausgabe
+listing_sql_clause = Eigene SQL-WHERE-Klausel
+listing_text = Teaser-Text
+listing_use_cats = BESCHRÄNKEN AUF:
+listing_use_subcats = Unterkategorien einbeziehen
+sort_asc = aufsteigend
+sort_desc = absteigend
+
+##./page/tmpl/modules/5.input.php
+label_media_for_gallery = Medien für Galerie
+label_size_format_thumb = Größe/Format für Vorschau-Bild
+label_size_format_zoom = Größe/Format für Zoom-Bild
+
+##./page/tmpl/modules/13.input.php
+label_individual_description = individuelle Beschreibung
+label_without = ohne
+
+##./page/tmpl/modules/14.input.php
+set_include_no_template = kein Skript-Template einbinden
+
+##./page/tmpl/modules/16.input.php
+dateformat = %d.%m.%Y
+msg_addon_not_activated = Das AddOn <b>{0}</b> ist nicht aktiv.
+
+##./page/tmpl/modules/2.input.php
+box_headline = Box-Überschrift
+box_text = Box-Text
+please_choose = Bitte auswählen
+
+##./page/tmpl/modules/2.output.php
+viewable_in_listing = Im Teaser-Listing sichtbar
+
+##./page/tmpl/modules/4.input.php
+duration_month = Monat
+duration_months = Monate
+duration_no = nein
+duration_week = Woche
+duration_weeks = Wochen
+duration_yes = ja, wenn: Erstelldatum &lt;
+order_by_createdate = Erstelldatum
+order_by_name = Namen alphabetisch
+order_by_online_from = Beginn des Online-Zeitraums
+order_by_online_to = Ende des Online-Zeitraums
+order_by_prior = keine (also wie in der Struktur)
+order_by_random = zufällige Liste
+order_by_updatedate = Updatedatum
+paragraph = Absatz
+teaser_default_img = Standard-Einstellung
+teaser_media_auto_img = Bild automatisch finden
+teaser_met_img = Artikel-Meta-Image
+teaser_no_img = kein Bild
+use_content = Content verwenden
+use_meta_desc = Meta-Description verwenden
+whole_text = gesamter Text
+words = Worte
+
+##./page/tmpl/modules/6.input.php
+include_ctype_with_slices = Alle Blöcke einbinden
+label_select_language = Sprache wählen
+no_alias_of_same_article_lang = Mit den aktuelle Einstellungen können keine Blöcke eingebunden werden!
+no_slices_in_ctype = In der gewählten Spalte sind keine Blöcke vorhanden!
+select_article = Artikel wählen
+select_ctype = Spalte wählen
+step1 = Schritt 1 - Einstellungen
+step2 = Schritt 2 - Block-Auswahl
+
+##./page/tmpl/modules/6.output.php
+alias_of_article = Block-Alias aus Artikel
+msg_article_offline = ACHTUNG: Quell-Artikel ist nicht online!
+msg_no_alias_settings = Kein Block-Alias mit den gegebenen Einstellungen!
+
+##./page/tmpl/modules/8.input.php
+include_template = Template einbinden
+
+##./page/tmpl/modules/8.output.php
+template_included = Eingebundenes Template
+err_include_template = Fehler beim Laden des Templates

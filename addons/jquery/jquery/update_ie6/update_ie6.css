@@ -1,0 +1,13 @@
+#upie6{width:100%;overflow:hidden;position:absolute;top:0;left:0;right:0;font-family:Arial,Verdana,Helvetica,sans-serif;font-size:12px;background:#fff;color:#666;border-bottom:2px solid #999;z-index:2000}
+#upie6 .upie6_headline {font-size:16px;font-weight:bold;margin:10px 20px 0;width:580px;background:none;}
+#upie6 .upie6_text {clear:both;font-size:13px;margin:10px 20px;width:580px;color:#888;}
+#upie6 .up_browser  {overflow:hidden; margin:5px 10px}
+#upie6 .up_browser li {float:left; margin:0 2px;}
+#upie6 .up_browser a {display:block;background:transparent url(./update_ie6.jpg) no-repeat 2000px 2000px;float:left;padding:103px 0 0 0;text-align:center;font-size:9px;text-decoration:none;color:#b3b3b3;width:120px;height:17px}
+#upie6 .up_browser a.upie6_firefox {background-position: 0 0}
+#upie6 .up_browser a.upie6_chrome {background-position: -120px 0}
+#upie6 .up_browser a.upie6_safari {background-position: -240px 0}
+#upie6 .up_browser a.upie6_opera {background-position: -360px 0}
+#upie6 .up_browser a.upie6_ie {background-position: -480px 0}
+#upie6 a#upie6_close {text-indent:-2000px; overflow:hidden; display:block;height:19px;width:19px;margin:0;padding:0; position:absolute;right:7px; top:7px;background: transparent url(./update_ie6.jpg) no-repeat right top}
+

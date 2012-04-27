@@ -1,0 +1,89 @@
+#fancybox-loading {
+	position: fixed;
+	top: 50%;
+	left: 50%;
+    width: 220px;
+	margin-top: -20px;
+	margin-left: -110px;
+	cursor: pointer;
+	overflow: hidden;
+	display:block!important;
+	background: transparent url(../img/contejo/ajax/ajax-loader4.gif) no-repeat center center;
+}
+#fancybox-outer {
+	background: transparent;
+    overflow: visible;
+}
+#fancybox-inner {
+	background: transparent;
+    overflow: visible!important;
+}
+#fancybox-close, #fancybox-title, #fancybox-title-over,
+#fancybox-title-left, #fancybox-title-main, #fancybox-title-right,
+#fancybox-left, #fancybox-right, #fancybox-left-ico, #fancybox-right-ico,
+div#fancy-bg-n, div#fancy-bg-ne, div#fancy-bg-e, div#fancy-bg-se,
+div#fancy-bg-s, div#fancy-bg-sw, div#fancy-bg-w, div#fancy-bg-nw {
+    background-image: none !important;
+    display: none;
+}
+#cjo_connectmedia_top {
+    height: 25px;
+	background: transparent url(../img/contejo/bg/connectmedia_top.png) no-repeat center top;
+	padding: 13px 20px 10px 20px;
+	position: relative;
+	z-index:5;
+}
+
+#cjo_connectmedia_top #cjo_connectmedia_close {
+	position: absolute;
+	display: block;
+	right: 20px;
+	top: 15px;
+} #cjo_connectmedia_top #cjo_cat_path {
+    font-size: 12px;
+    margin: -5px 0 5px -10px;
+
+}
+#cjo_connectmedia_middle {
+    width: 820px;
+	padding: 10px 10px 10px 20px;
+	background: transparent url(../img/contejo/bg/connectmedia_middle.png) repeat-y  center top;
+	overflow: hidden;
+}
+
+#cjo_connectmedia_middle .container{
+	height: 422px;
+	overflow: auto;
+	position:relative;
+}
+
+#cjo_connectmedia_bottom {
+	clear: both;
+	height: 60px;
+	background: transparent url(../img/contejo/bg/connectmedia_bottom.png) no-repeat center top;
+	padding: 10px;
+	color: #999 !important;
+}
+#cjo_connectmedia_bottom #cjo_connectmedia_icon {
+	margin-left: 5px;
+	display: none;
+	float: left;
+}
+
+#cjo_connectmedia_bottom #cjo_connectmedia_details {
+	margin-left: 50px;
+	display: none;
+	overflow: hidden;
+}
+#cjo_connectmedia_bottom #cjo_connectmedia_details * {
+	float: left;
+	background-position: left center;
+	background-repeat: no-repeat;
+	padding: 0 12px;
+	font-size: 11px;
+}
+#cjo_connectmedia_bottom #cjo_connectmedia_details h3 {
+	font-size: 13px;
+	padding: 0;
+	margin: 0;
+}

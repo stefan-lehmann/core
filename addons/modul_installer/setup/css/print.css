@@ -1,0 +1,8 @@
+@media print  {
+body {background:transparent !important;margin:0 0 0 30px;padding:0;}
+#footer .container,#lang_nav,#nav1 {display:none !important;height:0;width:0;margin:0;padding:0;}
+#page {position:relative;background:transparent !important;margin:0;}
+#page_margin {position:relative;background:transparent !important;line-height:130%;margin:0;padding:0;}
+#main .textblock {padding:0;}
+#footer {background:transparent;clear:both;margin:10px 0 0 !important;padding:0 10px 12px;}
+}

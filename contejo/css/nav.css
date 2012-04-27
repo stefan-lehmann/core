@@ -1,0 +1,44 @@
+@media all {
+.buttonmenu {list-style:none;overflow:visible;width:auto;margin:0;padding:0;}
+.buttonmenu li {float:left;border-left:1px solid #999;height:16px;overflow:visible;zoom:1;margin:-3px 0 0;padding:3px 3px 0;}
+.buttonmenu li.first {border-left:none;}
+.buttonmenu li a{float:left;display:block;color:#686868;background:transparent;text-decoration:none !important;text-transform:uppercase;line-height:1em;height:18px;overflow:visible;margin-top:-2px;}
+.buttonmenu li a:hover,.buttonmenu li a:focus,.buttonmenu li a.current {background:#009ee0;}
+.buttonmenu li a span {margin-top:-4px;padding-top:6px;display:block;height:20px;float:left;cursor:pointer;}
+.buttonmenu li a span.left {margin-left:-3px;width:10px;}
+.buttonmenu li a span.right {margin-right:-3px;width:10px;}
+.buttonmenu li a:hover span,.buttonmenu li a:focus span,.buttonmenu li a.current span {color:#fff !important;background:transparent url(../img/contejo/bg/mainmenu_center.png) repeat-x center center;}
+.buttonmenu li a:hover span.left,.buttonmenu li a:focus span.left,.buttonmenu li a.current span.left {background:transparent url(../img/contejo/bg/mainmenu_left.png) no-repeat left center;}
+.buttonmenu li a:hover span.right,.buttonmenu li a:focus span.right,.buttonmenu li a.current span.right{background:transparent url(../img/contejo/bg/mainmenu_right.png) no-repeat right center;}
+
+.tabnmenu {list-style:none;overflow:visible;width:auto;margin:0;padding:0;}
+.tabnmenu li {float:left;overflow:visible;zoom:1;margin:0 0 -10px;padding:3px 2px;height:26px;}
+.tabnmenu li a {height:70%;overflow:visible!important;float:left;display:block;color:#006b99 !important;background:transparent;text-decoration:none !important;text-transform:uppercase;line-height:14px;overflow:hidden;margin-top:-2px;cursor:pointer;}
+.tabnmenu li a span {height:100%;cursor:pointer;display:block;float:left;font-weight:700 !important;min-width:90px;text-align:center;background:transparent url(../img/contejo/bg/tab_center_60.png) repeat-x center top;margin:0;padding:9px 12px 0;}
+.tabnmenu li a span i {font-weight:400;font-style:normal;}
+.tabnmenu li a span.left{margin-left:-3px;width:6px;min-width:6px;background:transparent url(../img/contejo/bg/tab_left_60.png) no-repeat right top;padding:9px 0 0;}
+.tabnmenu li a span.right {margin-right:-3px;width:6px;min-width:6px;background:transparent url(../img/contejo/bg/tab_right_60.png) no-repeat left top;padding:9px 0 0;}
+.tabnmenu li a.current span {padding-bottom:1px;}
+.tabnmenu li:hover a span,.tabnmenu li a:hover span,.tabnmenu li a:focus span,.tabnmenu li a.current span {color:#009ee0 !important;background:transparent url(../img/contejo/bg/tab_center_100.png) repeat-x center top;}
+.tabnmenu li:hover a span.left,.tabnmenu li a:hover span.left,.tabnmenu li a:focus span.left,.tabnmenu li a.current span.left {background:transparent url(../img/contejo/bg/tab_left_100.png) no-repeat left top;}
+.tabnmenu li:hover a span.right,.tabnmenu li a:hover span.right,.tabnmenu li a:focus span.right,.tabnmenu li a.current span.right {background:transparent url(../img/contejo/bg/tab_right_100.png) no-repeat right top;}
+	
+#cjo_tabs,#cjo_sub_tabs {width:944px;background:transparent url(../img/contejo/bg/main_top.png) no-repeat center bottom;margin:0;padding:0 10px 10px 26px;}
+
+#cjo_sub_tabs {width:944px;margin:0 0 8px;padding:10px 0 6px 16px;height:25px;background-position: 50% 32px}
+#cjo_sub_tabs .tabnmenu {height:25px;}
+#cjo_sub_tabs a span {height:100%;text-transform:none;width:auto !important;color:#777 !important;line-height:16px!important;padding:6px 5px 0;}
+#cjo_sub_tabs a span.left,#cjo_sub_tabs a span.right {width:6px !important;padding-right:0 !important;padding-left:0 !important;}
+#cjo_sub_tabs a:focus span,#cjo_sub_tabs a:hover span,#cjo_sub_tabs a.current span {color:#32353a !important;}
+#cjo_sub_tabs a.current span {padding-bottom:1px;}
+#cjo_sub_tabs ul.buttonmenu li {border:none;}
+#cjo_lang_tabs {position:absolute;left:970px;top:30px;width:0;}
+#cjo_cat_path {padding:7px 10px 10px;}	
+	
+.v_tabnmenu {list-style:none;width:0;margin:0 0 0 -30px;padding:0;}
+.v_tabnmenu li a,.v_tabnmenu li a:visited {display:block;line-height:0;font-size:0;height:11px;width:16px;margin-left:1px;background:transparent url(../img/contejo/bg/langmenu_60.png) no-repeat right center;padding:12px 11px 12px 6px;}
+.v_tabnmenu li a:hover,.v_tabnmenu li a:focus,.v_tabnmenu li a.current {background:transparent url(../img/contejo/bg/langmenu_100.png) no-repeat right center;}
+.v_tabnmenu li a.current {padding-left:7px;margin-left:0;}
+.v_tabnmenu li#view_frontend {margin-top:5px;}
+.v_tabnmenu li#view_frontend a {padding-top:7px;}
+}

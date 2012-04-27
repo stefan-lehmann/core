@@ -1,0 +1,69 @@
+[%TEMPLATE%]
+
+IF(CJO_IS_CONTEJO){%
+    <div style="width:100%;overflow:auto;">
+%}ENDIF 
+
+	IF(![[NO_FLASH]] OR !CJO_MEDIA[4]){%
+		IF(CJO_MEDIA[3]){%
+			<div id="[[FLASH_ID]]_CJO_SLICE_ID_preview" style="cursor:pointer">[[PREVIEW_IMAGE]]</div>
+		%}ENDIF
+		
+	    <div id="[[FLASH_ID]]_CJO_SLICE_ID" class="textblock">
+	    IF([[DESCRIPTION]]){%
+	      <br /><p style="width:[[FLASH_WIDTH]]px">[[DESCRIPTION]]</p>
+	    %}ENDIF
+	    </div>
+	
+		<script type="text/javascript">
+		/* <![CDATA[ */
+		    $(function(){
+		    	if (jQuery().flash) {
+					IF(CJO_MEDIA[3]){%  $('#[[FLASH_ID]]_CJO_SLICE_ID_preview').click(function() { $(this).hide(); %}ENDIF
+			        $('#[[FLASH_ID]]_CJO_SLICE_ID').flash({ src: 'CJO_MEDIAFOLDER/CJO_FILE[1]', width: [[FLASH_WIDTH]],  height: [[FLASH_HEIGHT]] IF([[FLASH_VARS]]){% ,flashvars: { [[FLASH_VARS]] } %}ENDIF });
+					IF(CJO_MEDIA[3]){%  }); %}ENDIF
+				    });
+			    } else { if (jQuery) { alert('jQuery.flash-Plugin is missing!'); } else { alert('jQuery is missing!'); }}		    
+		/* ]]> */
+		</script>
+	%}ENDIF
+	
+	IF([[NO_FLASH]] AND CJO_MEDIA[4]){%
+			<div id="[[FLASH_ID]]_CJO_SLICE_ID_alt">
+				[[IPAD_ALT_IMAGE]]
+				IF([[DESCRIPTION]]){%
+			      <br /><p style="width:[[FLASH_WIDTH]]px">[[DESCRIPTION]]</p>
+			    %}ENDIF
+			</div>
+	%}ENDIF
+		
+IF(CJO_IS_CONTEJO){%
+    </div>
+%}ENDIF 
+
+if (jQuery().flash) {
+
+    $(function(){
+
+        $('#[[FLASH_ID]]_CJO_SLICE_ID').flash(
+            { src: 'CJO_MEDIAFOLDER/CJO_FILE[1]',
+              width: [[FLASH_WIDTH]],
+              height: [[FLASH_HEIGHT]]
+              IF([[FLASH_VARS]]){% ,
+                  flashvars: { [[FLASH_VARS]] }
+              %}ENDIF
+            });
+    });
+}
+else {
+	if (jQuery) {
+		alert('jQuery.flash-Plugin is missing!');
+	} else {
+		alert('jQuery is missing!');
+	}
+}
+/*]]>*/
+</script>
+
+
+

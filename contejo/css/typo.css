@@ -1,0 +1,30 @@
+@media all  {
+body {font-family:Arial, Verdana, sans-serif;color:#32353a;}
+h1,h2,h3 {font-size:125%;font-weight:700;margin:0 0 .75em;padding:0;}
+h1 {font-size:150%;}
+h1 span {font-size:75%;display:block;font-weight:400;}
+h2.layout_name {padding-left:10px;}
+h2.layout_name span {font-size:80%;font-weight:400;text-transform:uppercase;}
+h3 {font-size:110%;}
+span.found {background:#dedede;color:#000;font-weight:700;padding:0 .25em;}
+p {font-size:1em;line-height:1.4em;margin:0 0 1em;padding:0;}
+a {font-weight:inherit;font-style:inherit;}
+blockquote {border-left:10px solid #ddd;margin-left:10px;}
+pre {font-family:monospace;font-size:1em;}
+em,i {font-style:italic;}
+code {font-family:"Courier New", Courier, monospace;font-size:1em;white-space:pre;}
+p b,strong,b {font-weight:700;}
+ul{line-height:1.4em;margin-bottom:1.5em;margin-left:1em;list-style:disc;}
+ul li{margin:0 0 0.25em 30px;}
+ul ul{list-style:circle;}
+ol{font-size:1em;line-height:1.4em;margin-bottom:1.5em;margin-left:1em;list-style:decimal;}
+ol li{font-size:1em;margin:0 0 0.25em 30px;}
+dl{margin-bottom:1.5em;line-height:1.4em;}
+dl dt{font-weight:700;margin:0.25em 0;}
+dl dd{margin-left:30px;}
+table{margin-bottom:1.5em;font-size:1em;max-width:100%;min-width:300px;}
+table caption{font-weight:700;margin-bottom:1.5em;}
+th{font-weight:700;text-align:left;}
+td{font-size:1em;}
+textarea,input,select{font-family:Arial, Verdana, sans-serif;}
+}

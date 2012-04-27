@@ -1,0 +1,23 @@
+shop_credit_card = Kreditkarte
+
+##./addons/shop/include/pay_methods/credit_card/class.shop_credit_card.inc.php
+shop_credit_card_CVS = CVS-Nummer
+shop_credit_card_costs = Gebühr
+shop_credit_card_expiration_date = gütig bis
+shop_credit_card_id = Kartennummer
+shop_credit_card_owner = Karteninhaber
+shop_credit_card_provider = Kreditinstitut
+
+##./addons/shop/include/pay_methods/credit_card/index.inc.php
+msg_no_credit_card_cvs = Bitte geben Sie die CVS-Nummer an.
+msg_no_credit_card_number = Bitte geben Sie die Kartennummer an.
+msg_no_credit_card_owner_name = Bitte geben Sie den Namen des Karteninhabers an.
+msg_no_credit_card_provider = Bitte geben Sie das Kreditinstitut an.
+msg_no_expiration_date = Bitte wählen Sie ein Datum aus.
+shop_err_length_eq_3 = Die CVS muss dreistellig sein.
+shop_get_credit_card_cvs = CVS-Nummer.
+shop_get_credit_card_expiration = Gültig bis
+shop_get_credit_card_id = Kartennummer
+shop_get_credit_card_owner_firstname = Vorname
+shop_get_credit_card_owner_name = Nachname
+shop_get_credit_card_provider = Kreditinstitut

@@ -1,0 +1,55 @@
+phpmailer = PHPMailer
+
+##./addons/phpmailer/classes/class.cjo_phpmailer.inc.php
+err_account_is_empty = Der Mailversand über das PHPMailer-AddOn steht nicht zur Verfügung, bitte überprüfen Sie den gewählten PHPMailer-Account.
+
+
+##./addons/phpmailer/pages/archiv.inc.php =
+label_article_id = Artikel-Id
+label_clang_id = Language-Id
+label_bcc = BCC
+label_cc = CC
+label_delete_archiv_db = Archiv löschen
+label_info = Infos
+label_message = Nachricht
+label_message_datails = Detailansicht
+label_phpmailer_error = Fehlermeldung
+label_remote_addr = REMOTE_ADDR
+label_request = REQUEST_URI
+label_send_date = Versanddatum
+label_sender = From
+label_subject = Betreff
+label_to = An
+label_user_agent = HTTP_USER_AGENT
+msg_archiv_deleted = Alle Einträge des Archivs wurden gelöscht.
+msg_archiv_item_deleted = Der Archiv-Eintrag wurde gelöscht.
+
+##./addons/phpmailer/pages/index.inc.php =
+subtitle_archiv = Archiv
+
+##./addons/phpmailer/pages/settings.inc.php =
+label_add_setting = PHPMailer hinzufügen
+label_edit_setting = PHPMailer bearbeiten
+label_connection_settings = Verbindung
+label_default_mailer = Standard PHPMailer
+label_footer = Mail-Footer
+label_from_email = Absender-eMail
+label_from_name = Absender-Name
+label_host = Hostname
+label_mailer = Mailer
+label_password = SMTP-Passwort
+label_priority = eMail-Priorität
+label_setting_do_offline = PHPMailer deaktivieren
+label_setting_do_online = PHPMailer aktivieren
+label_setting_offline = deaktiviert
+label_setting_online = aktiv
+label_smtp_auth = SMTP mit Auth.
+label_username = SMTP-Benutzer
+msg_err_miss_from_name = Bitte Absender-Namen angeben!
+msg_err_miss_from_email = Bitte Absender-Adresse angeben!
+msg_err_no_email = Keine gültige eMail-Adresse!
+msg_setting_deleted = PHPMailer gelöscht.
+msg_smtp_auth = SMTP mit Authentifikation
+msg_status_updated = Status des PHPMailers geändert.
+note_priority = (1 = hoch, 3 = normal, 5 = niedrig).
+note_separate_by_comma = Mehrere Adressen durch Komma trennen.

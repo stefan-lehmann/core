@@ -1,0 +1,77 @@
+@media all {
+  h1.page_title,
+  #pfilter form,
+  #pfilter form fieldset,
+  #pfilter #p_submit,
+  h1.page_title a,
+  #nav3 ul,
+  #stext,
+  #steaser li a,
+  #main .accessory .description,
+  #main .accessory .description h2,
+  .template_1 #main h1,
+  .template_2 #main,
+  .template_19 #main .col1 h1 {
+        background-image: url(../img/layout/ie6/sprite2.gif);
+} #footer,
+  #phead .description,
+  #tabs,
+  #tabs ul li,
+  #tabs ul li.current,
+  #tabs ul li:hover,
+  #tabs ul li.current a,
+  #tabs ul li.current:hover a,
+  #tabs ul li:hover a,
+  #mosaik .item,
+  #main .suggest_item,
+  #mosaik .item  h2,
+  #main .suggest_item h2,
+  #main .col2 h2,
+  #main .col2 h2 span,
+  .template_5 #main,
+  .template_5 #main.dcols .col1,
+  .template_5 .after {
+        background-image: url(../img/layout/ie6/sprite.png);
+} #content {
+        padding: 0 0 0 40px;
+} #main {
+        background-color: #fff;
+} .template_2 #main {
+        width: 942px;
+        background-position: 100% -134px!important;
+        overflow: hidden;
+} h1.page_title.mosaik {
+       padding-left: 7px;
+} #nav1 {
+        right: 0;
+} .template_19 #nav1,
+  .template_20 #nav1 {
+        margin-right: 43px;
+} #nav3 {
+        left: 28px;
+} #footer {
+        background-position: 20px -324px;
+} #pfilter p {
+        padding-top: 4px;
+        height: 28px;
+} .template_1 #main {
+        position: relative;
+        margin-top: 0px;
+} .template_1 #main h1 {
+        margin-top: -1px;
+} #nav2 ul li.current a,
+  #nav2 ul li a:hover,
+  #nav2 ul li a:focus {
+        font-weight: normal;
+} .template_1 #main .col2 a.print_link {
+         margin: 10px 0 0 0!important;
+} form div.qfrow {
+        clear: both;
+        padding: 2px;
+} form input, form textarea, form select {
+        border: 1px solid #bcbcbc;
+        border-color: #bcbcbc #999 #999 #bcbcbc;
+} h1.page_title a {
+        background-image: url(../img/layout/ie6/sprite2.gif) !important;
+}
+}

@@ -1,0 +1,193 @@
+@media all {
+  #main .shop_basket_out .amount input {
+         width: 20px;
+} #main .shop_basket_out {
+    	width: 100%;
+} #main .shop_basket_out thead {
+} #main .shop_basket_out td,
+  #main .shop_basket_out th {
+     	font-weight:normal;
+     	padding:5px;
+} #main .shop_basket_out th {
+     	font-size:.85em;
+     	vertical-align:center;
+     	text-align: left;
+        padding-bottom: 4px;
+} #main .shop_basket_out .first td {
+    	padding-top: 10px;
+    	border-top: 2px solid #EEE;
+} #main .shop_basket_out .last td {
+    	padding-bottom: 10px;
+    	border-bottom: 2px solid #EEE;
+} #main .shop_basket_out .odd {
+    	background-color: #f4f4f4;
+} #main .shop_basket_out .total td {
+    	margin-top: 10px;
+    	font-weight: bold;
+    	padding-top: 10px;
+    	text-align: left;
+    	font-size: 1.1em;
+} #main .shop_basket_out .product_name {
+        font-size: .95em
+} #main .shop_basket_out .product_name div, .shop_basket_out .product_name a {
+    	font-weight:bold;
+    	text-align: left;
+    	font-size: 1.2em;
+    	display: inline;
+} #main .shop_basket_out .attribute {
+    	text-align: left;
+    	padding-right: 3px;
+} #main .shop_basket_out td.amount {
+    	text-align: center;
+    	vertical-align: middle;
+} #main .shop_basket_out .total_price {
+    	text-align: right;
+        vertical-align: middle;
+} #main .shop_basket_out .total_head {
+    	text-align: right;
+} #main .shop_basket_out th.total_name_head {
+    	text-align: right;
+} #main .shop_basket_out td.taxes {
+    	font-size:.9em;
+    	text-align: right;
+    	padding: 0px;
+    	padding-right: 5px;
+} #main .shop_basket_out td.tax_rate {
+    	font-size:.9em;
+    	text-align: right;
+    	padding: 2px;
+    	padding-left: 5px;
+} #main .shop_basket_out .delete {
+    	text-align: center;
+    	vertical-align: middle;
+    	width: 30px;
+} #main .shop_basket_out .delete_head {
+    	text-align: center;
+} #main .shop_basket_out .thumbnail {
+    	text-align: center;
+    	vertical-align: middle !important;
+    	width: 80px;
+} #main .shop_basket_out td.thumbnail * {
+    	margin: 0;
+        padding:0;
+} #main .shop_basket_out span.description {
+    	font-size: .9em;
+    	display: block;
+} #main .shop_basket_out .description span{
+    	display: block;
+} #main .shop_basket_out .amount input {
+         width: 20px;
+} #main .shop_basket_out .amount {
+    	width: 20px;
+} #main .shop_basket_out .amount_head {
+    	text-align:center;
+} #main .shop_basket_out td.total_name {
+    	text-align: right;
+    	font-weight: bold;
+} #main .shop_basket_out td.delivery_costs_name {
+		text-align: right;
+} #main .shop_basket_out td.order_value_name {
+		text-align: right;
+		font-weight: normal;
+} #main .shop_basket_out td.delivery_costs {
+		text-align: right;
+} #main .shop_basket_out td.total_sum {
+		text-align: right;
+		font-weight: bold;
+} #main .shop_basket_out td.order_value {
+		text-align: right;
+		font-weight: normal;
+} #main .shop_basket_out span.product_table_tax_rate {
+    	font-size: .85em;
+    	display: block;
+    	overflow: hidden;
+} #main .shop_basket_out td.total_color {
+    	color: #009ee0;
+    	font-size: 1.1em;
+} #main .shop_basket_out span.unavailable_amount {
+    	color: #c00;
+} #main .shop_basket_out span.product_id {
+    	margin-left: 5px;
+    	font-weight: normal;
+    	font-size: .85em;
+} #main #basket_refresh {
+        margin: -10px 0 0 10px;
+        padding: 0;
+        position: absolute;
+} #shop_goto_checkout,
+  #shop_checkout_next,
+  #shop_checkout_send {
+        float: right;
+} .shop_checkout_navi {
+        clear: bodth;
+} .shop_checkout_navi input {
+        font-size: 110%;
+        display: inline;
+        float: left !important;
+        width: 33.33%;
+        color: #009ee0;
+        margin: -20px 0;
+        padding: 30px 0;
+        border: none !important;
+        text-align: center;
+        background: transparent;
+        cursor: pointer;
+} .shop_checkout_navi.shop_with_adress2 input {
+        width: 25%;
+} .shop_checkout_navi input.disabled {
+        color: #999;
+        cursor: default;
+        background: transparent!important;
+        font-weight: normal!important;
+} .shop_checkout_navi input.current,
+  .shop_checkout_navi input:hover,
+  .shop_checkout_navi input:focus {
+        font-weight: bold;
+        background: transparent url(checkout_current.png) no-repeat top center;
+} .shop_checkout_next_page {
+        overflow: hidden;
+        clear: both;
+        padding: 20px 0;
+} #confirm_address1, #confirm_address2, #confirm_pay_method, #confirm_contact_data {
+        width: 48.45%;
+        float: left;
+} #confirm_address1 .rounded_corners_c,
+  #confirm_address2 .rounded_corners_c,
+  #confirm_pay_method .rounded_corners_c,
+  #confirm_contact_data .rounded_corners_c {
+        min-height: 180px;
+        position: relative;
+} #confirm_pay_method {
+        margin-right: -30px;
+} input.shop_checkout_change {
+        position: absolute;
+        right: 12px;
+        bottom: 15px;
+        font-size: .9em;
+        color: #009ee0;
+        background: transparent;
+        cursor: pointer;
+}  #shop_order_comment textarea {
+        width: 97.5% !important;
+        float: none !important;
+        overflow: auto !important;
+        margin: -.5em 0 1.5em;
+}  #confirm_business_terms div.qfelement {
+        width: 100% !important;
+}  #confirm_business_terms .qflabel {
+        display: none!important;
+}  #confirm_business_terms div.qfelement span.form_error {
+        float: none;
+        width: 100% !important;
+        margin-left: 0 !important;
+}  #shop_business_terms_txt {
+    	height: 200px;
+        margin: 0;
+        overflow-x: hidden;
+    	overflow-y: scroll;
+    	border: 1px solid #ccc;
+    	padding: 10px;
+        width: auto;
+        display: none;
+}
+}

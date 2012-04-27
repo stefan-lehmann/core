@@ -1,0 +1,23 @@
+@media all  {
+.floatbox {height:1%;overflow:hidden;}
+.stretch,.clear {clear:both;font-size:15px;height:1px;line-height:1px;margin:0;padding:0;}
+.clearfix:after {clear:both;content:".";display:block;height:0;visibility:hidden;}
+* html > body .clearfix {display:inline-block;width:100%;}
+* html .clearfix {height:1%;}
+.accept,.error {border:1px solid green;color:#222;display:block;line-height:1.3em;width:auto !important;margin:0 0 1em !important;padding:.5em .75em .6em 2em;}
+.accept a,.error a {color:#222 !important;font-weight:700;text-decoration:none !important;}
+.error strong,.accept strong,.error b,.accept b,.error u,.accept u {color:#222;}
+.accept {background:url(../../img/icons_gif/accept.gif) no-repeat 5px .6em #90EE90;border-color:green;}
+.error {background:url(../../img/icons_gif/error.gif) no-repeat 5px .6em #f99;border-color:red;}
+.error strong,.error strong {display:inline;font-weight:700;border-color:red;}
+.accept span,.error span {display:block;margin:.15em 25px .35em;}
+.accept span.u,.accept span.s,.accept span.d,.error span.u,.error span.s,.error span.d {display:inline;}
+.replace {background-color:transparent;background-position:left top;background-repeat:no-repeat;display:block;}
+.replace * {background-color:transparent;background-position:left top;background-repeat:no-repeat;display:block;text-indent:-10000px;}
+.replace a {text-indent:0;}
+.replace a span {text-indent:-10000px;}
+span.accesskey {text-decoration:none;}
+.accessibility {left:-999em;position:absolute;top:-999em;}
+.hide_me {display:none;}
+#benchmark {background-color:#fff;border:1px solid #555 !important;color:#555;cursor:pointer;position:absolute;right:10px;top:10px;padding:4px;}
+}

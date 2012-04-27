@@ -1,0 +1,16 @@
+@media all {
+body {height:100%;overflow:hidden;}
+#cjo_padding_top {width:1px;min-height:360px;height:50%;margin-bottom:-180px;}
+#cjo_page_margin {background:transparent;width:100%;margin:0;padding:0;}
+#cjo_page {width:410px;}
+#cjo_tabs {width:400px;position:absolute;top:0;height:40px;background:transparent;overflow:hidden;margin:-29px 0 0 20px;padding:0;}
+#cjo_login_top {height:46px;background:transparent url(../img/contejo/bg/login_top.png) no-repeat left top;}
+#cjo_login {background:transparent url(../img/contejo/bg/login_bottom.png) no-repeat left bottom;zoom:1;position:relative;padding:10px 6px 0 5px;}
+#cjo_login .statusmessage {width:399px;margin:0;padding:0;}
+#cjo_login form {padding:15px 30px 10px;}
+#cjo_login p {overflow:hidden;margin-bottom:5px;}
+#cjo_login label {display:block;float:left;width:80px;font-weight:700;vertical-align:middle;padding:3px 0;}
+#cjo_login input {display:block;float:left;width:230px;vertical-align:middle;padding:3px;}
+#cjo_login .submit {float:right;margin:0 22px 10px auto;width:auto;padding:0 10px;}
+.cjo_home_link {display:block;margin:0 0 17px 9px;}
+}

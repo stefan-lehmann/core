@@ -1,0 +1,55 @@
+import_export = Im-/Export
+
+##./addons/import_export/classes/class.cjo_import_export.inc.php 
+err_create_dirs_manually = Please create the following directories and set write permissions (via FTP). 
+err_import_failed_mediafolder_not_deletable = Import failed! Unable to save the current media folder ({0})! 
+err_no_import_file_chosen = No import file selected! 
+err_no_import_file_chosen_or_wrong_version = No import file selected or mismatching the version of your CONTEJO installation! 
+err_no_valid_import_file = No valid importfile! Please check the version stamp: 
+err_table_not_found = Table {0} not found!
+err_while_extracting = Problems when extracting the file. 
+msg_database_imported = Database imported successfully. 
+msg_entry_count = ({0} Entries) 
+msg_file_imported = File imported successfully. 
+
+##./addons/import_export/pages/import_export_db.inc.php 
+button_import = Import
+err_check_rights_in_directory = Please check write permissions in '{0}'! 
+err_file_could_not_be_generated = Unable to create export file! 
+err_file_could_not_be_uploaded = Unable to upload import file! 
+err_you_have_no_write_permission_in = You do not have write permissions in: '{0}'. 
+label_database_export = Database Export 
+label_delete_sql = delete: {0}  
+label_export = Export
+label_filename = Filename 
+label_import = Import 
+label_import_sql = import: {0}
+label_import_upload =  
+label_intro_export = Here you are able to create backups of your CONTEJO installation. In order to create a full backup you need to export <b>your database and your file system</b>. 
+label_save_as_file = Download as file 
+label_save_on_server = Save to the server 
+label_select_tables = Add tables to export
+label_selected_file = Selected file 
+label_start_export_db = Export Database 
+msg_file_deleted = File '{0}' deleted successfully. 
+msg_file_generated_in = Data saved in '{0}'. 
+msg_filename_updated = Filename has been corrected. Start the export by clicking the start button. 
+msg_intro_import = Please be aware that during database import <b>the old database will be deleted</b>. Make shure that you have a valid backup of your current database before you continue. 
+msg_proceed_sql_import = <b>ATTENTION:</b> Overrides existing data (Articles, Templates, Modules,...). Continue? 
+
+##./addons/import_export/pages/import_export_files.inc.php 
+button_delete = Delete 
+err_please_choose_folder = Please select directories you want to export! 
+label_createdate = Created on 
+label_database = Database Import 
+label_delete_tar = delete: {0} *** 
+label_export_settings = Export Settings 
+label_file_export = File Export 
+label_files = File system 
+label_import_tar = import: {0} *** 
+label_start_export = Start Export 
+msg_proceed_tar_import = <b>ATTENTION:</b> Overrides existing files. Continue? 
+
+##./addons/import_export/pages/index.inc.php 
+import_export_db = Database
+import_export_files = File system

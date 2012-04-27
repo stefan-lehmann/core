@@ -1,0 +1,16 @@
+@media all  {
+#nav1 {font-size:165%;line-height:1em;font-family:Arial, Verdana, Helvetica, sans-serif;}
+#nav1 .wrapper {overflow:hidden;}
+#nav1 ul {list-style:none;position:absolute;top:262px;right:10px;padding:0;}
+#nav1 li {display:inline;list-style:none;margin:0 !important;padding:0 !important;}
+#nav1 li a {float:left;background:#009ee0;color:#fff;line-height:1em;display:block;font-weight:700;text-decoration:none;text-transform:uppercase;margin:0 0 0 4px;padding:7px 8px;}
+#nav1 li.first {margin:0;}
+#nav1 li a.current,#nav1 li a.current:visited,#nav1 li a:hover,#nav1 li a:focus {color:#000;}
+#nav2 {font-size:120%;}
+#nav2 .wrapper {border:none;width:auto;}
+#nav2 ul {float:right;width:auto;}
+#nav2 li {float:left;border-right:1px solid #bdbdbd;line-height:1em;width:auto;margin:0;padding:0 .5em 2px;}
+#nav2 li.first {border-left:none;}
+#nav2 a {color:#fff;background:transparent;height:auto;width:auto;padding:0;}
+#nav2 a:hover,#nav2 a.current,#nav2 a.current:visited,#nav2 a.current:hover {background-color:transparent;}
+}

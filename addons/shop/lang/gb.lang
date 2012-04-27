@@ -1,0 +1,264 @@
+by_order_value = by Order Value
+by_packing_units = by Size/Weight
+shop_delivery_calculation = Calculate Delivery Costs
+shop_order_value_smaller_then = less than {0} = {1} (plus {2}% tax)
+shop_be_order_value = Order Value
+shop_edit_deliverer_zone_settings = Edit Deliverer Zone
+shop_delete = Delete
+shop_help_edit_zone_costs = Insribe the maximum order value for whom the delivery costs pass for, the delivery costs and the tax rate(5) here.
+shop_delivery_taxes = Taxes
+shop_edit_packages = Edit Package Sizes
+shop_help_delivery_method = Select here if the delivery cost are calculated by order value or the size/weight of the order.
+
+##./addons/shop/pages/localisation.inc.php
+button_update =  Update
+label_attribute = Attribute Name
+msg_data_not_saved =  The data was not saved
+msg_file_no_chmod =  File denied permission
+msg_order_confirmation_subject =  Specify the subject of confirmation email.
+msg_products_send_subject =  Specify the subject of products sent email.
+
+##./addons/shop/classes/class.shop_payment.inc.php
+shop_bank_account_id = Account Id
+shop_bank_account_owner
+shop_bank_code = Bank Code
+shop_bank_name = Name of the Bank
+shop_credit_card_CVS = CVS-Number
+shop_credit_card_expiration_date = Expiration Date
+shop_credit_card_id = Credit Card Id
+shop_credit_card_provider = Credit Card Provider
+
+##./addons/shop/classes/class.shop_product.inc.php
+shop_product_table_amount = Amount
+shop_product_table_attribute = Attribute
+shop_product_table_discount = Discount
+shop_product_table_id = Article-ID
+shop_product_table_name = Articlename
+shop_product_table_order_value = Order Value
+shop_product_table_price = Price
+shop_product_table_taxes = Taxes
+shop_product_table_total_price = Total Price
+shop_added_to_basket = add to basket
+##./addons/shop/include/checkout_address1.inc.php
+shop_birth_date = Date of Birth
+shop_company = Company Name
+shop_country = Country
+shop_err_date_format = Wrong Date Format. Correct dd.mm.yyyy
+shop_err_letters_only = You can only type letters here.
+shop_err_letters_or_nums = You can only type letters or numbers here.
+shop_err_mail_format = Invalid email address.
+shop_err_no_birth_date = Specify a date of birth, please.
+shop_err_no_country = Specify a country, please.
+shop_err_no_firstname = Specify a name, please.
+shop_err_no_mail = Specify an email address, please.
+shop_err_no_name = Specify a name, please.
+shop_err_no_place = Specify a place, please.
+shop_err_no_postal_code = Specify a postal_code, please.
+shop_err_no_street = Specify a street name, please.
+shop_err_no_street_nr = Specify a street number, please.
+shop_err_no_title = Specify a title, please.
+shop_err_nums_only = You can only type numbers here.
+shop_firstname = First Name
+shop_mr = Mister
+shop_mrs = Misses
+shop_ms = Miss
+shop_name = Last Name
+shop_place = Place
+shop_po_box = Po-Box
+shop_postal_code = Postal Code
+shop_street = Street
+shop_street_nr = Street Number
+shop_supply_address = Supply Address
+shop_title
+
+##./addons/shop/include/checkout_address2.inc.php
+
+##./addons/shop/include/checkout_confirm.inc.php
+shop_comment = Leave a Message
+shop_main_address = Main Address
+shop_pay_method = Mode of Payment
+
+##./addons/shop/include/checkout_pay_data.inc.php
+shop_checkout_pay_data_headline = Required Data
+shop_choose_pay_method = Choose a mode of Payment
+shop_payment = Payment
+
+
+##./addons/shop/pages/index.inc.php
+title_orders = Orders
+title_payment_be = Payment Settings
+title_settings_be = Delivery Settings
+
+##./addons/shop/pages/orders.inc.php
+label_info = Info
+shop_address1 = Address for Account
+shop_address2 = Address for Delivery
+shop_be_full_name = Name
+shop_delivery_cost = Delivery Costs
+shop_delivery_method = Deliverer
+shop_edit_orders = View Order Details
+shop_email = E-Mail
+shop_email_subject_order = Your Order at {0}: {1}
+shop_order_comment = Comment
+shop_order_date = Date of Order
+shop_order_id = Order ID
+shop_order_id_short = Order ID
+shop_order_status_added = New
+shop_order_status_canceled = Cancelled
+shop_order_status_finished = Finished
+shop_order_status_send = Send
+shop_order_status_under progress
+shop_order_status_under_progress = Under Progress
+shop_order_value = Value of Order
+shop_ordered_products = Ordered Products
+shop_pay_data = Payment Data
+shop_state = State
+shop_voucher = Voucher
+label_functions =  Functions
+label_send_notification =  Send Email
+label_updatedate =  Updatedate
+label_updateuser =  Updated By
+shop_order_costs = Total Sum
+
+##./addons/shop/pages/payment.inc.php
+button = Button
+button_delete = Delete
+shop_add_payment = Add Mode of Payment
+shop_icon_money = Money-Icon
+shop_payment_name = Notation
+shop_payment_requirements = Requires customer data
+shop_payment_requirements_msg = Requires customers bank account
+msg_pay_method_notEmpty = Specify a pay method here.
+
+##./addons/shop/pages/settings_be.inc.php
+button_edit = Edit
+shop_add_deliver_zone = Add Delivery Zone
+shop_add_deliverer = Add Deliverer
+shop_country_zone_settings = Delivery Zone Settings
+shop_deliver_countries = Countries
+shop_deliver_zone = Delivery Zone
+shop_deliverer = Deliverer
+shop_deliverer_settings = Deliverer Settings
+shop_deliverer_zones = Deliverer Zones
+shop_icon_lorry = Lorry-Icon
+shop_icon_package = Package-Icon
+shop_icon_world = World-Icon
+
+
+##./addons/shop/pages/settings_be_deliverer.inc.php
+shop_change_deliverer = Change Deliverer Name
+shop_deliverer_sizes = Deliverer Package Sizes
+shop_deliverer_zone = Delivery Zone
+shop_edit_deliverer_details = Edit Deliverer
+msg_name_notEmpty =  Specify a name, please.
+shop_deliverer_name = Deliverer
+
+##./addons/shop/pages/settings_be_deliverer_size.inc.php
+shop_add_deliverer_size_details = Add New Package Size For Deliverer
+shop_deliver_size = Package Size
+shop_edit_deliverer_size_details = Change Details For Package Size
+shop_package_costs = Delivery Costs
+shop_size_in_units = Packing Units
+shop_size_name = Size Name
+help_size_in_units = Specify the maximum count of packing units that a package of this size can comprise.
+
+
+##./addons/shop/pages/settings_be_deliverer_zone.inc.php
+shop_deliverer_size = Package Size
+shop_package_size_in_units = Packing Units
+
+##./addons/shop/pages/settings_be_zones.inc.php
+shop_add_country_zone = Add Delivery Zone
+shop_countries = Countries
+shop_country_zone = Delivery Zone
+shop_edit_countries = Edit Countries
+shop_edit_country_zone = Edit Delivery Zone
+shop_zone_name = Zone
+
+##./addons/shop/pages/basic_settings.inc.php
+msg_basket_id_notEmpty =  Please specify the basket article.
+msg_business_terms_id_notEmpty =  Please specify the business terms article.
+msg_checkout_id_notEmpty =  Please specify the checkout article.
+msg_country_notEmpty =  Please specify your home country.
+msg_currency_names_notEmpty =  Please specify at least one currency. Your country´s currency <strong>MUST</strong> be the first.
+msg_currency_signs_notEmpty =  Please specify a currency sign.
+msg_exchange_ratio_notEmpty =  Please specify an exchange ratio.
+msg_post_order_id_notEmpty =  Please specify the order confirmation article.
+msg_separators_notEmpty = Please specify a separator.
+shop_php_mailer_account = Mail Account
+msg_no_php_mailer_account = Specify a Mail-Account, please.
+
+## ----------------------------------------------------------------
+
+
+#################################
+
+		FRONTEND
+
+#################################
+
+##./addons/shop/classes/class.shop_extension.inc.php
+err_config_file_copy = Unable to copy the configuration files!
+
+##./addons/shop/include/pay_methods/bank_account/index.inc.php
+shop_bank_account_owner = Bank Account Owner
+
+shop_be_product_count = Amount
+shop_basket_info = In the basket
+shop_to_basket = To Basket
+shop_select_currency = Display in a different currency
+shop_products_in_basket = Products in the basket
+
+shop_be_product_name = name
+shop_be_product_count = Amount
+shop_be_product_price = Netto Price
+shop_be_taxes = Taxes
+shop_be_discount = Discount
+shop_be_packing_units = Packing Units
+shop_be_attributes = Attribute
+shop_be_newline_for_value = Write every value in a new line
+shop_price = Price
+shop_tax = Taxes
+shop_discount = Discount
+shop_equals= equals
+shop_total = Total Price
+shop_product_comment = Comment this product
+shop_refresh_basket = Refresh Basket
+shop_be_product_name = Name
+shop_be_product_count = Amount
+shop_add_to_basket = Add To Basket
+shop_continue_shopping = Continue shopping
+shop_product_attributes = Attributes
+shop_product_attribut_format = Attribut format
+shop_product_attribut_format_0 = combinable properties (with offset)
+shop_product_attribut_format_1 = product version dropdown (with final price)
+shop_product_attribut_format_2 = product version table (with final price)
+shop_product_count = Amount
+shop_basket_check_out = To Checkout
+basket_out_product_name = Name
+basket_out_prod_attribute = Attribute
+basket_out_amount = Amount
+basket_out_price = Price
+basket_out_total_discount = Total Discount
+basket_out_total_taxes = Total Taxes
+basket_out_total_price = Order Value
+basket_delete_product = Remove Product
+basket_out_total_name = Full Price
+basket_out_total_name = Order Value
+shop_empty_basket = Your Basket is empty.
+shop_basket_delete_product = Remove
+shop_customer_main_address = Address
+basket_out_product_name = Name
+basket_out_prod_attribute = Attribute
+basket_out_amount = Amount
+basket_out_price = Price
+basket_out_total_discount = Total Discount
+basket_out_total_taxes = Taxes
+basket_refresh = Refresh Basket
+basket_goto_check_out = To Checkout
+shop_deliverer_zones = Deliver Zones
+basket_checkout = To Checkout
+shop_different_supply_address = Specify a different supply address
+shop_enable_different_supply_address = enable different supply addresses
+
+

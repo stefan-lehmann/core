@@ -1,0 +1,4 @@
+upgrade = Upgrade to 2.5.x
+
+msg_modules_installed = Die Datenbank und Template-Dateien werden auf den enuesten Stand gebracht!
+msg_not_installable = Dieses AddOn kann nicht dauerhaft installiert werden. Es wird nur das Ugrade durchgeführt.

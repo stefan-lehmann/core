@@ -1,0 +1,191 @@
+<?php
+/**
+ * This file is part of CONTEJO - CONTENT MANAGEMENT 
+ * It is an open source content management system and had 
+ * been forked from Redaxo 3.2 (www.redaxo.org) in 2006.
+ * 
+ * PHP Version: 5.3.1+
+ *
+ * @package     contejo
+ * @subpackage  core
+ * @version     2.5.2
+ *
+ * @author      Stefan Lehmann <sl@contejo.com>
+ * @copyright   Copyright (c) 2008-2012 CONTEJO. All rights reserved. 
+ * @link        http://contejo.com
+ *
+ * @license     http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ *  CONTEJO is free software. This version may have been modified pursuant to the
+ *  GNU General Public License, and as distributed it includes or is derivative
+ *  of works licensed under the GNU General Public License or other free or open
+ *  source software licenses. See _copyright.txt for copyright notices and
+ *  details.
+ * @filesource
+ */
+
+1. VERZEICHNISSTRUKTUR 
+==========================================================================
+
+Nachdem sie die aktuelle CONTEJO-Version heruntergeladen und entpackt haben, sehen sie 
+die Ordnerstruktur von CONTEJO bestehend aus vier Verzeichnissen. Um ihnen den Einstieg 
+zu erleichtern, werden wir diese Struktur im folgenden etwas näher beleuchten.
+
+* ./addons
+Das Verzeichnis „addons“ beinhaltet alle Erweiterungen, die die Funktion ihrer 
+CONTEJO-Installation über die CONTEJO-AddOn-Schnittstelle erweitern. Dies beinhaltet 
+auch die System-AddOns. Jedes AddOn verfügt über einen eigenen Unterordner, der die 
+Programmdateien (PHP-Klassen, Sprachdateien, Backendseiten, etc.) des jeweiligen 
+AddOns beinhaltet.
+
+* ./cache
+Verzeichnis für Cache-Daten, Bilder, Artikel usw.
+
+* ./contejo
+Im Verzeichnis „contejo“ befinden sich alle Kern-Dateien des Systems. Das beinhaltet alle 
+Klassen, Funktionen, Grundkonfigurations- und Installationsdateien sowie Javascript- und 
+CSS-Dateien des Backends. Die wichtigste Datei in diesem Ordner ist master.inc.php. In 
+ihr werden die wichtigsten Konstanten und globalen Variablen definiert und alle benötigten 
+Klassen eingebunden.
+
+* ./files
+Im Verzeichnis „files“ legt CONTEJO alle Medien (z.B. JPG-, PDF- oder DOC-Dateien) ab, 
+die über den Dialog „Medien hinzufügen“ in das System geladen wurden. Darüber hinaus 
+existieren die Unterverzeichnisse „uploads“ und „cache“. In letzterem speichert das 
+ImageProcessor-AddOn die generierten Bild-Dateien. Das Verzeichnis „uploads“ nutzt CONTEJO 
+als Speicherort für alle Dateien, die über den Dialog „Medien hinzufügen“ in den Bereich 
+Medien geladen werden sollen. Bei Bedarf können die Upload-Funktionalität des „
+Medien hinzufügen“-Dialogs umgehen in dem sie z.B. besonders große Medien per FTP-Programm 
+direkt in das „upload“-Verzeichnis laden.
+
+Anschließend steht das betreffende Medium im „Medien hinzufügen“-Dialiog zum Einfügen 
+in die Datenbank bereit.
+
+* ./page
+Das Verzeichnis „page“ ist vereinfacht gesprochen der Speicherort für alle Dateien, die 
+CONTEJO benötigt, um „ihre“ individuelle Website auszugeben. Dies beinhaltet spezifische 
+CONTEJO- und AddOn-Einstellungen, außerdem Layout Dateien wie z.B. Hintergrund-Bilder oder 
+Icons, Javascript- und CSS-Dateien des Frontends und vieles mehr. Im Unterverzeichnis „tmpl“ 
+legt das Developer-AddOn lokal bearbeitbare Kopien der in der Datenbank gespeicherten 
+Templates und Module ab. 
+
+Die klare Trennung zwischen Core-Dateien und spezifischen Dateien der jeweiligen Webseite 
+erleichtert die Übersicht und ein späteres Upgrade der CONTEJO-Installation.
+
+
+2. SETUP 
+==========================================================================
+
+Nach dem Upload auf Ihren Webspace können Sie die Installation von CONTEJO starten. 
+Sie erreichen den Installations-Assistenten über die URL Ihres Webspaces ergänzt 
+durch den Pfad „/contejo“:
+
+Beispiel 1: http://www.meine-domain.de/contejo
+----------
+Sollten Sie CONTEJO in einen Ordner unterhalb Ihres Root-Verzeichnisses geladen haben, 
+müssen Sie diesen Pfad berücksichtigen:
+
+Beispiel 2: http://www.meine-domain.de/mein/pfad/contejo
+----------
+Die Installation von CONTEJO erfolgt dann in wenigen Schritten.
+
+
+START
+
+Wählen sie, aus den zur Verfügung stehenden Sprachen, die Sprache aus, in der sie das 
+Backend betreiben wollen.
+
+
+SCHRITT 1: LIZENZBESTIMMUNGEN
+-----------------------------
+Bestätigen sie die Lizenzbestimmungen. Eine kurze Auflistung informiert darüber hinaus 
+über die nachfolgenden Installationsschritte.
+
+
+SCHRITT 2: PHP-VERSIONSCHECK UND RECHTE-ÜBERPRÜFUNG
+---------------------------------------------------
+An dieser Stelle wird überprüft alle für eine erfolgreiche Installation notwendigen 
+Systemvoraussetzungen erfüllt und die Zugriffsrechte korrekt gesetzt sind. Sie können 
+erst fortfahren, wenn alle Voraussetzungen erfüllt sind.
+
+Übersicht der zu setzenden Zugriffsrechte (rekursiv):
+(777) /addons
+(777) /page/include
+(777) /cache
+(777) /files
+(777) /files/uploads
+(777) /page/tmpl
+(777) /page/tmpl/html
+(777) /page/tmpl/modules
+(777) /page/tmpl/templates
+
+
+SCHRITT 3: CONTEJO-EINSTELLUNGEN
+--------------------------------
+Geben sie hier die Domain und den Titel ihrer Website, sowie die eMail-Adresse des System-Administrators an.
+
+
+SCHRITT 4: DATENBANK EINRICHTEN
+-------------------------------
+Definieren sie die Datenbankverbindung, die CONTEJO verwenden soll. In der Regel erfahren 
+sie die Zugangsdaten von ihrem Provider.
+
+    * Das Tabellen-Präfix ist optional und sollte nur dann geändert werden, wenn mehrere 
+      CONTEJO-Installationen die selbe Datenbank nutzen. Es wird jedem Tabellennamen 
+      vorangestellt.
+    * Der Name der Datenbank die CONTEJO verwenden soll. Die Datenbank muss bereits 
+      angelegt sein und mit der Kollation (Zeichensatz) „utf8_general_ci“ betrieben 
+      werden.
+    * Der DB-Host ist der Hostname des Datenbank-Servers.
+    * Der Benutzer muss ein auf dem Datenbank-Server existierender Benutzername mit 
+      gültigem Passwort sein. 
+
+
+SCHRITT 5: DATENBANK-SETUP
+--------------------------
+CONTEJO bietet mehrere Optionen für die Einrichtung der Datenbank.
+
+   1. Datenbank einrichten
+      Das System erstellt automatisch alle benötigten Tabellen, 
+      das ist der Standard bei einer Erstinstallation
+   2. Datenbank einrichten und alte überschreiben
+      Das System löscht alle vorhandenen CONTEJO-Tabellen in der 
+      Datenbank und richtet anschließend neue Tabellen ein. Achtung! – 
+      Alle vorhandenen Daten früherer CONTEJO-Installationen gehen dabei verloren.
+   3. Update von CONTEJO 1.1 auf CONTEJO 2.6
+      Aktualisiert alle vorhandenen Tabellen der Version 1.1 um 
+      ihre Website mit CONTEJO 2.6 betreiben zu können. Vorhandene Daten bleiben 
+      dabei erhalten. Aus Sicherheitsgründen empfehlen wir dringend vor diesem 
+      Schritt ein Backup der bisherigen Datenbank zu erstellen.
+   4. Update von CONTEJO 2.1 auf CONTEJO 2.6
+      Aktualisiert alle vorhandenen Tabellen der Version 2.1 um ihre Website mit 
+      CONTEJO 2.6 betreiben zu können. Vorhandene Daten bleiben dabei erhalten.
+   5. Aus Sicherheitsgründen empfehlen wir dringend vor diesem Schritt ein Backup 
+      der bisherigen Datenbank zu erstellen.
+   6. Weiter ohne Datenbank-Import
+      Diese Option kann gewählt werden, wenn die Datenbank existiert und vollständig 
+      eingerichtet ist, z.B. bie einer Neuinstallation oder einem Umzug auf einen anderen 
+      Server (nur die Domain nicht der Datenbank-Server)
+   7. Vorhandene Exporte
+      Hier stehen vorhandene Exporte (Import/Export-AddOn) zur Auswahl. Wählen sie den 
+      Export aus mit dem sie die Datenbank einrichten wollen. Diese Option ist dann 
+      sinnvoll, wenn sie eine frühere CONTEJO wiederherstellen wollen.
+
+
+Schritt 6: Aktivierung der System-AddOns
+----------------------------------------
+Die Installation der System-AddOns erfolgt automatisch.
+
+
+SCHRITT 7: ADIMISTRATOR ANLEGEN
+-------------------------------
+Zum Abschluss der Installation können sie einen Administrator erstellen. Tragen sie hierzu 
+den Benutzernamen und das Passwort ein. Für den Fall, dass nach der Einrichtung der Datenbank 
+bereits ein entsprechender Administrator in der Datenbank existiert, können durch Auswahl der 
+entsprechenden Checkbox diese Funktion überspringen.
+
+Nach der Bestätigung werden sie ins Backend von CONTEJO umgeleitet. Die Installation ist abgeschlossen.
+
+
+FERTIG!
+------
+Sie können sich nun CONTEJO-Backend einloggen!

@@ -1,0 +1,108 @@
+[%TEMPLATE%]
+
+IF(1){%
+    <div class="left_col">
+        <div class="settings green_box">
+            <h2 style="margin-bottom: 5px;" class="no_bg_image">[translate: article_ext_settings]</h2>
+            <div>
+                <input type="hidden" name="CJO_EXT_VALUE[show_new_updated]" value="off" />
+                <input type="checkbox" name="CJO_EXT_VALUE[show_new_updated]" value="on" [[SHOW_NEW_UPDATED_CHECKED]]  />
+                [translate: article_ext_display_new]
+            </div>
+            <div>
+                <input type="hidden" name="CJO_EXT_VALUE[show_margin]" value="off" />
+                <input type="checkbox" name="CJO_EXT_VALUE[show_margin]" value="on" [[SHOW_MARGIN_CHECKED]] class="toggle_children" />
+                    [translate: article_ext_bottom_margin]
+
+                <div style="padding-left: 20px;">
+                    <input type="hidden" name="CJO_EXT_VALUE[show_to_top]" value="off" />
+                    <input type="checkbox" name="CJO_EXT_VALUE[show_to_top]" value="on" class="toggle_parent" [[SHOW_TO_TOP_CHECKED]] />
+                        [translate: article_ext_link_to_top]
+                    <br />
+                    <input type="hidden" name="CJO_EXT_VALUE[show_infos]" value="off" />
+                    <input type="checkbox"  name="CJO_EXT_VALUE[show_infos]" value="on" class="toggle_parent" [[SHOW_INFOS_CHECKED]] />
+                        [translate: article_ext_display_infos]
+                </div>
+            </div>
+            <div>
+                <input type="checkbox" name="CJO_EXT_VALUE[anchor_nav]" value="on" [[ANCHOR_NAV_CHECKED]] />
+                    [translate: article_ext_anchor_nav]
+            </div>
+        </div>
+    </div>
+
+<script type="text/javascript">
+ /* <![CDATA[ */
+   jQuery(function() {
+
+        $('input.toggle_parent').mouseup(function(){
+            if($(this).is(':checked')) return false;
+            $(this)
+                .parent()
+                .parent()
+                .find('input.toggle_children:not(:checked)')
+                .attr('checked','checked');
+        });
+
+        $('input.toggle_children').mouseup(function(){
+            if(!$(this).is(':checked')) return false;
+            $(this)
+                .parent()
+                .find('input.toggle_parent:checked')
+                .removeAttr('checked');
+        });
+   });
+ /* ]]> */
+</script>
+
+%}ENDIF
+
+<div class="right_col">
+    <div class="settings">
+        <h2>[translate: article_headline]</h2>
+        <div>
+            <input type="text" class="inp100 headline_h1" name="VALUE[2]" value="CJO_VALUE[2]" />
+        </div>
+    </div>
+    IF(1){%
+        <div class="settings">
+            <h2>[translate: article_sub_headline]</h2>
+            <div>
+                <input type="text" class="inp100 headline_h4" name="VALUE[3]" value="CJO_VALUE[3]" />
+            </div>
+        </div>
+    %}ENDIF
+</div>
+<div class="clearfix hrz_img" style="clear:left">
+    CJO_IMAGE_LIST_BUTTON[1]
+</div>
+
+<div class="left_col">
+    CJO_IMAGE_LIST_BUTTON[2]
+</div>
+
+<div class="right_col">
+    <div class="settings">
+        <h2>[translate: block_headline]</h2>
+        <div>
+            <input type="text" class="inp100 headline_h3" name="VALUE[4]"
+                value="CJO_VALUE[4]" style="font-weight: bold;" />
+        </div>
+    </div>
+    <div class="settings">
+        <h2 class="no_bg_image">[translate: block_text]</h2>
+        CJO_WYMEDITOR[id=1]
+    </div>
+
+    IF(1){%
+        <div class="settings cjo_float_l">
+            <h2>[translate: download_box]</h2>
+            <div class="container clearfix IF(!CJO_MEDIALIST[1]){% hide_me %}ENDIF">
+              	<label>[translate: download_box_headline]</label>
+                <input type="text" name="VALUE[5]" value="CJO_VALUE[5]" class="inp100" />
+    			CJO_MEDIALIST_BUTTON[1]
+            </div>
+        </div>
+     %}ENDIF
+</div>
+

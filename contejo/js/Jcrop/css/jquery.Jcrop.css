@@ -1,0 +1,28 @@
+.jcrop-holder{text-align:left}
+.jcrop-vline,.jcrop-hline{font-size:0;position:absolute;background:#FFF url('Jcrop.gif') top left repeat}
+.jcrop-vline{height:100%;width:1px !important}
+.jcrop-hline{width:100%;height:1px !important}
+.jcrop-handle{font-size:1px;width:7px !important;height:7px !important;border:1px #eee solid;background-color:#333}
+.jcrop-tracker{background-color:gray;width:100%;height:100%}
+.custom .jcrop-vline,.custom .jcrop-hline{background:#FF0}
+.custom .jcrop-handle{background-color:#C7BB00;-moz-border-radius:3px;-webkit-border-radius:3px;border-color:#000}
+#cropheadline{font-size:12px;font-weight:700;width:234px;right:0;top:0;position:absolute;height:20px;background:transparent url(../../../img/contejo/bg/cropheadline.png) no-repeat 0 0;margin:-34px 0 0;padding:13px 10px 0 20px}
+#cropbox,#croplist{background:transparent url(../../../img/contejo/bg/croplist.png) repeat-y 0 0;position:absolute;right:0;top:0;width:244px;height:100%;overflow:auto;margin-top:-1px;z-index:5;padding:0 10px}
+#cropbox{background:transparent url(../../../img/contejo/bg/cropbox.gif) repeat-y 260px 0;left:960px;width:0;overflow:hidden;margin:0 250px 0 -260px;padding:0}
+#cropbox .jcrop-holder{margin-left:260px;display:block}
+#cropbox h3{position:absolute;top:10px;left:270px;background:#009de0;color:#fff;z-index:400;text-transform:uppercase;padding:4px 5px 2px 4px}
+#cropbox #cropbuttons{position:absolute;bottom:10px;right:10px;z-index:400}
+#cropbox #cropcords{position:absolute;color:#999;bottom:13px;left:270px;font-size:10px !important;line-height:9px;background:#f2f2f2;z-index:400;padding:3px 4px 3px 3px}
+#cropbox #cropcords span{padding:0 5px 0 0}
+#cropbox #cropcords strong{padding:0 3px 0 0}
+#cropbox #crop_reset{position:absolute;bottom:10px;left:910px;z-index:500;padding:4px}
+#croplist .container,#croplist .container.locked,#croplist .container.locked:hover{border:2px solid #99d8f3;background-color:#fff;width:210px;cursor:default;position:relative;overflow:hidden;margin:10px auto;padding:20px 0 0}
+#croplist .container.selected,#croplist .container:hover{cursor:pointer;border-color:#009de0}
+#croplist .container.selected h4,#croplist .container:hover h4{background-color:#009de0}
+#croplist .container h4,#croplist .container.locked h4,#croplist .container.locked:hover h4{background-color:#99d8f3;color:#fff;font-size:11px;text-transform:uppercase;text-align:left;width:206px;position:absolute;top:0;left:0;z-index:501;padding:1px 3px 5px}
+#croplist .container.locked h4,#croplist .container.locked:hover h4{background:#99d8f3 url(../../../img/mini_icons/lock.png) no-repeat 4px 40%;padding-left:16px;width:192px}
+#croplist .container h4 img{display:inline;padding:2px 0}
+#croplist .container img{display:block;margin:auto;padding:5px}
+#croplist .container .warning{font-size:10px;font-weight:400 !important;background-color:#ffff8c;background-image:url(../../../img/mini_icons/error.png) !important;background-repeat:no-repeat;background-position:4px 50%;padding:3px 3px 3px 16px !important}
+#croplist .cropbuttons{display:none;position:absolute;bottom:0;left:0;width:200px;text-align:right;background:transparent url(../../../img/contejo/bg/black_60.png) 0 0;padding:200px 5px 5px}
+#croplist .selected .cropbuttons{display:block}

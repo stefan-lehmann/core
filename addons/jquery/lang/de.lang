@@ -1,0 +1,17 @@
+﻿
+jquery = jQuery
+
+##./contejo/include/addons/jquery/pages/index.inc.php =
+subtitle_settings = Einstellungen
+
+##./contejo/include/addons/jquery/pages/settings.inc.php =
+label_font_settings = jQuery-Einstellungen
+label_jquery_version = Version
+label_plugins = Plugins
+label_use_gzip = automatisch GZIP-Version erstellen
+err_copy_plugin_dir = Das Plugin '{0}' konnte nicht aktiviert werden werden! Bitte kopieren Sie es von Hand in das Verzeichnis: '{1}'
+err_copy_version = = Die gewählte jQuery-Version '{0}' konnte nicht aktiviert werden werden! Bitte kopieren Sie die Datei von Hand: '{1}'
+err_create_plugin_dir = Das jQuery-Quellverzeichnis '{0}' konnte nicht erstellt werden
+err_empty_version = Bitte eine jQuery-Version auswählen!
+err_jquery_version_is_missing = Die gewählte jQuery-Version exisitiert nicht '{0}'!
+note_plugins = Aktivierte jQuery-Plugins werden in das Verzeichnis<br/> <b>'{0}'</b> kopiert.

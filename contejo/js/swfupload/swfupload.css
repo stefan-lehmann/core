@@ -1,0 +1,18 @@
+#fsUploadProgress{width:358px;margin-left:200px;border:2px solid #99d8f3;background:#fff;min-height:54px;max-height:212px;overflow:auto;border-color:#888 #bbb #bbb #888;padding:10px}
+#fsUploadProgress .progressWrapper{width:338px;overflow:hidden}
+#fsUploadProgress .progressContainer{background-color:#F7F7F7 !important;overflow:hidden;margin:5px;padding:4px}
+#fsUploadProgress .message{background-color:#FFC !important;overflow:hidden;margin:1em 0;padding:10px 20px}
+#fsUploadProgress .red{background-color:#fae9e5 !important}
+#fsUploadProgress .green{background-color:#cfc !important}
+#fsUploadProgress .blue{background-color:#F0F5FF !important}
+#fsUploadProgress .progressName{font-size:8pt;font-weight:700;color:#555;width:290px;height:18px;text-align:left;white-space:nowrap;overflow:hidden}
+#fsUploadProgress .progressBarInProgress,#fsUploadProgress .progressBarComplete,#fsUploadProgress .progressBarError{font-size:0;width:0;height:2px;background-color:#009de0 !important;margin-top:2px}
+#fsUploadProgress .progressBarComplete{width:100%;background-color:#cfc !important;visibility:hidden}
+#fsUploadProgress .progressBarError{width:100%;background-color:red !important;visibility:hidden}
+#fsUploadProgress .progressBarStatus{margin-top:2px;width:317px;font-size:7pt;font-family:Arial;text-align:left;white-space:nowrap}
+a.progressCancel{font-size:0;display:block;height:16px;width:16px;background-image:url(../../img/silk_icons/cancel.png) !important;background-repeat:no-repeat;background-position:center center;float:right}
+#swf_upload_buttons{z-index:1;position:relative}
+#swf_status{font-size:.85em;padding:3px 0 10px}
+#SWFUpload_Console{font-size:12px}
+#swf_upload_buttons .swfupload{position:absolute;z-index:100;}
+#swf_upload_buttons.update .swfupload{position:absolute;z-index:100;top:0;right:396px;bottom:-9px;left:462px}

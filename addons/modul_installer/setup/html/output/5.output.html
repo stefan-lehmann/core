@@ -1,0 +1,19 @@
+[%TEMPLATE%]
+
+<div class="absatz"></div>
+<div class="floatbox">
+    <div class="textblock galerie">
+        <%MEDIA_LIST%>
+    </div>
+</div>
+
+[%MEDIA_LIST%]
+<p class="gal_item">
+    <a rel="[[REL]]" href="[[URL]]" name="[[COPY]]" title="[[DESCRIPTION]]" class="imagelink zoom">
+        <img src="[[IMAGE_SRC]]"
+              alt="[[NAME]]"
+              title="[[SHORT_DESCRIPTION]]"
+              style="width:[[WIDTH]]px; height:[[HEIGHT]]px" />
+        <span></span>
+    </a>
+</p>

@@ -1,0 +1,4 @@
+modul_installer = Modul Installer
+
+msg_modules_installed = Alle Default-Module und ein Template wurden installiert!
+msg_not_installable = Dieses AddOn kann nicht dauerhaft installiert werden. Es installiert nur die Default-Module.

@@ -1,0 +1,332 @@
+shop = Shop
+shop_order_value = Bestellwert
+shop_delivery_calculation = Versandkosten nach
+shop_order_value_smaller_then = bis {0} = {1} (zzgl. {2}% MwSt.)
+shop_be_order_value = Bestellwert
+shop_edit_deliverer_zone_settings = Lieferzonen bearbeiten
+shop_delete = Datensatz löschen
+shop_help_edit_zone_costs = Tragen sie nacheinander den maximalen Bestellwert bis zu dem die Lieferkosten gelten, den Nettopreis sowie die MwSt. ein.
+shop_delivery_taxes = Mehrwertsteuer
+shop_edit_packages = Paketgrößen bearbeiten
+shop_package = Paketgröße
+shop_edit_deliverer_settings = Lieferant bearbeiten
+shop_package_add = Paketgröße hinzufügen
+shop_help_delivery_method = Stellen sie hier ein, ob die Versandkosten nach Bestellwert oder abhängig von Größe bzw. Gewicht der Sendung ermittelt werden.
+
+##.//addons/shop/classes/class.shop_address.inc.php
+shop_po_box = Postfach
+
+##.//addons/shop/classes/class.shop_basket.inc.php
+shop_available_product_amount_1 = Dieser Artikel ist derzeit nur noch
+shop_available_product_amount_2 = mal vorrätig!
+shop_discount = Rabatt
+shop_empty_basket = Der Warenkorb ist leer
+shop_incl = inkl.
+shop_product_not_deliverable = Der Artikel ist derzeit ausverkauft.
+shop_tax = MwSt.
+
+##.//addons/shop/classes/class.shop_delivery.inc.php
+delivery_duration_0 = Versand am selben Arbeitstag
+delivery_duration_10 = Versand innerhalb von 10 Arbeitstagen
+delivery_duration_14 = Versand innerhalb von 2 Wochen
+delivery_duration_2 = Versand in 2-3 Arbeitstagen
+delivery_duration_21 = Versand innerhalb von 3 Wochen
+delivery_duration_28 = Versand innerhalb von 4 Wochen
+delivery_duration_35 = Versand innerhalb von 5 Wochen
+delivery_duration_42 = Versand innerhalb von 6 Wochen
+delivery_duration_56 = Versand innerhalb von 8 Wochen
+delivery_duration_7 = Versand innerhalb von 7 Arbeitstagen
+delivery_duration_ask = Lieferzeit auf Anfrage
+delivery_duration_no = Lieferzeit unbekannt
+shop_excl_delivery_cost = zzgl. Versandkosten
+shop_packing_units = Verpackungseinheiten
+
+##.//addons/shop/classes/class.shop_extension.inc.php
+msg_shop_attributes_copied = Eine neue Sprachversion der Produkt-Attribute wurde erzeugt.
+
+##.//addons/shop/classes/class.shop_mail.inc.php
+shop_bank_account = Lastschrift
+shop_credit_card = Kreditkarte
+shop_invoice = Rechnung
+shop_pre_payment = Vorkasse
+
+##.//addons/shop/classes/class.shop_price.inc.php
+
+##.//addons/shop/classes/class.shop_product.inc.php
+shop_amount = Anzahl
+shop_attribute = Attribut
+shop_brutto = Brutto
+shop_delivery_costs = Versandkosten
+shop_delivery_costs_add = Versandkosten hinzufügen
+shop_final_amount_price = Warenwert
+shop_final_price = Preis
+shop_incl_discount = inkl. Rabatt
+shop_incl_taxes = inkl. MwSt.
+shop_name = Bezeichnung
+shop_netto_price = Nettopreis
+shop_only_1_product_available = Von diesem Artikel ist derzeit nur noch einmal lieferbar.
+shop_order_value = Summe
+shop_pay_costs = Zahlungsgebühren
+shop_product_id = Artikelnummer
+shop_product_id_short = Art.-Nr.
+shop_total_price = Gesamtpreis
+
+##.//addons/shop/classes/class.shop_product_attributes.inc.php
+label_attribute_setup = Attribute bearbeiten
+msg_attribute_removed =
+no_product_attributes_defined = Es stehen noch keine Attribute zur Auswahl.
+shop_attribute_prior = Attribut-Priorität
+
+##.//addons/shop/config.inc.php
+msg_err_configure_basic_settings = <b>Die Konfiguration des Shop-AddOns ist unvollständig.</b> Um den vollen Funktionsumfang herzustellen, müssen die Einstellungen ergänzt werden. ><u><a href="{0}">Jetzt korrigieren</a></u><
+
+##.//addons/shop/include/checkout.inc.php
+shop_checkout_address1 = Rechnungsadresse
+shop_checkout_address2 = Lieferadresse
+shop_checkout_confirm = Bestätigung
+shop_checkout_pay_data = Zahlungsdaten
+
+##.//addons/shop/include/checkout_address1.inc.php
+shop_birth_date = Geburtsdatum
+shop_company = Firmenname
+shop_customer_country = Land
+shop_different_supply_address = Abweichende Lieferaddresse
+shop_enable_different_supply_address = Abweichende Lieferaddresse erlauben
+shop_err_date_format = Falsches Datumsformat, richtig TT.MM.JJJJ!
+shop_err_mail_format = Bitte geben Sie eine gültige Email-Adresse an!
+shop_err_no_birth_date = Bitte geben Sie Ihr Geburtsdatum an!
+shop_err_no_customer_country = Bitte wählen Sie ein Land!
+shop_err_no_firstname = Geben Sie bitte einen Vornamen an!
+shop_err_no_lastname = Geben Sie bitte einen Nachnamen an!
+shop_err_no_mail = Geben Sie bitte eine Email-Adresse an!
+shop_err_no_place = Geben Sie bitte einen Ort an!
+shop_err_no_postal_code = Geben Sie bitte eine Postleitzahl an!
+shop_err_no_street = Geben Sie bitte einen Strassennamen an!
+shop_err_no_street_nr = Geben Sie bitte eine Hausnummer an!
+shop_err_no_title = Wählen Sie bitte eine Anrede aus!
+shop_err_nums_only = Es dürfen nur Zahlen verwendet werden!
+shop_firstname = Vorname
+shop_lastname = Nachname
+shop_mr = Herr
+shop_mrs = Frau
+shop_phone_nr = Telefon
+shop_place = Ort
+shop_postal_code = PLZ
+shop_street = Straße
+shop_street_nr = Hausnummer
+shop_title = Anrede
+
+##.//addons/shop/include/checkout_address2.inc.php
+shop_err_letters_or_nums = Es dürfen nur Buchstaben und Zahlen verwendet werden.
+
+##.//addons/shop/include/checkout_confirm.inc.php
+confirm_business_terms = Ich habe die allgemeinen <a href="#" id="shop_toggle_terms">Geschäfts- und Lieferbedingungen</a> (AGB) gelesen und akzeptiere sie.
+msg_not_confirmed_business_terms = Sie müssen die AGB´s bestätigen!
+shop_email = E-Mail
+shop_comment = Bemerkung mitsenden
+
+##.//addons/shop/include/checkout_pay_data.inc.php
+shop_no_pay_method = Bitte wählen sie eine Zahlungsart
+shop_pay_method = Zahlungsart
+
+
+##.//addons/shop/pages/attributes.inc.php
+label_attribute_value = Attributwert
+label_attribute_values =  Attributwerte
+msg_attribute_offset_no_price =  Das Offset muss ein Preis sein!
+shop_add_attribute =  Attribut hinzufügen
+shop_attributes = Attribute
+
+##.//addons/shop/pages/basic_settings.inc.php
+err_copy_theme = Das Theme  "<b>{0}</b>"  konnte nicht aktiviert werden werden! Bitte kopieren Sie es von Hand in das Verzeichnis: "<b>{1}</b>"
+err_create_theme_dir = Das Theme-Verzeichnis  "<b>{0}</b>"  konnte nicht erstellt werden.
+err_write_business_terms = Die AGB's konnten nicht gespeichert werden.
+help_shop_theme = Das aktivierte Theme wird in das Verzeichnis "<b>{0}</b>" kopiert. <br/><br/> <b>ACHTUNG:</b> Änderungen des derzeitigen Themes gehen verloren!
+msg_basket_id_notEmpty = Bitte wählen Sie den Warenkorb-Artikel aus!
+msg_business_terms_notEmpty = Bitte geben Sie die AGB ein!
+msg_checkout_id_notEmpty = Bitte wählen Sie den Checkout-Artikel aus!
+msg_currency_names_format = Format: EUR=Euro|USD=US Dollar|... <br/><br/> <b>ACHTUNG:</b> Die erstaufgeführte Währung ist die Standard-Währung des Shops.
+msg_delivery_id_notEmpty = Bitte wählen Sie einen Versandkosten-Artikel aus!
+msg_no_php_mailer_account = Bitte wählen Sie einen Mail-Account aus!
+msg_post_order_id_notEmpty = Bitte wählen Sie den Artikel aus, der nach Abschluss der Bestellung angezeigt wird!
+note_currency_signs_format = Format: EUR=€|USD=US $|...
+note_exchange_ratio_format = Format: EUR=1|USD=1.2|...
+note_separators_format = Format: EUR=,|USD=.|...
+note_use_https = Eine entsprechende konfiguration Ihres Webspace vorausgesetzt, ermöglicht diese Einstellung den Bestellvorgang über eine sichere Verbindung abzuwickeln. Bitte tragen Sie hierzu die entsprechende URL (Format: https://meine-domain.de) ein. <br/><br/><b>ACHTUNG:</b> Ist keine Verbindung eingetragen wird keine sichere Verbindung verwendet.
+shop_basket_id = Warenkorb-Artikel
+shop_be_article_links = Verknüpfte Shop-Artikel
+shop_business_terms = Shop-AGB
+shop_checkout_id = Checkout-Artikel
+shop_country = Shop-Standort
+shop_currency_names = Währungsnamen
+shop_currency_signs = Währungszeichen
+shop_delivery_id = Versandkosten-Artikel
+shop_edit_basic_settings = Grundeinstellungen bearbeiten
+shop_edit_business_terms = AGB's eingeben
+shop_exchange_ratio = Wechselkurse
+shop_modul_id = Warenkorb-Modul
+shop_php_mailer_account = Mail-Account
+shop_post_order_id = Bestätigungs-Artikel
+shop_separators = Währungstrennzeichen
+shop_themes = Shop-Layout
+shop_use_https = Sichere Verbindung
+
+##.//addons/shop/pages/index.inc.php
+title_basic_settings = Einstellungen
+title_localisation = Benachrichtigung
+title_orders = Bestellungen
+title_payment = Zahlung
+title_products = Produkte
+title_shipping = Lieferung
+
+##.//addons/shop/pages/localisation.inc.php
+label_lang_setup = Sprachabhängige Benachrichtigungseinstellungen
+label_order_confirm_mail = Vorlage für Bestätigungsemail
+label_order_send_mail = Vorlage für Versand-Nachricht
+label_product_added_message = Dialog-Text "zum Warenkorb hinzugefügt"
+note_mail_subject = Tragen Sie hier den Betreff der Email ein.
+order_confirmation_subject = Betreff Bestätigungsemail
+products_send_subject = Betreff Versand-Nachricht
+shop_mail_wildcards = <b>PLATZHALTER:</b><br/><br/><b>%customer%</b> - Name mit Anrede,<br/><b>%address%</b> - Rechnungsaddresse,<br/><b>%supply_address%</b> - Lieferaddresse,<br/><b>%product_list%</b> - bestellte Artikel,<br/><b>%order_value%</b> - Bestellwert,<br/><b>%pay_method%</b> - Zahlungsmethode,<br/><b>%pay_data%</b> - Zahlungsdaten,<br/><b>%delivery_costs%</b> - Lieferkosten,<br/><b>%today%</b> - aktuelles Datum,<br/><b>%total_sum%</b> - Rechnungssumme,<br/><b>%order_id%</b> - Bestellnummer,<br/><b>%order_date%</b> - Bestelldatum,<br/><b>%home_page%</b> - Domain des Shops.
+
+##.//addons/shop/pages/orders.inc.php
+label_cjoform_export_button = Bestellungen Exportieren
+label_send_notification = Versand-Nachricht verschicken
+shop_deliverer = Lieferant
+shop_edit_orders = Bestellung ansehen
+shop_email_subject_order = Ihre Bestellung bei {0}: {1}
+shop_full_name = Name
+shop_main_address = Rechnungsanschrift
+shop_order_comment = Bemerkung
+shop_your_order_comment = Ihre Bemerkung
+shop_order_date = Bestelldatum
+shop_order_id = Bestellnummer
+shop_order_id_short = Bst.-Nr.
+shop_order_status_added = Neu
+shop_order_status_canceled = Abgebrochen
+shop_order_status_finished = Abgeschlossen
+shop_order_status_send = Versendet
+shop_order_status_under_progress = In Bearbeitung
+shop_ordered_products = Bestellung
+shop_pay_data = Zahlungsdaten
+shop_state = Status
+shop_supply_address = Lieferanschrift
+
+##.//addons/shop/pages/payment.inc.php
+shop_activate_pay_method = Aktivierte Zahlungsmethoden
+shop_payment_costs = Gebühren für Zahlmethode
+shop_payment_settings = Zahlungseinstellungen
+
+##.//addons/shop/pages/products.inc.php
+shop_ordered_amount = Anzahl bestellten Produkte
+shop_products_in_stock = Produkt-Bestand
+shop_shop_into_basket_amount = Anzahl der in den Warenkorb gelegten Produkte
+
+##.//addons/shop/pages/shipping.inc.php
+shop_add_deliver_zone = Lieferzone hinzufügen
+shop_add_deliverer = Lieferant hinzufügen
+shop_countries = Länder
+shop_country_zone_settings = Lieferzoneneinstellungen
+shop_deliver_zone = Lieferzone
+shop_deliver_zones = Lieferzonen
+shop_deliverer_settings = Lieferanteneinstellungen
+shop_icon_lorry = Lieferwagen-Icon
+shop_icon_package = Paket-Icon
+shop_icon_world = Welt-Icon
+
+##.//addons/shop/pages/shipping_deliverer.inc.php
+label_functions = Funktionen
+shop_change_deliverer = Lieferant bearbeiten
+shop_deliverer_sizes = Paketgrössen
+
+##.//addons/shop/pages/shipping_deliverer_size.inc.php
+help_size_in_units = Eine Verpackungseinheit ist eine freie Referenzgröße, die Ihre Produkte näher beschreibt, um die optimale Paketgröße einer Bestellung berechnen zu können. Es steht Ihnen dabei frei, sich am Gewicht (kg), dem Volumen (Liter) oder eigenen Vorstellungen zu orientieren.
+msg_name_notEmpty = Bitte geben Sie einen Namen an!
+msg_packing_units_notEmpty = Bitte geben Sie die Verpackungseinheiten an!
+msg_packing_units_no_number = Bitte geben Sie die Verpackungseinheiten als Zahl mit zwei Nachkommastellen an!
+msg_package_costs_notEmpty = Bitte geben Sie die Versandkosten an!
+msg_package_costs_no_price = Bitte geben Sie die Versandkosten als Zahl mit zwei Nachkommastellen an!
+msg_package_tax_notEmpty = Bitte geben Sie die MwSt. an!
+msg_package_tax_no_price = Bitte geben Sie die MwSt. als Zahl mit zwei Nachkommastellen an!
+shop_add_deliverer_size_details = Neue Paketgrösse hinzufügen
+shop_edit_deliverer_size_details = Paketgrösse bearbeiten
+shop_package_costs = Versandkosten
+
+##.//addons/shop/pages/shipping_deliverer_zone.inc.php
+shop_deliverer_size = Paketgrössenbezeichnung
+
+##.//addons/shop/pages/shipping_zones.inc.php
+msg_country_name_notEmpty = Bitte geben Sie den Landesnamen an.
+shop_add_country_zone = Zone hinzufügen
+shop_edit_countries = Länder-Zuweisung
+shop_edit_country_zone = Lieferzone bearbeiten
+shop_zone_name = Zone
+
+##.//addons/shop/setup/html/output/add_to_basket.output.html
+shop_add_to_basket = In den Warenkorb
+shop_continue_shopping = Einkauf fortsetzen
+shop_in_stock = verfügbar
+shop_to_basket = Zum Warenkorb
+
+##.//addons/shop/setup/modules/add_to_basket.input.php
+shop_bought_products = Verkäufe
+shop_count_down_stock = Käufe abziehen
+shop_delivery_duration = Lieferzeit
+shop_enable_out_of_stock = nur eingestellten Bestand verkaufen
+shop_online_offline_settings = Online-/Offline-Einstellungen
+shop_product_attributes = Produkt-Attribute
+shop_product_attribut_format = Attributformat
+shop_product_attribut_format_0 = Kombinierbare Eigenschaften (mit Offset)
+shop_product_attribut_format_1 = Produktversionen als Dropdown (mit Endpreis)
+shop_product_attribut_format_2 = Produktversionen als Liste (mit Endpreis)
+shop_product_description =  Beschreibung
+shop_product_image = Produkt-Bild
+shop_product_offline_message = Offline-Nachricht
+shop_product_online = Produkt ist online
+shop_product_settings = Produkt-Einstellungen
+shop_product_statistic = Produkt-Statistik
+shop_product_statistic_reset = Statistik zurücksetzen
+shop_product_title = Produkt-Bezeichnung
+shop_show_in_stock = aktuellen Bestand anzeigen
+shop_max_products_to_basked = Maximale Bestellmenge
+
+##.//addons/shop/setup/modules/add_to_basket.output.php
+shop_brutto_price = Normalpreis
+shop_attribute_list_title = Artikel
+shop_attribute_list_price = Preis
+shop_attribute_list_amount = Menge
+
+##.//addons/shop/setup/settings/html/basket.html
+basket_out_product_name = Produkt
+basket_refresh = Aktualisieren
+delete = Entfernen
+shop_goto_checkout = Zur Kasse
+
+##.//addons/shop/setup/settings/html/basket_info.html
+shop_basket_info = Im Warenkorb
+shop_products_in_basket = Produkt(e) im Warenkorb
+
+##.//addons/shop/setup/settings/html/checkout.html
+shop_checkout_change = ändern
+shop_checkout_change_settings = Einstellung ändern
+shop_checkout_next_step = weiter
+shop_checkout_previous_step = zurück
+shop_checkout_send = Bestellung absenden
+shop_contact_data = Kontaktdaten
+
+##.//addons/shop/setup/settings/html/currency_select.html
+shop_select_currency = aktuelle Währung
+
+##.//addons/shop/setup/settings/html/product_table.html
+shop_order = Ihre Bestellung
+
+##.//addons/shop/setup/settings/html/shop_nav.html
+shop_navigation = Bestellung
+
+
+##.//page/tmpl/modules/16.input.php
+shop_added_to_basket =  In den Warenkorb gelegt
+
+
+
+## ----------------------------------------------------------------

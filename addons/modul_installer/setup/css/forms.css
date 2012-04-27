@@ -1,0 +1,40 @@
+@media all  {
+form {margin-bottom:2em;position:relative;}
+fieldset {border:1px solid #ccc;padding:30px 0 !important;}
+fieldset.hidden {border:none;padding:10px 0 !important;}
+form,form div.qfrow {overflow:hidden;}
+input[type = text],input[type = password],textarea,select {background:#fff;background-position:left top;background-repeat:repeat-y;border:1px solid #ccc;font-family:Arial, Verdana, Helvetica, sans-serif;font-size:90%;font-weight:400;border-color:#ccc #999 #999 #ccc;padding:2px 4px;}
+select {padding:1px 1px 1px 2px;}
+input[type=checkbox],input[type=radio] {vertical-align:middle;}
+span.button {background:#fff;cursor:pointer;display:block;width:auto;margin:0 0 0 auto;padding:0 !important;}
+span.button input {background-color:#fff;background-repeat:no-repeat;background-position:center center;border:1px solid #ccc;color:#009ee0;font-weight:700;text-transform:uppercase;cursor:pointer;border-color:#ccc #999 #999 #ccc;margin:0;padding:5px 50px;}
+span.button input:hover,span.button input:focus {color:#fff !important;background-color:#009ee0;}
+form fieldset {float:left;width:99.5%;margin:0;padding:.5em 0;}
+form fieldset.hidden {border:0;}
+form fieldset legend {display:none;font-size:140%;font-weight:400;line-height:0;text-transform:uppercase;margin:0 0 0 .5em;padding:.5em;}
+form .qflabel {display:block;float:left;text-align:right;line-height:1.2em;width:140px;margin:.5em 10px 0 5px;padding:0;}
+form div.qfrow p {margin-left:110px;position:relative;}
+form div.qfelement {float:left;margin:5px 0 0;padding:0;}
+form div.qfelement.checkbox {width:250px;}
+form div.qfelement label {float:none;margin-right:1em;}
+form div.qfelement em {font-size:.85em;padding-bottom:1em;}
+form div.qfelement span {padding-left:1em;}
+form div.qfheadline,form div.qfdivide,form div.qftext {margin:.5em 55px 0 155px;padding:0;}
+form div.qfdivide {height:1em;}
+form div.qftext {font-size:85%;text-align:justify;}
+form div.qfreqnote {font-size:80%;top:10px;right:13px;position:absolute;}
+textarea.form_elm_norm,input.form_elm_norm {width:290px;}
+input.form_elm_radio {margin-top:.5em;vertical-align:text-bottom;}
+input.form_elm_med {width:120px;}
+input.form_elm_smll {width:56px;}
+select.form_elm_smll {width:100px;}
+select.form_elm_med {width:130px;}
+select.form_elm_norm {width:300px;}
+form textarea {overflow:auto;}
+form br {clear:left;}
+#main form div.form_error input,#main form div.form_error textarea,#main form div.form_error select {border-color:red;}
+form div.qfelement span.form_error {background:transparent;border:none;color:red;display:block;line-height:1.2em;font-size:85%;float:right;font-style:italic;width:170px !important;margin:0 0 .25em 10px !important;padding:0 !important;}
+form div.qfelement.form_error {background:transparent;border:none;margin:.35em 0 0 !important;padding:0;}
+form div.qfelement.form_error em * {border-color:#e60000;}
+form div.qfelement.form_error span {padding-left:0;}
+}

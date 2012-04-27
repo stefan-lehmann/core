@@ -1,0 +1,133 @@
+[%TEMPLATE%]
+
+<div class="settings" style="overflow: hidden;">
+    <h2 class="no_slide">[translate: listing_settings]</h2>
+    <div class="formular">
+        <label>[translate: listing_art_per_page]</label>
+        <input name="VALUE[2]" value="CJO_VALUE[2]" class="inp10" />
+        <br />
+        <input type="hidden"  name="VALUE[3]" value="0" />
+        <input type="checkbox"  name="VALUE[3]" value="1"[[PANGINATION_CHECKED]] />
+        <label class="right_label">[translate: listing_pagination]</label>
+    </div>
+    <div class="formular">
+        <label>[translate: listing_order_by]</label>
+        [[SORT_SELECTION]]
+        <br />
+        <input type="radio"  name="VALUE[9]" [[SORT_ASC_CHECKED]] value="asc" />&uarr; [translate: sort_asc] (A-Z)
+        <input type="radio"  name="VALUE[9]" [[SORT_DESC_CHECKED]] value="desc" />&darr; [translate: sort_desc] (Z-A)
+    </div>
+    <div class="formular">
+        <label>[translate: listing_only_new]</label>
+        [[DURATION_SELECTION]]
+    </div>
+</div>
+<div class="settings">
+    <h2 class="no_slide">[translate: listing_content_settings]</h2>
+
+    <div class="formular">
+    <label>[translate: listing_modul_sel]</label>
+       [[MODUL_SELECTION]]
+    </div>
+    <div class="formular">
+        <label>[translate: listing_text]</label>
+        [[TRUNCATE_SELECTION]]
+    </div>
+    <div class="formular">
+        <label>[translate: listing_image]</label>
+        [[TEASER_IMG_NUM]]
+    </div>
+    <div class="formular">
+        <label>[translate: listing_crop_settings]</label>
+        [[CROP_SELECTION]]
+    </div>
+    <div class="formular">
+        <input type="hidden"  name="VALUE[14]" value="0" />
+        <input type="checkbox"  name="VALUE[14]" value="1"[[BACKBUTTON_CHECKED]] />
+        <label class="right_label">[translate: listing_back_to_list]</label>
+    </div>
+    <div class="formular">
+        <label>[translate: listing_no_result_info]</label>
+        CJO_WYMEDITOR[id=13 height=100]
+    </div>
+</div>
+
+<div class="settings">
+    <h2 class="no_slide">[translate: listing_query_settings]</h2>
+    IF(CTYPE_SELECTION){%
+    <div class="formular" style="width: 230px;">
+        <label>[translate: label_ctype]</label>
+        [[CTYPE_SELECTION]]
+        <!-- <input type="hidden" name="VALUE[12]" value="CJO_VALUE[12]" id="ctypes" /> -->
+    </div>
+    %}ENDIF
+    <div class="formular">
+        <label>[translate: listing_cat_sel]</label>
+        <span style="display:block; width: 230px; float:left;">
+            <label class="right_label" style="color:green">[translate: listing_use_cats]</label>
+            [[CAT_TRUE_SELECTION]]
+        </span>
+        <span style="margin-left: 20px; display:block; width: 230px; float:left;">
+            <label class="right_label" style="color:red">[translate: listing_not_use_cats]</label>
+            [[CAT_FALSE_SELECTION]]
+        </span>
+        <input type="hidden" name="VALUE[6]" value="CJO_VALUE[6]" id="cats" />
+    </div>
+    <div class="formular">
+        <input type="hidden"  name="VALUE[7]" value="0" />
+        <input type="checkbox"  name="VALUE[7]" value="1"[[SUB_CATS_CHECKED]] />
+        <label class="right_label">[translate: listing_use_subcats]</label>
+    </div>
+    <div class="formular IF([[DISPLAY_WHERE]]){% hide_me %}ENDIF">
+        <label>[translate: listing_sql_clause]</label>
+        <textarea name="VALUE[11]" class="inp50" rows="3" cols="2">CJO_VALUE[11]</textarea>
+        <br />
+        <input type="hidden"  name="VALUE[10]" value="0" />
+        <input type="checkbox"  name="VALUE[10]" value="1"[[DEBUGING_CHECKED]] />
+        <label class="right_label">[translate: listing_debug_mode]</label>
+    </div>
+</div>
+
+<script type="text/javascript">
+ /* <![CDATA[ */
+    $(function() {
+
+        $('#cat_false').change(function () {
+            $(this).children().each(function (i) {
+                if ($(this).is(":selected")){
+                    $('#cat_true').children().eq(i).removeAttr('selected');
+                }
+            });
+            sel_to_string();
+        });
+
+        $('#cat_true').change(function () {
+            $(this).children().each(function (i) {
+                if($(this).is(":selected")){
+                    $('#cat_false').children().eq(i).removeAttr('selected');
+                }
+            });
+            sel_to_string();
+        });
+
+        function sel_to_string(){
+
+            var string = '';
+
+            $('#cat_true').children().each(function (i) {
+                if($(this).is(":selected")){
+                    string += ','+$(this).val();
+                }
+            });
+
+            $('#cat_false').children().each(function (i) {
+                if($(this).is(":selected")){
+                    string += ',-'+$(this).val();
+                }
+            });
+
+            $('#cats').val(string);
+        }
+    });
+    /* ]]> */
+</script>

@@ -1,0 +1,85 @@
+<?php
+/**
+ * This file is part of CONTEJO ADDON - VOUCHER CODES
+ *
+ * PHP Version: 5.2.6+
+ *
+ * @package     Addon_voucher_codes
+ * @version     SVN: $Id: template.txt 1054 2010-11-17 13:59:09Z s_lehmann $
+ *
+ * @author      Stefan Lehmann <sl@contejo.com>
+ * @copyright   Copyright (c) 2008-2009 CONTEJO. All rights reserved.
+ * @link        http://contejo.com
+ *
+ * @license     http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ * CONTEJO is free software. This version may have been modified pursuant to the
+ * GNU General Public License, and as distributed it includes or is derivative
+ * of works licensed under the GNU General Public License or other free or open
+ * source software licenses. See _copyright.txt for copyright notices and
+ * details.
+ * @filesource
+ */
+
+if ($CJO['CONTEJO']) return false;
+
+if (OOAddon::isAvailable('voucher_codes')) {
+    
+    $this->setDefaults(vc_template_get_defaults());
+
+    if (!function_exists('cjo_performPostAction')) {
+        function cjo_performPostAction(&$obj) {
+
+            global $CJO;
+    
+            $return = array();
+            $mypage = 'event_calendar';
+            $form_name = $obj->getName();
+            $unused_codes = $obj->equal_values['code'];
+            
+            $posted             = cjo_post($form_name, 'array', array());
+            $posted['event_id'] = cjo_post('event', 'int');
+            $posted['email']    = strtolower($posted['sender_email']);
+    
+            $sql = new cjoSql();
+            $qry = "SELECT * FROM ".TBL_16_EVENTS." WHERE id = '".$posted['event_id']."' LIMIT 1";
+            $event = $sql->getArray($qry);
+            
+            if (!empty($posted['code']) &&
+                in_array($posted['code'], cjoAssistance::toArray($unused_codes)) &&
+                $event[0]['attribute1'] > 0) {
+    
+                $update = $sql;
+                $update->flush();            
+                $update->setTable(TBL_16_EVENTS);
+                $update->setWhere("id='".$posted['event_id']."'");
+                $update->setValue("attribute1",($event[0]['attribute1']-1));
+                $update->update();
+
+                $update->flush();
+                $update->setTable(TBL_17_VOUCHER);
+                $update->setWhere("code='".$posted['code']."'");
+                $update->setValue("firstname",$posted['firstname']);
+                $update->setValue("name",$posted['name']);
+                $update->setValue("email",$posted['email']);
+                $update->setValue("event_id",$posted['event_id']);
+                $update->update();
+
+                $return['mail_replace']['%event%']     = $event[0]['title'];
+                $return['mail_replace']['%date%']      = strftime($CJO['ADDON']['settings'][$mypage]['date_output_format'], $event[0]['start_date']);
+                $return['mail_replace']['%firstname%'] = $posted['firstname'];
+                $return['mail_replace']['%name%']      = $posted['name'];
+                $return['mail_replace']['%code%']      = $posted['code'];
+    
+                $return['is_valid'] = true;
+            }
+            else {
+                $return['is_valid'] = false;
+            }
+
+            return $return;
+        }
+    }    
+} else {
+    $this->addError($I18N_17->msg('msg_err_configure_settings', './contejo'));
+}
+

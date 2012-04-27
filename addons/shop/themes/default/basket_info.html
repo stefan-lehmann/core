@@ -1,0 +1,19 @@
+[%TEMPLATE%]
+
+ <div class="shop_rounded_corners basket_info">
+ 	<div class="rounded_corners_t"><div></div></div>
+	<div class="rounded_corners_c">
+		<div class="rounded_corners_b"></div>
+		<h1>[translate_21: shop_basket_info]</h1>
+		IF(![[EMPTY_BASKET]]){%
+			<p><strong>[[PRODUCT_AMOUNT]]</strong> [translate_21: shop_products_in_basket]<br/>
+			[translate_21: shop_order_value]: <strong>[[ORDER_VALUE]]</strong><br/>
+            <a href="[[DELIVERY_URL]]">[translate_21: shop_package_costs]</a>: <strong>[[DELIVERY_COSTS]]</strong><br/>
+            ([[DELIVERY_COUNTRY]])
+            </p>
+		%}ENDIF
+        IF([[EMPTY_BASKET]]){%
+		    <p>[[EMPTY_BASKET]]</p>
+        %}ENDIF
+    </div>
+ </div>

@@ -1,0 +1,15 @@
+@media all  {
+#sitemap ul {list-style:none !important;}
+#sitemap ul li {float:left;margin:0 10px 10px 0;padding:0;}
+#sitemap ul li ul li {float:none;border-bottom:1px solid #ebebeb;margin:0;padding:3px 5px;}
+#sitemap ul li a {background:#ebebeb;display:block;font-weight:700;text-decoration:none;text-transform:uppercase;width:200px;margin:0;padding:3px 5px;}
+#sitemap ul li a:hover,#sitemap ul li a:focus {background:#009ee0;color:#fff;}
+#sitemap ul li ul {font-size:100%;font-weight:400 !important;margin:0;padding:.35em 0 0;}
+#sitemap ul li ul li a,#sitemap ul li ul li a:visited {background:transparent;text-transform:none;font-weight:400;width:170px;margin:0;padding:0;}
+#sitemap ul li ul li a:hover,#sitemap ul li ul li a:focus {color:#009ee0;text-decoration:underline;}
+#sitemap ul li ul li a:hover,#sitemap ul li ul li a:focus,#sitemap ul li ul li a.current,#sitemap ul li ul li a.current:visited {background:transparent;border:none;padding:0;}
+#sitemap ul li ul li ul {line-height:1.1em;margin:0;padding:.35em 0 0 15px;}
+#sitemap ul li ul li ul li {border:none;margin-left:0;padding-left:0;}
+#sitemap ul li ul li ul li a,#sitemap ul li ul li ul li a:visited {background:transparent url("../../img/bg/bg_punkt.gif") no-repeat 2px .4em !important;font-weight:400 !important;padding-left:10px !important;text-transform:none !important;}
+#sitemap ul li ul li ul li a.current,#sitemap ul li ul li ul li a.current:visited {background-image:url("../../img/bg/bg_punkt_red.gif") !important;}
+}

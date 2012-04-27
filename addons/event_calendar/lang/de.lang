@@ -1,0 +1,144 @@
+
+/**
+ * This file is part of CONTEJO ADDON - EVENT CALENDAR
+ *
+ * PHP Version: 5.2.6+
+ *
+ * @package 	Addon_event_calendar
+ * @version   	SVN: $Id: de.lang 1049 2010-11-17 13:52:13Z s_lehmann $
+ *
+ * @author 		Stefan Lehmann <sl@contejo.com>
+ * @copyright	Copyright (c) 2008-2009 CONTEJO. All rights reserved.
+ * @link      	http://contejo.com
+ *
+ * @license 	http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ * CONTEJO is free software. This version may have been modified pursuant to the
+ * GNU General Public License, and as distributed it includes or is derivative
+ * of works licensed under the GNU General Public License or other free or open
+ * source software licenses. See _copyright.txt for copyright notices and
+ * details.
+ * @filesource
+ */
+
+event_calendar = Events
+subtitle_events = Events
+subtitle_import_export = Im-/Export
+
+##./addons/event_calendar/classes/class.event_calendar.inc.php 
+cookie_enabled_text =  Filter-Einstellungen speichern
+datefrom_text =  Events von
+dateto_text = Events bis
+form_legend_text = Event-Filter 
+msg_event_deleted = Der Event wurde gelöscht. 
+msg_event_status_updated = Der Event wurde aktualisiert. 
+msg_no_such_event = Der Event existiert nicht! 
+search_key_text = in
+search_text = Schlagwort
+submit_button_text = Filter anwenden
+
+##./addons/event_calendar/classes/class.event_imexport.inc.php 
+err_empty_csv_document = Die CSV-Datei enthält keine Daten! 
+err_wrong_delimiter = Fehler beim Trennen der Datensätze, möglicherweise wurde ein falsches Trennzeichen gewählt! 
+msg_import_done = Import erfolgreich abgeschlossen. (Datensätze hinzugefügt {0} / Fehler {1}) 
+msg_import_failed = Beim Import sind Fehler aufgetreten, es konnten keine Daten importiert werden. 
+
+##./addons/event_calendar/config.inc.php 
+label_attribute_article = Link-Button 
+label_attribute_datepicker = Datumsfeld 
+label_attribute_disabled = -- Attribut wird ignoriert -- 
+label_attribute_media = Media-Button 
+label_attribute_select = Select-Box 
+label_attribute_text = Textfeld 
+label_attribute_textarea = Textarea 
+label_attribute_time = Uhrzeit 
+label_attribute_wymeditor = HTML-Eingabe 
+label_description = Beschreibung 
+label_end_date = Ende (Datum) 
+label_event_article = Event-Artikel 
+label_event_file = Event-Medium 
+label_example = z.B. 
+label_keywords = Keywords 
+label_online_from_to = Online-Zeitraum 
+label_short_description = Kurzbeschreibung 
+label_times = Event-Zeiten 
+label_title = Event-Titel 
+
+##./addons/event_calendar/pages/attributes.inc.php 
+label_attribute = Attribut {0} 
+label_attribute_display = In Event-Übersicht 
+label_attribute_settings =  
+label_attribute_title = Titel 
+label_attribute_typ = Typ 
+label_attribute_values = Werte 
+label_crop_num = Bildausschnitt 
+label_date_output_format = Datumsausgabe-Format 
+label_display = ja, im Backend anzeigen 
+msg_err_attribute_title_notEmpty = Bitte geben Sie ein Attribut-Titel an! 
+msg_err_attribute_values_notEmpty = Bitte geben Sie die Werte der Select-Box ein! 
+note_separate_by_new_line = Bei mehren Werten jeden Wert in eine neue Zeile. 
+
+##./addons/event_calendar/pages/events_form.inc.php 
+label_add_event = Event hinzufügen 
+label_attributes = Attribute 
+label_copy_event = Änderungen als neuen Event speichern 
+label_edit_event = Event bearbeiten 
+label_end_time = Ende (Uhrzeit) 
+label_info = Infos 
+label_start_date = Beginn (Datum) 
+label_start_time = Beginn (Uhrzeit) 
+label_status = Status 
+label_status_offline = offline 
+label_status_online = online 
+msg_err_no_time = Die Zeitangabe hat kein gültiges Format (z.B. 09:20, 07.00)! 
+msg_err_start_date_notEmpty = Bitte geben Sie ein Beginn-Datum an! 
+msg_err_status_notEmpty = Bitte wählen Sie einen Status (online/offline) aus! 
+msg_err_title_notEmpty = Bitte geben Sie einen Event-Titel an! 
+note_delimiter_comma = Mehrere Werte durch Komma trennen
+
+##./addons/event_calendar/pages/events_list.inc.php 
+label_delete_event = Event löschen 
+label_status_do_offline = offline stellen 
+label_status_do_online = online stellen 
+
+##./addons/event_calendar/pages/imexport.inc.php 
+button_export = Events exportieren 
+button_import = Events importieren 
+delete_all = Alle Events löschen 
+err_limit_number = Bitte für 'Anzahl Datensätze' eine Zahl eingeben! 
+err_limit_start = Bitte für 'Import ab Zeile' eine Zahl eingeben! 
+file_not_found = Importdatei wurde nicht gefunden! 
+label_charset = Codierung der Datei 
+label_csv = CSV-Datei 
+label_divider = Trennzeichen 
+label_file_settings = Datei-Einstellungen 
+label_limit_number = Anzahl Datensätze 
+label_limit_start = Import ab Zeile 
+msg_all_db_deleted = Die Datenbank wurde zurückgesetzt! 
+note_limit_number = leer=alle Datensätze bis zum Ende der Datei 
+section_delete_all = Zurücksetzen 
+section_export = Events-Export 
+section_import = Events-Import 
+
+##./addons/event_calendar/pages/index.inc.php 
+subtitle_attributes = Attribute
+subtitle_import_export = Im-/Export 
+
+##./addons/event_calendar/pages/settings.inc.php 
+headline_filter = Filter 
+headline_list = Listenausgabe 
+label_cookie_enabled = Filter-Cookie 
+label_date_input_enabled = Datumseingabe 
+label_date_input_format = Datumseingabe-Format 
+label_elements_per_page = Elemente pro Seite 
+label_enabled = ein 
+label_enabled_fields = aktivierte Eingaben 
+label_no_data_text = Hinweis bei leerem Ergebnis 
+label_order_asc = aufsteigend (A->Z) 
+label_order_desc = absteigend (Z->A) 
+label_results_order_by = Sortierschlüssel 
+label_results_order_dir = Sortierrichtung 
+label_search_fields = Felder für Suche 
+label_select_fields = Felder als Select-Box 
+label_settings = Grundeinstellungen 
+msg_err_elements_per_page_noEmpty = Bitte geben Sie an wie viele Elemente pro Seite erscheinen sollen! 
+msg_err_elements_per_page_wrong = Die Einagabe für Elemente pro Seite muss zwischen 1 und 200 liegen! 

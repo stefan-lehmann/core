@@ -1,0 +1,14 @@
+[%TEMPLATE%]
+
+IF([[DISPLAY_TEASER_INFO]]){%
+    <span class="new">{TEASER_INFO}</span>
+%}ENDIF
+
+IF(CJO_IS_VALUE[1]){%
+    <div class="box_main left_margin">
+        IF(CJO_IS_VALUE[2]){%
+            <h5>CJO_VALUE[2]</h5>
+        %}ENDIF
+        CJO_HTML_VALUE[1]
+    </div>
+%}ENDIF

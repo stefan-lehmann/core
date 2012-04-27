@@ -1,0 +1,21 @@
+shop_bank_account = Lastschrift
+
+##./addons/shop/include/pay_methods/bank_account/class.shop_bank_account.inc.php
+shop_bank_account_costs = Gebühr
+shop_bank_account_id = Kto.-Nr.
+shop_bank_account_owner = Inhaber
+shop_bank_code = BLZ
+shop_bank_name = Bank
+
+##./addons/shop/include/pay_methods/bank_account/index.inc.php
+msg_no_bank_name = Bitte Namen der Bank eingeben!
+msg_no_bank_owner_name = Bitte den Kontoinhaber eingeben!
+msg_no_bank_account_number = Bitte Kontonummer eingeben!
+msg_no_bank_code = Bitte Bankleitzahl eingeben!
+shop_insert_paydata = Zahlungsdaten eingeben
+shop_get_bank_account_id = Kontonummer
+shop_get_bank_code = Bankleitzahl
+shop_get_bank_name = Kreditinstitut
+shop_bank_account_owner = Kontoinhaber
+shop_get_bank_owner_firstname = Vorname
+shop_get_bank_owner_name = Nachname

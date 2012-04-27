@@ -1,0 +1,53 @@
+import_export = Im-/Export
+
+##./addons/import_export/classes/class.cjo_import_export.inc.php 
+err_create_dirs_manually = Erstellen Sie bitte folgende Ordner manuell und setzen Sie die Schreibrechte auf diese Ordner (über ftp). 
+err_import_failed_mediafolder_not_deletable = Import fehlgeschlagen, da aktueller Media-Folder ({0}) nicht gesichert werden konnte! 
+err_no_import_file_chosen = Keine Importdatei ausgewählt! 
+err_no_import_file_chosen_or_wrong_version = Keine Importdatei ausgewählt bzw. Contejo-Version falsch! 
+err_no_valid_import_file = Keine korrekte Importdatei! Bitte prüfen Sie den Versionsstempel: 
+err_table_not_found = Die Tabelle {0} existiert nicht! 
+err_while_extracting = Es gab Probleme beim Extrahieren der Datei. 
+msg_database_imported = Datenbank erfolgreich importiert. 
+msg_entry_count = ({0} Einträge) 
+msg_file_imported = Die Datei wurde erfolgreich importiert. 
+
+##./addons/import_export/pages/import_export_db.inc.php 
+button_import = Importieren 
+err_check_rights_in_directory = Bitte überprüfen Sie die Schreibrechte in folgendem Verzeichnis: '{0}' ! 
+err_file_could_not_be_generated = Die Export-Datei konnte nicht erstellt werden. 
+err_file_could_not_be_uploaded = Datei konnte nicht hochgeladen werden! 
+err_you_have_no_write_permission_in = Sie haben keine Schreibrechte in diesem Verzeichnis: '{0}'. 
+label_database_export = Datenbank-Export 
+label_delete_sql = {0} löschen 
+label_export = Export
+label_filename = Dateiname
+label_import = Import
+label_import_sql = {0} importieren
+label_import_upload = Datei hochladen und importieren
+label_intro_export = Hier können Sie Ihre aktuellen Eingaben und Dateien von CONTEJO sichern. Um eine vollständige Sicherung zu erhalten müssen Sie <b>die Datenbank UND die Dateien exportieren</b>. 
+label_save_as_file = Als Datei herunterladen 
+label_save_on_server = Auf dem Server speichern 
+label_select_tables = Tabellen zum Export hinzufügen
+label_selected_file = Ausgewählte Datei 
+label_start_export_db = Datenbank-Export starten
+msg_file_deleted = Die Datei '{0}' wurde gelöscht. 
+msg_file_generated_in = Daten wurden in '{0}' gesichert. 
+msg_filename_updated = Der eingegebene Dateiname wurde korrigiert. Der Export kann nun durch Klick gestartet werden. 
+msg_intro_import = Bitte bedenken Sie, daß beim Importieren einer Datenbank <b>die alte Datenbank gelöscht</b> wird. Bitte speichern/exportieren Sie diese vorher, wenn Sie sich unsicher sind. 
+msg_proceed_sql_import = <b>Achtung:</b> Bestehende Daten (Artikel, Templates, Module,...) gehen verloren. Fortfahren? 
+
+##./addons/import_export/pages/import_export_files.inc.php 
+err_please_choose_folder = Bitte wählen Sie die Verzeichnisse aus die exportiert werden sollen! 
+label_database = Datenbank-Import 
+label_delete_tar = {0} löschen
+label_export_settings = Export-Einstellungen 
+label_file_export = Datei-Export 
+label_files = Dateisystem 
+label_import_tar = {0} importieren 
+label_start_export = Export Starten 
+msg_proceed_tar_import = <b>Achtung:</b> Bestehende Dateien werden gelöscht. Fortfahren? 
+
+##./addons/import_export/pages/index.inc.php 
+import_export_db = Datenbank
+import_export_files = Dateisystem

@@ -1,0 +1,24 @@
+shop_credit_card = Credit Card
+credit_card = Credit Card
+
+##./addons/shop/include/pay_methods/credit_card/class.shop_credit_card.inc.php 
+shop_get_credit_card_cvs = CVS-Number
+shop_credit_card_costs = Charge
+shop_credit_card_expiration_date = Expiration Date 
+shop_credit_card_id = Card-Id 
+shop_credit_card_owner = Credit Card Owner
+shop_credit_card_provider = Card Provider
+
+##./addons/shop/include/pay_methods/credit_card/index.inc.php 
+msg_no_credit_card_cvs = Specify a CVS-Number, please.
+msg_no_credit_card_number = Specify card-id, please..
+msg_no_credit_card_owner_name = Specify a name, please.
+msg_no_credit_card_provider = Specify a card provider, please.
+shop_err_length_eq_3 = The CVS must be three digit.
+shop_get_credit_card_cvs = CVS-Number.
+shop_get_credit_card_expiration = Expiration Date
+shop_get_credit_card_id = Card ID
+shop_get_credit_card_owner_firstname = First Name 
+shop_get_credit_card_owner_name = Name
+shop_get_credit_card_provider = Card Provider
+shop_err_date_format = Type a correct date, please.

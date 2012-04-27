@@ -1,0 +1,22 @@
+@media all  {
+body {background:#fff url(../img/contejo/bg/page_bg.jpg) repeat-x center top;position:relative;}
+#cjo_page_margin {background:transparent;width:100%;height:100%;margin:0;padding:0;font-size:120%;}
+#cjo_page {width:980px;position:relative;overflow:visible;margin:0 auto;padding:0 0 2em;}
+#cjo_page.cjo_popup {width:980px;overflow:hidden;font-size:12px;padding:0;}
+
+#cjo_header {background:transparent url(../img/contejo/bg/header.png) no-repeat left top;width:960px;height:76px;position:relative;overflow:hidden;padding:0 10px 10px;}
+#cjo_header #cjo_login_status {position:absolute;right:20px;top:7px;}
+#cjo_header #cjo_login_status ul.buttonmenu {margin-left:10px;float:right;}
+#cjo_header #cjo_login_status ul.buttonmenu li a {line-height:15px !important;font-size:11px !important;text-transform:none;}
+#cjo_header #cjo_login_status ul.buttonmenu li a span.left {padding-left:5px;width:20px;}
+#cjo_header #cjo_login_status ul.buttonmenu li a span.rot {color:red;padding-left:.3em;}
+#cjo_header #cjo_login_status ul.buttonmenu li a:hover,#cjo_header #cjo_login_status ul.buttonmenu li a:focus,#cjo_header #cjo_login_status ul.buttonmenu li a.current,#cjo_header #cjo_login_status ul.buttonmenu li a:visited.current {background:red;}
+#cjo_header #cjo_mainmenu {font-size:12px;position:absolute;right:20px;bottom:17px;}
+#cjo_header #cjo_mainmenu ul.buttonmenu li a {line-height:15px !important;}
+#cjo_header_small {color:#fff;text-align:right;font-weight:700;font-size:16px;text-transform:uppercase;margin:0 20px -20px 0;padding:10px 0 0;}
+	
+#cjo_main {width:960px;background:transparent url(../img/contejo/bg/main_middle.png) repeat-y left top;position:relative;min-height:100px;padding:0 10px 5px;}
+#cjo_edit_content {padding:0 10px 1px;}
+#cjo_footer {clear:both;width:940px;background:transparent url(../img/contejo/bg/footer.png) no-repeat left bottom;margin:0;padding:10px 20px 20px;}
+#cjo_footer #cjo_footer_right {float:right;}
+}

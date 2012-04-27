@@ -1,0 +1,31 @@
+.cs_select_class{background:#fff url(../../img/silk_icons/arrow_down_padding.png) no-repeat right 3px !important;border:2px solid #99d8f3;cursor:pointer;font-weight:700;height:1.4em;line-height:18px;overflow:hidden !important;padding:3px 4px;position:relative;text-align:left;width:300px}
+.cs_select_class.invalid{background-color:#fae9e5 !important;border-color:red !important}
+.cjo_select_button .cs_select_class{padding:4px}
+.cs_select_class.disabled{border-color:#ccc !important;cursor:default}
+.cs_select_class span{background:transparent;background-image:url(../../img/silk_icons/arrow_right.png);background-position:center center;background-repeat:no-repeat;display:block;float:left;height:25px;margin-top:-4px;width:17px}
+.cs_select_class span:hover{background-color:#99d8f3;background-image:url(../../img/silk_icons/arrow_down.png)}
+.cs_select_class a{background:transparent;background-image:url(../../img/silk_icons/page_white.png);background-position:left center;background-repeat:no-repeat;display:block;float:left;font-weight:400;margin:0 2px;padding-left:18px;white-space:nowrap}
+.cs_select_class a.file{display:block;float:left}
+.cs_select_class a.category,.cs_select_class a.folder{background-image:url(../../img/silk_icons/folder.png)}
+.cs_select_class a.categories{background-image:url(../../img/silk_icons/folders.png) !important;padding-left:22px}
+.cs_select_class a.category{background-image:url(../../img/silk_icons/folder.png) !important}
+.cs_select_class a.root{background-image:url(../../img/silk_icons/house.png);background-position:6px 50%;padding-left:27px}
+.cs_select_class a.locked,.cs_select_class a.locked.file,.cs_select_class a.locked.folder,.cs_select_class a.locked.categories,.cs_select_class a.locked.category,.cs_select_class a.locked.root{background-image:url(../../img/silk_icons/lock.png) !important;color:inherit}
+.cs_selectitems,.cs_selectitems img{float:none !important;line-height:20px;margin:0;padding:0 !important;text-align:left;vertical-align:middle;white-space:nowrap !important}
+.cs_selectitems{display:none;height:22px;margin:-2px -8px -1px 0}
+.cs_selectitems img{display:inline !important;float:none}
+.cs_selectitems span{background-image:url(../../img/silk_icons/folder.png);background-position:left center;background-repeat:no-repeat;clear:none;display:inline;float:none !important;line-height:13px !important;margin:0 !important;padding:2px 5px 2px 20px;vertical-align:middle}
+.cs_selectitems.folder span{color:inherit}
+.cs_selectitems.file span{background-image:url(../../img/silk_icons/page_white.png) !important;color:inherit}
+.cs_selectitems.categories span{background-image:url(../../img/silk_icons/folders.png) !important;color:inherit;padding-left:22px}
+.cs_selectitems.category span{background-image:url(../../img/silk_icons/folder.png) !important;color:inherit}
+.cs_selectitems.cs_disabled_class span,.cs_selectitems.locked span{background-image:url(../../img/silk_icons/lock_off.png) !important}
+.cs_selectitems.root span{background-image:url(../../img/silk_icons/house.png) !important;background-position:11px center;display:block;font-weight:700;padding:3px 0 2px 32px}
+.cs_selectitems.locked span.file,.cs_selectitems.locked span.folder,.cs_selectitems.locked span.categories,.cs_selectitems.locked span.category,.cs_selectitems.locked span.root{background-image:url(../../img/silk_icons/lock.png) !important}
+.cs_holder_class{background:#fff !important;border:2px solid #99d8f3;clear:left;color:#000;cursor:pointer;display:none;margin:-2px 0 10px;max-height:300px;overflow-x:hidden;overflow-y:auto;padding:3px 8px 3px 0;position:absolute;vertical-align:middle;width:300px;z-index:300}
+.cs_hover_class,.cs_hover_class span{background-color:#ffecc1;cursor:hand}
+.cs_selected_class,.cs_selected_class span{background-color:#ffe097}
+.cs_disabled_class,.locked{cursor:default}
+.cs_disabled_class,.locked span{color:#999;cursor:default;text-align:left}
+.cs_hidden{height:0;left:-2000px;position:absolute;visibility:hidden;width:0}
+.cjo_article_path .cs_select_class a.folder,.cjo_article_path .cs_selectitems span{background-image:url(../../img/silk_icons/pages_white.png)}

@@ -1,0 +1,105 @@
+div.jGrowl {
+	padding: 5px;
+	z-index: 9999;
+	background:yellow!important;
+	display:none;
+}
+
+/** Normal Style Positions **/
+body>div.jGrowl {
+	position: fixed;
+}
+
+body>div.jGrowl.top-left {
+	left: 0px;
+	top: 0px;
+}
+
+body>div.jGrowl.top-right {
+	right: 0px;
+	top: 0px;
+}
+
+body>div.jGrowl.bottom-left {
+	left: 0px;
+	bottom: 0px;
+}
+
+body>div.jGrowl.bottom-right {
+	right: 0px;
+	bottom: 0px;
+}
+
+body>div.jGrowl.center {
+	top: 80px;
+	width: 400px;
+	left: 50%;
+	margin-left: -206px;
+}
+
+/** Cross Browser Styling **/
+div.center div.jGrowl-notification,div.center div.jGrowl-closer {
+	
+}
+
+div.jGrowl div.jGrowl-notification, div.jGrowl div.jGrowl-closer {
+	color: #fff;
+	opacity: .85!important;
+	filter: alpha(opacity = 85)!important;
+	zoom: 1;
+	width: 394px;
+	padding:0 !important;
+	margin: 0 0 4px 0!important;
+	font-size: 13px;
+	text-align: left;
+	display: none;
+	background: transparent!important;
+	shadow: 3px 3px 10px rgba(0, 0, 0, 0.6); 
+	-webkit-box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.6); 
+	-moz-box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.6);
+	-moz-border-radius: 4px;
+	-webkit-border-radius: 4px;	
+	border: 3px solid rgba(215, 215, 215, 0.5);
+}
+div.jGrowl div.jGrowl-notification {
+	min-height: 32px;
+} div.jGrowl div.jGrowl-notification .jGrowl-message {
+	padding: 8px 10px 8px 27px;
+	margin:0;
+ 	background: green url(../../img/silk_icons/accept.png) no-repeat 7px 9px !important;
+} div.jGrowl div.jGrowl-notification.error .jGrowl-message {
+ 	background: red url(../../img/silk_icons/exclamation.png) no-repeat 7px 9px !important;    
+} div.jGrowl div.jGrowl-notification.warning .jGrowl-message {
+    color: #444 !important;
+    background: #ffff8c url(../../img/silk_icons/error.png) no-repeat 7px 9px !important;  
+}
+ 
+div.jGrowl div.jGrowl-notification div.header {
+	font-weight: bold;
+	font-size: 10px;
+}
+
+div.jGrowl div.jGrowl-notification div.close {
+	float: right;
+	font-weight: bold;
+	font-size: 18px;
+	margin-right: 3px;
+	cursor: pointer;
+}
+
+div.jGrowl div.jGrowl-closer {
+	min-height: 15px;
+	cursor: pointer;
+	margin: 0 0 0 331px !important;
+	float: right;
+	width: 69px;	
+} div.jGrowl div.jGrowl-closer span {
+	display: block;
+	height: 15px;
+	width: 55px;
+	padding: 3px 7px;
+	font-size: 10px;
+	font-weight: bold;
+	text-align: center;	
+	background-color: #666 !important;
+}	

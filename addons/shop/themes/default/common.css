@@ -1,0 +1,152 @@
+@media all {
+ .shop_pre {
+        white-space: pre;
+} .shop_left_col,
+  .shop_right_col {
+        width: 50%;
+        float: left;
+} .shop_rounded_corners h1 {
+        margin: 0 0 1em 0;
+}
+ .checkbox input {
+         width: auto;
+ }
+  button.shop_button {
+        display: block;
+        height: 40px;
+        width: auto;
+        float: right;
+        margin: 0;
+        padding: 0 3px;
+        font-size: 13px;
+        line-height: 17px;
+        text-transform: uppercase;
+        font-weight: bold;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+} button.shop_button.left {
+        float: left;
+} button.shop_button:hover .bg {
+        color: #444;
+        background: #444;
+} button.shop_button.disabled .bg {
+        cursor: default;
+        color: #CCC !important;
+        background: #CCC !important;
+} button.shop_button span {
+    	color: inherit;
+        display: block;
+        float: left;
+        height: 32px;
+        padding: 0;
+        font-size: inherit;
+        line-height: inherit;
+        font-weight: inherit;
+        color: inherit;
+        margin: -3px -6px 0 -3px;
+        background-color: transparent;
+        background-image: url(button.png);
+        background-repeat: no-repeat;
+        background-position: center center;
+} button.shop_button .bg {
+        height: 22px;
+        margin: 3px 6px 0 0;
+        color: #009ee0;
+        background: #009ee0;
+} button.shop_button .bl {
+        width: 8px;
+        margin-right: 0;
+        background-position: left top;
+} button.shop_button.left .bl {
+        width: 28px;
+        background-position: left bottom;
+} button.shop_button .bc {
+        padding-top: 6px;
+        margin: -3px 0 0;
+        background-position: center top;
+} button.shop_button .br {
+        width: 32px;
+        margin-left: 0;
+        background-position: right top;
+} button.shop_button.left .br {
+        width: 10px;
+        background-position: right bottom;
+} button.shop_button .bl span,
+  button.shop_button .br span {
+        width: 22px;
+        height: 22px;
+        margin: 4px 0 0 6px;
+        background-position: 0 -35px
+} button.shop_button .bl span {
+        margin-left: 3px;
+} button.shop_button.heard .bl span,
+  button.shop_button.heard .br span {
+        background-position: -200px -35px
+} button.shop_button.ok .bl span,
+  button.shop_button.ok .br span {
+        background-position: -266px -35px
+} button.shop_button.goto .bl span,
+  button.shop_button.goto .br span {
+        background-position: -134px -35px
+} button.shop_button.goback .bl span,
+  button.shop_button.goback .br span {
+        background-position: -112px -35px
+} button.shop_button.refresh .bl span,
+  button.shop_button.refresh .br span {
+        background-position: -22px -35px
+} button.shop_button.circle .bl span,
+  button.shop_button.circle .br span {
+        background-position: -243px -35px
+}/* button#shop_checkout_send .bg {
+        background: #33ff00;
+        color: #00cc00;
+} button#shop_checkout_send:hover .bg {
+        color: #444;
+        background: #444;
+} */
+  .shop_rounded_corners {
+        position: relative;
+        margin: 0px auto;
+        min-width: 8em;
+        max-width: 760px; /* based on image dimensions - not quite consistent with drip styles yet */
+        z-index: 1;
+        margin-left: 10px; /* default, width of left corner */
+        margin-bottom: 0.5em; /* spacing under dialog */
+} .shop_rounded_corners .rounded_corners_c, .shop_rounded_corners .rounded_corners_b,
+  .shop_rounded_corners .rounded_corners_t, .shop_rounded_corners .rounded_corners_t div {
+        background: transparent url(rounded_corners.png) no-repeat bottom right;
+        _background-image: url(rounded_corners.gif);
+} .shop_rounded_corners .rounded_corners_t {
+        /* bottom */
+        position: relative;
+        width: 100%;
+} .shop_rounded_corners .rounded_corners_t,
+  .shop_rounded_corners .rounded_corners_t div {
+        height: 10px; /* height of bottom cap/shade */
+        font-size: 0;
+} .shop_rounded_corners .rounded_corners_t {
+        background-position: top right;
+} .shop_rounded_corners .rounded_corners_t div {
+        position: relative;
+        width: 10px; /* bottom corner width */
+        margin-left: -10px;
+        background-position: top left;
+} .shop_rounded_corners .rounded_corners_c {
+        position: relative;
+        zoom: 1;
+        min-height: 60px;
+        _overflow-y: hidden;
+        padding: 10px 15px 5px 5px;
+} .shop_rounded_corners .rounded_corners_b {
+        /* top+left vertical slice */
+        position: absolute;
+        left: 0px;
+        top: 0px;
+        width: 10px; /* top slice width */
+        margin-left: -10px;
+        height: 100%;
+        _height: 1600px; /* arbitrary long height, IE 6 */
+        background-position: bottom left;
+}
+}

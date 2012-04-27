@@ -1,0 +1,29 @@
+@media all {
+
+	.a22-cjolist-data table td.cjo_delete {
+		text-align: right;
+		padding: 10px;
+		position: relative;
+		height: 1px;
+		border: none;
+		background-position: left top;
+		background-repeat: repeat-x;
+		background-image: url(../img/contejo/bg/td_border_top.png);
+	}
+	.a22-cjolist-data td.cjo_delete img {
+		position: absolute;
+		right:10px;
+		top: 50%;
+		margin-top: -8px;
+	}
+	.a22-cjolist-data table th.headerSortUp span,
+	.a22-cjolist-data table th.headerSortDown span {
+		padding:0;
+	    margin-right: -16px;
+	}
+	.a22-cjolist-data table th.headerSortUp,
+	.a22-cjolist-data table th.headerSortDown{
+	    padding-right: 16px!important;
+	}
+	.jGrowl .jGrowl-closer{margin-left:128px!important;}
+}

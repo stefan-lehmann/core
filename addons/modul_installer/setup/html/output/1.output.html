@@ -1,0 +1,99 @@
+[%TEMPLATE%]
+
+IF(CJO_IS_VALUE[2]){%
+
+    IF([[DISPLAY_NEW]]){% [[NEW_OR_UPDATE]] %}ENDIF
+
+    <h1>
+        CJO_VALUE[2]
+        IF(CJO_IS_VALUE[3]){% <span>CJO_VALUE[3]</span> %}ENDIF
+    </h1>
+%}ENDIF
+
+IF(CJO_IMAGE_LIST[1]){%
+    <div class="floatbox imagelist1">
+        CJO_IMAGE_LIST[1]
+    </div>
+%}ENDIF
+
+IF(CJO_IS_VALUE[4]){%
+    <a name="[[ANCHOR_LINK]]" class="hidden_anchor">[[ANCHOR_LINK]]</a>
+    <h2>CJO_VALUE[4]</h2>
+%}ENDIF
+
+IF(CJO_IS_VALUE[1] OR CJO_IMAGE_LIST[2] OR CJO_MEDIALIST[1]){%
+    <div class="floatbox" style="clear: both">
+
+        IF(CJO_IMAGE_LIST[2]){%
+            <div class="float_left">
+                CJO_IMAGE_LIST[2]
+            </div>
+        %}ENDIF
+
+        IF(CJO_IS_VALUE[1]){%
+
+            <div class="textblock">
+
+                CJO_HTML_VALUE[1]
+
+                IF([[DISPLAY_ANCHOR_NAV]]){%
+                    <div class="box_main">
+                        <h5>[translate: direct_links]</h5>
+                        <ul class="anchor_nav">
+                            <%ANCHOR_NAV%>
+                        </ul>
+                    </div>
+                %}ENDIF
+
+                IF(CJO_MEDIALIST[1]){%
+                <div class="box_main">
+                    IF(CJO_IS_VALUE[5]){%
+                    	<h5>CJO_VALUE[5]</h5>
+                    %}ENDIF
+                     <ul class="download_list">
+                         <%DOWNLOADS%>
+                     </ul>
+                </div>
+                %}ENDIF
+
+		        IF([[DISPLAY_BOX]]){%
+		            [[BOX]]
+		        %}ENDIF
+            </div>
+        %}ENDIF
+    </div>
+%}ENDIF
+
+IF(CJO_IS_VALUE[1]){%
+    [[ARTICLE_INFOS]]
+%}ENDIF
+
+[%ANCHOR_NAV%]
+    <li><a href="#[[ANCHOR_LINK]]">[[ANCHOR_LINK_TEXT]]</a></li>
+
+[%DOWNLOADS%]
+
+<li>
+    <a href="[[DOWNLOAD_PATH]]" class="download_opener [[EXTENSION]]">
+        [[TITLE]]
+    </a>
+    <span class="download_info">
+        IF([[DESCRIPTION]]){%
+        <strong class="description">[translate: dl_description]</strong>
+        <span class="description">[[DESCRIPTION]]</span>
+        %}ENDIF
+        IF([[COPYRIGHT]]){%
+        <strong class="copyright">[translate: dl_copyright]</strong>
+        <span class="copyright">[[COPYRIGHT]]</span>
+        %}ENDIF
+        <strong class="filesize">[translate: dl_filesize]</strong>
+        <span class="filesize">[[FILESIZE]]</span>
+
+        <strong class="updated">[translate: dl_updated]</strong>
+        <span class="updated">[[UPDATEDATE]]</span>
+
+        <span class="download_start">
+            <a href="[[DOWNLOAD_PATH]]" class="download">[translate: dl_start_download]</a>
+        </span>
+    </span>
+</li>

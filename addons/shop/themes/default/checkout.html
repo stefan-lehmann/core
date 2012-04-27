@@ -1,0 +1,373 @@
+[%TEMPLATE%]
+<a name="shop_basket" class="hidden_anchor"></a>
+<form class="shop_checkout_form [[CUR_PAGE_CLASS]]" action="#" method="post">
+    <div class="shop_checkout shop_rounded_corners">
+    	<div class="rounded_corners_t"><div></div></div>
+    	<div class="rounded_corners_c">
+    		<div class="rounded_corners_b"></div>
+        	<input type="hidden" name="[[PAGE]][checkout][address1]" value="[[ADDRESS1]]" />
+        	<input type="hidden" name="[[PAGE]][checkout][address2]" value="[[ADDRESS2]]" />
+        	<input type="hidden" name="[[PAGE]][checkout][personals]" value="[[PERSONALS]]" />
+        	<input type="hidden" name="[[PAGE]][checkout][pay_data]" value="[[PAY_DATA]]" />
+        	<input type="hidden" name="[[PAGE]][checkout][pay_method]" value="[[PAY_METHOD]]" />
+        	<input type="hidden" name="[[PAGE]][checkout][comment]" value="[[COMMENT]]" />
+        	<input type="hidden" name="full_basket" value="[[FULL_BASKET]]" />
+        	<input type="hidden" name="page" value="[[PAGE]]" />
+        	<input type="hidden" name="supply_address" value="[[SUPPLY_ADDRESS]]" />
+
+            <h1>[[HEADLINE]]</h1>
+
+            IF([[PREVIOUS]]){% <%CONFIRM_DETAILS%> %}ENDIF
+
+        	<div class="user_input">
+
+        	<%FORM_ELEMENTS%>
+
+        	IF([[SUBMIT]]){% [[SUBMIT]] %}ENDIF
+
+        	IF([[PAY_METHOD_NOT_VALID]]){%
+        		<div class="shop_invalid_pay_method">
+        			<p>[[PAY_METHOD_NOT_VALID]]</p>
+        		</div>
+        	%}ENDIF
+        	</div>
+
+    		<div class="shop_checkout_next_page">
+				IF([[PREVIOUS]]){%
+                    <button type="submit" name="[[PAGE]][submit][previous]"
+                        id="shop_checkout_prev" class="shop_button left goback"
+                        title="[translate_21: shop_checkout_previous_step]"  value="previous">
+                        <span class="bg">
+                        <span class="bl"><span></span></span>
+                        <span class="bc">[translate_21: shop_checkout_previous_step]</span>
+                        <span class="br"></span>
+                        </span>
+                    </button>
+				%}ENDIF
+				IF([[NEXT]]){%
+                    <button type="submit" name="[[PAGE]][submit][next]"
+                        id="shop_checkout_next" class="shop_button goto"
+                        title="[translate_21: shop_checkout_next_step]"  value="next">
+                        <span class="bg">
+                        <span class="bl"></span>
+                        <span class="bc">[translate_21: shop_checkout_next_step]</span>
+                        <span class="br"><span></span></span>
+                        </span>
+                    </button>
+				%}ENDIF
+				IF([[CONFIRM]]){%
+                    <button type="submit" name="[[PAGE]][submit][send]"
+                        id="shop_checkout_send" class="shop_button circle"
+                        title="[translate_21: shop_checkout_send]"  value="send">
+                        <span class="bg">
+                        <span class="bl"></span>
+                        <span class="bc">[translate_21: shop_checkout_send]</span>
+                        <span class="br"><span></span></span>
+                        </span>
+                    </button>
+				%}ENDIF
+    		</div>
+        </div>
+    </div>
+
+    <div class="shop_checkout_navi shop_rounded_corners IF([[SUPPLY_ADDRESS]]){% shop_with_adress2 %}ENDIF">
+    	<div class="rounded_corners_t"><div></div></div>
+    	<div class="rounded_corners_c">
+    		<div class="rounded_corners_b"></div>
+
+           <input type="submit" name="[[PAGE]][submit][address1]"
+                       id="shop_checkout_address1" [[SUBMIT_ADDRESS1_ATTR]]
+                       title="[[COUNT_ADDRESS1]]. [translate_21: shop_checkout_address1]"
+                       value="[[COUNT_ADDRESS1]]. [translate_21: shop_checkout_address1]" />
+
+    		IF([[SUPPLY_ADDRESS]]){%
+                <input type="submit" name="[[PAGE]][submit][address2]"
+                       id="shop_checkout_address2" [[SUBMIT_ADDRESS2_ATTR]]
+                       title="[[COUNT_ADDRESS2]]. [translate_21: shop_checkout_address2]"
+                       value="[[COUNT_ADDRESS2]]. [translate_21: shop_checkout_address2]" />
+            %}ENDIF
+
+            <input type="submit" name="[[PAGE]][submit][pay_data]"
+                   id="shop_checkout_pay_data" [[SUBMIT_PAY_DATA_ATTR]]
+                   title="[[COUNT_PAY_DATA]]. [translate_21: shop_checkout_pay_data]"
+                   value="[[COUNT_PAY_DATA]]. [translate_21: shop_checkout_pay_data]" />
+
+            <input type="submit" name="[[PAGE]][submit][confirm]"
+                   id="shop_checkout_confirm" [[SUBMIT_CONFIRM_ATTR]]
+                   title="[[COUNT_CONFIRM]]. [translate_21: shop_checkout_confirm]"
+                   value="[[COUNT_CONFIRM]]. [translate_21: shop_checkout_confirm]" />
+         </div>
+    </div>
+</form>
+
+[%CONFIRM_DETAILS%]
+
+<div id="confirm_address1" class="shop_rounded_corners">
+    <div class="rounded_corners_t"><div></div></div>
+    <div class="rounded_corners_c">
+        <div class="rounded_corners_b"></div>
+        <h1>[translate_21: shop_checkout_address1]</h1>
+        <p class="shop_pre">[[ADDRESS1]]
+            <input type="submit" name="[[PAGE]][submit][address1]" class="shop_checkout_change" id="shop_checkout_change_address1"
+                   title="[translate_21: shop_checkout_change_settings]"  value="[translate_21: shop_checkout_change]" /></p>
+     </div>
+</div>
+
+
+<div id="confirm_address2" class="shop_rounded_corners">
+    <div class="rounded_corners_t"><div></div></div>
+    <div class="rounded_corners_c">
+        <div class="rounded_corners_b"></div>
+        <h1>[translate_21: shop_checkout_address2]</h1>
+        <p class="shop_pre">[[ADDRESS2]]
+             <input type="submit" name="[[PAGE]][submit][[[DEST_ADDRESS]]]" class="shop_checkout_change" id="shop_checkout_change_address2"
+             title="[translate_21: shop_checkout_change_settings]"  value="[translate_21: shop_checkout_change]" /></p>
+     </div>
+</div>
+
+
+<div id="confirm_contact_data" class="shop_rounded_corners">
+    <div class="rounded_corners_t"><div></div></div>
+    <div class="rounded_corners_c">
+        <div class="rounded_corners_b"></div>
+        <h1>[translate_21: shop_contact_data]</h1>
+        <p class="shop_pre">[[CONTACT]]
+            <input type="submit" name="[[PAGE]][submit][address1]" class="shop_checkout_change" id="shop_checkout_change_contact_data"
+                   title="[translate_21: shop_checkout_change_settings]"  value="[translate_21: shop_checkout_change]" /></p>
+     </div>
+</div>
+
+
+<div id="confirm_pay_method" class="shop_rounded_corners">
+    <div class="rounded_corners_t"><div></div></div>
+    <div class="rounded_corners_c">
+        <div class="rounded_corners_b"></div>
+        <h1>[translate_21: shop_pay_method]</h1>
+        <p class="shop_pre"><strong>[[PAY_METHOD]]</strong>
+            [[PAY_DATA]]
+            <input type="submit" name="[[PAGE]][submit][pay_data]" class="shop_checkout_change" id="shop_checkout_change_pay_data"
+                   title="[translate_21: shop_checkout_change_settings]"  value="[translate_21: shop_checkout_change]" /></p>
+     </div>
+</div>
+
+<div id="shop_order_comment" class="shop_rounded_corners" style="clear: both;">
+    <div class="rounded_corners_t"><div></div></div>
+    <div class="rounded_corners_c">
+        <div class="rounded_corners_b"></div>
+        <h1>[translate_21: shop_your_order_comment]</h1>
+
+        <textarea name="[[COMMENT_NAME]]" title="[translate_21: shop_your_order_comment]"
+             cols="10" rows="2">[[COMMENT_VALUE]]</textarea>
+     </div>
+</div>
+
+<div style="clear: both;">
+    [[PRODUCT_TABLE]]
+</div>
+
+<script type="text/javascript">
+/*<![CDATA[*/
+    $(function () {
+        $('#shop_toggle_terms').click(function(){
+           $('#shop_business_terms_txt').slideToggle(200);
+           return false;
+        });
+    });
+/*]]>*/
+</script>
+
+[%FORM_ELEMENTS%]
+
+##
+
+   IF([[ELEMENT_TYPE_HEADLINE]]){%
+        <div class="qfrow">
+            <div class="qfheadline">
+                [[ELEMENT_VALUE]]
+            </div>
+        </div>
+   %}ENDIF
+
+##
+
+   IF([[ELEMENT_TYPE_FIELDSET]]){%
+           </fieldset>
+        <fieldset class="[[ELEMENT_CLASS]]">
+             <legend IF([[HIDE_LEGEND]]){% class="hide_me" %}ENDIF>[[ELEMENT_VALUE]]</legend>
+   %}ENDIF
+
+##
+
+   IF([[ELEMENT_TYPE_SEPARATOR]]){%
+        <div class="qfrow" id="[[ELEMENT_ROW_ID]]">
+            <div class="qfdivide">
+            </div>
+        </div>
+   %}ENDIF
+
+##
+
+   IF([[ELEMENT_TYPE_NOTICE]]){%
+        <div class="qfrow" id="[[ELEMENT_ROW_ID]]">
+            <span class="qflabel">
+                [[ELEMENT_LABEL]]
+            </span>
+            <div class="qfelement">
+                [[ELEMENT_VALUE]]
+            </div>
+        </div>
+   %}ENDIF
+
+##
+
+    IF([[ELEMENT_TYPE_HIDDEN]]){%
+        <input type="hidden" name="[[ELEMENT_NAME]]" value="[[ELEMENT_VALUE]]" />
+    %}ENDIF
+
+
+##
+
+    IF([[ELEMENT_TYPE_TEXT]]){%
+        <div class="qfrow" id="[[ELEMENT_ROW_ID]]">
+            <label class="qflabel" for="[[ELEMENT_ID]]" >
+                IF([[ELEMENT_REQUIRED]]){%
+                    <span class="required">*</span>
+                %}ENDIF
+                [[ELEMENT_LABEL]]
+            </label>
+
+            <div class="qfelement IF([[ELEMENT_ERROR_MSG]]){% form_error %}ENDIF">
+                IF([[ELEMENT_ERROR_MSG]]){%
+                    <span class="form_error">[[ELEMENT_ERROR_MSG]]</span>
+                %}ENDIF
+
+                <input type="text" name="[[ELEMENT_NAME]]"
+                value="[[ELEMENT_VALUE]]" title="[[ELEMENT_LABEL]]"
+                id="[[ELEMENT_ID]]" class="[[ELEMENT_CLASS]]" />
+
+            </div>
+        </div>
+    %}ENDIF
+
+##
+
+    IF([[ELEMENT_TYPE_PASSWORD]]){%
+        <div class="qfrow" id="[[ELEMENT_ROW_ID]]" >
+            <label class="qflabel" for="[[ELEMENT_ID]]">
+                IF([[ELEMENT_REQUIRED]]){%
+                    <span class="required">*</span>
+                %}ENDIF
+                [[ELEMENT_LABEL]]
+            </label>
+
+            <div class="qfelement IF([[ELEMENT_ERROR_MSG]]){% form_error %}ENDIF">
+                IF([[ELEMENT_ERROR_MSG]]){%
+                    <span class="form_error">[[ELEMENT_ERROR_MSG]]</span>
+                %}ENDIF
+
+                <input type="password" name="[[ELEMENT_NAME]]"
+                value="[[ELEMENT_VALUE]]" title="[[ELEMENT_LABEL]]"
+                id="[[ELEMENT_ID]]" class="[[ELEMENT_CLASS]]" />
+
+            </div>
+        </div>
+    %}ENDIF
+
+##
+
+    IF([[ELEMENT_TYPE_TEXTAREA]]){%
+        <div class="qfrow" id="[[ELEMENT_ROW_ID]]">
+            <label class="qflabel" for="[[ELEMENT_ID]]">
+                IF([[ELEMENT_REQUIRED]]){%
+                    <span class="required">*</span>
+                %}ENDIF
+                [[ELEMENT_LABEL]]
+            </label>
+
+            <div class="qfelement IF([[ELEMENT_ERROR_MSG]]){% form_error %}ENDIF">
+                IF([[ELEMENT_ERROR_MSG]]){%
+                    <span class="form_error">[[ELEMENT_ERROR_MSG]]</span>
+                %}ENDIF
+
+                <textarea name="[[ELEMENT_NAME]]" title="[[ELEMENT_LABEL]]"
+                id="[[ELEMENT_ID]]" class="[[ELEMENT_CLASS]]" cols="10" rows="10">
+                [[ELEMENT_VALUE]]</textarea>
+
+            </div>
+        </div>
+    %}ENDIF
+
+##
+
+    IF([[ELEMENT_TYPE_CHECKBOX]]){%
+        <div class="qfrow" id="[[ELEMENT_ROW_ID]]">
+
+            <label class="qflabel" for="[[ELEMENT_ID]]">
+                IF([[ELEMENT_REQUIRED]]){%
+                    <span class="required">*</span>
+                %}ENDIF
+                [[ELEMENT_LABEL]]
+            </label>
+            <div class="qfelement checkbox IF([[ELEMENT_ERROR_MSG]]){% form_error %}ENDIF">
+
+                IF([[ELEMENT_ERROR_MSG]]){%
+                    <span class="form_error checkbox">[[ELEMENT_ERROR_MSG]]</span>
+                %}ENDIF
+
+                <input type="hidden" name="[[ELEMENT_NAME]]" value="0" />
+                <input type="checkbox" name="[[ELEMENT_NAME]]" value="[[ELEMENT_VALUE]]"
+                 id="[[ELEMENT_ID]]" class="[[ELEMENT_CLASS]]"
+                [[ELEMENT_CHECKED]] />
+
+                [[CHECKBOX_LABEL]]
+
+            </div>
+        </div>
+    %}ENDIF
+
+##
+
+    IF([[ELEMENT_TYPE_SELECT]]){%
+        <div class="qfrow" id="[[ELEMENT_ROW_ID]]">
+            <label class="qflabel" for="[[ELEMENT_ID]]">
+                IF([[ELEMENT_REQUIRED]]){%
+                    <span class="required">*</span>
+                %}ENDIF
+                [[ELEMENT_LABEL]]
+            </label>
+
+            <div class="qfelement IF([[ELEMENT_ERROR_MSG]]){% form_error %}ENDIF">
+                IF([[ELEMENT_ERROR_MSG]]){%
+                    <span class="form_error">[[ELEMENT_ERROR_MSG]]</span>
+                %}ENDIF
+
+                [[ELEMENT_SELECT_OUT]]
+
+            </div>
+        </div>
+    %}ENDIF
+
+##
+
+    IF([[ELEMENT_TYPE_ANTISPAM]]){%
+        <div class="qfrow" id="[[ELEMENT_ROW_ID]]">
+            <label class="qflabel" for="[[ELEMENT_ID]]">
+                <span class="required">*</span>
+                [[ELEMENT_LABEL]]
+            </label>
+
+            <div class="qfelement IF([[ELEMENT_ERROR_MSG]]){% form_error %}ENDIF">
+                IF([[ELEMENT_ERROR_MSG]]){%
+                    <span class="form_error">[[ELEMENT_ERROR_MSG]]</span>
+                %}ENDIF
+
+                <input type="text" name="[[ELEMENT_NAME]]" value="[[ELEMENT_VALUE]]"
+                title="[[ELEMENT_LABEL]]" id="[[ELEMENT_ID]]" class="[[ELEMENT_CLASS]]" />
+                <input type="hidden" name="mathresult" value="[[MATHRESULT]]" />
+                <input type="hidden" name="antispam_label" value="[[ELEMENT_LABEL]]" />
+
+            </div>
+        </div>
+    %}ENDIF
+
+##

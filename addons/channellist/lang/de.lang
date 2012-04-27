@@ -1,0 +1,84 @@
+<?php
+/**
+ * This file is part of CONTEJO ADDON - CHANNEL LIST
+ *
+ * PHP Version: 5.2.6+
+ *
+ * @package     Addon_channel_list
+ * @subpackage  lang
+ * @version     SVN: $Id: de.lang 1037 2010-11-17 13:47:55Z s_lehmann $
+ *
+ * @author      Stefan Lehmann <sl@contejo.com>
+ * @copyright   Copyright (c) 2008-2010 CONTEJO. All rights reserved.
+ * @link        http://contejo.com
+ *
+ * @license     http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ * CONTEJO is free software. This version may have been modified pursuant to the
+ * GNU General Public License, and as distributed it includes or is derivative
+ * of works licensed under the GNU General Public License or other free or open
+ * source software licenses. See _copyright.txt for copyright notices and
+ * details.
+ * @filesource
+ */
+
+channellist = Sender Liste
+
+##./addons/channellist/pages/channels.inc.php 
+add_channels = Sender Hinzufügen
+edit_channels = Sender Bearbeiten
+label_channel_icon = Logo
+label_channel_name = Sender-Name 
+label_channel_short_name = Kürzel
+label_connected_video = Trailer 
+label_connected_medialist = Galerie 
+label_description = Beschreibung
+label_packages = Pakete
+label_pay_tv = PayTV
+label_player = Flash-Player
+label_hd = HD
+label_update_vars = Variablen aktualisieren 
+msg_channel_deleted = Sender gelöscht
+msg_channel_name_notEmpty = Bitte Sender-Namen angeben!
+msg_channel_short_name_notEmpty = Bitte Sender-Kürzel angeben!
+msg_channel_updated = Der Sender wurde aktualisiert
+msg_player_empty = Bitte Flash-Player verknüpfen!
+note_connected_video = Video-Format (.mp4,.ogg, .webm)
+
+##./addons/channellist/pages/index.inc.php 
+tv_channels = TV-Sender
+radio_channels = Radio-Sender
+settings = Einstellungen
+packages = Sender-Pakete
+
+##./addons/channellist/pages/packages.inc.php 
+add_packages = Paket Hinzufügen
+edit_packages = Paket Bearbeiten
+label_package_icon = Paket-Grafik
+label_package_name = Paket-Name
+label_package_symbol = Paket-Kürzel
+label_connected_media = Paket-Grafik
+label_selectable = Auswählbares Paket
+msg_package_deleted = Das Paket wurde gelöscht.
+msg_package_name_notEmpty = Bitte Paket-Namen angeben!
+msg_package_symbol_notEmpty = Bitte Paket-Kürzel angeben!
+
+##./addons/channellist/pages/settings.inc.php 
+label_basic_settings = Grundeinstellungen
+label_offset_x = X-Abstand
+label_offset_y = Y-Abstand
+label_tv_sprite_big = TV-Logo-Sprite (gross)
+label_tv_sprite_small = TV-Logo-Sprite (klein)
+label_radio_sprite_big = Radio-Logo-Sprite (gross)
+label_radio_sprite_small = Radio-Logo-Sprite (klein)
+label_sprite_packages = Paket-Sprite
+msg_offset_x_empty = Bitte X-Abstand angeben!
+msg_offset_x_number = Bitte für den X-Abstand nur Zahlen eingeben!
+msg_offset_y_empty = Bitte Y-Abstand angeben!
+msg_offset_y_number = Bitte für den Y-Abstand nur Zahlen eingeben! 
+msg_packages_not_empty = Bitte Pakete angeben!
+msg_tv_sprite_big_empty = Bitte Medium für "TV-Logo-Sprite (grossC" verknüpfen!
+msg_tv_sprite_small_empty = Bitte Medium für "TV-Logo-Sprite (kleinV" verknüpfen! 
+msg_radio_sprite_big_empty = Bitte Medium für "Radio-Logo-Sprite (grossV" verknüpfen!
+msg_radio_sprite_small_empty = Bitte Medium für "Radio-Logo-Sprite (kleinV" verknüpfen! 
+msg_sprite_packages_empty = Bitte Medium für "Paket-Sprite" verknüpfen! 
+note_packages = [Format: id1=Paketname1|id2=Paketname2]

@@ -1,0 +1,19 @@
+opf_lang = Language Filter
+
+add_replacement = Ersetzung hinzufügen
+edit_replacement = Ersetzung bearbeiten
+
+label_var = Variable
+label_name = Ersetzung
+label_function = Funktion
+label_edit = Eintrag bearbeiten
+label_delete = Eintrag löschen
+label_update_vars = Variablen aktualisieren
+label_used = verwendet
+
+err_name = Die Ersetzung darf nicht leer sein!
+err_var = Die Variable darf nicht leer sein!
+
+values_deleted = Die Ersetzung wurde gelöscht.
+values_saved = Die Ersetzung wurde gespeichert.
+values_already_exists = Die Ersetzung existiert bereits!

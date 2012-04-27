@@ -1,0 +1,18 @@
+piwik = Piwik
+
+label_settings = Einstellungen
+
+label_email_campaign_filename = NL-Redirect-Dateiname
+label_email_campaign_prefix = NL-Kampagnen-Prefix
+label_idsite = Site_id
+label_track_as_downloads = Als Download tracken
+label_download_class = Download-Klasse
+label_url = Piwik-Url
+
+err_empty_email_campaign_filename = Bitte einen Dateinamen für den Newsletter-Redirect eingeben!
+err_empty_campaign_prefix = Bitte Newsletter-Kampagnen-Prefix eingeben!
+err_empty_idsite = Bitte die Piwik-Site-Id eingeben!
+err_empty_url = Bitte Piwik-Url eingeben!
+err_no_number_idsite = Als Piwik-Site-Id werden nur Zahlen akzeptiert!
+err_no_url = Die angegebene Piwik-Url ist nicht valide!
+err_saving_settings = Beim Speichern ist ein Fehler aufgetreten!

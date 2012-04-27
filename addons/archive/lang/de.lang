@@ -1,0 +1,31 @@
+archive = Artikel-Archiv
+
+##./addons/archive/pages/index.inc.php 
+title_overview = Übersicht
+title_settings = Einstellungen
+
+##./addons/archive/pages/overview.inc.php 
+label_article_id = ID
+label_delete_articles = Artikel aus dem Archiv löschen
+label_name = Name
+label_path = ursprüngliche Struktur 
+label_restore_articles = Artikel wiederherstellen
+label_slice_count = Content-Blöcke
+label_template = Template 
+label_createdate = Archiviert am
+msg_confirm_delete_article = Soll der gewählte Artikel wirklich dauerhaft gelöscht werden?
+msg_confirm_rdelete = Sollen die gewählten Artikel wirklich dauerhaft gelöscht werden?  
+msg_confirm_restore = Sollen die gewählten Artikel wirklich dauerhaft gelöscht werden?   
+
+##./addons/archive/pages/settings.inc.php 
+label_basic_settings = Grundeinstellungen
+label_categories_select = Zu überwachende Artikel
+label_disable_archive = Archiv-Funktion ausschalten
+label_duration = Wartezeit bis zum Verschieben ins Archiv
+label_duration_month = {0} Monat
+label_duration_months = {0} Monate
+label_duration_week =  {0} Woche
+label_duration_weeks = {0} Wochen 
+label_immediately = keine (Artikel wandern sofort ins Archiv)
+
+## ----------------------------------------------------------------
