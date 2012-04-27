@@ -25,12 +25,13 @@
 
 if (empty($CJO['LOCALHOST'])) $CJO['LOCALHOST'] = 'contejo.localhost';
 
-$dataset['TABLE_PREFIX'] = $CJO['TABLE_PREFIX'];
+$dataset['TABLE_PREFIX']    = $CJO['TABLE_PREFIX'];
+$dataset['LOCALHOST']       = $CJO['LOCALHOST'];
 
-$dataset['DB_1_NAME'] 	= $CJO['DB']['1']['NAME'];
-$dataset['DB_1_HOST'] 	= $CJO['DB']['1']['HOST'];
-$dataset['DB_1_LOGIN'] 	= $CJO['DB']['1']['LOGIN'];
-$dataset['DB_1_PSW'] 	= $CJO['DB']['1']['PSW'];
+$dataset['DB_1_NAME'] 	    = $CJO['DB']['1']['NAME'];
+$dataset['DB_1_HOST'] 	    = $CJO['DB']['1']['HOST'];
+$dataset['DB_1_LOGIN'] 	    = $CJO['DB']['1']['LOGIN'];
+$dataset['DB_1_PSW'] 	    = $CJO['DB']['1']['PSW'];
 
 $dataset['DB_LOCAL_NAME'] 	= $CJO['DB']['LOCAL']['NAME'];
 $dataset['DB_LOCAL_HOST'] 	= $CJO['DB']['LOCAL']['HOST'];
@@ -58,17 +59,18 @@ $fields['table_prefix']->addValidator('notEmpty', $I18N->msg("msg_table_prefix_n
 $fields['headline2'] = new readOnlyField('headline2', '', array('class' => 'formheadline'));
 $fields['headline2']->setValue($I18N->msg("label_mysql_db"));
 
-$fields['name'] = new textField('DB_1_NAME', $I18N->msg("label_db_name"));
 $fields['host'] = new textField('DB_1_HOST', $I18N->msg("label_db_host"));
+$fields['name'] = new textField('DB_1_NAME', $I18N->msg("label_db_name"));
 $fields['login'] = new textField('DB_1_LOGIN', $I18N->msg("label_db_login"));
 $fields['psw'] = new textField('DB_1_PSW', $I18N->msg("label_db_psw"));
 
 
 $fields['headline3'] = new readOnlyField('headline3', '', array('class' => 'formheadline slide'));
-$fields['headline3']->setValue($I18N->msg("label_mysql_db_local", $CJO['LOCALHOST']));
+$fields['headline3']->setValue($I18N->msg("label_mysql_db_local"));
 
-$fields['name_local'] = new textField('DB_LOCAL_NAME', $I18N->msg("label_db_name"));
+$fields['localhost'] = new textField('LOCALHOST', $I18N->msg("label_db_localhost_name"));
 $fields['host_local'] = new textField('DB_LOCAL_HOST', $I18N->msg("label_db_host"));
+$fields['name_local'] = new textField('DB_LOCAL_NAME', $I18N->msg("label_db_name"));
 $fields['login_local'] = new textField('DB_LOCAL_LOGIN', $I18N->msg("label_db_login"));
 $fields['psw_local'] = new textField('DB_LOCAL_PSW', $I18N->msg("label_db_psw"));
 
@@ -122,7 +124,8 @@ if ($form->validate()) {
         $data = file_get_contents($CJO['FILE_CONFIG_DB']);
     
     	if ($data != '') {
-    		$data = preg_replace('/^(\$CJO\[\'TABLE_PREFIX\'\]\s*=\s*)(".*")(.*?)$/imx', '$1"'.cjo_get('TABLE_PREFIX','string','cjo_').'"$3', $data);
+    		$data = preg_replace('/^(\$CJO\[\'TABLE_PREFIX\'\]\s*=\s*)(".*")(.*?)$/imx', '$1"'.cjo_post('TABLE_PREFIX','string','cjo_').'"$3', $data);
+            $data = preg_replace('/^(\$CJO\[\'LOCALHOST\'\]\s*=\s*)(".*")(.*?)$/imx', '$1"'.cjo_post('LOCALHOST','string','localhost').'"$3', $data);
     
     		$data = preg_replace('/^(\$CJO\[\'DB\'\]\[\'1\'\]\[\'HOST\'\]\s*=\s*)(".*")(.*?)$/imx', '$1"'.$databases[1]['host'].'"$3', $data);
     		$data = preg_replace('/^(\$CJO\[\'DB\'\]\[\'1\'\]\[\'LOGIN\'\]\s*=\s*)(".*")(.*?)$/imx', '$1"'.$databases[1]['login'].'"$3', $data);

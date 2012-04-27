@@ -25,6 +25,7 @@
 
 // ----------------- Table-Präfix
 $CJO['TABLE_PREFIX'] 			= "cjo_";
+$CJO['LOCALHOST']               = "localhost"; // Host für lokale Arbeitsumgebung
 
 // ----------------- DB1
 $CJO['DB']['1']['HOST'] 		= "localhost";
@@ -34,14 +35,14 @@ $CJO['DB']['1']['NAME'] 		= "";
 $CJO['DB']['1']['CON_CHARSET'] 	= "utf8";
 
 // ----------------- DB2 - if necessary
-$CJO['DB']['2']['HOST'] 		= "";
+$CJO['DB']['2']['HOST'] 		= "localhost";
 $CJO['DB']['2']['LOGIN'] 		= "";
 $CJO['DB']['2']['PSW'] 			= "";
 $CJO['DB']['2']['NAME'] 		= "";
-$CJO['DB']['2']['CON_CHARSET'] 	= "";
+$CJO['DB']['2']['CON_CHARSET'] 	= "utf8";
 
 // ----------------- DB_local - for local development (depends on http://localhost)
-$CJO['DB']['LOCAL']['HOST'] 	= "";
+$CJO['DB']['LOCAL']['HOST'] 	= "localhost";
 $CJO['DB']['LOCAL']['LOGIN'] 	= "";
 $CJO['DB']['LOCAL']['PSW'] 		= "";
 $CJO['DB']['LOCAL']['NAME'] 	= "";

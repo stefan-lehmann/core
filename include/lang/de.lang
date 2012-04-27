@@ -528,7 +528,7 @@ msg_setup_step3_err_copy2 = Bitte kopieren Sie die Dateien von Hand in das angeg
 msg_setup_step3_err_gd = Die GD-Library ist nicht in der bundled Version verfügbar. Wichtige Bildbearbeitungsfunktionen stehen deshalb nicht zur Verfügung.
 msg_setup_step3_err_perm = Folgende Verzeichnisse sind nicht beschreib- bzw. ausführbar! Bitte ändern Sie die Rechte via FTP/SSH entsprechend (chmod 757 o. 777): {0}
 msg_setup_step3_err_php = Die PHP version des Servers ist zu alt (unter {0}), bitte updaten Sie auf die aktuellste Version!
-msg_setup_step3_info = {0} PHP Version ({1})<br/>{2} GD-Library <br/>{3} Zugriffsrechte (System-Verzeichnisse)<br/>{4} Kopieren der Setup-Files
+msg_setup_step3_info = {0} PHP Version ({1})<br/>{2} GD-Library <br/>{3} Anlegen der System-Verzeichnisse<br/>{4} Zugriffsrechte System-Verzeichnisse
 
 ##./contejo/include/pages/setup/step4.inc.php
 button_next_step5 = weiter zu Schritt 4
@@ -547,7 +547,8 @@ label_db_login = Benutzer
 label_db_name = DB-Name
 label_db_psw = Passwort
 label_mysql_db = Standard Datenbank-Verbindung
-label_mysql_db_local = Optionale Datenbank-Verbindung (für lokale Entwicklungsumgebung via http://{0})
+label_mysql_db_local = Optionale Datenbank-Verbindung (für lokale Entwicklungsumgebung z.B. via http://localhost)
+label_db_localhost_name = Name des lokalen Hosts
 label_table_prefix = Tabellen-Präfix
 msg_config_db_does_not_exist = Die Datei <b>{0}</b> existiert nicht! Bitte kopieren Sie die gleichnamige Datei von Hand in das include Verzeichnis und benennen Sie die Dateiendung in '.php' um!
 msg_config_db_no_perm = Die Datei <b>{0}</b> ist nicht beschreibbar! Bitte ändern Sie die Rechte via FTP/SSH entsprechend (chmod 757 o. 777).

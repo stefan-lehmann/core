@@ -39,6 +39,10 @@ $CJO['ADDON']['install']['developer'] = 1;
 $CJO['ADDON']['status']['developer'] = 1;
 $CJO['ADDON']['menu']['developer'] = "0";
 
+$CJO['ADDON']['install']['html5video'] = 0;
+$CJO['ADDON']['status']['html5video'] = 0;
+$CJO['ADDON']['menu']['html5video'] = "0";
+
 $CJO['ADDON']['install']['image_processor'] = 0;
 $CJO['ADDON']['status']['image_processor'] = 0;
 $CJO['ADDON']['menu']['image_processor'] = "0";
@@ -46,6 +50,10 @@ $CJO['ADDON']['menu']['image_processor'] = "0";
 $CJO['ADDON']['install']['import_export'] = 0;
 $CJO['ADDON']['status']['import_export'] = 0;
 $CJO['ADDON']['menu']['import_export'] = "0";
+
+$CJO['ADDON']['install']['log'] = 0;
+$CJO['ADDON']['status']['log'] = 0;
+$CJO['ADDON']['menu']['log'] = "0";
 
 $CJO['ADDON']['install']['opf_lang'] = 0;
 $CJO['ADDON']['status']['opf_lang'] = 0;

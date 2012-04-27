@@ -284,12 +284,12 @@ class cjoAssistance {
     	if (!is_dir($dstdir)) mkdir($dstdir,$CJO['FILEPERM']);
     	if ($curdir = opendir($srcdir)) {
     		while($file = readdir($curdir)) {
-    			if ($file != '.' && $file != '..' && $file != '.svn' && $file != '.gitignore') {
+    			if ($file != '.' && $file != '..' && $file != '.svn') {
     				$srcfile = $srcdir . '/' . $file;    # added by marajax
     				$dstfile = $dstdir . '/' . $file;    # added by marajax
     				if (is_file($srcfile)) {
     					if (is_file($dstfile)) $ow = filemtime($srcfile) - filemtime($dstfile); else $ow = 1;
-    					if ($overwrite && $ow > 0) {
+    					if ($overwrite || $ow > 0) {
     						if ($verbose) echo "Copying '$srcfile' to '$dstfile'...<br />";
     						if (copy($srcfile, $dstfile)) {
     							touch($dstfile, filemtime($srcfile)); $num++;

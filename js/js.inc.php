@@ -25,7 +25,7 @@
 ?>
 
 <script type="text/javascript" src="<?php echo $CJO['JQUERY_PATH']; ?>/jquery-1.7.0.min.js"></script>
-<script type="text/javascript" src="<?php echo $CJO['HTDOCS_PATH']; ?>contejo/js/contejo.js"></script>
+<script type="text/javascript" src="<?php echo $CJO['BACKEND_PATH']; ?>/js/contejo.js"></script>
 <script type="text/javascript" src="<?php echo $CJO['JQUERY_PATH']; ?>/iutil.js"></script>
 <script type="text/javascript" src="<?php echo $CJO['JQUERY_PATH']; ?>/easing.js"></script>
 <script type="text/javascript" src="<?php echo $CJO['JQUERY_PATH']; ?>/jquery.blockUI.js"></script>
@@ -36,8 +36,8 @@
 <script type="text/javascript" src="<?php echo $CJO['JQUERY_PATH']; ?>/jquery.tablednd.js"></script>
 <script type="text/javascript" src="<?php echo $CJO['JQUERY_PATH']; ?>/jquery.fancybox.js"></script>
 <script type="text/javascript" src="<?php echo $CJO['JQUERY_PATH']; ?>/jquery.jgrowl.js"></script>
-<script type="text/javascript" src="<?php echo $CJO['HTDOCS_PATH']; ?>contejo/js/codepress/codepress.js"></script>
-<script type="text/javascript" src="<?php echo $CJO['HTDOCS_PATH']; ?>contejo/js/jpicker/jpicker-1.1.5.js"></script>
+<script type="text/javascript" src="<?php echo $CJO['BACKEND_PATH']; ?>/js/codepress/codepress.js"></script>
+<script type="text/javascript" src="<?php echo $CJO['BACKEND_PATH']; ?>/js/jpicker/jpicker-1.1.5.js"></script>
 <script type="text/javascript">
 /* <![CDATA[ */
 

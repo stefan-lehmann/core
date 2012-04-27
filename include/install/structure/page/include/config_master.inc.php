@@ -35,7 +35,6 @@ $CJO['INSTNAME'] 			= "cjo00000000000000";
 $CJO['SESSIONTIME']         = 3000;
 $CJO['RELOGINDELAY'] 		= 5; // bei fehllogin 5 sekunden kein relogin möglich
 $CJO['MAXLOGINS'] 			= 5; // maximal erlaubte versuche
-$CJO['LOCALHOST']			= 'contejo.localhost'; // Host für lokale Arbeitsumgebung
 
 $CJO['TMPL_FILE_TYPE']             		  = 'html';
 $CJO['LOGIN_ENABLED'] 		       		  = true;

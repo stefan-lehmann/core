@@ -23,7 +23,7 @@
  * @filesource
  */
 
-function cjoSetupImport($import_sql, $import_tar = null) {
+function cjoSetupImport($import_sql) {
 
 	global $CJO, $I18N;
 
@@ -36,11 +36,9 @@ function cjoSetupImport($import_sql, $import_tar = null) {
 	else {
 		if (file_exists($import_sql) &&
 		   ($import_tar === null ||
-			$import_tar !== null ||
 			file_exists($import_tar)))
 		{
 			require_once $export_addon_dir.'/classes/class.cjo_import_export.inc.php';
-		    require_once $export_addon_dir.'/classes/class.tar.inc.php';
 
 			// Set DB to UTF-8
 			$sql = new cjoSql();
@@ -50,16 +48,6 @@ function cjoSetupImport($import_sql, $import_tar = null) {
 			$replace_cjo = false;
 			if ($CJO['TABLE_PREFIX'] != "cjo_") $replace_cjo = true;
 			cjoImportExport::importSqlFile($import_sql, $replace_cjo);
-
-			if (cjoMessage::hasErrors()) {
-			    return false;
-			}
-
-			// Archiv optional importieren
-			if ($import_tar !== null &&
-				file_exists($import_tar)) {
-				cjoImportExport::importTarFile($import_tar);
-			}
 
 			if (cjoMessage::hasErrors()) {
 			    return false;
