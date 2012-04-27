@@ -1,0 +1,16 @@
+#RewriteEngine Off
+
+<FilesMatch ".*\.*$">
+	Order Deny,Allow
+	Deny from all
+</FilesMatch>
+
+<FilesMatch "\.(htm|html|css|js|gif|jpg|jpeg|png|pdf|jar|swf|f4v|mp4|flv|php|xml|mp3|gz|zip|json|ttf|otf|eot)$">
+	Order Deny,Allow
+	Allow from all
+</FilesMatch>
+
+<FilesMatch "\.inc.php$">
+	Order Deny,Allow
+	Deny from all
+</FilesMatch>

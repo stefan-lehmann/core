@@ -251,11 +251,12 @@ class cjoAssistance {
      * Makes a copy of a directory including subdirectories.
      * @param string $source path to the source file
      * @param string $dest destination path
+     * @param string $overwrite overwrite existing files
      * @param int $offset offset count for the possibilty that it somehow miscounts the files
      * @param bool $verbose
      * @return string
      */
-    public static function copyDir($srcdir, $dstdir, $offset = '', $verbose = false) {
+    public static function copyDir($srcdir, $dstdir, $overwrite=false, $offset = '', $verbose = false) {
 
     	// A function to copy files from one directory to another one, including subdirectories and
     	// nonexisting or newer files. Function returns number of files copied.
@@ -283,12 +284,12 @@ class cjoAssistance {
     	if (!is_dir($dstdir)) mkdir($dstdir,$CJO['FILEPERM']);
     	if ($curdir = opendir($srcdir)) {
     		while($file = readdir($curdir)) {
-    			if ($file != '.' && $file != '..'&& $file != '.svn') {
+    			if ($file != '.' && $file != '..' && $file != '.svn' && $file != '.gitignore') {
     				$srcfile = $srcdir . '/' . $file;    # added by marajax
     				$dstfile = $dstdir . '/' . $file;    # added by marajax
     				if (is_file($srcfile)) {
     					if (is_file($dstfile)) $ow = filemtime($srcfile) - filemtime($dstfile); else $ow = 1;
-    					if ($ow > 0) {
+    					if ($overwrite && $ow > 0) {
     						if ($verbose) echo "Copying '$srcfile' to '$dstfile'...<br />";
     						if (copy($srcfile, $dstfile)) {
     							touch($dstfile, filemtime($srcfile)); $num++;
