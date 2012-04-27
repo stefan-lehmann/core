@@ -38,7 +38,7 @@ $hidden['lang']->setValue($lang);
 $fields['headline1'] = new readOnlyField('headline1', '', array('class' => 'formheadline'));
 $fields['headline1']->setValue($I18N->msg("label_license"));
 
-$license = file_get_contents($CJO['HTDOCS_PATH'].'contejo/_license.txt');
+$license = file_get_contents($CJO['HTDOCS_PATH'].'core/_license.txt');
 $fields['license'] = new textAreaField('license', '');
 $fields['license']->addAttribute('rows', '30');
 $fields['license']->addAttribute('wrap', 'off');
