@@ -27,33 +27,41 @@ class cjoCommunityGroups {
 
     public static function countUsers($clang=false) {
 
-    	global $CJO, $I18N;
+        global $CJO, $I18N;
 
-    	if ($clang === false) $clang = cjo_request('clang','cjo-clang-id', 0);
+        if ($clang === false) $clang = cjo_request('clang','cjo-clang-id', 0);
+        
+        $temp = array();
+        $return = array();
+        
+        $dec_point = trim($I18N->msg('dec_point'));
+        $thousands_sep = trim($I18N->msg('thousands_sep'));
 
-    	$n = array();
-    	
-    	$dec_point = trim($I18N->msg('dec_point'));
-    	$thousands_sep = trim($I18N->msg('thousands_sep'));
-
-    	$sql = new cjoSql();
-    	$qry = "SELECT ug.group_id AS group_id, COUNT(*) AS user
+        $sql = new cjoSql();
+        $qry = "SELECT ug.group_id AS group_id, us.status AS status, COUNT(*) AS user
                 FROM ".TBL_COMMUNITY_UG." ug
                 LEFT JOIN ".TBL_COMMUNITY_USER." us
                 ON us.id = ug.user_id
                 WHERE us.clang = '".$clang."'
-                GROUP BY ug.group_id";
-    	$sql->setQuery($qry);
+                GROUP BY ug.group_id, us.status
+                ORDER BY us.status DESC";
+        $results = $sql->getArray($qry);
+        
+        if ($sql->getRows() <= 0) return array();
 
-    	
-    	if ($sql->getRows() <= 0) return array();
+ 
+        foreach($results as $i=>$result) {
+            if ($result['status'] == 0 || $result['status'] == 1) {
+                if (!isset($temp[$result['group_id']])) $temp[$result['group_id']] = array(0,0);
+                $temp[$result['group_id']][$result['status']]  = number_format($result['user'], 0, $dec_point, $thousands_sep) ;
+            }
+        }
+        
+        foreach($temp as $group_id=>$group) {
+            $return[$group_id] = $group[1].' | '.$group[0];
+        }
 
-    	for ($i=0; $i<$sql->getRows(); $i++) {
-    		$n[$sql->getValue('group_id')] = number_format($sql->getValue('user'), 0, $dec_point, $thousands_sep) ;
-    		$sql->next();
-    	}
-
-    	return $n;
+        return $return;
     }
 
     public static function getSelectGroups($id='', $custom_select=false) {
