@@ -47,7 +47,9 @@ if ($CJO['CONTEJO']) {
     cjoExtension::registerExtension('MESSAGE_OUTPUT', 'cjoLog::prepareMessage');  
     
 }
-//if ($CJO['ADDON']['status'][$mypage] != 1) return;
+
+require_once $CJO['ADDON_PATH'].'/'.$mypage.'/classes/class.log.inc.php';
+
+if ($CJO['ADDON']['status'][$mypage] != 1) return;
 
 require_once $CJO['ADDON_CONFIG_PATH']."/".$mypage."/settings.inc.php";
-require_once $CJO['ADDON_PATH'].'/'.$mypage.'/classes/class.log.inc.php';
