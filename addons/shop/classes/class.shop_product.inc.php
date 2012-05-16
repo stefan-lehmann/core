@@ -62,7 +62,7 @@ class cjoShopProduct {
 			$this->attribute 	= cjoShopProductAttributes::getAttributesAndValues($value['attribute'], false);
 			$this->amount 		= $value['amount'];
 			$this->offset		= cjoShopProductAttributes::getAttributeOffsets($value['attribute']);
-			$this->price 		= new cjoShopPrice($value['price'], $this->offset , $value['taxes'], $value['discount']);
+			$this->price 		= new cjoShopPrice($value['price'], array($this->offset), $value['taxes'], $value['discount']);
 		}
 		elseif ($value != null) {// read from tbl_21_orders
 			$arr = explode('|', $value);
@@ -72,7 +72,7 @@ class cjoShopProduct {
 			$this->attribute 	= $arr[3];
 			$this->amount 		= $arr[4];
 			$this->offset		= $arr[8];
-			$this->price 		= new cjoShopPrice($arr[5], $arr[8], $arr[6], $arr[7]);
+			$this->price 		= new cjoShopPrice($arr[5], array($arr[8]), $arr[6], $arr[7]);
 		}
 	}
 

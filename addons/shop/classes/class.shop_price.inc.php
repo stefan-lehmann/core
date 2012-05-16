@@ -68,8 +68,7 @@ class cjoShopPrice {
 
 		// add attribute offsets to price
 		$price = self::convToFloat($price);
-		$offset = is_numeric($attributes) ? $attributes
-		 		: cjoShopProductAttributes::getAttributeOffsets($attributes);
+		$offset = is_array($attributes) ? $attributes[0] : cjoShopProductAttributes::getAttributeOffsets($attributes);
 
 		$this->vars['basic_price'] = self::convToFloat($price, 2);
 		$price += $offset;

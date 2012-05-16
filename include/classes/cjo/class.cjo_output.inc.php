@@ -50,7 +50,7 @@ class cjoOutput {
         $securese  = false;
         $varname   = strtoupper($varname);
 
-        $article = OOArticle::getArticleById($GLOBALS['CJO_ARTICLE_ID'],$clang);
+        $article = OOArticle::getArticleById($CJO['ARTICLE_ID'],$clang);
 
         if (!OOArticle::isValid($article)) return false;
 

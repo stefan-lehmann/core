@@ -200,8 +200,6 @@ class cjoShopBasket {
 
     			// if product can run out of stock
     			if (!empty($order['enable_out_of_stock'])) {
-
-
     				// add to list
     				$list['available_amount'][$count] = cjoShopBasket::getProductAvailability($order, $products, $amount);
 
