@@ -27,8 +27,8 @@ error_reporting(E_ALL ^ E_NOTICE);
 // ----- caching start für output filter
 
 ob_start();
-unset($CJO);
 
+$CJO                = array();
 $CJO['HTDOCS_PATH'] = '../';
 $CJO['CONTEJO']     = false;
 $CJO['NOFUNCTIONS'] = true;

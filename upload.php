@@ -28,17 +28,13 @@ error_reporting(E_ALL ^ E_NOTICE);
 
 ob_start();
 
-// ----------------- MAGIC QUOTES CHECK
-require_once "./include/functions/function.cjo_mquotes.inc.php";
-
-// ----- CJO UNSET
-unset($CJO);
-
+$CJO                = array();
 $CJO['HTDOCS_PATH'] = '../';
 $CJO['CONTEJO']     = true;
 $cur_page           = array();
 $message = array();
 
+require_once "./include/functions/function.cjo_mquotes.inc.php";
 require_once 'include/master.inc.php';
 
 
