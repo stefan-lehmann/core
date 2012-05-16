@@ -22,7 +22,7 @@
  *  details.
  * @filesource
  */
-
+ 
 /**
  * Gibt die Superglobale variable $varname des Array $_GET zurück und castet dessen Wert ggf.
  *

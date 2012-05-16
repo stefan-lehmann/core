@@ -45,12 +45,13 @@ class cjoOutput {
 
         global $CJO, $I18N;
 
-        $downloads = array();
-        $clang     = $CJO['CUR_CLANG'];
-        $securese  = false;
-        $varname   = strtoupper($varname);
+        $downloads  = array();
+        $article_id = $CJO['ARTICLE_ID'];
+        $clang      = $CJO['CUR_CLANG'];
+        $securese   = false;
+        $varname    = strtoupper($varname);
 
-        $article = OOArticle::getArticleById($CJO['ARTICLE_ID'],$clang);
+        $article = OOArticle::getArticleById($article_id,$clang);
 
         if (!OOArticle::isValid($article)) return false;
 
