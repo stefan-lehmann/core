@@ -41,6 +41,6 @@ if (OOAddon::isAvailable('search')) {
         }
     }
 } else {
-    $this->addError($I18N_13->msg('msg_err_configure_settings', './contejo'));
+    $this->addError($I18N_13->msg('msg_err_configure_settings', $CJO['BACKEND_PATH']));
 }
 ?>

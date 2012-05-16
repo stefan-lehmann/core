@@ -28,10 +28,10 @@ if ($CJO['CONTEJO']) return false;
 if (OOAddon::isAvailable('community')) {
     global $I18N_10;
     if (!cjoCommunityTemplate::secureDownload()){
-        echo '<p class="error">'.$I18N_10->msg('msg_err_configure_settings', './contejo').'</p>';
+        echo '<p class="error">'.$I18N_10->msg('msg_err_configure_settings', $CJO['BACKEND_PATH']).'</p>';
     }
     
 } else {
     global $I18N_10;
-    echo '<p class="error">'.@$I18N_10->msg('msg_err_configure_settings', './contejo').'</p>';
+    echo '<p class="error">'.@$I18N_10->msg('msg_err_configure_settings', $CJO['BACKEND_PATH']).'</p>';
 }

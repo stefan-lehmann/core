@@ -114,7 +114,7 @@ function imageProcessor_getImg ($filename,
 
 		$file_ext = substr(strrchr($fullpath, "."), 1);
 		$file_ext = (OOMedia :: isDocType($file_ext)) ? $file_ext : 'default';
-		return $CJO['HTDOCS_PATH'].'contejo/img/mime_icons/'.$file_ext.'.png';
+		return $CJO['BACKEND_PATH'].'/img/mime_icons/'.$file_ext.'.png';
 	}
 
 	$res_orig_size = $CJO['ADDON']['settings'][$mypage]['res_orig']['size'];

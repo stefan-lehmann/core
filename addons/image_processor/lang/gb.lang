@@ -1,13 +1,13 @@
 ##
 image_processor = ImageProcessor
 
-##./contejo/include/addons/image_processor/config.inc.php =
+##./core/include/addons/image_processor/config.inc.php =
 msg_no_cache_folder = <b>{0}-ERROR:</b><br/>- The directory: {1} does not exist and could not be created automatically!<br/>- Please create it manually via FTP.'
 
-##./contejo/include/addons/image_processor/functions/image_function.inc.php =
+##./core/include/addons/image_processor/functions/image_function.inc.php =
 msg_wait_while_generating_images = <b>ATTENTION: THE REQUESTED PAGE IS LOADED AGAIN!</b><br/><br/>Please be patient while the images are generated in the background.<br/>The process might take several minutes!
 
-##./contejo/include/addons/image_processor/pages/crop_settings.inc.php =
+##./core/include/addons/image_processor/pages/crop_settings.inc.php =
 label_aspectratio = Fixed aspect ratio
 label_aspectratio_crop = Fixed aspect ratio
 label_crop_num_do_offline = Disable size setting 
@@ -26,18 +26,18 @@ msg_empty_name = Please enter a name!
 msg_wrong_height = Please enter a positive number or zero value for the height!
 msg_wrong_width = Please enter a positive number or zero value for the width!
 
-##./contejo/include/addons/image_processor/pages/index.inc.php =
+##./core/include/addons/image_processor/pages/index.inc.php =
 subtitle_basic_settings = Basic settings
 subtitle_crop_settings = Size settings
 
-##./contejo/include/addons/image_processor/pages/mediapool_crop.inc.php =
+##./core/include/addons/image_processor/pages/mediapool_crop.inc.php =
 button_crop_reset = Reset crop setting
 label_crop_function = Crop function
 label_edit_crop = Edit crop setting
 msg_no_croping_set = No crop setting
 msg_no_resize_img_to_small = Original image is too small
 
-##./contejo/include/addons/image_processor/pages/basic_settings.inc.php =
+##./core/include/addons/image_processor/pages/basic_settings.inc.php =
 button_empty_cache = Empty cache
 label_bottom_left = bottom left
 label_bottom_right = bottom right

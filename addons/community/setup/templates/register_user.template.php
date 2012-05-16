@@ -35,5 +35,5 @@ if (OOAddon::isAvailable('community')) {
         }
     }    
 } else {
-    $this->addError($I18N_10->msg('msg_err_configure_settings', './contejo'));
+    $this->addError($I18N_10->msg('msg_err_configure_settings', $CJO['BACKEND_PATH']));
 }

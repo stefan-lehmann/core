@@ -1058,7 +1058,7 @@ class OOMedia {
             
         $attributes = '';
         
-        if (!$icon_path) $icon_path = $CJO['HTDOCS_PATH'].'contejo/img/mime_icons';
+        if (!$icon_path) $icon_path = $CJO['BACKEND_PATH'].'/img/mime_icons';
 
         foreach (cjoAssistance::toArray($params) as $name => $value) {
             if ($name == 'width' || $name == 'height') continue;

@@ -143,7 +143,7 @@ function cjo_insert_cropping($params) {
 }
 
 ?>
-<script src="<?php echo $CJO['HTDOCS_PATH']; ?>contejo/js/Jcrop/js/jquery.Jcrop.js" type="text/javascript"></script>
+<script src="<?php echo $CJO['HTDOCS_PATH']; ?>core/js/Jcrop/js/jquery.Jcrop.js" type="text/javascript"></script>
 
 <script type="text/javascript">
 /* <![CDATA[ */

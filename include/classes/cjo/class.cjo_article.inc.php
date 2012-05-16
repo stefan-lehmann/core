@@ -349,7 +349,7 @@ class cjoArticle {
                 cjoAssistance::redirectFE($CJO['NOTFOUND_ARTICLE_ID'], $this->clang);
             }
             else {
-                cjoAssistance::redirect('./contejo');
+                cjoAssistance::redirect($CJO['BACKEND_PATH']);
             }
         }
 

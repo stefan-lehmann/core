@@ -413,7 +413,7 @@ class liveEdit {
           else {
             alert(\'Your browser cant handle this script\');
           }
-          var url = \'./contejo/ajax.php?function=liveEdit::regenerateArticlesByModultypId&modules='.$regenerateString.'\';
+          var url = \'./core/ajax.php?function=liveEdit::regenerateArticlesByModultypId&modules='.$regenerateString.'\';
           //document.write(url);
           xmlDoc.load(url);
 

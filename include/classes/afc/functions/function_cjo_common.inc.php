@@ -252,7 +252,7 @@ function cjo_insertCss($content, $files) {
         if (empty($file) || !empty($CJO['AFC']['css'][$file])) continue;
         // CSS-Datei merken, damit jedes nur einmal eingebunden wird
         $CJO['AFC']['css'][$file] = true;
-        $url = $CJO['HTDOCS_PATH'].'contejo/get_file.php?file='.rawurlencode($file);
+        $url = $CJO['BACKEND_PATH'].'/get_file.php?file='.rawurlencode($file);
         $styles .= '<link rel="stylesheet" type="text/css" href="'.$url.'" />'."\n";
     }
     if ($content === false) {
@@ -277,7 +277,7 @@ function cjo_insertJS($content, $files) {
         if (empty($file) || ($CJO['AFC']['js'][$file])) continue;
         // JS-Datei merken, damit jedes nur einmal eingebunden wird
         $CJO['AFC']['js'][$file] = true;
-        $url = $CJO['HTDOCS_PATH'].'contejo/get_file.php?file='.rawurlencode($file);
+        $url = $CJO['BACKEND_PATH'].'/get_file.php?file='.rawurlencode($file);
         $js .= '<script type="text/javascript" src="'.$url.'"></script>'."\n";
     }
     if ($content === false) {

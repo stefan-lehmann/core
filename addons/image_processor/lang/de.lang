@@ -1,13 +1,13 @@
 ##
 image_processor = ImageProcessor
 
-##./contejo/include/addons/image_processor/config.inc.php =
+##./core/include/addons/image_processor/config.inc.php =
 msg_no_cache_folder = <b>{0}-FEHLER:</b><br/>- Das Verzeichnis: {1} existiert nicht und konnte nicht automatisch erstellt werden!<br/>- Bitte erstellen Sie es von Hand via FTP.'
 
-##./contejo/include/addons/image_processor/functions/image_function.inc.php =
+##./core/include/addons/image_processor/functions/image_function.inc.php =
 msg_wait_while_generating_images = <b>ACHTUNG: DIE ANGEFORDERTE SEITE WIRD ERNEUT GELADEN!</b><br/><br/>Bitte haben Sie etwas Geduld, während die Bilder im Hintergrund generiert werden.<br/>Bei vielen und großen Bildern kann der Prozeß auch mehrere Minuten dauern!
 
-##./contejo/include/addons/image_processor/pages/crop_settings.inc.php =
+##./core/include/addons/image_processor/pages/crop_settings.inc.php =
 label_aspectratio = festes Seitenverhältnis
 label_aspectratio_crop = festes Seitenverhältnis
 label_crop_num_do_offline = Größen-Einstellung deaktivieren
@@ -26,18 +26,18 @@ msg_empty_name = Bitte einen Namen eingeben!
 msg_wrong_height = Für die Höhe bitte einen positiven Zahlenwert bzw. Null eingeben!
 msg_wrong_width = Für die Breite bitte einen positiven Zahlenwert bzw. Null eingeben!
 
-##./contejo/include/addons/image_processor/pages/index.inc.php =
+##./core/include/addons/image_processor/pages/index.inc.php =
 subtitle_basic_settings = Grund-Einstellungen
 subtitle_crop_settings = Größen-Einstellungen
 
-##./contejo/include/addons/image_processor/pages/mediapool_crop.inc.php =
+##./core/include/addons/image_processor/pages/mediapool_crop.inc.php =
 button_crop_reset = Ausschnitt zurücksetzen
 label_crop_function = Ausschnitt-Funktion
 label_edit_crop = Ausschnitt bearbeiten
 msg_no_croping_set = Kein Ausschnitt festgelegt
 msg_no_resize_img_to_small = Ausgangsbild zu klein
 
-##./contejo/include/addons/image_processor/pages/basic_settings.inc.php =
+##./core/include/addons/image_processor/pages/basic_settings.inc.php =
 button_empty_cache = Cache leeren
 label_bottom_left = unten-links
 label_bottom_right = unten-rechts

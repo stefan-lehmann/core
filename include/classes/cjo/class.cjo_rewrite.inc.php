@@ -91,7 +91,7 @@ class cjoRewrite {
     	}  	 	
     	
     	if ($article_id == null) {
-    	    $params['path'] .= $CJO['CONTEJO'] ? '' : 'contejo/';
+    	    $params['path'] .= $CJO['CONTEJO'] ? '' : 'core/';
     	    $params['path'] .= 'index.php';
     	}
     	else {
@@ -195,7 +195,7 @@ class cjoRewrite {
         
         $url  = self::setServerUri(false,false);
         $url .= self::setServerPath();
-        $url  = preg_replace('/contejo\/$/', '', $url);
+        $url  = preg_replace('/core\/$/', '', $url);
         $url .= cjoRewrite::parseArticleName($params['name']).'.'.$params['id'].'.'.$params['clang'].'.html';
         $url .= $params['params'];
         $url .= !empty($params['hash']) ? $params['hash'] : '';

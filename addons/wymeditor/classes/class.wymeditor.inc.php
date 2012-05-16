@@ -76,7 +76,7 @@ class WYMeditor {
     public $id;
     
     public static $WYMPath			= "./js/wymeditor/wymeditor/";
-    public static $jQueryPath		= "../contejo/js/jQuery/jquery-1.7.0.min.js";
+    public static $jQueryPath		= "./js/jQuery/jquery-1.7.0.min.js";
     public static $tidy				= false;
     
     public function __construct() {

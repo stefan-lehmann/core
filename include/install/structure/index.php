@@ -24,15 +24,20 @@
  */
 
 error_reporting(E_ALL ^ E_NOTICE);
-// ----- ob caching start für output filter
 
 ob_start();
 
-// ----------------- MAGIC QUOTES CHECK
-require_once "./contejo/include/functions/function.cjo_mquotes.inc.php";
+if (preg_match('#.*?/contejo$#', $_SERVER['REQUEST_URI'], $matches)) {
+    header('Location: ./core/index.php');
+    exit();
+} 
 
-// --------------------------- globals
-unset($CJO);
+if (preg_match('#.*?/contejo/*[^/]*$#', $_SERVER['REQUEST_URI'], $matches)) {
+    header('Location: ../core/index.php');
+    exit();
+} 
+
+$CJO = array();
 
 // Flag ob Inhalte mit CONTEJO aufgerufen oder
 // von der Webseite aus
@@ -47,15 +52,17 @@ $CJO['GG'] = true;
 
 // setzte pfad und includiere klassen und funktionen
 $CJO['HTDOCS_PATH'] = "./";
-include $CJO['HTDOCS_PATH']."contejo/include/master.inc.php";
+
+require_once $CJO['HTDOCS_PATH']."core/include/functions/function.cjo_mquotes.inc.php";
+require_once $CJO['HTDOCS_PATH']."core/include/master.inc.php";
 
 // Starte einen neuen Artikel und setzte die aktuelle
 // artikel id. wenn nicht vorhanden, nimm einen
 // speziellen artikel. z.b. fehler seite oder home seite
 
 if ($CJO['SETUP']) {
-	header('Location: contejo/index.php');
-	exit();
+    header('Location: core/index.php');
+    exit();
 } 
 
 if (cjo_get('process_image', 'bool')) {

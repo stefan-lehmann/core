@@ -1,10 +1,10 @@
 ﻿
 jquery = jQuery
 
-##./contejo/include/addons/jquery/pages/index.inc.php =
+##./core/include/addons/jquery/pages/index.inc.php =
 subtitle_settings = Einstellungen
 
-##./contejo/include/addons/jquery/pages/settings.inc.php =
+##./core/include/addons/jquery/pages/settings.inc.php =
 label_font_settings = jQuery-Einstellungen
 label_jquery_version = Version
 label_plugins = Plugins
