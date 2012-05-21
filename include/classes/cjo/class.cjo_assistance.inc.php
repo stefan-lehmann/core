@@ -1097,7 +1097,7 @@ class cjoAssistance {
         $dir = @escapeshellcmd($dir);
         // get a list of all matching files in the current directory
         $files = glob("$dir/$pattern");
-        cjo_Debug((glob("$dir/{.[^.]*,*}", GLOB_BRACE|GLOB_ONLYDIR),$dir);
+        cjo_Debug(glob("$dir/{.[^.]*,*}", GLOB_BRACE|GLOB_ONLYDIR),$dir);
         cjo_Debug($files);
         // find a list of all directories in the current directory
         // directories beginning with a dot are also included
