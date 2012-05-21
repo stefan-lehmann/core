@@ -99,10 +99,6 @@ if ($function == "add" || $function == "edit" ) {
                 cjoMessage::addSuccess($I18N_4->msg("values_saved"));
             }
         }
-//        cjo_debug($_POST, cjo_post('cjoform_save_button','boolean'), 'yellow'); die();
-//        if (cjo_post('cjoform_save_button','boolean')) {
-//            cjoAssistance::redirectBE(array('mode'=>'', 'function'=>'', 'oid'=>'',  'msg'=>'msg_data_saved'));
-//    	}
     }
 }
 

@@ -1,5 +1,5 @@
 @media all  {
-.floatbox {overflow:hidden;height:1%;padding:0;}
+.floatbox {overflow:hidden;padding:0;zoom:1}
 .clear_l {clear:left !important;}
 .clear_r {clear:right !important;}
 .clear_b {clear:both !important;}

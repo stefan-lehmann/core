@@ -176,7 +176,7 @@ if ($CJO['CONTEJO']) {
 // ----- FUNCTIONS
 require_once $CJO['INCLUDE_PATH']."/functions/function.cjo_globals.inc.php";
 
-//if (isset($CJO['ONLY_FUNCTIONS']) && $CJO['ONLY_FUNCTIONS']) return false;
+if (isset($CJO['ONLY_FUNCTIONS']) && $CJO['ONLY_FUNCTIONS']) return false;
 
 require_once $CJO['INCLUDE_PATH'].'/classes/var/class.cjo_vars.inc.php';
 
@@ -209,7 +209,7 @@ if (!empty($CJO['FILE_CONFIG_ADDONS'])) {
     include_once $CJO['FILE_CONFIG_ADDONS'];
 }
 //cjoUser::updateCatReadPermissions();
-require_once $CJO['INCLUDE_PATH']."/authentication.inc.php";
+require_once $CJO['INCLUDE_PATH']."/authentication.inc.php";    
 require_once $CJO['INCLUDE_PATH']."/frontend_auth.inc.php";
 require_once $CJO['INCLUDE_PATH']."/local.inc.php";
 

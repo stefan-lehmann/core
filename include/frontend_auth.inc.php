@@ -32,9 +32,6 @@ if (cjo_session('UID', 'bool', false, md5($CJO['INSTNAME'])) &&
         cjoGenerate::generateTemplates();       
 }
 
-
-//$LOGIN = cjo_request('LOGIN', 'array', array());
-
 $LOGIN['username'] = (isset($_POST['LOGIN']['username'])) ? (string) $_POST['LOGIN']['username'] : '';
 $LOGIN['password'] = (isset($_POST['LOGIN']['password'])) ? (string) $_POST['LOGIN']['password'] : '';
 

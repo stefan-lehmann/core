@@ -237,7 +237,8 @@ class liveEdit {
                 $this->writeModuleFiles();
             }
         }
-        if ($CJO['CONTEJO']){
+
+        if ($CJO['CONTEJO'] && self::md5ModulLayouts()){
             $this->regenerateArticlesByModultypId($module_files);
         }
         return $regenerate;
@@ -385,44 +386,68 @@ class liveEdit {
         			font-size: 11px; width: 200px;"><b>CONTEJO Developer Addon regenerating Articles:</b>
         		<div id="status" style="font-weight: bold"></div>
         	</div>
-        <script type="text/javascript">
-        /* <![CDATA[ */
-
-        function status(count){
-          var div = document.getElementById(\'status\');
-          if(div) div.innerHTML += \'. \';
-          count++;
-          window.setTimeout(\'status(\' + count + \');\', 50);
-        }
-        status(0);
-
-        function rel(){
-          location.reload();
-        }
-
-        if (document.implementation && document.implementation.createDocument){
-            xmlDoc = document.implementation.createDocument(\'\', \'\', null);
-            xmlDoc.onload = function() { rel(); };
-          }
-          else if (window.ActiveXObject){
-            xmlDoc = new ActiveXObject(\'Microsoft.XMLDOM\');
-            xmlDoc.onreadystatechange = function () {
-                if (xmlDoc.readyState == 4) rel()
-            };
-          }
-          else {
-            alert(\'Your browser cant handle this script\');
-          }
-          var url = \'./core/ajax.php?function=liveEdit::regenerateArticlesByModultypId&modules='.$regenerateString.'\';
-          //document.write(url);
-          xmlDoc.load(url);
-
-        /* ]]> */
-        </script>
-        </body></html>';
+            <script type="text/javascript">
+            /* <![CDATA[ */
+    
+            function status(count){
+              var div = document.getElementById(\'status\');
+              if(div) div.innerHTML += \'. \';
+              count++;
+              window.setTimeout(\'status(\' + count + \');\', 50);
+            }
+            status(0);
+    
+            function rel(){
+              location.reload();
+            }
+    
+            if (document.implementation && document.implementation.createDocument){
+                xmlDoc = document.implementation.createDocument(\'\', \'\', null);
+                xmlDoc.onload = function() { rel(); };
+              }
+              else if (window.ActiveXObject){
+                xmlDoc = new ActiveXObject(\'Microsoft.XMLDOM\');
+                xmlDoc.onreadystatechange = function () {
+                    if (xmlDoc.readyState == 4) rel()
+                };
+              }
+              else {
+                alert(\'Your browser cant handle this script\');
+              }
+              var url = \'./core/ajax.php?function=liveEdit::regenerateArticlesByModultypId&modules='.$regenerateString.'\';
+              //document.write(url);
+              xmlDoc.load(url);
+    
+            /* ]]> */
+            </script>
+            </body></html>';
 
             return $content;
         }
+    }
+    
+    private static function md5ModulLayouts() {
+        
+        global $CJO;
+        
+        $files = cjoAssistance::rglob($CJO['ADDON']['settings']['developer']['edit_path'].'/'.
+                                      $CJO['TMPL_FILE_TYPE'],
+                                      '*.'.$CJO['TMPL_FILE_TYPE']);
+        
+        if (empty($files)) return false;
+        $md5 = '';
+        
+        foreach($files as $file) {
+            $md5 .= md5(file_get_contents($file));
+        }
+        
+        $md5 = md5($md5);
+        
+        if (cjo_session('layouts_md5', 'string', '0') != $md5) {
+            cjo_set_session('layouts_md5', $md5);
+            return true;
+        }
+        return false;
     }
 
     public function deleteLiveEdit($params){
