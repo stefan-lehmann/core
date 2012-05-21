@@ -238,7 +238,7 @@ class liveEdit {
             }
         }
 
-        if ($CJO['CONTEJO'] && self::md5ModulLayouts()){
+        if ($CJO['CONTEJO'] && $CJO['USER'] && self::md5ModulLayouts()){
             $this->regenerateArticlesByModultypId($module_files);
         }
         return $regenerate;
