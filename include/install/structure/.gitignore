@@ -41,3 +41,5 @@ svn-commit*.tmp
 *.sublime-project
 *.sublime-workspace
 sftp-config.jsonc
+usage
+logs
