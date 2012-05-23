@@ -23,20 +23,23 @@
 if (OOAddon::isActivated('shop')) {
     cjo_insertJS(false, $CJO['ADDON']['settings']['shop']['JS']['BACKEND']);
     cjo_insertCSS(false, $CJO['ADDON']['settings']['shop']['CSS']['BACKEND']);
+    
+$product_name = "CJO_VALUE[8]";
+if (empty($product_name)) {
+    $article = OOArticle::getArticleById($CJO['ARTICLE_ID']);
+    if (OOArticle::isValid($article)) {
+        $product_name = $article->getName();
+    } else {
+        $product_name = 'No Name';
+    }
+} 
 ?>
 <div class="settings">
-    <h2 class="no_bg_image">[translate_21: shop_product_description]</h2>
+    <h2 class="no_slide">[translate_21: shop_product_settings]</h2>
     <div class="formular">
         <label>[translate_21: shop_product_title]</label>
-        <input type="text" class="inp50" name="VALUE[8]" value="CJO_VALUE[8]" />
+        <input type="text" class="inp50 headline_h3" name="VALUE[8]" value="<?php echo $product_name; ?>" />
     </div>
-    <div class="formular">
-        <label>[translate_21: shop_product_image]</label>
-        CJO_MEDIA_BUTTON[id=1 preview=1 width=300 height=300]
-    </div>
-</div>
-<div class="settings">
-    <h2 class="no_bg_image">[translate_21: shop_product_settings]</h2>
     <div class="formular">
         <label class="label_right">[translate_21: shop_state]</label>
         <input type="checkbox" name="VALUE[19]" value="1"
@@ -86,33 +89,35 @@ if (OOAddon::isActivated('shop')) {
         <input type="text" class="inp10" name="VALUE[5]" value="CJO_VALUE[5]" style="display: inline"/>
     </div>
     <div class="formular">
+        <label>[translate_21: shop_max_products_to_basked]</label>
+        <input type="text" class="inp10" name="VALUE[11]" value="<?php echo ('CJO_VALUE[11]' < 1) ? 10 : 'CJO_VALUE[11]';  ?> " style="display: inline"/>
+    </div>  
+    <div class="formular">
         <label>[translate_21: shop_delivery_duration]</label>
         <?php echo cjoShopDelivery::getDurationSelection("VALUE[10]","CJO_VALUE[10]") ?>
     </div>
 </div>
 <div class="settings">
-    <h2 class="no_bg_image">[translate_21: shop_product_attributes]</h2>
-
-    <div class="formular">
-        <label>[translate_21: shop_product_attribut_format]</label>
-            <select name="VALUE[7]" class="inp50">
-                <option value=""  <?php if ("CJO_VALUE[7]" < 1)  echo 'selected="selected"'; ?>>[translate_21: shop_product_attribut_format_0]</option>
-                <option value="1" <?php if ("CJO_VALUE[7]" == 1) echo 'selected="selected"'; ?>>[translate_21: shop_product_attribut_format_1]</option>
-                <option value="2" <?php if ("CJO_VALUE[7]" == 2) echo 'selected="selected"'; ?>>[translate_21: shop_product_attribut_format_2]</option>
-            </select>
-    </div>
-    
+    <h2 class="no_slide">[translate_21: shop_product_attributes]</h2>   
     <?php echo cjoShopProductAttributes::getAttributeSelections("CJO_VALUE[6]"); ?>
 </div>
 <div class="settings">
-    <h2 class="no_bg_image">[translate_21: shop_online_offline_settings]</h2>
+    <h2 class="no_slide">[translate_21: shop_product_description]</h2>
+    <div class="formular">
+        <label>[translate_21: shop_product_image]</label>
+        CJO_MEDIA_BUTTON[id=1 width=326 height=300]
+    </div>
+    <div class="formular">
+        <label>[translate_21: shop_product_description]</label>
+        CJO_WYMEDITOR[id=7 height=100]
+    </div>
     <div class="formular">
         <label>[translate_21: shop_product_offline_message]</label>
-        <textarea name="VALUE[9]" rows="2" cols="5" class="inp50">CJO_VALUE[9]</textarea>
+        CJO_WYMEDITOR[id=9 height=100]
     </div>
 </div>
 <div class="settings">
-    <h2 class="no_bg_image">[translate_21: shop_product_statistic]
+    <h2>[translate_21: shop_product_statistic]
         (<?php echo @strftime($I18N->msg('dateformat'), 'CJO_VALUE[13]').' - '.@strftime($I18N->msg('dateformat'), time()); ?>)</h2>
     <div class="formular">
         <input type="hidden" name="VALUE[13]" value="CJO_VALUE[13]" />
