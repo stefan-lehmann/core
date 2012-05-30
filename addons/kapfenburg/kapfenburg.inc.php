@@ -20,7 +20,7 @@ class Kapfenburg {
         if ($set['type'] == 'update') return false;
         
         $sql = new cjoSql();
-        $qry = "SELECT *  FROM ".TBL_21_BASKET." WHERE session_id LIKE '".$session_id."' LIMIT 2";        
+        $qry = "SELECT * FROM ".TBL_21_BASKET." WHERE session_id LIKE '".$session_id."' LIMIT 2";        
         $sql->setQuery($qry);
 
         if ($sql->getRows() > 1 || !isset($set['form_name']) || $set['slice_id'] == $slice_id) return false;
@@ -54,6 +54,8 @@ class Kapfenburg {
         
         $set['md5']  = md5($set['session_id'].$posted['slice_id'].$posted['attribute']);
    
+        cjoExtension::registerExtension('OUTPUT_FILTER', 'Kapfenburg::insertJs');
+   
         if (!$set['online']) return false;
         
         $delete = new cjoSql();
@@ -64,5 +66,4 @@ class Kapfenburg {
         cjoShopBasket::addToBasket($posted, $set);
     }
 }
-
 cjoExtension::registerExtension('SHOP_ADDED_TO_BASKET', 'Kapfenburg::addDefaultProductToBasket');
