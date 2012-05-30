@@ -17,7 +17,13 @@ class Kapfenburg {
         $slice_id   = 4972;
         $session_id = $set['session_id'];
         
-        if (!isset($set['form_name']) || $set['slice_id'] == $slice_id) return false;
+        if ($set['type'] == 'update') return false;
+        
+        $sql = new cjoSql();
+        $qry = "SELECT *  FROM ".TBL_21_BASKET." WHERE session_id LIKE '".$session_id."' LIMIT 2";        
+        $sql->setQuery($qry);
+
+        if ($sql->getRows() > 1 || !isset($set['form_name']) || $set['slice_id'] == $slice_id) return false;
         
         $posted                  = array();
         $set                     = array();
