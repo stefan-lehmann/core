@@ -48,6 +48,8 @@ class browseBar extends cjoListToolbar {
 		$steps = $this->cjolist->getSteps();
 		$found = $this->cjolist->num_rows;
 		$stepping = $this->cjolist->getStepping();	
+        
+        $this->cjolist->addGlobalParams(cjo_a22_getDefaultGlobalParams());
 
 		$last = floor($found/$stepping)*$stepping;
 		
