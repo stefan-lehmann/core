@@ -93,7 +93,7 @@ class resultColumn extends cjoListColumn {
             $this->head_attributes = '';
             $attributes = '';
 
-            if ($order_type == 'desc') {
+            if (strtolower($order_type) == 'desc') {
                 $link = $this->link(sprintf($label, '', $I18N->msg('label_sort_asc')), array (
                     'order_col' => $this->name,
                     'order_type' => 'asc',
@@ -108,6 +108,7 @@ class resultColumn extends cjoListColumn {
                 $this->setHeadAttributes('class="header headerSortUp '. $classes . '"'.$attributes);
             }
             else {
+                
                 $link = $this->link(sprintf($label, '', $I18N->msg('label_sort_desc')), array (
                     'order_col' => $this->name,
                     'order_type' => 'desc',
