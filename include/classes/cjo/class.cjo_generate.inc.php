@@ -196,7 +196,7 @@ class cjoGenerate {
     	$new_content .= '$CJO[\'ART\'][\''.$article_id.'\'][\'last_update_stamp\'][\''.$clang.'\'] = "'.time().'";'."\r\n";
     	$new_content .= '?>'."\r\n";
 
-		foreach (cjoAssistance::toArray(glob($CJO['FOLDER_GENERATED_ARTICLES']."/*.".$clang.".aspath")) as $filename) {
+		foreach (cjoAssistance::toArray(glob($CJO['FOLDER_GENERATED_ARTICLES']."/"."*.".$clang.".aspath")) as $filename) {
 	    	@ unlink($filename);
 		}
 		if (!self::putFileContents($file, $new_content)) return false;
@@ -222,7 +222,7 @@ class cjoGenerate {
 	         return false;
         }
         $CJO['CONTEJO'] = false;
-        $new_content = "?>".$article->getArticle();
+        $new_content = '?>'.$article->getArticle();
         $CJO['CONTEJO'] = $temp;
 		if (!self::putFileContents($file, $new_content)) return false;
 
@@ -285,7 +285,9 @@ class cjoGenerate {
     		}
     		$new_content .= "\r\n?>";
     		$file = $CJO['FOLDER_GENERATED_ARTICLES']."/".$re_id.".".$clang.".alist";
-    		self::putFileContents($file, $new_content);
+    		if (!self::putFileContents($file, $new_content)) {
+                cjoMessage::removeLastError();
+            }
     	}
     }
 
