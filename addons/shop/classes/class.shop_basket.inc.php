@@ -453,9 +453,9 @@ class cjoShopBasket {
 
     	// if dataset exists -> update it else create a new one
     	if ($sql->getRows() < 1) {
-
+            
+            $set['type'] = 'insert';
     	    $set['new_amount'] = $posted['amount'];
-
             $insert = new cjoSql();
     		$insert->setTable(TBL_21_BASKET);
     		$insert->setValue('session_id', $set['session_id']);
@@ -469,7 +469,7 @@ class cjoShopBasket {
     		if ($insert->getError()) return false;
     	}
     	else {
-
+            $set['type'] = 'update';
     	    $set['new_amount'] = $sql->getValue('amount') + $posted['amount'];
 
     		$update = new cjoSql();

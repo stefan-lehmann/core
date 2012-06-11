@@ -92,6 +92,7 @@ class cjoShopMail {
 		$address1_full   = $customer."\r\n".$address1->out();
 		$address2 	  	 = new cjoShopSupplyAddress($result['address2']);
 		$address2 		 = $address2->out();
+        $phone_nr        = $result['phone_nr'];
 		$product_list 	 = cjoShopProduct::productsOut($result['products'], $products_available);
 		$mail_address 	 = $result['email'];
 		$pay_method	  	 = $result['pay_method'];
@@ -102,14 +103,15 @@ class cjoShopMail {
 	    $order_value  	 = $result['total_price'];
 	    $order_date		 = strftime($I18N->msg('dateformat_sort'),$result['createdate']);
 	    $order_comment   = $result['comment'];
-		$order_value     = cjoShopPrice::convToFloat($order_value);
+		$total_sum       = cjoShopPrice::convToFloat($order_value);
 		$delivery_costs  = cjoShopPrice::convToFloat($delivery_costs);
-		$total_sum       = $delivery_costs + $order_value + $pay_object->getCosts();
+		$order_value     = $total_sum - $delivery_costs - $pay_object->getCosts();
 
 		// replace wildcards by values
 		$replacements   = array( '%customer%' 		  => $customer,
 								 '%address%'		  => $address1_full,
 								 '%supply_address%'   => $address2,
+                                 '%phone_nr%'         => $phone_nr,								 
 								 '%product_list%' 	  => $product_list,
 								 '%order_value%' 	  => cjoShopPrice::toCurrency($order_value),
 								 '%pay_method%' 	  => $I18N_21->msg('shop_'.$pay_method),

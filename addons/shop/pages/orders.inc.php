@@ -178,12 +178,11 @@ if ($function == '') {
 	//LIST output
 	$qry = "SELECT
 					*,
-				 id AS address1,
-				 total_price+delivery_cost+pay_costs AS sum
+				 id AS address1
 			FROM "
 				.TBL_21_ORDERS;
 
-	$list = new cjolist($qry, 'order_id', 'DESC', '', 60);
+	$list = new cjoList($qry, 'id', 'DESC', '', 60);
     $list->addGlobalParams(cjo_a22_getDefaultGlobalParams());
 	//$list-> debug = 1;
 
