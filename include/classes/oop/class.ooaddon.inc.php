@@ -421,12 +421,14 @@ class OOAddon {
     	$ADDONS = $CJO['SYSTEM_ADDONS'];
     	$folder = !$folder ? $CJO['ADDON_PATH'].'/' : $folder;
 
-    	foreach(glob($folder.'*') as $filename) {
+    	foreach(glob('{'.$CJO['ADDON_PATH'].'/*,'.$CJO['ADDON_CONFIG_PATH'].'/*}',GLOB_ONLYDIR|GLOB_BRACE|GLOB_MARK) as $filename) {
     	    if (!is_dir($filename)) continue;
-            $filename = str_replace($folder,'',$filename);
+            $filename = pathinfo($filename,PATHINFO_BASENAME);
     	    if (in_array($filename,$CJO['SYSTEM_ADDONS'])) continue;
-    	    $ADDONS[] = $filename;
+    	    $ADDONS[$filename] = $filename;
     	}
+        
+        $ADDONS = array_values($ADDONS);
 
     	$temp1 = @array_keys(array_flip($ADDONS));
         $temp2 = @array_keys($CJO['ADDON']['install']);
