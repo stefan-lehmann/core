@@ -48,7 +48,7 @@ input[type=button], input[type=submit] {padding:2px 4px;font-size:inherit;box-sh
 button.cjo_form_button + button.cjo_form_button {margin-left:4px!important}
 button.cjo_form_button.small + button.cjo_form_button.small {margin-left:0!important}
 
-button[disabled] {cursor:default!important;opacity:.5;filter: alpha(opacity=50);-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";}
+button[disabled] {-moz-opacity: 0.6!important;-webkit-opacity: 0.6!important;opacity: 0.6!important;}
 button.cjo_form_button img {display:block; float:left;padding: 5px 7px 5px 5px;}
 button.cjo_form_button span {float:left;font-weight:bold;text-transform:uppercase;display:inline-block;padding:5px 7px}
 button.cjo_form_button img + span, button.cjo_form_button span + img{float:none;border: 1px solid rgba(50,50,50,0.2); border-width: 0 0 0  1px;padding-left:8px}

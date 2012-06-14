@@ -61,7 +61,7 @@ input[type=submit] {width:auto !important;}
 .a22-cjoform textarea.codepress {width:720px;}
 .a22-cjoform .cjo_link_button {width:358px;}
 .a22-cjoform input.confirm {font-weight:700;color:red;}
-.a22-cjoform .disabled,.a22-cjoform input[disabled=disabled],.a22-cjoform select[disabled=disabled],.a22-cjoform textarea[disabled=disabled] {color:#999 !important;cursor:default;border-color:#ddd;}
+.a22-cjoform .disabled,.a22-cjoform input[disabled=disabled],.a22-cjoform select[disabled=disabled],.a22-cjoform textarea[disabled=disabled] {-moz-opacity: 0.6!important;-webkit-opacity: 0.6!important;opacity: 0.6!important;}
 .a22-cjoform input[type=text].invalid,.a22-cjoform span.invalid input[type=text],.a22-cjoform input[type=password].invalid,.a22-cjoform span.invalid input[type=password],
 .a22-cjoform select.invalid,.a22-cjoform span.invalid select,.a22-cjoform textarea.invalid,.a22-cjoform span.invalid textarea,.a22-cjoform .cjobutton.invalid,
 .a22-cjoform span.invalid .cjobutton,.a22-cjoform .cjo_link_button.invalid,.a22-cjoform span.invalid .cjo_link_button {border:2px solid red !important;width:336px;padding-left:24px;background:#fae9e5 url(../img/silk_icons/exclamation.png) no-repeat 2px 50% !important;}

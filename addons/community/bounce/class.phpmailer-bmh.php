@@ -391,25 +391,25 @@ class BounceMailHandler {
             $moveFlag[$x]   = false;
             if ($processed) {
                 $c_processed++;
-                if ( ($this->testmode === false) && ($this->disable_delete === false) ) {
+
+                if ($this->testmode !== false) {
+                    
+                } elseif ($processed == 'hard' && $this->moveHard && $this->mailbox_exist($this->hardMailbox)) {
+                    // move the message
+                    imap_mail_move($this->_mailbox_link, $x, $this->hardMailbox);
+                    $moveFlag[$x] = true;
+                    $c_moved++;
+                } elseif ($processed == 'soft' &&  $this->moveSoft && $this->mailbox_exist($this->softMailbox) ) {
+                    // move the message
+                    imap_mail_move($this->_mailbox_link, $x, $this->softMailbox);
+                    $moveFlag[$x] = true;
+                    $c_moved++;
+                }
+                elseif ($this->disable_delete !== true) {
                     // delete the bounce if not in test mode and not in disable_delete mode
-                    @imap_delete($this->_mailbox_link,$x);
+                    imap_delete($this->_mailbox_link,$x);
                     $deleteFlag[$x] = true;
                     $c_deleted++;
-                } elseif ( $this->moveHard ) {
-                    // check if the move directory exists, if not create it
-                    if (!$this->mailbox_exist($this->hardMailbox)) return false;
-                    // move the message
-                    @imap_mail_move($this->_mailbox_link, $x, $this->hardMailbox);
-                    $moveFlag[$x] = true;
-                    $c_moved++;
-                } elseif ( $this->moveSoft ) {
-                    // check if the move directory exists, if not create it
-                    if (!$this->mailbox_exist($this->softMailbox)) return false;
-                    // move the message
-                    @imap_mail_move($this->_mailbox_link, $x, $this->softMailbox);
-                    $moveFlag[$x] = true;
-                    $c_moved++;
                 }
             } else { // not processed
                 $c_unprocessed++;
@@ -429,7 +429,8 @@ class BounceMailHandler {
         $this->output( $c_unprocessed . ' no action taken' );
         $this->output( $c_deleted . ' messages deleted' );
         $this->output( $c_moved . ' messages moved' );
-        return $c_total-$x == 0;
+
+        return $c_total==0 || $c_total-$x < 1;
     }
 
     /**
@@ -548,9 +549,10 @@ class BounceMailHandler {
                 return true;
             } else {
                 $params = array($pos,$bounce_type,$email,$subject,$xheader,$remove,$rule_no,$rule_cat,$totalFetched);
-                return call_user_func_array($this->action_function,$params);
+                call_user_func_array($this->action_function,$params);
             }
         }
+        return $bounce_type;
     }
 
     /**

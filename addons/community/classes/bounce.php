@@ -31,7 +31,7 @@ require_once $CJO['ADDON_PATH'].'/community/bounce/phpmailer-bmh_rules.php';
 class cjoCommunityBounce extends BounceMailHandler   {
 
     static  $mypage        = 'community';
-    static  $soft_turns    = 6;
+    static  $soft_turns    = 3;
     private $bmh;
     private $succes_msg    = '';
     private $log           = array();
@@ -93,20 +93,13 @@ class cjoCommunityBounce extends BounceMailHandler   {
     public static function updateUser($msgnum, $bounce_type, $email, $subject, $xheader, $remove, $rule_no=false, $rule_cat=false, $totalFetched=0) {
 
         $sql = new cjoSql();
-		$qry = "SELECT 
-					id, 
-					status, 
-					bounce, 
-					(SELECT GROUP_CONCAT(ug.group_id) FROM ".TBL_COMMUNITY_UG." ug WHERE ug.user_id=id GROUP BY ug.user_id) AS groups
-				FROM 
-					".TBL_COMMUNITY_USER."
-				WHERE email LIKE '".$email."'";
-				
-        $sql->setQuery($qry);
+        $sql->setTable(TBL_COMMUNITY_USER);
+        $sql->setWhere(array('email'=>$email));
+        $sql->Select('id, status, bounce, (SELECT GROUP_CONCAT(ug.group_id) FROM '.TBL_COMMUNITY_UG.' ug WHERE ug.user_id=id GROUP BY ug.user_id) AS groups');
 
         if ($sql->getRows() > 0) {
                        
-            $bounce = ($remove) ? self::$soft_turns : (int) $sql->getValue('bounce') + 2;
+            $bounce = ($remove) ? self::$soft_turns : (int) $sql->getValue('bounce') + 1;
 
             $user_id = $sql->getValue('id');            
             $group_ids = $sql->getValue('groups');           
@@ -116,44 +109,35 @@ class cjoCommunityBounce extends BounceMailHandler   {
             $update->setTable(TBL_COMMUNITY_USER);
             $update->setWhere(array('id'=>$user_id));
             $update->setValue('bounce',$bounce);
-			$update->addGlobalUpdateFields('bounce');
             if ($bounce>=self::$soft_turns) {
                 $update->setValue('status',0);
             }      
-            if (!$update->Update()) {
-            	$group_ids = '-1';
-				$rule_cat = 'unmatching recipient';
-            }
- 		}
-		else {
-			$group_ids = '-1';
-			$rule_cat = 'unmatching recipient';
-		}
-	
-        foreach (cjoAssistance::toArray($group_ids,',') as $group_id) {
+            if (!$update->Update()) return false;
+ 
+            foreach (cjoAssistance::toArray($group_ids,',') as $group_id) {
 
-            $sql->flush();
-            $sql->setTable(TBL_COMMUNITY_BOUNCE);
-            $sql->setWhere(array('group_id'=>$group_id, 'rule_cat'=>$rule_cat));
-            $sql->Select('count');
-            $count = $sql->getValue('count');
-            
-            if ($sql->getRows() == 0) {
-                $insert = $sql;
-                $insert->flush();
-                $insert->setTable(TBL_COMMUNITY_BOUNCE);
-                $insert->setValue('group_id',$group_id);
-                $insert->setValue('rule_cat',$rule_cat);
-                $insert->setValue('count',1);
-                $insert->Insert();
-            }
-            else {
-                $update = $sql;
-                $update->flush();
-                $update->setTable(TBL_COMMUNITY_BOUNCE);
-                $update->setWhere(array('group_id'=>$group_id,'rule_cat'=>$rule_cat));
-                $update->setValue('count',$count+1);
-                $update->Update();
+                $sql->flush();
+                $sql->setTable(TBL_COMMUNITY_BOUNCE);
+                $sql->setWhere(array('group_id'=>$group_id, 'rule_cat'=>$rule_cat));
+                $sql->Select('count');
+                $count = $sql->getValue('count');
+                
+                if ($sql->getRows() == 0) {
+                    $insert = $sql;
+                    $insert->flush();
+                    $insert->setTable(TBL_COMMUNITY_BOUNCE);
+                    $insert->setValue('group_id',$group_id);
+                    $insert->setValue('rule_cat',$rule_cat);
+                    $insert->setValue('count',1);
+                    $insert->Insert();
+                }
+                else {
+                    $update->flush();
+                    $update->setTable(TBL_COMMUNITY_BOUNCE);
+                    $update->setWhere(array('group_id'=>$group_id,'rule_cat'=>$rule_cat));
+                    $update->setValue('count',$count+1);
+                    $update->Update();
+                }
             }
         }
         //self::isTimeOut();
@@ -219,14 +203,6 @@ class cjoCommunityBounce extends BounceMailHandler   {
         
         global $CJO;
         
-        $path = $CJO['ADDON']['settings'][self::$mypage]['BOUNCED_PATH'];
-        $date = strftime('%Y-%m-%d_%H-%M-%S', time());
-        
-        if (!file_exists($path)){
-            @mkdir($path);
-            @chmod($path, $CJO['FILEPERM']);
-        }
-        
         $sql = new cjoSql();
         
         $qry = "SELECT 
@@ -237,6 +213,7 @@ class cjoCommunityBounce extends BounceMailHandler   {
         		FROM ".TBL_COMMUNITY_BOUNCE." 
         		ORDER BY group_id, rule_cat";
         
+        
         $results = $sql->getArray($qry);
         
         $content = 'group_id;group_name;bounce_type;count';
@@ -245,7 +222,11 @@ class cjoCommunityBounce extends BounceMailHandler   {
             $content .= "\r\n".implode(';',$result);
         }
         
-        return cjoGenerate::putFileContents($path.'/bounce_report_'.$date.'.csv', $content);
+        $date = strftime('%Y-%m-%d_%H-%M-%S', time());
+        $filename = $CJO['ADDON_CONFIG_PATH'].'/'.self::$mypage.'/bounce_report_'.$date.'.csv';
+        
+        return cjoGenerate::putFileContents($filename, $content);
+        
     }
 
     private static function printRestartScript($finished=false) {

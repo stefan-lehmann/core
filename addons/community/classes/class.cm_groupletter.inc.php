@@ -175,16 +175,45 @@ class cjoGroupLetter {
     	}
         return $state;
     }
+    
+    private function newLogfile(){
+        
+        global $CJO;
+        
+        $path = $CJO['ADDON']['settings'][self::$mypage]['LOGS_PATH'];
+        $date = strftime('%Y-%m-%d_%H-%M-%S', time());           
+        
+        if (!file_exists($path)){
+            @mkdir($path);
+            @chmod($path, $CJO['FILEPERM']);
+        }
+        
+        if (file_exists($path.'/current.log')) {
+            rename($path.'/current.log', $path.'/'.$date.'.log');
+        }
+        $content = 'Groupletter Error Log: '.strftime('%d.%m.%Y %H:%M:%S', time())."\r\n";
+        cjoGenerate::putFileContents($path.'/current.log',$content);
+    }
+    
+    private function logError($recipient,$error) {
+        global $CJO;
+        $path = $CJO['ADDON']['settings'][self::$mypage]['LOGS_PATH'];
+        $line = strftime('%d.%m.%Y %H:%M:%S', time()).
+                "\t|\t".
+                implode("\t",$recipient).
+                "\t|\t".
+                strip_tags($error);
+        $line = str_replace(array("\r\n","\r","\n")," ", $line);
+        file_put_contents($path.'/current.log',"\r\n".$line, FILE_APPEND | LOCK_EX);
+    }
 
-    public function resetPreferences() {
+    public function resetPreferences($status=0) {
 
         $update = new cjoSql();
     	$update->setTable(TBL_COMMUNITY_ARCHIV);
     	$update->setWhere("status='1'");
-    	$update->setValue("status",'0');
+    	$update->setValue("status",$status);
     	$update->Update();
-    	$update->flush();
-    	$update->setQuery("TRUNCATE TABLE ".TBL_COMMUNITY_PREPARED);
 
     	$this->setPreferences(array());
     }
@@ -201,7 +230,9 @@ class cjoGroupLetter {
         @set_time_limit(180);
         @ini_set("memory_limit", "256M");
 
-        $this->resetPreferences();
+        $this->newLogfile();
+        $this->resetprepearedRecipients();
+        $this->resetPreferences(-1);
 
         $this->clang        = isset($new_prefs['clang']) ? $new_prefs['clang'] : cjo_request('clang','cjo-clang-id', 0);
         $this->subject      = $new_prefs['GL_SUBJECT'];
@@ -241,12 +272,41 @@ class cjoGroupLetter {
     		$this->prepareGroups($group['id']);
     	} 	
     }
+    
+    public function resetprepearedRecipients(){
+        
+        global $CJO, $I18N_10; 
+
+        $path = $CJO['ADDON']['settings'][self::$mypage]['PREPARED_PATH'];
+        $date = strftime('%Y-%m-%d_%H-%M-%S', time());
+        $content = cjoImportExport::generateSqlExport(array(TBL_COMMUNITY_PREPARED));
+        
+        if (!file_exists($path)){
+            @mkdir($path);
+            @chmod($path, $CJO['FILEPERM']);
+        }
+        
+        if (!cjoGenerate::putFileContents($path.'/'.$date.'sql',$content)) {
+            cjoMessage::addError($I18N_10->msg("msg_err_get_prepared_recipients"));
+            return false;
+        }
+
+        $sql = new cjoSql();
+        $sql->setDirectQuery("TRUNCATE TABLE ".TBL_COMMUNITY_PREPARED);
+        
+        if ($sql->getError() != '') {
+            cjoMessage::addError($I18N_10->msg("msg_err_get_prepared_recipients").'<br/>'.$sql->getError());
+            return false;
+        }
+        return true;
+    }
 
     private function prepareRecipients($group_id) {
 
         global $CJO;
-
+        
         $sql = new cjoSql();
+                
         $qry = "SELECT a.user_id as user_id
                 FROM ".TBL_COMMUNITY_UG."  a
                 LEFT JOIN ".TBL_COMMUNITY_USER." b
@@ -255,7 +315,8 @@ class cjoGroupLetter {
                 AND b.activation = 1
                 AND b.newsletter = 1
                 AND b.status = 1
-                AND b.clang = ".$this->clang;
+                AND b.clang = ".$this->clang."
+                ORDER BY b.id";
 
         $recipients = $sql->getArray($qry);
 
@@ -272,7 +333,7 @@ class cjoGroupLetter {
             $insert->Insert();
             if ($insert->getError() == '') $this->prepared++;
         }
-        return;
+        return true;
     }
 
     public function sendPrepared(){
@@ -316,44 +377,15 @@ class cjoGroupLetter {
 
         	cjoMessage::addSuccess($I18N_10->msg("msg_all_gl_send",
         	                                     $this->send,
-        	                                     $this->prepared));
+        	                                     $this->prepared,
+        	                                     $this->errors));
         	if ($this->errors > 0) {
-        		$sql->flush();
-        		$qry = "SELECT
-	            			us.id AS user_id,            			
-	            			us.email AS email,
-	            			pr.error AS error
-	            		FROM
-	            			".TBL_COMMUNITY_PREPARED." pr
-	            		LEFT JOIN
-	            			".TBL_COMMUNITY_USER." us
-	            		ON
-	            			pr.user_id=us.id
-	            		WHERE
-	            			pr.clang='".$this->clang."' AND
-	            			pr.status = '-1'";
-
-        		$missed = $sql->getArray($qry);
-
-        		$temp = array();
-
-        		foreach($missed as $miss) {
-        			$temp[] = cjoAssistance::createBELink(
-        							             $miss['email'],
-        										 array('function' => 'edit', 'oid' => $miss['user_id'], 'clang'=> $this->clang),
-        										 array('page' => self::$mypage, 'subpage' => 'user'),
-							        			 'target="_blank"'). ' ('.$miss['error'].')';
-        		}
-        		cjoMessage::addError($I18N_10->msg("msg_missed_send", $this->errors, implode(' | ',$temp)));
-        		return false;
-        	}
-
-        	// alle Adressen reseten
-            $this->resetPreferences();
-            cjoMessage::addSuccess($I18N_10->msg("msg_no_errors"));
-	        return true;
+        		$this->resetPreferences(0);
+        	} else {
+                $this->resetPreferences(2);
+            }
+	        return false;
         }
-        
         
         $this->embedImages();
 
@@ -376,11 +408,12 @@ class cjoGroupLetter {
                 $update->setValue("status", '-1');
                 $update->setValue("error", $this->mail_error);
                 $this->errors++;
+                $this->logError($recipient,$this->mail_error);
             }
             $update->Update();
   
 
-            $temp   = array();
+            $temp = array();
 
             if (!empty($this->user))
                 $temp[] = $this->user;
@@ -389,7 +422,6 @@ class cjoGroupLetter {
                 $temp[] = $CJO['USER']->getValue('name');
 
             $this->user = implode(', ',$temp);
-            $this->status = (($this->send+$this->errors) == $this->prepared) ? '2' : '1';
 
             $update->flush();
             $update->setTable(TBL_COMMUNITY_ARCHIV);
@@ -399,7 +431,6 @@ class cjoGroupLetter {
             	$update->setValue("firstsenddate", time());
             $update->setValue("lastsenddate", time());
             $update->setValue("user", $this->user);
-            $update->setValue("status", $this->status);
             $update->setWhere('status=1');
             $update->Update();
         }
@@ -407,13 +438,14 @@ class cjoGroupLetter {
         $this->mail->SmtpClose();
 
 		if (($this->send+$this->errors) == $this->prepared){
-			$this->sendPrepared();
+			if (!$this->sendPrepared()) return false;
 		}
-		else {
-			$CJO['ADDON']['settings'][self::$mypage]['reload'] = true;
-        	cjoMessage::addSuccess($I18N_10->msg("msg_gl_send", $this->send, $this->prepared, $this->errors));
-		    cjoMessage::addSuccess($I18N_10->msg("msg_pease_wait"));
-		}
+		// else {
+			// $CJO['ADDON']['settings'][self::$mypage]['reload'] = true;
+        	// cjoMessage::addSuccess($I18N_10->msg("msg_gl_send", $this->send, $this->prepared, $this->errors));
+		    // cjoMessage::addSuccess($I18N_10->msg("msg_pease_wait"));
+		// }
+		return true;
     }
 
     /**
@@ -610,18 +642,18 @@ class cjoGroupLetter {
         $article->setArticleId($article_id);
         $article->setClang($clang);
         $article->setTemplateId($template_id);
-        $CONTENT = $article->getArticleTemplate(); 
-        $CONTENT = cjoOutput::replaceLinks($CONTENT);
-        $CONTENT = cjoOpfLang::translate($CONTENT);
-        $CONTENT = cjoOutput::prettifyOutput($CONTENT);        
+        $content = $article->getArticleTemplate(); 
+        $content = cjoOutput::replaceLinks($content);
+        $content = cjoOpfLang::translate($content);
+        $content = cjoOutput::prettifyOutput($content);        
         $CJO['CONTEJO'] = true;
 
         $base  = cjoRewrite::setServerUri(true, false);
         $base .= cjoRewrite::setServerPath();
   
-        $CONTENT = str_replace(array('"../','"./'), '"'.$base, $CONTENT);
-        $CONTENT = cjoExtension::registerExtensionPoint('OUTPUT_FILTER', array('subject' => $CONTENT, 'environment' => 'frontend'));
-        return $CONTENT;
+        $content = str_replace(array('"../','"./'), '"'.$base, $content);
+        $content = cjoExtension::registerExtensionPoint('OUTPUT_FILTER', array('subject' => $content, 'environment' => 'frontend'));
+        return $content;
     }
     
     private function validateMailAccount() {
@@ -644,5 +676,39 @@ class cjoGroupLetter {
 
     private function hasContent() {
         return trim($this->html.$this->text) != '';
+    }
+    
+    public static function currentNumbers(){
+            
+        global $I18N;
+               
+        $dec_point = trim($I18N->msg('dec_point'));
+        $thousands_sep = trim($I18N->msg('thousands_sep'));
+        
+        $sql = new cjoSql();
+        $qry = "SELECT status, count(*) AS number FROM ".TBL_COMMUNITY_PREPARED." GROUP BY status";
+        $temp = $sql->getArray($qry); 
+        
+        $results = array('open' => 0, 'send'=> 0, 'errors'=> 0);
+        
+        if ($sql->getRows() > 0) {
+            foreach($temp as $key=>$val) {
+                $number = number_format($val['number'], 0, $dec_point, $thousands_sep);
+                switch($val['status']) {
+                    case -1: $results['errors'] = $number; break;
+                    case 0: $results['send'] = $number; break;
+                    case 1: $results['open'] = $number; break;
+                }
+            }
+        }
+        
+        return json_encode($results);
+    }
+    
+    public static function ajaxSend() {
+        $groupletter = new cjoGroupLetter();
+        $status = $groupletter->sendPrepared();
+        cjoMessage::flushAllMessages();
+        return $status;
     }
 }
