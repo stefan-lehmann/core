@@ -286,7 +286,7 @@ class cjoGroupLetter {
             @chmod($path, $CJO['FILEPERM']);
         }
         
-        if (!cjoGenerate::putFileContents($path.'/'.$date.'sql',$content)) {
+        if (!cjoGenerate::putFileContents($path.'/'.$date.'.sql',$content)) {
             cjoMessage::addError($I18N_10->msg("msg_err_get_prepared_recipients"));
             return false;
         }

@@ -129,7 +129,7 @@ $fields['button']->addButton('cjoform_send_button',$I18N_10->msg("button_send"),
 $fields['button']->addButton('cjoform_stop_button',$I18N_10->msg("button_stop"), true, 'img/silk_icons/time.png');
 $fields['button']->addButton('cjoform_reset_button',$I18N_10->msg("button_reset_prepared"), true, 'img/silk_icons/cancel.png');
 $fields['button']->setButtonAttributes('cjoform_send_button', 'class="green"');
-$fields['button']->setButtonAttributes('cjoform_reset_button', 'class="red"');
+$fields['button']->setButtonAttributes('cjoform_reset_button', 'class="red cjo_confirm"');
 
 //Add Fields
 $section = new cjoFormSection($CJO['ADDON']['settings'][$mypage], $I18N_10->msg('label_send_groupletter'), array ());
