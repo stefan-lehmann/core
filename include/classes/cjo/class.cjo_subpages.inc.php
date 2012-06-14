@@ -289,27 +289,37 @@ class cjoSubPages {
     		$subpage = cjo_request('subpage', 'string', '');
     	}
 
-        if ($addon_index) {
-            if ($this->debug) echo '1.) '.$CJO['ADDON_PATH'].'/'.$subpage.'/pages/index.inc.php<br/>';
-            if (file_exists($CJO['ADDON_PATH'].'/'.$subpage.'/pages/index.inc.php'))
-              return $CJO['ADDON_PATH'].'/'.$subpage.'/pages/index.inc.php';
+    	if ($addon_index) {
+    	    
+    		if ($this->debug) echo '1.) '.$CJO['ADDON_PATH'].'/'.$subpage.'/pages/index.inc.php<br/>';
+    		
+    		if (file_exists($CJO['ADDON_PATH'].'/'.$subpage.'/pages/index.inc.php'))
+    		    return $CJO['ADDON_PATH'].'/'.$subpage.'/pages/index.inc.php';
+    		  
             if (file_exists($CJO['ADDON_CONFIG_PATH'].'/'.$subpage.'/pages/index.inc.php'))
-              return $CJO['ADDON_CONFIG_PATH'].'/'.$subpage.'/pages/index.inc.php';            
-            return $CJO['INCLUDE_PATH'].'/pages/edit/structure.inc.php';      
-        }
-        elseif (!empty($CJO['ADDON']['status'][$this->mypage]) && $subpage != '') {
-            if ($this->debug) echo '2.) '.$CJO['ADDON_PATH'].'/'.$this->mypage.'/pages/'.$subpage.'.inc.php<br/>';
+                return $CJO['ADDON_CONFIG_PATH'].'/'.$subpage.'/pages/index.inc.php';                   
+            
+            return $CJO['INCLUDE_PATH'].'/pages/edit/structure.inc.php'; 
+              		  
+    	}
+    	elseif (!empty($CJO['ADDON']['status'][$this->mypage]) && $subpage != '') {
+    	    
+    		if ($this->debug) echo '2.) '.$CJO['ADDON_PATH'].'/'.$this->mypage.'/pages/'.$subpage.'.inc.php<br/>';
+    		
             if (file_exists($CJO['ADDON_PATH'].'/'.$this->mypage.'/pages/'.$subpage.'.inc.php'))
-              return $CJO['ADDON_PATH'].'/'.$this->mypage.'/pages/'.$subpage.'.inc.php'; 
+                return $CJO['ADDON_PATH'].'/'.$this->mypage.'/pages/'.$subpage.'.inc.php';      		
+
             if (file_exists($CJO['ADDON_CONFIG_PATH'].'/'.$this->mypage.'/pages/'.$subpage.'.inc.php'))
-              return $CJO['ADDON_CONFIG_PATH'].'/'.$this->mypage.'/pages/'.$subpage.'.inc.php';  
+                return $CJO['ADDON_CONFIG_PATH'].'/'.$this->mypage.'/pages/'.$subpage.'.inc.php';  
+                
             return $CJO['INCLUDE_PATH'].'/pages/edit/structure.inc.php';      
-        }
-        else if ($subpage != '' || $subpage === 0) {
-            if ($this->debug) echo '3.) '.$CJO['INCLUDE_PATH'].'/pages/'.$this->mypage.'/'.$subpage.'.inc.php<br/>';
-            return $CJO['INCLUDE_PATH'].'/pages/'.$this->mypage.'/'.$subpage.'.inc.php';
-        }
-        else if ($this->mypage != 'login') {
+              
+    	}
+    	else if ($subpage != '' || $subpage === 0) {
+    		if ($this->debug) echo '3.) '.$CJO['INCLUDE_PATH'].'/pages/'.$this->mypage.'/'.$subpage.'.inc.php<br/>';
+    		return $CJO['INCLUDE_PATH'].'/pages/'.$this->mypage.'/'.$subpage.'.inc.php';
+    	}
+    	else if ($this->mypage != 'login') {
 
             $article_id = cjo_request('article_id', 'cjo-article-id');
             //[translate: msg_no_permissions_redirected]
