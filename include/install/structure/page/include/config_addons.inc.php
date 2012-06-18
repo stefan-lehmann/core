@@ -72,8 +72,9 @@ $CJO['ADDON']['menu']['wymeditor'] = "0";
 
 foreach($CJO['ADDON']['status'] as $addonname=>$status){
 
-	$addon_path = $CJO['ADDON_PATH'].'/'.$addonname.'/config.inc.php';
-	if (!file_exists($addon_path)) continue;
+    $addon_path = $CJO['ADDON_PATH'].'/'.$addonname.'/config.inc.php';
+    if (!file_exists($addon_path)) $addon_path = $CJO['ADDON_CONFIG_PATH'].'/'.$addonname.'/config.inc.php';       
+    if (!file_exists($addon_path)) continue;
 	require_once $addon_path;
     if (!$status || !isset($CJO['ADDON']['perm'][$addonname])) continue;
 

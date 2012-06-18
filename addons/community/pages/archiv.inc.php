@@ -90,7 +90,8 @@ $cols['user']->setBodyAttributes('height="40" width="110"');
 $cols['status'] = new staticColumn('status', $I18N_10->msg('label_status'));
 $cols['status']->addCondition('status', '2', '<img src="img/silk_icons/tick.png" title="'.$I18N_10->msg("status_success").'" alt="'.$I18N_10->msg("status_success").'" />');
 $cols['status']->addCondition('status', '1', '<img src="img/silk_icons/email_open.png" title="'.$I18N_10->msg("status_ready").'" alt="'.$I18N_10->msg("status_ready").'" />');
-$cols['status']->addCondition('status', '0', '<img src="img/silk_icons/exclamation.png"  title="'.$I18N_10->msg("status_canceled").'" alt="'.$I18N_10->msg("status_canceled").'" />');
+$cols['status']->addCondition('status', '0', '<img src="img/silk_icons/error.png"  title="'.$I18N_10->msg("status_incomplete").'" alt="'.$I18N_10->msg("status_incomplete").'" />');
+$cols['status']->addCondition('status', '-1', '<img src="img/silk_icons/exclamation.png"  title="'.$I18N_10->msg("status_canceled").'" alt="'.$I18N_10->msg("status_canceled").'" />');
 $cols['status']->setBodyAttributes('width="16"');
 
 if ($CJO['USER']->isAdmin()){

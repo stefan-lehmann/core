@@ -2,7 +2,7 @@
 community = Community
 
 ##./addons/community/classes/class.cm_imexport.inc.php
-accept_data_imported = Es wurden {0} Datensätze importiert ({1} hinzugefügt / {2} aktualisiert)
+accept_data_imported = Es wurden {0} Datensätze verarbeitet.<br/> ({1} hinzugefügt / {2} aktualisiert / {3} ignoriert)
 accept_data_export = Export läuft, es wurden bislang {0} Datensätze verarbeitet. Bitte haben Sie noch etwas Geduld.
 accept_data_finished = <b>Export abgeschlossen.</b><br/>Es wurden {0} Datensätze verarbeitet.
 err_empty_csv_document = Die CSV-Datei enthält keine Daten!
@@ -14,11 +14,11 @@ total_data_imported = <b>{0} Datensätze wurden bearbeitet!</b>
 ##./addons/community/classes/class.cm_groupletter.inc.php
 err_no_groupselected = Bitte mindestens eine Gruppe auswählen!
 err_no_recipients_selected = Die Gruppen-Auswahl beinhaltet keinen empfangsbereiten Abonnenten!
-msg_all_gl_send = <b>Aktion abgeschlossen</b>, {0} von {1} vorbereiteten Newslettern wurden erfolgreich versendet!
+msg_all_gl_send = <b>Aktion abgeschlossen</b>, {0} von {1} vorbereiteten Newslettern wurden erfolgreich versendet! {2} Fehler wurden protokolliert.
 msg_err_get_prepared_recipients = Die Abonnenten können nicht gelesen werden!
 msg_err_no_content = Der Newsletter hat keinen Inhalt!<br/>Bitte Zurücksetzen und den Versand erneut vorbereiten!
 msg_gl_send = Der Versand läuft! ({0} von {1} versendet, protokollierte Fehler: {2})
-msg_missed_send = Es wurden {0} Fehler protokolliert: {1}
+msg_missed_send = Es wurden {0} Fehler protokolliert und im Error-Log gespeichert.
 msg_no_errors = Es wurden keine Fehler protokolliert!
 msg_pease_wait = Bitte haben Sie noch etwas Geduld bis der Versand vollständig abgeschlossen ist.
 msg_recipients_prepared = Der Versand mit {0} Empfängern wurde vorbereitet.
@@ -75,6 +75,7 @@ label_status = Status
 label_subject = Betreff
 msg_archiv_deleted = Das gesamte Archiv wurde gelöscht!
 msg_archiv_item_deleted = Der Archiv-Eintrag wurde gelöscht!
+status_incomplete = Versand unvollständig
 status_canceled = Versand abgebrochen
 status_ready = Bereit für den Versand
 status_success = Versand an alle Empfänger erfolgt
@@ -122,8 +123,9 @@ text_explain_cycle5 = <b> 5.</b>  Der versandfertige Newsletter kann jetzt versc
 text_explain_cycle6 = <br/><b> Platzhalter:</b><br/> %email% <br/>  %firstname% <br/>  %name% <br/>  %link% <br/>  %m=Sehr geehrter Herr|w=Sehr geehrte Frau% (Beispiel) Zur Steuerung geschlechtsspezifischer Elemente
 
 ##./addons/community/pages/groupletter_send.inc.php
-button_reset_prepared = zurücksetzen
+button_reset_prepared = Zurücksetzen
 button_send = Versand starten
+button_stop = unterbrechen
 label_article = Artikel
 label_preview = Inhalt ansehen
 label_send_groupletter = vorbereiteten Versand abschließen
@@ -153,9 +155,10 @@ label_divider = Trennzeichen
 label_file_settings = Datei-Einstellungen
 label_language = Sprache
 label_limit_number = Anzahl Datensätze
+label_ignore_updates = Vorhandene Datensätze ignorieren
 label_limit_start = Import ab Zeile
 label_limit_user_export = User-Export limitieren
-label_all_users = --
+label_all_users = keine Einschränkung
 label_online_users = angemeldet
 label_offline_users = abgemeldet
 label_bounced_users = gebounced und abgemeldet

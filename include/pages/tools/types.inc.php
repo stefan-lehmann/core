@@ -163,7 +163,6 @@ if ($function == "add" || $function == "edit" ) {
     $form->show();
 
     if ($form->validate()) {
-        
 		$oid = ($function == "add") ? $form->last_insert_id : $oid;
 
 		$update = new cjoSql();
@@ -195,7 +194,7 @@ if ($function == "add" || $function == "edit" ) {
 if (!$function) {
 
     //LIST Ausgabe
-    $list = new cjolist("SELECT * FROM ".TBL_ARTICLES_TYPE." WHERE type_id != '1'",
+    $list = new cjoList("SELECT * FROM ".TBL_ARTICLES_TYPE,
     	                "prior",
     					'ASC',
     	                '',

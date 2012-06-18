@@ -229,7 +229,7 @@ class cjoImportExport {
     	$header .= "## Prefix ". $CJO['TABLE_PREFIX'] ."\r\n\r\n";
     
         $exec_place_holder = '[___'.md5($header).'___]';
-        
+
         $header .= "## User           ". $CJO['USER']->getValue("name") ."[".$CJO['USER']->getValue("login")."]\r\n";    	
         $header .= "## Origin-DB      ". cjo_server('REMOTE_ADDR','string') ."\r\n";    	
         $header .= "## Server         ". cjo_server('SERVER_NAME','string') ."\r\n";    
@@ -242,7 +242,7 @@ class cjoImportExport {
         if (!is_array($export_tables)) {
             $export_tables = $tables_in_db;
         }
-            
+
         foreach($export_tables as $key=>$export_table) {
             if (!in_array($export_table,$tables_in_db)) {
                 unset($export_tables[$key]);

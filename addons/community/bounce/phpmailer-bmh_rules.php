@@ -34,24 +34,24 @@
 
 global $rule_categories;
 $rule_categories = array(
- 'antispam'       => array('remove'=>0,'bounce_type'=>'blocked'  )
-,'autoreply'      => array('remove'=>0,'bounce_type'=>'autoreply')
+ 'antispam'       => array('remove'=>0,'bounce_type'=>'soft'     )
+,'autoreply'      => array('remove'=>0,'bounce_type'=>'soft'     )
 ,'concurrent'     => array('remove'=>0,'bounce_type'=>'soft'     )
 ,'content_reject' => array('remove'=>0,'bounce_type'=>'soft'     )
 ,'command_reject' => array('remove'=>1,'bounce_type'=>'hard'     )
-,'internal_error' => array('remove'=>0,'bounce_type'=>'temporary')
+,'internal_error' => array('remove'=>0,'bounce_type'=>'soft'     )
 ,'defer'          => array('remove'=>0,'bounce_type'=>'soft'     )
-,'delayed'        => array('remove'=>0,'bounce_type'=>'temporary')
+,'delayed'        => array('remove'=>0,'bounce_type'=>'soft'     )
 ,'dns_loop'       => array('remove'=>1,'bounce_type'=>'hard'     )
 ,'dns_unknown'    => array('remove'=>1,'bounce_type'=>'hard'     )
 ,'full'           => array('remove'=>0,'bounce_type'=>'soft'     )
 ,'inactive'       => array('remove'=>1,'bounce_type'=>'hard'     )
 ,'latin_only'     => array('remove'=>0,'bounce_type'=>'soft'     )
-,'other'          => array('remove'=>1,'bounce_type'=>'generic'  )
+,'other'          => array('remove'=>1,'bounce_type'=>'soft'     )
 ,'oversize'       => array('remove'=>0,'bounce_type'=>'soft'     )
 ,'outofoffice'    => array('remove'=>0,'bounce_type'=>'soft'     )
 ,'unknown'        => array('remove'=>1,'bounce_type'=>'hard'     )
-,'unrecognized'   => array('remove'=>0,'bounce_type'=>false,     )
+,'unrecognized'   => array('remove'=>0,'bounce_type'=>'soft',    )
 ,'user_reject'    => array('remove'=>1,'bounce_type'=>'hard'     )
 ,'warning'        => array('remove'=>0,'bounce_type'=>'soft'     )
 );
@@ -103,6 +103,10 @@ function bmhSubjectRules($subject,$debug_mode=false) {
          $result['rule_cat']    = 'autoreply';
          $result['rule_no']     = '0167';
      }
+     elseif (preg_match ("/Spam/i",$subject,$match)) {
+        $result['rule_cat']    = 'antispam';
+        $result['rule_no']     = '0101';
+    }     
      
      global $rule_categories, $bmh_newline;
      if ($result['rule_no'] == '0000') {
@@ -110,6 +114,8 @@ function bmhSubjectRules($subject,$debug_mode=false) {
              echo 'Body:' . $bmh_newline . $subject . $bmh_newline;
              echo $bmh_newline;
          }
+         $result['bounce_type'] = $rule_categories[$result['rule_cat']]['bounce_type'];
+         $result['remove']      = $rule_categories[$result['rule_cat']]['remove'];
      } else {
          if ($result['bounce_type'] === false) {
              $result['bounce_type'] = $rule_categories[$result['rule_cat']]['bounce_type'];
@@ -458,6 +464,8 @@ function bmhBodyRules($body,$structure,$debug_mode=false) {
              echo 'Body:' . $bmh_newline . $body . $bmh_newline;
              echo $bmh_newline;
          }
+         $result['bounce_type'] = $rule_categories[$result['rule_cat']]['bounce_type'];
+         $result['remove']      = $rule_categories[$result['rule_cat']]['remove'];
      } else {
          if ($result['bounce_type'] === false) {
              $result['bounce_type'] = $rule_categories[$result['rule_cat']]['bounce_type'];
@@ -1537,6 +1545,8 @@ function bmhDSNRules($dsn_msg,$dsn_report,$debug_mode=false) {
             echo "DSN Message:<br />\n" . $dsn_msg . $bmh_newline;
             echo $bmh_newline;
         }
+         $result['bounce_type'] = $rule_categories[$result['rule_cat']]['bounce_type'];
+         $result['remove']      = $rule_categories[$result['rule_cat']]['remove'];        
     } else {
         if ($result['bounce_type'] === false) {
             $result['bounce_type'] = $rule_categories[$result['rule_cat']]['bounce_type'];

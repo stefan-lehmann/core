@@ -23,13 +23,13 @@
  * @filesource
  */
 
+require_once $CJO['ADDON_PATH'].'/import_export/classes/class.cjo_import_export.inc.php';   
+ 
 $groupletter = new cjoGroupLetter();
-if (cjo_request('cjoform_send_button', 'bool')) {
-	$groupletter->sendPrepared();
-}
+
 
 if (cjo_post('cjoform_reset_button', 'bool')) {
-	$groupletter->resetPreferences();
+	$groupletter->resetPreferences(-1);
 }
 
 if ($groupletter->isPrepared()) {    

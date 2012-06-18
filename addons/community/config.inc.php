@@ -31,9 +31,9 @@ $CJO['ADDON']['addon_id'][$mypage] 	    = '10';
 $CJO['ADDON']['page'][$mypage] 		    = $mypage;
 $CJO['ADDON']['name'][$mypage] 		    = $I18N_10->msg($mypage);
 $CJO['ADDON']['perm'][$mypage] 		    = 'community[]';
-$CJO['ADDON']['author'][$mypage] 	    = 'Stefan Lehmann 2010';
-$CJO['ADDON']['version'][$mypage] 	    = '0.4';
-$CJO['ADDON']['compat'][$mypage] 	    = '2.2';
+$CJO['ADDON']['author'][$mypage] 	    = 'Stefan Lehmann 2012';
+$CJO['ADDON']['version'][$mypage] 	    = '1.1';
+$CJO['ADDON']['compat'][$mypage] 	    = '2.6.2';
 $CJO['ADDON']['support'][$mypage] 	    = 'http://contejo.com/addons/community';
 
 if (!defined('TBL_COMMUNITY_USER')) {
@@ -57,9 +57,12 @@ if (!defined('TBL_COMMUNITY_BOUNCE')) {
 
 if ($CJO['ADDON']['status'][$mypage] != 1) return;
 
-$CJO['ADDON']['settings'][$mypage]['SETTINGS']   = $CJO['ADDON_CONFIG_PATH'].'/'.$mypage.'/settings.inc.php';
-$CJO['ADDON']['settings'][$mypage]['CLANG_CONF'] = $CJO['ADDON_CONFIG_PATH'].'/'.$mypage.'/'.$clang.'.clang.inc.php';
-$CJO['ADDON']['settings'][$mypage]['BLANK_IMG']  = $CJO['ADDON_CONFIG_PATH'].'/'.$mypage.'/blank.gif';
+$CJO['ADDON']['settings'][$mypage]['SETTINGS']      = $CJO['ADDON_CONFIG_PATH'].'/'.$mypage.'/settings.inc.php';
+$CJO['ADDON']['settings'][$mypage]['CLANG_CONF']    = $CJO['ADDON_CONFIG_PATH'].'/'.$mypage.'/'.$clang.'.clang.inc.php';
+$CJO['ADDON']['settings'][$mypage]['BLANK_IMG']     = $CJO['ADDON_CONFIG_PATH'].'/'.$mypage.'/blank.gif';
+$CJO['ADDON']['settings'][$mypage]['PREPARED_PATH'] = $CJO['ADDON_CONFIG_PATH'].'/'.$mypage.'/prepared';
+$CJO['ADDON']['settings'][$mypage]['BOUNCED_PATH']  = $CJO['ADDON_CONFIG_PATH'].'/'.$mypage.'/bounced';
+$CJO['ADDON']['settings'][$mypage]['LOGS_PATH']     = $CJO['ADDON_CONFIG_PATH'].'/'.$mypage.'/logs';
 
 include_once $CJO['ADDON']['settings'][$mypage]['SETTINGS'];
 include_once $CJO['ADDON']['settings'][$mypage]['CLANG_CONF'];

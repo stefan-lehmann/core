@@ -290,12 +290,30 @@ class cjoSubPages {
     	}
 
     	if ($addon_index) {
+    	    
     		if ($this->debug) echo '1.) '.$CJO['ADDON_PATH'].'/'.$subpage.'/pages/index.inc.php<br/>';
-    		return $CJO['ADDON_PATH'].'/'.$subpage.'/pages/index.inc.php';
+    		
+    		if (file_exists($CJO['ADDON_PATH'].'/'.$subpage.'/pages/index.inc.php'))
+    		    return $CJO['ADDON_PATH'].'/'.$subpage.'/pages/index.inc.php';
+    		  
+            if (file_exists($CJO['ADDON_CONFIG_PATH'].'/'.$subpage.'/pages/index.inc.php'))
+                return $CJO['ADDON_CONFIG_PATH'].'/'.$subpage.'/pages/index.inc.php';                   
+            
+            return $CJO['INCLUDE_PATH'].'/pages/edit/structure.inc.php'; 
+              		  
     	}
     	elseif (!empty($CJO['ADDON']['status'][$this->mypage]) && $subpage != '') {
+    	    
     		if ($this->debug) echo '2.) '.$CJO['ADDON_PATH'].'/'.$this->mypage.'/pages/'.$subpage.'.inc.php<br/>';
-    		return $CJO['ADDON_PATH'].'/'.$this->mypage.'/pages/'.$subpage.'.inc.php';
+    		
+            if (file_exists($CJO['ADDON_PATH'].'/'.$this->mypage.'/pages/'.$subpage.'.inc.php'))
+                return $CJO['ADDON_PATH'].'/'.$this->mypage.'/pages/'.$subpage.'.inc.php';      		
+
+            if (file_exists($CJO['ADDON_CONFIG_PATH'].'/'.$this->mypage.'/pages/'.$subpage.'.inc.php'))
+                return $CJO['ADDON_CONFIG_PATH'].'/'.$this->mypage.'/pages/'.$subpage.'.inc.php';  
+                
+            return $CJO['INCLUDE_PATH'].'/pages/edit/structure.inc.php';      
+              
     	}
     	else if ($subpage != '' || $subpage === 0) {
     		if ($this->debug) echo '3.) '.$CJO['INCLUDE_PATH'].'/pages/'.$this->mypage.'/'.$subpage.'.inc.php<br/>';
@@ -303,17 +321,17 @@ class cjoSubPages {
     	}
     	else if ($this->mypage != 'login') {
 
-    	    $article_id = cjo_request('article_id', 'cjo-article-id');
+            $article_id = cjo_request('article_id', 'cjo-article-id');
             //[translate: msg_no_permissions_redirected]
-    		$local_params =  array('page'=>'edit',  'subpage' => 'structure',
-							       'article_id'=> $article_id, 'err_msg'=>'msg_no_permissions_redirected');
+            $local_params =  array('page'=>'edit',  'subpage' => 'structure',
+                                   'article_id'=> $article_id, 'err_msg'=>'msg_no_permissions_redirected');
 
-    		if ($this->debug) {
-    			echo '4.) '.cjoAssistance::createBEUrl($local_params).'<br/>';
-    		}
-    		else {
-    			cjoAssistance::redirectBE($local_params);
-    		}
-    	}
+            if ($this->debug) {
+                echo '4.) '.cjoAssistance::createBEUrl($local_params).'<br/>';
+            }
+            else {
+                cjoAssistance::redirectBE($local_params);
+            }
+        }
     }
 }

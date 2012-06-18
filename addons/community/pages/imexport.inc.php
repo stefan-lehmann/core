@@ -86,7 +86,7 @@ if (cjo_post('cjoform_delete_all_button', 'bool') &&
     $qry = "SELECT name, id FROM ".TBL_CLANGS." ORDER BY id";
     $fields['clang']->addSQLOptions($qry);
     $fields['clang']->addAttribute('size', '1');
-    $fields['clang']->addAttribute('style', 'width: 130px;');
+    $fields['clang']->addAttribute('style', 'width: 150px;');
     $fields['clang']->setValue($CJO['CUR_CLANG']);
     $fields['clang']->setNote($I18N_10->msg("note_clang"));
     $fields['clang']->addValidator('notEmpty', $I18N_10->msg('err_notEmpty_lang'), false, false);
@@ -94,14 +94,6 @@ if (cjo_post('cjoform_delete_all_button', 'bool') &&
     //DATEI-EINSTELLUNGEN
     $fields['headline2'] = new readOnlyField('headline2', '', array('class' => 'formheadline slide'));
     $fields['headline2']->setValue($I18N_10->msg('label_file_settings'));
-
-    $fields['charset'] = new selectField('charset', $I18N_10->msg("label_charset"));
-    $fields['charset']->addAttribute('size', '1');
-
-    $charset = array('utf-8'=>'unicode (UTF-8)','iso'=>'ISO-8859-1');
-    foreach($charset as $key=>$value){
-        $fields['charset']->addOption('&nbsp;'.$value,$key);
-    }
 
     $fields['divider'] = new selectField('divider', $I18N_10->msg("label_divider"));
     $fields['divider']->addAttribute('size', '1');
@@ -122,6 +114,10 @@ if (cjo_post('cjoform_delete_all_button', 'bool') &&
     $fields['limit_number']->addAttribute('style', 'width: 80px;');
     $fields['limit_number']->addValidator('isNumber', $I18N_10->msg("err_limit_number"), true, true);
 
+    $fields['ignore_updates'] = new checkboxField('ignore_updates', '&nbsp;',  array('style' => 'width: auto;'));
+    $fields['ignore_updates']->addBox($I18N_10->msg('label_ignore_updates'), '1');  
+    $fields['ignore_updates']->setValue('1');      
+    
     $fields['automate'] = new checkboxField('automate', '&nbsp;',  array('style' => 'width: auto;'));
     $fields['automate']->addBox($I18N_10->msg('label_automate_import'), '1');  
     $fields['automate']->setValue('1');  
@@ -161,7 +157,7 @@ if (cjo_post('cjoform_delete_all_button', 'bool') &&
     $qry = "SELECT name, id FROM ".TBL_CLANGS." ORDER BY id";
     $fields['clang']->addSQLOptions($qry);
     $fields['clang']->addAttribute('size', '1');
-    $fields['clang']->addAttribute('style', 'width: 130px;');
+    $fields['clang']->addAttribute('style', 'width: 150px;');
     $fields['clang']->setValue($CJO['CUR_CLANG']);
     $fields['clang']->addValidator('notEmpty', $I18N_10->msg('err_notEmpty_lang'), false, false);
     
@@ -172,7 +168,7 @@ if (cjo_post('cjoform_delete_all_button', 'bool') &&
     $fields['limit']->addOption($I18N_10->msg('label_bounced_users'), 3);
     $fields['limit']->addOption($I18N_10->msg('label_not_activated_users'), 4);
     $fields['limit']->addAttribute('size', '1');
-    $fields['limit']->addAttribute('style', 'width: 130px;');
+    $fields['limit']->addAttribute('style', 'width: 150px;');
 
     $fields['button'] = new buttonField();
     $fields['button']->addButton('cjoform_export_button',$I18N_10->msg('button_export'), true, 'img/silk_icons/disk.png');

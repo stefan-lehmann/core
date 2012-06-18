@@ -42,17 +42,18 @@ class cjoCommunityImportExport {
             
             self::resetSession($settings['mode']);
 
-            $settings['charset']      = cjo_post('charset','string');
-            $settings['divider']      = stripslashes(cjo_post('divider'));
-            $settings['limit_start']  = cjo_post('limit_start','int');
-            $settings['limit_number'] = cjo_post('limit_number','int');
-            $settings['groups']       = cjo_post('groups','array');
-            $settings['clang']        = cjo_post('clang','string');
-            $settings['automate']     = cjo_post('automate','bool');
-            $settings['import_file']  = $CJO['TEMPFOLDER'].'/community_cm_import_'.strftime('%Y%m%d%H%M%S',time());
-            $settings['inserted']     = array('error' => 0, 'success' => 0);
-            $settings['updated']      = array('error' => 0, 'success' => 0);
-            $settings['all_msg']      = array('error' => 0, 'success' => 0);
+            $settings['divider']        = stripslashes(cjo_post('divider'));
+            $settings['limit_start']    = cjo_post('limit_start','int');
+            $settings['limit_number']   = cjo_post('limit_number','int');
+            $settings['groups']         = cjo_post('groups','array');
+            $settings['clang']          = cjo_post('clang','string');
+            $settings['ignore_updates'] = cjo_post('ignore_updates','bool');
+            $settings['automate']       = cjo_post('automate','bool');
+            $settings['import_file']    = $CJO['TEMPFOLDER'].'/community_cm_import_'.strftime('%Y%m%d%H%M%S',time());
+            $settings['inserted']       = array('error' => 0, 'success' => 0);
+            $settings['updated']        = array('error' => 0, 'success' => 0);
+            $settings['ignored']        = 0;
+            $settings['all_msg']        = array('error' => 0, 'success' => 0);
             
             if (!empty($_FILES['userfile']['tmp_name'])) {
                 move_uploaded_file($_FILES['userfile']['tmp_name'], $settings['import_file']);
@@ -70,13 +71,15 @@ class cjoCommunityImportExport {
            return false; 
         }
 
-        $csv_file = ($settings['charset'] == 'iso')
-        ? utf8_encode(file_get_contents($settings['import_file']))
-        : file_get_contents($settings['import_file']);
+        $data = file_get_contents($settings['import_file']);
+        
+        if (mb_detect_encoding($data, 'UTF-8', true) == false) {
+            $data = utf8_encode($data);
+        }
 
-        self::normalizeLineEndings($csv_file);
+        self::normalizeLineEndings($data);
 
-        preg_match_all('/^.*$/m', $csv_file, $csv_data);
+        preg_match_all('/^.*$/m', $data, $csv_data);
 
         // leere Datei
         if (!is_array($csv_data[0])){
@@ -129,7 +132,16 @@ class cjoCommunityImportExport {
             $sql->setQuery($qry);
 
             if ($sql->getRows() > 0) {
+                
                 $curr['id'] =  $sql->getValue('id');
+                        
+                if ($settings['ignore_updates']) {
+                    $settings['ignored']++;
+                    $settings['total']['success']++;
+                    $settings['limit_start']++;
+                    continue;
+                }    
+                
                 if (isset($curr['status']))      unset($curr['status']);
                 if (isset($curr['activation']))  unset($curr['activation']);
                 if (isset($curr['newsletter']))  unset($curr['newsletter']);
@@ -144,6 +156,7 @@ class cjoCommunityImportExport {
                 }
                 
                 $curr['newsletter']  = $sql->getValue('newsletter');
+                
             }
             else {
                 $curr['status']      = $curr['status'] == ''     ? 1 : $curr['status'];
@@ -190,12 +203,13 @@ class cjoCommunityImportExport {
         }
 
         cjoMessage::flushAllMessages();
-         
+
         if ($settings['total']['success'] > 0) {
             cjoMessage::addSuccess($I18N_10->msg('accept_data_imported',
             ($settings['total']['success']+$settings['total']['error']),
             $settings['inserted']['success'],
-            $settings['updated']['success']));
+            $settings['updated']['success'],
+            $settings['ignored']));
         }
         if ($settings['total']['error'] > 0) {
             cjoMessage::addError($I18N_10->msg('error_data_imported',

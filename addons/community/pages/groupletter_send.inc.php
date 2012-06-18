@@ -87,7 +87,9 @@ $infos = array(
     "label_reply_to" 	=> $mail_account,
     "label_send_type"	=> $groupletter->article_id > 0 ? $article_str : $I18N_10->msg('label_send_text'),
     "label_groups" 		=> $groups_str,
-    "label_processed" 	=> $groupletter->prepared.' / '.$groupletter->send,
+    "label_processed" 	=> '<span id="gl_open" style="display:inline-block;background:url(img/silk_icons/email.png) no-repeat 5px center;padding:1px 5px 1px 24px;">'.number_format($groupletter->prepared, 0, trim($I18N->msg('dec_point')), trim($I18N->msg('thousands_sep'))).'</span> | '.
+                           '<span id="gl_send" style="display:inline-block;background:url(img/silk_icons/tick.png) no-repeat 5px center;padding:1px 5px 1px 24px;">--</span> | '.
+                           '<span id="gl_errors" style="display:inline-block;background:url(img/silk_icons/error.png) no-repeat 5px center;padding:1px 5px 1px 24px;">--</span>',
     "label_senddates" 	=> $senddates_str,
     "label_gl_editor" 	=> $groupletter->user
 );
@@ -124,7 +126,10 @@ $fields['explain']->setValue($explain);
 
 $fields['button'] = new buttonField();
 $fields['button']->addButton('cjoform_send_button',$I18N_10->msg("button_send"), true, 'img/silk_icons/email_go.png');
+$fields['button']->addButton('cjoform_stop_button',$I18N_10->msg("button_stop"), true, 'img/silk_icons/time.png');
 $fields['button']->addButton('cjoform_reset_button',$I18N_10->msg("button_reset_prepared"), true, 'img/silk_icons/cancel.png');
+$fields['button']->setButtonAttributes('cjoform_send_button', 'class="green"');
+$fields['button']->setButtonAttributes('cjoform_reset_button', 'class="red cjo_confirm"');
 
 //Add Fields
 $section = new cjoFormSection($CJO['ADDON']['settings'][$mypage], $I18N_10->msg('label_send_groupletter'), array ());
@@ -133,16 +138,6 @@ $section->addFields($fields);
 $form->addSection($section);
 $form->addFields($hidden);
 $form->show(false);
-
-$js_reload = '';
-$js_block = '';
-if ($CJO['ADDON']['settings'][$mypage]['reload'] === true){
-
-	$url = cjoAssistance::createBEUrl(array('cjoform_send_button' => 1));
-
-	$js_reload = 'location.href = \''.$url.'\';';
-	$js_block = '$(\'#cjo_page_margin\').block({ message: null });';
-}
 
 $popup_url = cjoAssistance::createBEUrl(array('subpage' => 'show', 'clang' => $groupletter->clang, 'popup'=>1, 'oid' => $groupletter->id));
 
@@ -154,19 +149,44 @@ cjoAssistance::resetAfcVars();
 /* <![CDATA[ */
 
 	$(function(){
-
-		function reload(){
-			<?php echo $js_reload; ?>
-		}
-		<?php echo $js_block; ?>
-
-		setTimeout(reload, 8000);
+	    $('#cjoform_send_button').click(function() {
+	        var $this = $(this);
+	        if ($this.is('.disabled')) return false;
+	        $this.addClass('disabled');
+	        $('#gl_errors').after(' | <img src="img/contejo/ajax/ajax-loader1.gif" alt="" />');
+	        startSend();
+	        return false;
+	    })
 
 		$('a.cjo_popup').click(function(){
 			cjo.openPopUp('preview','<?php echo $popup_url; ?>',1010,600,'');
 			return false;
 		});
+		
+		updateNumbers();
 	});
 
+    function startSend(block) {
+        $.get('ajax.php', {'function': 'cjoGroupLetter::ajaxSend'}, function(data) {
+            if (data == 1) {
+                startSend();
+            } else {
+              location.href = '<?php echo cjoAssistance::createBEUrl(); ?>';
+            }
+        });
+    }
+        
+    function updateNumbers() {
+        $.getJSON('ajax.php', {'function': 'cjoGroupLetter::currentNumbers'},
+            function(data) { 
+                if (data.open == 0 || data.open == "0") {
+                    location.href = '<?php echo cjoAssistance::createBEUrl(); ?>';
+                }
+                $('#gl_open').text(data.open);
+                $('#gl_errors').text(data.errors);
+                $('#gl_send').text(data.send); 
+                setTimeout(function() { updateNumbers() },2000);
+             });   
+    }
 /* ]]> */
 </script>
