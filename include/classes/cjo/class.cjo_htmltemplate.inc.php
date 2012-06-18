@@ -193,6 +193,8 @@ class cjoHtmlTemplate {
 
     protected function callFunctions($html){
         
+        global $I18N;
+        
         $search_keys = array();    
              
         preg_match_all('/\[\[(([a-z0-9_-]|::)*?[^\]]):\s*\"(.*?)\"\]\]/is', $html, $matches, PREG_SET_ORDER);         
