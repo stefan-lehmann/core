@@ -48,7 +48,7 @@ class cjoShopMail {
 	 * @access public
 	 * @see /addons/phpmailer/classes/class.phpmailer.inc.php
 	 */
-	public static function sendMail($subject , $id, $products_available = array()) {
+	public static function sendMail($subject, $id, $products_available = array()) {
 
 		global $CJO, $I18N_21, $I18N;
 

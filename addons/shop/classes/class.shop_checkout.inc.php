@@ -238,6 +238,7 @@ class cjoShopCheckout {
 		$insert->setValue('birth_date', strtotime($personals[0]));
 		$insert->addGlobalCreateFields($address1->getName());
 		$insert->addGlobalUpdateFields('--');
+        $insert->setValue('comment', $comment);
 		$insert->setTable(TBL_21_ORDERS);
 		$insert->Insert();
 
