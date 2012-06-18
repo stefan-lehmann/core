@@ -145,15 +145,12 @@ class cjoShopProduct {
 	 * Returns a string with products data
 	 * and the order value for order confirm mail.
 	 *
-	 * @param string $string 								- a string with product info
-	 * @param array $products_available (default = array())	- holds information about
-	 * 														  availabilty of the ordered
-	 * 														  products
+	 * @param string $string - a string with product info
 	 * @return string
 	 * @access public
 	 * @see ./class.shop_mail.inc.php
 	 */
-	public static function productsOut($string, $products_available = array()) {
+	public static function productsOut($string) {
 
 		global $I18N_21;
 
@@ -186,8 +183,7 @@ class cjoShopProduct {
 		    // build output string
 			$temp = $product->getAmount()." x ";
 			$spaces = self::addWhiteSpaces(strlen($temp));
-			$return[$key] .= $temp.$product->getName()."\t\t\t";
-			$return[$key] .= $spaces;
+			$return[$key] .= $temp.$product->getName()."  ";
 			$return[$key] .= strtoupper($I18N_21->msg("shop_final_amount_price")).': ';
 			$return[$key] .= $product->getFullPrice()."\r\n";
 
@@ -215,28 +211,6 @@ class cjoShopProduct {
     			$return[$key] .= ' ('. $product->getFormattedProductValue('total_discount').')';
 			}
 
-			// add note if there are not as much products available
-			// as requested
-			if (!empty($products_available) &&
-			    array_key_exists($product->getSliceId(), $products_available)) {
-					$product_available = $products_available[$product->getSliceId()];
-
-					// if product is out of stock
-				if ($product_available['amount'] == 0) {
-					$return[$key] .= "\r\n".$spaces;
-					$return[$key] .= $I18N_21->msg('shop_product_not_deliverable');
-				}
-				elseif($product_available['amount'] == 1) {
-					$return[$key] .= "\r\n".$spaces;
-					$return[$key] .= $I18N_21->msg('shop_only_1_product_available');
-				}
-				else {
-					$return[$key] .= "\r\n".$spaces;
-					$return[$key] .= $I18N_21->msg('shop_available_product_amount_1');
-					$return[$key] .= ' '.$product_available['amount'].' ';
-					$return[$key] .= $I18N_21->msg('shop_available_product_amount_2');
-				}
-			}
 			// calculate order value
 			$sum += cjoShopPrice::convToFloat($product->getFullprice());
 		}
@@ -249,11 +223,11 @@ class cjoShopProduct {
 	 * Outputs the ordered products in backend.
 	 *
 	 * @param int $id 		 - the order id
-	 * @return string $table - html-table with product info
+	 * @return string $backend - is backend view
 	 * @access public
 	 * @see ../pages/orders.inc.php
 	 */
-	public static function toTable($id) {
+	public static function toTable($id, $backend=true) {
 
 		global $I18N_21;
 
@@ -277,76 +251,86 @@ class cjoShopProduct {
 
 		$results = explode('~', $result);
 		$order_value = 0;
-		$i = 0;
 
 
 		// get product data and calculate the value of the order
-		foreach($results as $product) {
+		foreach($results as $result) {
 
-			$products[] = new cjoShopProduct($product);
-			$order_value +=   cjoShopPrice::convToFloat($products[$i]->getProductValue('final_price'))
-							* $products[$i]->getAmount();
-			$i++;
+			$product = new cjoShopProduct($result);
+			$order_value +=   cjoShopPrice::convToFloat($product->getProductValue('final_price'))
+							* $product->getAmount();
+                            
+			$products[] = $product;
 		}
 
 		$order_value = round($order_value, 2);
 		$order_value = str_replace('.',$products[0]->getSeparator(), $order_value);
+		  
+		$table = array(
+		              array('<th class="center" style="width:40px;text-align:center">'.$I18N_21->msg("shop_amount").'</th>'."\r\n"),
+				      array('<th style="width:30px">'.$I18N_21->msg("shop_product_id_short").'</th>'."\r\n"),
+				      array('<th>'.$I18N_21->msg("shop_name").'</th>'."\r\n"),
+                      array('<th class="right">'.$I18N_21->msg("shop_netto_price").'</th>'."\r\n"),
+                      array('<th class="right">'.$I18N_21->msg("shop_discount").'</th>'."\r\n"),
+                      array('<th class="right">'.$I18N_21->msg("shop_tax").'</th>'."\r\n"),
+                      array('<th class="right">'.$I18N_21->msg("shop_final_amount_price").' ('.$I18N_21->msg("shop_brutto").')</th>'."\r\n"));
 
-		// create table
-		$table = "<div class=\"cjo_with_border shop_product_table\">
-				  <table>
-				  <thead>
-				  <tr>
-				  <th class=\"center\" style=\"width:30px\">".$I18N_21->msg("shop_amount")."</th>
-				  <th style=\"width:30px\">".$I18N_21->msg("shop_product_id_short")."</th>
-				  <th>".$I18N_21->msg("shop_name")." / ".$I18N_21->msg("shop_attribute")."</th>";
-                  
-		$table .= "<th class=\"right\">".$I18N_21->msg("shop_netto_price")."</th>";
-        $table .= "<th class=\"right\">".$I18N_21->msg("shop_discount")."</th>";
-        $table .= "<th class=\"right\">".$I18N_21->msg("shop_tax")."</th>";
-        $table .= "<th class=\"right\">".$I18N_21->msg("shop_final_amount_price")." (".$I18N_21->msg("shop_brutto").")</th>
-				  </tr>
-				  </thead>
-				  <tbody>";
-
+        $i = 1;
 		foreach($products as $product) {
 
-			$total_sum = $product->getProductValue('final_price') * $product->getAmount();
-			$total_sum = cjoShopPrice::toCurrency($total_sum);
-			$table .= "<tr>
-					   <td class=\"center\" style=\"width:30px\">".$product->amount."</td>
-					   <td style=\"width:30px\">".$product->product_id."</td>
-					   <td style=\"white-space:pre\"><strong>".$product->product_name."</strong>\r\n".$product->attribute."</td>
-					   <td class=\"right\">".$product->getFormattedProductValue('netto_price')."</td>
-					   <td class=\"right\" style=\"white-space:pre\">".cjoShopPrice::formatNumber($product->getProductValue('discount'), '%').
-					   "\r\n(".$product->getFormattedProductValue('total_discount').")</td>
-					   <td class=\"right\" style=\"white-space:pre\">".cjoShopPrice::formatNumber($product->getProductValue('taxes'), '%').
-					   "\r\n(".$product->getFormattedProductValue('total_taxes').")</td>
-					   <td class=\"right\"><b>".$total_sum."</b></td>
-					   </tr>";
+			$table[0][$i] = '<td class="center" style="width:40px;text-align:center">'.$product->amount.'</td>'."\r\n";
+
+            if ($product->product_id)
+                $table[1][$i] = '<td style="width:30px">'.$product->product_id.'</td>'."\r\n";
+			
+			$table[2][$i] = '<td style="white-space:pre"><strong>'.$product->product_name.'</strong>'."\r\n".$product->attribute.'</td>'."\r\n";
+            
+			$table[3][$i] = '<td class="right">'.$product->getFormattedProductValue('netto_price').'</td>'."\r\n";
+            
+            if ($product->getProductValue('discount'))
+                $table[4][$i] = '<td class="right" style="white-space:pre">'.cjoShopPrice::formatNumber($product->getProductValue('discount'), '%')."\r\n(".$product->getFormattedProductValue('total_discount').')</td>'."\r\n";
+			
+			$table[5][$i] = '<td class="right" style="white-space:pre">'.cjoShopPrice::formatNumber($product->getProductValue('taxes'), '%')."\r\n(".$product->getFormattedProductValue('total_taxes').')</td>'."\r\n";
+			$table[6][$i] = '<td class="right"><b>'.cjoShopPrice::toCurrency($product->getProductValue('final_price') * $product->getAmount()).'</b></td>'."\r\n";
+			$i++;
 		}
-		$table .= "<tr>
-				   		<td colspan=\"6\" class=\"right\"><b>".$I18N_21->msg("shop_order_value")." (".$I18N_21->msg("shop_brutto").")</b></td>
-				   		<td class=\"right\" style=\"width:60px\"><b>".cjoShopPrice::toCurrency($order_value)."</b></td>
-				   </tr>";        
+
+        $html = $backend
+              ? '<div class="cjo_with_border shop_product_table" style="overflow-x:auto; max-width: 700px"><table style="margin:10px"><thead>'."\r\n"
+              : '<table style="width: 100%"><thead>'."\r\n";
+
+        $rowspan = -1;
+        
+        for ($i=0;$i<count($table[2]);$i++) {
+           $html .= '<tr>'."\r\n";
+           for ($ii=0;$ii<count($table);$ii++) {
+               if (count($table[$ii]) == 1) continue;
+               if ($i == 0) $rowspan++;
+               $html .= $table[$ii][$i];
+           }
+           $html .= $i == 0 ? "</tr>\r\n</thead>\r\n<tbody>\r\n" : '</tr>'."\r\n";
+        }
+
+		$html .= '<tr>
+				   		<td colspan="'.$rowspan.'" class="right shop_order_value"><b>'.$I18N_21->msg("shop_order_value").' ('.$I18N_21->msg("shop_brutto").')</b></td>
+				   		<td class="right shop_order_value" style="width:60px"><b>'.cjoShopPrice::toCurrency($order_value).'</b></td></tr>';        
 	   if ($pay_costs > 0) {           
-        $table .= "<tr>
-				   		<td colspan=\"6\" class=\"right\"><b>".$I18N_21->msg("shop_pay_costs")." (".$I18N_21->msg("shop_brutto").")</b></td>
-				   		<td class=\"right\" style=\"width:60px\"><b>".cjoShopPrice::toCurrency($pay_costs)."</b></td>
-				   </tr>";
+        $html .= '<tr>
+				   		<td colspan="'.$rowspan.'" class="right shop_pay_costs"><b>'.$I18N_21->msg("shop_pay_costs").' ('.$I18N_21->msg("shop_brutto").')</b></td>
+				   		<td class="right shop_pay_costs" style="width:60px"><b>'.cjoShopPrice::toCurrency($pay_costs).'</b></td></tr>';
         }                  
-        $table .= "<tr>
-                        <td colspan=\"6\" class=\"right\"><b>".$I18N_21->msg("shop_delivery_costs")." (".$I18N_21->msg("shop_brutto").")</b></td>
-				   		<td class=\"right\" style=\"width:60px\"><b>".cjoShopPrice::toCurrency($delivery_costs)."</b></td>
+        $html .= '<tr>
+                        <td colspan="'.$rowspan.'" class="right shop_delivery_costs"><b>'.$I18N_21->msg('shop_delivery_costs').' ('.$I18N_21->msg('shop_brutto').')</b></td>
+				   		<td class="right shop_delivery_costs" style="width:60px"><b>'.cjoShopPrice::toCurrency($delivery_costs).'</b></td>
 				   </tr><tr>
-				   		<td colspan=\"6\" class=\"right\"><b>".$I18N_21->msg("shop_total_price")." (".$I18N_21->msg("shop_brutto").")</b></td>
-				   		<td class=\"right\" style=\"width:60px\"><b>".cjoShopPrice::toCurrency($total_price)."</b></td>
+				   		<td colspan="'.$rowspan.'" class="right shop_total_price"><b>'.$I18N_21->msg('shop_total_price').' ('.$I18N_21->msg('shop_brutto').')</b></td>
+				   		<td class="right shop_total_price" style="width:60px"><b>'.cjoShopPrice::toCurrency($total_price).'</b></td>
 				   </tr>
                    </tbody>
 				   </table>
-				   </div>";
-cjo_Debug($table,'____'.$delivery_costs.'________'.cjoShopPrice::toCurrency($delivery_costs));
-		return $table;
+				   </div>';
+                   
+		return $html;
 
 	} // end function toTable
 

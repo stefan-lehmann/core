@@ -36,11 +36,7 @@ $page = !empty($_REQUEST['page']) ? $_REQUEST['page'] : '';
 
 $CJO['SETUP'] 				= true;
 $CJO['VERSION'] 			= "2.6";
-<<<<<<< HEAD
-$CJO['RELEASE'] 			= "1";
-=======
 $CJO['RELEASE'] 			= "2";
->>>>>>> 60982a44e4b5c31cdb18fbb0e888d9d7d6b1101d
 $CJO['BACKEND_PATH']        = $CJO['HTDOCS_PATH']."core";
 $CJO['INCLUDE_PATH'] 		= $CJO['BACKEND_PATH']."/include";
 $CJO['JQUERY_PATH']			= $CJO['BACKEND_PATH']."/js/jQuery";

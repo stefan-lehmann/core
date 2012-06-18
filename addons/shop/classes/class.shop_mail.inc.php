@@ -58,6 +58,7 @@ class cjoShopMail {
 		$currency  			= $settings['CURRENCY']['DEFAULT_SIGN'];
 		$pay_methods_path 	= $settings['PAY_METHODS_PATH'];
 		$all_pay_costs 		= cjoShopPayMethod::getAllCosts();
+        $html               = false;
 
 		$clang = $CJO['CUR_CLANG'];
 
@@ -67,11 +68,16 @@ class cjoShopMail {
 		// get mail type to send
 		switch ($subject) {
 			// get data from $_POST
-			case 'ORDER_CONFIRM_SUBJECT' 	:   
-			                                    $template = file_get_contents($CJO['ADDON_CONFIG_PATH']."/".self::$mypage."/".$clang.".confirm.html"); //$settings['ORDER_CONFIRM_MAIL'];
+			case 'ORDER_CONFIRM_SUBJECT' 	:   if (file_exists($CJO['ADDON_CONFIG_PATH']."/".self::$mypage."/".$clang.".confirm_mail.html")) {
+			                                        $html = file_get_contents($CJO['ADDON_CONFIG_PATH']."/".self::$mypage."/".$clang.".confirm_mail.html"); //;
+                                                }
+                                                $text = $settings['ORDER_CONFIRM_MAIL'];
 												break;
 			// get data from db
-			case 'ORDER_SEND_SUBJECT' 		: 	$template = $settings['ORDER_SEND_MAIL'];
+			case 'ORDER_SEND_SUBJECT' 		: 	if (file_exists($CJO['ADDON_CONFIG_PATH']."/".self::$mypage."/".$clang.".send_mail.html")) {
+                                                     $html = file_get_contents($CJO['ADDON_CONFIG_PATH']."/".self::$mypage."/".$clang.".send_mail.html"); //;
+                                                }
+                                                $text = $settings['ORDER_SEND_MAIL'];
 							    				break;
 		}
 
@@ -94,8 +100,8 @@ class cjoShopMail {
 		$address2 	  	 = new cjoShopSupplyAddress($result['address2']);
 		$address2 		 = preg_replace('/(\r\n|\r|\n){2,}/',"\r\n", $address2->out());
         $phone_nr        = $result['phone_nr'];
-		$product_list 	 = cjoShopProduct::productsOut($result['products'], $products_available);
-        $product_table   = cjoShopProduct::toTable($id);
+		$product_list 	 = cjoShopProduct::productsOut($result['products']);
+        $product_table   = cjoShopProduct::toTable($id, false);
 		$mail_address 	 = $result['email'];
 		$pay_method	  	 = $result['pay_method'];
 		$pay_object	  	 = cjoShopPayMethod::getPayObject($pay_method, $result['pay_data']);
@@ -103,7 +109,7 @@ class cjoShopMail {
 	    $delivery_costs  = $result['delivery_cost'];
 	    $delivery_method = $result['delivery_method'];
 	    $order_value  	 = $result['total_price'];
-	    $order_date		 = strftime($I18N->msg('dateformat_sort'),$result['createdate']);
+	    $order_date		 = strftime($I18N->msg('datetimeformat'),$result['createdate']);
 	    $order_comment   = $result['comment'];
 		$total_sum       = cjoShopPrice::convToFloat($order_value);
 		$delivery_costs  = cjoShopPrice::convToFloat($delivery_costs);
@@ -127,27 +133,41 @@ class cjoShopMail {
 								 '%order_id%' 		  => $id,
 								 '%order_date%'       => $order_date,
 		                         '%order_comment%'    => $order_comment,
-								 '%shop_name%'		  => $CJO['SERVER']);
+								 '%shop_name%'		  => $CJO['SERVER'],
+                                 '%subject%'          => $settings[$subject],
+                                 'CJO_SERVERNAME'            => $CJO['SERVERNAME'],
+                                 'CJO_SERVER'                => $CJO['SERVER'],
+                                 'CJO_START_ARTICLE_ID'      => $CJO['START_ARTICLE_ID'],
+                                 'CJO_NOTFOUND_ARTICLE_ID'   => $CJO['NOTFOUND_ARTICLE_ID'],
+                                 'CJO_HTDOCS_PATH'           => $CJO['HTDOCS_PATH'],
+                                 'CJO_MEDIAFOLDER'           => $CJO['MEDIAFOLDER'],
+                                 'CJO_FRONTPAGE_PATH'        => $CJO['FRONTPAGE_PATH'],
+                                 'CJO_ADDON_CONFIG_PATH'     => $CJO['ADDON_CONFIG_PATH']);
 
-		// build mail text
-		$html = str_replace(array_keys($replacements), $replacements, $template);
-
+        $text = str_replace(array_keys($replacements), $replacements, $text);   
+        
+        
+		if ($html !== false) {
+    		$html = str_replace(array_keys($replacements), $replacements, $html);     
+            
+            $html = cjoExtension::registerExtensionPoint('OUTPUT_FILTER', array('subject' => $html, 'environment' => 'frontend', 'sendcharset' => false));
+            $html = cjoOutput::replaceLinks($html);       
+            $html = cjoOpfLang::translate($html);
+        }
 		// prepare mail and send it
 		$phpmailer = new cjoPHPMailer();
 		$phpmailer->setAccount($settings['PHP_MAILER_ACCOUNT']);
 		$phpmailer->Subject = $settings[$subject];
 		$phpmailer->AddAddress($mail_address);
 
-        if (strpos($html, '<!DOCTYPE') === false) {
-		  $phpmailer->IsHTML(true);
-          $phpmailer->Body = $html;
+        if ($html === false) {
+		  $phpmailer->IsHTML(false);
+          $phpmailer->Body = $text;
         }
         else {
-            $phpmailer->setBodyHtml($html);
+            $phpmailer->setBodyHtml($html, $text);
             
         }
-        $phpmailer->Send(true);
-        cjo_Debug($phpmailer); die();
 		return $phpmailer->Send(true);
 
 	} // end function sendMail
@@ -165,4 +185,3 @@ class cjoShopMail {
 
 } // end class cjoShopMail
 
-cjoShopMail::sendMail('ORDER_CONFIRM_SUBJECT', 11);

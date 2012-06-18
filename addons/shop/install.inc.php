@@ -31,10 +31,15 @@ $mypage = 'shop';
 $install = new cjoInstall($mypage);
 if ($install->installResource()) {
 
-    $themes_dir = $CJO['ADDON_CONFIG_PATH'].'/'.$mypage.'/theme';
-	if (!file_exists($themes_dir)) { mkdir($themes_dir, $CJO['FILEPERM']); }
+    $dir = $CJO['ADDON_CONFIG_PATH'].'/'.$mypage.'/theme';
+	if (!file_exists($dir)) { mkdir($dir, $CJO['FILEPERM']); }
 
-    cjoAssistance::copyDir($CJO['ADDON_PATH'].'/'.$mypage.'/themes/default',$themes_dir);
+    cjoAssistance::copyDir($CJO['ADDON_PATH'].'/'.$mypage.'/themes/default',$dir);
+    
+    $dir = $CJO['ADDON_CONFIG_PATH'].'/'.$mypage.'/img';
+    if (!file_exists($dir)) { mkdir($dir, $CJO['FILEPERM']); }
+
+    cjoAssistance::copyDir($CJO['ADDON_PATH'].'/'.$mypage.'/setup/img',$dir);    
 
     foreach($CJO['CLANG'] as $clang_id => $name) {
         if ($clang_id == 0) continue;

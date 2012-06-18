@@ -171,28 +171,29 @@ class cjoPHPMailer extends PHPMailer {
        	return true;
     }
 
-    public function setBodyHtml($html) {
+    public function setBodyHtml($html, $text=false) {
 
         $html = cjoOpfLang::translate($html);
 
-        $text = str_replace (array("<br />","<br/>","<br>"),"\r\n",$html);
-        $text = preg_replace ('/(\\n|\\r|\\r\\n|\\s){2,}/', "\r\n", $text);
-
-        $text = preg_replace ('#<script[^>]*?>.*?<\/script>#si', ' ', $text);
-        $text = preg_replace ('#<style[^>]*?>.*?<\/style>#siU', ' ', $text);
-        $text = preg_replace ('#<![\s\S]*?--[ \t\n\r]*>#', ' ', $text);
-        $text = preg_replace ("#<h1[^>]*>(.*)</h1>#siU","\r\n\r\n*\\1*\r\n",$text);
-        $text = preg_replace ("#<(h[2-6]|p)[^>]*>(\s*<a[^>]*>)(.*)(</a>)?</\\1>#imsU","\r\n<\\1>\\3</\\1>\r\n",$text);
-        $text = preg_replace ("#<h[2-6][^>]*>(.*)</h[2-6]>#siU","\r\n__\r\n\r\n\\1\r\n",$text);
-        $text = preg_replace ('#<a[^>]*href="(.*)"[^>]*>(.*)</a>#siU', "\\2 \\1",$text);
-        $text = preg_replace ("#(\<)(.*)(\>)#imsU", "\r\n",  $text);
-        $text = preg_replace ('/(\\n|\\r|\\r\\n|\\s){2,}/', "\r\n\r\n", $text);        
+        if ($text === false) {
+                $text = str_replace (array("<br />","<br/>","<br>"),"\r\n",$html);
+                $text = preg_replace ('#<script[^>]*?>.*?<\/script>#si', ' ', $text);
+                $text = preg_replace ('#<style[^>]*?>.*?<\/style>#siU', ' ', $text);
+                $text = preg_replace ('#<![\s\S]*?--[ \t\n\r]*>#', ' ', $text);
+                $text = preg_replace ("#<h1[^>]*>(.*)</h1>#siU","\r\n\r\n*\\1*\r\n",$text);
+                $text = preg_replace ("#<(h[2-6]|p)[^>]*>(\s*<a[^>]*>)(.*)(</a>)?</\\1>#imsU","\r\n<\\1>\\3</\\1>\r\n",$text);
+                $text = preg_replace ("#<h[2-6][^>]*>(.*)</h[2-6]>#siU","\r\n__\r\n\r\n\\1\r\n",$text);
+                $text = preg_replace ('#<a[^>]*href="(.*)"[^>]*>(.*)</a>#siU', "\\2 \\1",$text);
+                $text = preg_replace ("#(\<)(.*)(\>)#imsU", "\r\n",  $text);
+        }
+        
+        $text = str_replace(array('\r\n','\n','\r'), "\r\n", $text);    
+        $text = preg_replace ('/(\\r\\n){2,}/', "\r\n\r\n", $text);        
         $text = html_entity_decode($text);
 
-        $temp = explode("\n", $text);
+        preg_match_all('/^.*$/m', $text, $temp);
         $text = '';
-
-        foreach ($temp as $line){
+        foreach ($temp[0] as $line){
             $line = str_replace(' *', '*', $line);
             $line = str_replace('&bdquo;', '"', $line);
             $line = str_replace('&euro;', 'EUR', $line);
