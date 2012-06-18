@@ -238,7 +238,7 @@ class cjoRewrite {
     public static function setServerPath() {
         $path = cjoAssistance::toArray(pathinfo(cjo_server('PHP_SELF','string'),PATHINFO_DIRNAME),'/');
         $length = count($path)-1;
-        if ($path[$length] == 'contejo') {
+        if ($path[$length] == 'contejo' || $path[$length] == 'core') {
             $temp = array_pop($path);
         }
         return '/'.implode('/', $path).'/';
