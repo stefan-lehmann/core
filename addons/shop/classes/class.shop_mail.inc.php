@@ -79,6 +79,8 @@ class cjoShopMail {
                                                 }
                                                 $text = $settings['ORDER_SEND_MAIL'];
 							    				break;
+                                                
+            default:                            return false;
 		}
 
 		// get data
@@ -95,28 +97,29 @@ class cjoShopMail {
 		$sql->flush();
 		$customer 		 = $result['title'].' '.$result['firstname'].' '.
 						   $result['name'];
+        $phone_nr        = $result['phone_nr'];
+        $mail_address    = $result['email'];
+        $pay_method      = $result['pay_method'];
+        $delivery_costs  = $result['delivery_cost'];
+        $delivery_method = $result['delivery_method'];
+        $order_value     = $result['total_price'];
+        $order_comment   = $result['comment'];
 		$address1 	   	 = new cjoShopAddress($result['address1']);
 		$address1_full   = preg_replace('/(\r\n|\r|\n){2,}/',"\r\n", $customer."\r\n".$address1->out());
 		$address2 	  	 = new cjoShopSupplyAddress($result['address2']);
 		$address2 		 = preg_replace('/(\r\n|\r|\n){2,}/',"\r\n", $address2->out());
-        $phone_nr        = $result['phone_nr'];
 		$product_list 	 = cjoShopProduct::productsOut($result['products']);
         $product_table   = cjoShopProduct::toTable($id, false);
-		$mail_address 	 = $result['email'];
-		$pay_method	  	 = $result['pay_method'];
 		$pay_object	  	 = cjoShopPayMethod::getPayObject($pay_method, $result['pay_data']);
 		$payment_costs	 = cjoShopPrice::toCurrency($all_pay_costs[$pay_method]);
-	    $delivery_costs  = $result['delivery_cost'];
-	    $delivery_method = $result['delivery_method'];
-	    $order_value  	 = $result['total_price'];
 	    $order_date		 = strftime($I18N->msg('datetimeformat'),$result['createdate']);
-	    $order_comment   = $result['comment'];
 		$total_sum       = cjoShopPrice::convToFloat($order_value);
 		$delivery_costs  = cjoShopPrice::convToFloat($delivery_costs);
 		$order_value     = $total_sum - $delivery_costs - $pay_object->getCosts();
 
 		// replace wildcards by values
 		$replacements   = array( '%customer%' 		  => $customer,
+		                         '%email%'            => $mail_address,
 								 '%address%'		  => $address1_full,
 								 '%supply_address%'   => $address2,
                                  '%phone_nr%'         => $phone_nr,								 
@@ -132,7 +135,7 @@ class cjoShopMail {
 								 '%total_sum%' 		  => cjoShopPrice::toCurrency($total_sum),
 								 '%order_id%' 		  => $id,
 								 '%order_date%'       => $order_date,
-		                         '%order_comment%'    => $order_comment,
+		                         '%order_comment%'    => empty($order_comment) ? '--' : $order_comment,
 								 '%shop_name%'		  => $CJO['SERVER'],
                                  '%subject%'          => $settings[$subject],
                                  'CJO_SERVERNAME'            => $CJO['SERVERNAME'],
@@ -145,7 +148,6 @@ class cjoShopMail {
                                  'CJO_ADDON_CONFIG_PATH'     => $CJO['ADDON_CONFIG_PATH']);
 
         $text = str_replace(array_keys($replacements), $replacements, $text);   
-        
         
 		if ($html !== false) {
     		$html = str_replace(array_keys($replacements), $replacements, $html);     
@@ -168,6 +170,7 @@ class cjoShopMail {
             $phpmailer->setBodyHtml($html, $text);
             
         }
+
 		return $phpmailer->Send(true);
 
 	} // end function sendMail
@@ -184,4 +187,3 @@ class cjoShopMail {
 */
 
 } // end class cjoShopMail
-

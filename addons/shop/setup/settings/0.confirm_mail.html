@@ -98,7 +98,7 @@
 										<img src="cid:CJO_ADDON_CONFIG_PATH/shop/img/blank.gif" height="20" width="1" alt="">
 										%product_table%
 										<img src="cid:CJO_ADDON_CONFIG_PATH/shop/img/blank.gif" height="20" width="1" alt="">
-										<table cellpadding="0" cellspacing="0" border="0" width="100%">
+										<<table cellpadding="0" cellspacing="0" border="0" width="100%">
 											<thead>
 												<tr>
 													<th>Rechnungsadresse</th>
@@ -120,18 +120,31 @@
 											</tbody>
 											<thead>
 												<tr>
-													<th>Zahlungsmethode: %pay_method%</th>
+													<th>Kontaktdaten</th>
 													<th><img src="cid:CJO_ADDON_CONFIG_PATH/shop/img/blank.gif" height="1" width="22" alt=""></th>
-													<th>Ihr Kommentar</th>
+													<th>Zahlungsmethode: %pay_method%</th>
 												</tr>
 											</thead>
 											<tbody>
 												<tr>
-													<td style="white-space: pre">%pay_data%</td>
+													<td>
+														E-Mail: %email%<br/>
+														Tel: %phone_nr%
+													</td>
 													<td><img src="cid:CJO_ADDON_CONFIG_PATH/shop/img/blank.gif" height="1" width="22" alt=""></td>
-													<td style="white-space: pre">%order_comment%</td>
+													<td style="white-space: pre">%pay_data%</td>
 												</tr>
 											</tbody>
+											<thead>
+												<tr>
+													<th colspan="3">Ihr Kommentar</th>
+												</tr>
+											</thead>
+											<tbody>
+												<tr>
+													<td colspan="3" style="white-space: pre">%order_comment%</td>
+												</tr>
+											</tbody>											
 										</table>
 										<img src="cid:CJO_ADDON_CONFIG_PATH/shop/img/blank.gif" height="20" width="1" alt="">
 										<p>Nach Abschluss der Zahlungsprozesses werden wir die Bestellung innerhalb der angegebenen
