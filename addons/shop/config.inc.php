@@ -35,8 +35,8 @@ $CJO['ADDON']['page'][$mypage] 		= $mypage; // pagename/foldername
 $CJO['ADDON']['name'][$mypage] 		= $I18N_21->msg($mypage);  // name
 $CJO['ADDON']['perm'][$mypage] 		= 'shop[]'; // permission
 $CJO['ADDON']['author'][$mypage] 	= 'Matthias Schomacker, Stefan Lehmann 2010';
-$CJO['ADDON']['version'][$mypage] 	= '0.2';
-$CJO['ADDON']['compat'][$mypage] 	= '2.2';
+$CJO['ADDON']['version'][$mypage] 	= '1.0';
+$CJO['ADDON']['compat'][$mypage] 	= '2.6.0';
 $CJO['ADDON']['support'][$mypage] 	= 'http://contejo.com/addons/shop';
 
 // define table constants
@@ -103,7 +103,6 @@ include_once $CJO['ADDON_PATH']."/".$mypage."/classes/class.shop_payment.inc.php
 include_once $CJO['ADDON_PATH']."/".$mypage."/classes/class.shop_product.inc.php";
 include_once $CJO['ADDON_PATH']."/".$mypage."/classes/class.shop_product_attributes.inc.php";
 include_once $CJO['ADDON_PATH']."/".$mypage."/classes/class.shop_address.inc.php";
-//include_once $CJO['ADDON_PATH']."/".$mypage."/classes/class.shop_customer_data.inc.php";
 include_once $CJO['ADDON_PATH']."/".$mypage."/classes/class.shop_zone.inc.php";
 include_once $CJO['ADDON_PATH']."/".$mypage."/classes/class.shop_checkout.inc.php";
 include_once $CJO['ADDON_PATH']."/".$mypage."/classes/class.shop_extension.inc.php";

@@ -62,9 +62,7 @@ $CJO['LOGIN']->setLoginQuery("SELECT *
 if (!$CJO['LOGIN']->checkLogin()) {
 
     if (!preg_match('/\/index\.php$/',$_SERVER['PHP_SELF'])) {
-        ?>
-        <script type="text/javascript">  /* <![CDATA[ */ location.reload(); /* ]]> */ </script>
-        <?php
+        header('Location: index.php');
         exit();
     }
 

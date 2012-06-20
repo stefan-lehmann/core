@@ -180,7 +180,6 @@ if ($CJO['PAGEPATH'] == '') {
 if ($cur_page['header']){
 	require_once $CJO['INCLUDE_PATH'].'/layout/top.php';
 }
-
 include $CJO['PAGEPATH'];
 
 if ($cur_page['header']) {

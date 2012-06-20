@@ -772,7 +772,7 @@ var cjo = {
 
 			try {
                 var width = $(this).width() * 1;
-                $(this).next(':not(.formular)').children('input[type=text], select').width(width + 25);
+                $(this).next(':not(.formular)').children('input[type=text], select:not(.cjo_media_list)').width(width + 25);
             }
             catch (err) {
                 return true;

@@ -236,9 +236,9 @@ class cjoShopCheckout {
 		$insert->setValue('delivery_method', $delivery->getDeliverer().': '.$delivery->getDelivererSize());
 		$insert->setValue('delivery_cost', cjoShopPrice::convToFloat($delivery->getTotalCosts()));
 		$insert->setValue('birth_date', strtotime($personals[0]));
-		$insert->setValue('createuser', $address1->getName());
-		$insert->setValue('createdate', time());
-		$insert->setValue('comment', $comment);
+		$insert->addGlobalCreateFields($address1->getName());
+		$insert->addGlobalUpdateFields('--');
+        $insert->setValue('comment', $comment);
 		$insert->setTable(TBL_21_ORDERS);
 		$insert->Insert();
 

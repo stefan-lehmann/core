@@ -38,7 +38,11 @@ class cjoShopExtension {
         $files     = array( array($CJO['ADDON_CONFIG_PATH'].'/'.self::$mypage.'/0.clang.inc.php',
         	                      $CJO['ADDON_CONFIG_PATH'].'/'.self::$mypage.'/'.$params['id'].'.clang.inc.php'),
         	                array($CJO['ADDON_CONFIG_PATH'].'/'.self::$mypage.'/0.business_terms.txt',
-        	                      $CJO['ADDON_CONFIG_PATH'].'/'.self::$mypage.'/'.$params['id'].'.business_terms.txt')
+        	                      $CJO['ADDON_CONFIG_PATH'].'/'.self::$mypage.'/'.$params['id'].'.business_terms.txt'),
+                            array($CJO['ADDON_CONFIG_PATH'].'/'.self::$mypage.'/0.confirm_mail.html',
+                                  $CJO['ADDON_CONFIG_PATH'].'/'.self::$mypage.'/'.$params['id'].'.confirm_mail.html'),
+                            array($CJO['ADDON_CONFIG_PATH'].'/'.self::$mypage.'/0.send_mail.html',
+                                  $CJO['ADDON_CONFIG_PATH'].'/'.self::$mypage.'/'.$params['id'].'.send_mail.html')                                          	                      
         	               );
 
     	foreach ($files as $file) {

@@ -236,9 +236,11 @@ class cjoRewrite {
      * @access public
      */
     public static function setServerPath() {
+        global $CJO;
         $path = cjoAssistance::toArray(pathinfo(cjo_server('PHP_SELF','string'),PATHINFO_DIRNAME),'/');
         $length = count($path)-1;
-        if ($path[$length] == 'contejo' || $path[$length] == 'core') {
+        
+        if ($path[$length] == str_replace($CJO['HTDOCS_PATH'], '', $CJO['BACKEND_PATH'])) {
             $temp = array_pop($path);
         }
         return '/'.implode('/', $path).'/';
