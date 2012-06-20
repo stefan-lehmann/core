@@ -102,6 +102,15 @@ else {
     					$cur_page['header'] = false;
     					$cur_page['page'] = $page;
     					$CJO['PAGEPATH'] = $CJO['ADDON_PATH'].'/'.$cur_page['page'].'/pages/index.inc.php';
+                        if (!file_exists($CJO['PAGEPATH']))
+                            $CJO['PAGEPATH'] = $CJO['ADDON_CONFIG_PATH'].'/'.$cur_page['page'].'/pages/index.inc.php';
+                        if (!file_exists($CJO['PAGEPATH'])) {
+                            $cur_page['header'] = true;
+                            $cur_page['page'] = '';
+                            $CJO['PAGEPATH'] = '';
+                            cjoMessage::addError($I18N->msg('msg_page_not_found'));
+                        }
+                        
     				}
     			}
     		}

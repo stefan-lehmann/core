@@ -20,6 +20,7 @@ label_filetype = MIME Type
 label_updatedate = Update date
 label_updateuser = Updated by
 msg_media_in_this_category = No media in root! Please select an other category or upload media.
+msg_page_not_found = An error occurred! The requested page cannot be displayed. Please contact your system administrator.
 
 ##.//contejo/include/classes/afc/classes/class.cjo_formatter.inc.php 
 dateformat = %m-%d-%Y

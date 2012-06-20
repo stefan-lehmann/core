@@ -20,6 +20,7 @@ label_filetype = MIME-Typ
 label_updatedate = aktualisiert am
 label_updateuser = aktualisiert von
 msg_media_in_this_category = Keine Medien hier! Bitte Kategorie wechseln bzw. Medien auf den Server laden.
+msg_page_not_found = Es ist ein Fehler aufgetreten! Die angeforderte Seite kann nicht angezeigt werden. Bitte wenden Sie sich an den System-Administrator.
 
 ##./contejo/include/classes/afc/classes/class.cjo_formatter.inc.php
 dateformat = %d.%m.%Y

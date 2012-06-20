@@ -69,7 +69,8 @@ input[type=submit] {width:auto !important;}
 .a22-cjoform .cjo_select_button input[type=text].invalid {width:346px;}
 .a22-cjoform select.invalid,.a22-cjoform span.invalid select {width:366px;}
 .a22-cjoform label.invalid {border:2px solid red !important;font-weight:700 !important;background:#fae9e5 url(../img/silk_icons/exclamation.png) no-repeat 2px 50% !important;padding:3px .25em 4px 24px !important;}
-.a22-cjoform select {width:366px;padding:0 !important;}
+.a22-cjoform select {width:366px;}
+.a22-cjoform select option {min-height:15px}
 .a22-cjoform option {text-align:left;font-weight:400;margin:0;padding:1px 2px;}
 .a22-cjoform div.cjo_float_l input,.a22-cjoform div.cjo_float_r input {float:none;width:auto;margin:5px 0;}
 .a22-cjolist input[type=text],.a22-cjolist input[type=password],.a22-cjolist select {width:150px;}
@@ -78,7 +79,7 @@ input[type=submit] {width:auto !important;}
 .a22-cjoform-section .a22-col1 {clear:left;width:100%;}
 .a22-cjoform-section div.field {width:100%;line-height:150%;z-index:1;margin:0 !important;padding:7px 0;}
 .a22-cjoform-section div.field.no_border_top{padding:3px 0;}
-	.a22-cjoform-section div.hr {display:block;clear:both;width:100%;height:1px;background:#ddd;border:0;font-size:1px;line-height:1px;z-index:1;margin:0;padding:0;}
+.a22-cjoform-section div.hr {display:block;clear:both;width:100%;height:1px;background:#ddd;border:0;font-size:1px;line-height:1px;z-index:1;margin:0;padding:0;}
 .a22-cjoform-section .button_field {display:block;min-height:12px;float:left;clear:both;width:100%;background:#fff url(../img/contejo/bg/table_footer.png) repeat-x left top !important;margin:-8px 0 -7px 0;padding:14px 0 20px;}
 .a22-cjoform label {display:block;float:left;width:180px;font-weight:400;text-align:left;text-transform:uppercase;padding:0 10px;}
 .a22-cjoform label.right {display:inline;float:none;width:auto;font-weight:400;text-align:left;text-transform:none;vertical-align:middle;padding:0 10px;}
