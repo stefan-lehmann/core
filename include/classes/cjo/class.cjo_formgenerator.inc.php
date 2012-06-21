@@ -239,6 +239,10 @@ class cjoFormGenerator {
                 $elm['name'] == 'sender_email' ) {
                 $this->sender_email = $send_value;
             }
+            
+            
+            $elements_out['element_title'][$i] = preg_replace('/\/[^\/]*$/', '', $elm['label']);
+            
             switch($elm['type']){
 
                 case "headline":
@@ -429,6 +433,10 @@ class cjoFormGenerator {
     
     public function getFormeElmentsOut() {
         return $this->elements_out;
+    }
+    
+    public function getErrorMessages() {
+        return array('element_error_msg' => $this->elements_out['element_error_msg']);
     }
     
     public function hasFormeElments() {
@@ -677,6 +685,7 @@ class cjoFormGenerator {
      	}
      	else {
      		foreach($this->elements_mail['element_label'] as $key=>$element) {
+     		    if (empty($this->elements_mail['element_value'][$key])) continue;
                 $this->mail_text .= ($element != '') ? "*".$element."*: " : "";
                 $this->mail_text .= stripslashes($this->elements_mail['element_value'][$key])." \r\n";
             }
