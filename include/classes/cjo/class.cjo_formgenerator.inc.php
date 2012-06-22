@@ -242,7 +242,7 @@ class cjoFormGenerator {
             
             
             $elements_out['element_title'][$i] = preg_replace('/\/[^\/]*$/', '', $elm['label']);
-            
+
             switch($elm['type']){
 
                 case "headline":
@@ -355,7 +355,7 @@ class cjoFormGenerator {
                     $elements_out['element_value'][$i] = $send_value ? $send_value : $elm['default'];
                     self::getFormSelectOptions($sel, $elm['values']);
                     $sel->setSelected($elements_out['element_value'][$i]);
-                    $sel->setSelectExtra('title="'.$elm['label'].'"');                    
+                    $sel->setSelectExtra('title="'.$elements_out['element_title'][$i].'"');                    
                     $elements_out['element_select_out'][$i] = $sel->get();
 
                     $elements_mail['element_name'][$i] 	 	 = $elm['name'];
