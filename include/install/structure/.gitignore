@@ -43,3 +43,4 @@ svn-commit*.tmp
 sftp-config.jsonc
 usage
 logs
+stats
