@@ -146,7 +146,7 @@ input[type=submit].yellow:hover,
 .cjo_image_container span {position:absolute;top:3px;right:3px;height:18px;}
 .cjo_image_container span input {float:right;}
 .cjo_image_container b {font-size:9px;position:absolute;bottom:5px;left:5px;display:block;word-wrap:break-word;overflow:hidden;line-height:12px;width:130px;font-weight:400;}
-.cjo_modulselect {background:#99d8f3;padding:10px;}
+.cjo_modulselect {background:#99d8f3;padding:10px;clear:both;}
 .cjo_modulselect:hover {background:#009de0;}
 .cjo_hidden_anchor {position:absolute;visibility:hidden;margin:-200px 0 200px;}
 .cjo_modulselect select {width:100%;text-align:center;font-size:110%;}
