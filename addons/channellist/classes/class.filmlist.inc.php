@@ -103,7 +103,8 @@ class cjoFilmList {
 
             if ($sql->getRows() > 0) $results[$package['id']] = $temp;
         }
-        
+        if (empty($results)) return '';
+
         $unique = array();
         $counter = 0;
         foreach($results as $id => $package) {
@@ -220,7 +221,7 @@ class cjoFilmList {
         
         if (empty(self::$current)) self::$current = $default_item;
         if (!empty($items[$current_key])) $items[$current_key]['current'] = true;   
-        
+
         return sprintf('<div class="vf_filmlist"><div class="vf_scrollouter"><div class="vf_scrollcontainer"><ul>%s</ul></div></div></div>'.
                '<script type="text/javascript" src="%s"></script>%s'."\r\n",
                self::getListOutput($items),                    
@@ -510,10 +511,16 @@ class cjoFilmList {
 
     	if (!$CJO['CONTEJO'] && strpos($content,'VF_FILMLIST[') !== false) {
     	    
+            $replace['VF_HAS_FILMLIST[]'] = '';
+            
     	    if (preg_match('/VF_FILMLIST\[([^\]]*)\]/', $content, $matches)) {
     	        $replace[$matches[0]] = $CJO['ARTICLE_ID'] == 232 
     	                              ? self::getFilmListFromArticle() 
     	                              : self::getFilmList($matches[1]); 
+                                      
+              if (trim($replace[$matches[0]]) == '') {
+                   $replace['VF_HAS_FILMLIST[]'] = ' style="display:none!important"'; 
+              }
     	    }
    		    
    		    if (strpos($content,'VF_FILMLIST_HEADLINE[]') !== false)   	    
