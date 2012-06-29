@@ -183,20 +183,34 @@ class cjoFormField {
 	        $dataset = $section->_getDataSet();
 	    	$form    = $section->getForm();
 
-	        $name = $this->getName();
 
+            $name = str_replace ("]", '', $this->getName()); 
+            $name = explode("[",$name); 
+            
+            if (cjo_post('cjo_form_name','string') == $form->getName())
+                $dataset = $_POST;
+
+            $temp = $dataset[array_shift($name)];
+            if (!empty($name)) {
+            foreach($name as $key)
+                if (!isset($temp[$key])) {
+                    $temp = ''; 
+                    break;
+                }
+                $temp = $temp[$key];
+            }
+            
 	        if (cjo_post('cjo_form_name','string') == $form->getName() && empty($this->attributes['disabled'])) {
-		        if (!empty($name) && cjo_post($name,'bool')) {
-		            // Da beim Redraw des Formulars via mquotes slashes hinzugefügt wurden, diese entfernen!
-		            return $this->stripslashes($_POST[$name]);
+		        if ($this->getName() && !empty($temp)) {
+		            return $this->stripslashes($temp);
 		        }
 	        }
 	        else {
 		        if ($value == '' && $this->value != '') {
 		            $value = $this->value;
 		        }
-	            if ($value == '' && isset ($dataset[$name])) {
-		            $value = $dataset[$name];
+	            if ($value == '' && isset ($temp)) {
+		            $value = $temp;
 		        }
 		        if($value == '' && $this->getDefault()){
 		             $value = $this->getDefault();

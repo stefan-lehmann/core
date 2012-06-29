@@ -312,6 +312,7 @@ class SmartyValidate {
         
         // check for failed fields
         $_failed_fields = SmartyValidate::_failed_fields($formvars, $form);
+
         $_ret = is_array($_failed_fields) && count($_failed_fields) == 0;
         // set validation state of form
         $SMARTY_VALIDATE[$form]['is_error'] = !$_ret;

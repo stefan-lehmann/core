@@ -6,9 +6,9 @@
  * 
  * PHP Version: 5.3.1+
  *
- * @package     contejo
- * @subpackage  core
- * @version     2.6.0
+ * @package     Addons
+ * @subpackage  extend_meta
+ * @version     2.6.2
  *
  * @author      Stefan Lehmann <sl@contejo.com>
  * @copyright   Copyright (c) 2008-2012 CONTEJO. All rights reserved. 
@@ -23,21 +23,9 @@
  * @filesource
  */
 
-class textField extends cjoFormField {
 
-	public function textField($name, $label, $attributes = array (), $id = '') {
-		$this->cjoFormField($name, $label, $attributes, $id);
-	}
+$mypage = "extend_meta";
 
-	public function get() {
-		$value = htmlspecialchars($this->getValue(), ENT_QUOTES, "UTF-8");
-
-		return sprintf('<input type="text" name="%s" value="%s" id="%s" tabindex="%s"%s />%s', 
-		                $this->getName(), 
-		                $value, 
-		                $this->getId(), 
-		                cjo_a22_nextTabindex(), 
-		                $this->getAttributes(), 
-		                $this->getNote());
-	}
+if (cjoInstall::installDump(dirname(__FILE__).'/install.sql')) {
+    $CJO['ADDON']['install'][$mypage] = true;
 }

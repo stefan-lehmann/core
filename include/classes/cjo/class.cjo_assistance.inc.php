@@ -519,7 +519,10 @@ class cjoAssistance {
      */
     public static function toArray($value, $delimiter = '|') {
 
-        if (!is_array($value)) {
+        if (is_object($value)) {
+            return get_object_vars($value);
+        }
+        elseif (!is_array($value)) {
             return array_values(array_diff(explode($delimiter,$value), array('')));
         }
         else {

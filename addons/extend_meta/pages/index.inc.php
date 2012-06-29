@@ -6,11 +6,11 @@
  * 
  * PHP Version: 5.3.1+
  *
- * @package     contejo
- * @subpackage  core
- * @version     2.6.0
+ * @package     Addons
+ * @subpackage  extend_meta
+ * @version     2.6.2
  *
- * @author      Stefan Lehmann <sl@contejo.com>
+ * @author      Stefan Lehmann <sl@raumsicht.com>
  * @copyright   Copyright (c) 2008-2012 CONTEJO. All rights reserved. 
  * @link        http://contejo.com
  *
@@ -23,21 +23,12 @@
  * @filesource
  */
 
-class textField extends cjoFormField {
+$mypage    = 'extend_meta';
 
-	public function textField($name, $label, $attributes = array (), $id = '') {
-		$this->cjoFormField($name, $label, $attributes, $id);
-	}
+// register subpages
+$subpages = new cjoSubPages($subpage, $mypage);
+$subpages->addPage( array('settings', 'title' => $I18N_30->msg('label_settings')));
 
-	public function get() {
-		$value = htmlspecialchars($this->getValue(), ENT_QUOTES, "UTF-8");
-
-		return sprintf('<input type="text" name="%s" value="%s" id="%s" tabindex="%s"%s />%s', 
-		                $this->getName(), 
-		                $value, 
-		                $this->getId(), 
-		                cjo_a22_nextTabindex(), 
-		                $this->getAttributes(), 
-		                $this->getNote());
-	}
-}
+require_once $CJO['INCLUDE_PATH'].'/layout/top.php';
+require_once $subpages->getPage();
+require_once $CJO['INCLUDE_PATH'].'/layout/bottom.php';

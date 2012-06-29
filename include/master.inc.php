@@ -159,6 +159,7 @@ require_once $CJO['INCLUDE_PATH']."/classes/cjo/class.cjo_subpages.inc.php";
 require_once $CJO['INCLUDE_PATH']."/classes/cjo/class.cjo_template.inc.php";
 require_once $CJO['INCLUDE_PATH']."/classes/cjo/class.cjo_user.inc.php";
 require_once $CJO['INCLUDE_PATH']."/classes/cjo/class.compatibility.inc.php";
+require_once $CJO['INCLUDE_PATH']."/classes/cjo/class.cjo_process.inc.php";
 
 // ----------------- CONTEJO LANGOBJEKT
 $I18N = new i18n($CJO['LANG']);
@@ -178,44 +179,15 @@ require_once $CJO['INCLUDE_PATH']."/functions/function.cjo_globals.inc.php";
 
 if (isset($CJO['ONLY_FUNCTIONS']) && $CJO['ONLY_FUNCTIONS']) return false;
 
-require_once $CJO['INCLUDE_PATH'].'/classes/var/class.cjo_vars.inc.php';
-
-cjoUnregisterGlobals();
-cjogetAdjustPath();
-cjoSetFavicon();
-
-$CJO['CUR_CLANG'] = cjo_request('clang', 'cjo-clang-id', $CJO['START_CLANG_ID']);
-
-$CJO['ARTICLE_ID']
-= (cjo_request('article_id', 'int') == 0)
-? $CJO['START_ARTICLE_ID']
-: cjo_request('article_id','cjo-article-id', $CJO['NOTFOUND_ARTICLE_ID']);
-
-if ($CJO['CONTEJO']) {
-    $CJO['ARTICLE_ID'] = cjo_request('article_id', 'cjo-article-id');
-}
-
-foreach($CJO['VARIABLES'] as $key => $value) {
-    require_once $CJO['INCLUDE_PATH']."/classes/var/class.".
-    strtolower(str_replace('cjoVar', 'cjo_var_', $value)).".inc.php";
-
-    $CJO['VARIABLES'][$key] = new $value;
-}
-
-// ------ MESSAGE
-new cjoMessage();
+cjoProcess::start();
 
 if (!empty($CJO['FILE_CONFIG_ADDONS'])) {
     include_once $CJO['FILE_CONFIG_ADDONS'];
-}
-//cjoUser::updateCatReadPermissions();
+}   
+
 require_once $CJO['INCLUDE_PATH']."/authentication.inc.php";
 require_once $CJO['INCLUDE_PATH']."/frontend_auth.inc.php";
 require_once $CJO['INCLUDE_PATH']."/local.inc.php";
-
-
-cjoSetIndividualUploadFolder();
-cjoExtension::registerExtension('OUTPUT_FILTER','i18n::searchAndTranslate');
 
 // ----------------- set to default
 $CJO['NOFUNCTIONS'] = true;
