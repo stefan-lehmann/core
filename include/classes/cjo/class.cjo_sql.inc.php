@@ -516,8 +516,16 @@ class cjoSql implements Iterator{
      * @return string
      * @access protected
      */
-    protected function buildPreparedWhere() {        
-        return (!empty($this->where_var) && is_array($this->where_params)) ? $this->where_var.' '.$this->buildWhereArg($this->where_params) : '';
+    protected function buildPreparedWhere() {
+        if (empty($this->where_var)) {
+            return '';
+        }   
+        else if ($this->where_var == "WHERE" && is_array($this->where_params)) {
+            return $this->where_var.' '.$this->buildWhereArg($this->where_params);
+        }
+        else {
+            return $this->where_var;
+        }    
     }
       
     /**
@@ -1132,7 +1140,7 @@ class cjoSql implements Iterator{
      * @return array()
      * @access public
      */
-    protected function _getFieldnames() {
+    public function _getFieldnames() {
         $this->fetchMeta();
         return $this->fieldnames;
     }

@@ -125,7 +125,9 @@ class cjoRewrite {
 			$params['name'] = cjoRewrite::parseArticleName($article->getName());
     		
         	if (empty($params['name'])) $params['name'] = 'article';
-        	
+            
+            $params['deeplink'] = !empty($CJO['MODREWRITE']['DEEPLINK_FORMAT']) ? $CJO['MODREWRITE']['DEEPLINK_FORMAT'] : '%name%.%article_id%.%clang%.html';
+            
         	$params['query'] = $query_params;
             
         	$temp = cjoExtension::registerExtensionPoint('GENERATE_URL', $params);
@@ -146,19 +148,18 @@ class cjoRewrite {
         	    $replace['%clang%']       = $params['query']['clang'];
                 $replace['%clang_iso%']   = $CJO['CLANG_ISO'][$params['query']['clang']];  
                 $replace['%clang_name%']  = $CJO['CLANG'][$params['query']['clang']]; 
-                $replace['%clang_sname%'] = substr($replace['%clang_name%'], 0, 2);                                        	    
+                $replace['%clang_sname%'] = substr($replace['%clang_name%'], 0, 2);  
         	    
-        	    $deeplink = !empty($CJO['MODREWRITE']['DEEPLINK_FORMAT']) ? $CJO['MODREWRITE']['DEEPLINK_FORMAT'] : '%name%.%article_id%.%clang%.html';
-        	    
-        	    if (isset($params['name']))                unset($params['name']);
-        	    if (isset($params['query']['article_id'])) unset($params['query']['article_id']);
-        	    if (isset($params['query']['clang']))      unset($params['query']['clang']);
-        	    
-        	    $params['path'] .= str_replace(array_keys($replace),$replace, $deeplink);
+        	    $params['path'] .= str_replace(array_keys($replace),$replace, $params['deeplink']);
         	}
         	else {
         	    $params['path'] .= 'index.php';  
         	}
+            
+            if (isset($params['deeplink']))            unset($params['deeplink']);
+            if (isset($params['name']))                unset($params['name']);
+            if (isset($params['query']['article_id'])) unset($params['query']['article_id']);
+            if (isset($params['query']['clang']))      unset($params['query']['clang']);
 
         	if ($redirect === false &&
         	    !empty($CJO['MODREWRITE']['LINK_REDIRECT']) && 
@@ -169,8 +170,9 @@ class cjoRewrite {
                 $params['query'] = is_array($params['query']) && !empty($params['query']) ? http_build_query($params['query']) : null;
                 $url = http_build_url('',$params,HTTP_URL_STRIP_AUTH | HTTP_URL_JOIN_PATH | HTTP_URL_JOIN_QUERY | HTTP_URL_STRIP_FRAGMENT).$hash;
             }
+            $url = preg_replace('/(?<!:)\/{2,}/','/', $url);
 
-            return preg_replace('/(?<!:)\/{2,}/','/', $url); 
+            return cjoExtension::registerExtensionPoint('GENERATED_URL', array('subject' => $url));
     }
 
     /**

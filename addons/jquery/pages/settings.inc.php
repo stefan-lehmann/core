@@ -80,54 +80,9 @@ $form->addSection($section);
 $form->addFields($hidden);
 
 if ($form->validate()) {
-    
 
-
-//	if (file_exists($jq_incl) && !cjoAssistance::deleteDir($jq_incl,true)) {
-//		cjoMessage::addError($I18N_11->msg("err_create_plugin_dir", $jq_incl));
-//	}
-//
-//	if (!@mkdir($jq_incl, $CJO['FILEPERM'])) {
-//		cjoMessage::addError($I18N_11->msg("err_create_plugin_dir", $jq_incl));
-//	}
-//
-//	if (!file_exists($version)) {
-//		cjoMessage::addError($I18N_11->msg("err_jquery_version_is_missing", $version));
-//	}
-//
-//	$dest = str_replace($CJO['ADDON_PATH'], $CJO['ADDON_CONFIG_PATH'],$version);
-//
-//	if (!@copy($version, $dest)) {
-//	    
-//		cjoMessage::addError($I18N_11->msg("err_copy_version", $version, $dest));
-//	}
-//	else {
-//	    @chmod($dest, $CJO['FILEPERM']);
-//	}
-//
-//	foreach($plugins as $key=>$plugin) {
-//
-//		if (cjoMessage::hasErrors()) break;
-//		if (!file_exists($plugin)) continue;
-//
-//		$dest = str_replace($CJO['ADDON_PATH'], $CJO['ADDON_CONFIG_PATH'], $plugin);
-//
-//		if (!cjoAssistance::copyDir($plugin, $dest)) {
-//			cjoMessage::addError($I18N_11->msg("err_copy_plugin_dir", $plugin, $dest));
-//		}
-//	}
     cjojQuery::copyjQueryFiles();
     
-    
-    
-//    if () {
-//        
-//        
-//        
-//	    if (!cjoMessage::hasErrors()) {
-//			//cjoAssistance::redirectBE( array('msg' => 'msg_data_saved'));
-//		}
-//	}
 }
 
 $form->show(false);

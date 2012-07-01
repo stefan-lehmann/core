@@ -39,8 +39,8 @@ class cjoVarMeta extends cjoVars {
 
         global $CJO;
 
-        if (empty($article_id))
-            $article_id = cjo_request('article_id', 'cjo-article-id', $CJO['START_ARTICLE_ID']);
+        if (empty($article_id)) $article_id = $CJO['ARTICLE_ID'];
+        if (empty($article_id)) $article_id = cjo_request('article_id', 'cjo-article-id', $CJO['START_ARTICLE_ID']);
 
         $this->getMeta($article_id);
 

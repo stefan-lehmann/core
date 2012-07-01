@@ -137,8 +137,10 @@ class cjoClientCache {
 
 
         if (@readfile($filename) === false) {
-            header('HTTP/1.0 500 Internal Server Error'); exit();
+            header('HTTP/1.0 500 Internal Server Error');
         }
+
+        exit();
     }
 
 

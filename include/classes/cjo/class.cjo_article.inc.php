@@ -207,7 +207,7 @@ class cjoArticle {
 
         $value = $this->correctValue($value);
 
-        return (!$this->viasql)
+        return (!$this->viasql || !in_array($value, $this->sql->_getFieldnames()))
             ? $CJO['ART'][$this->article_id][$value][$this->clang]
             : $this->sql->getValue($value);
     }

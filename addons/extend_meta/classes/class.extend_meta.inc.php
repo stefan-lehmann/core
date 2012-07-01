@@ -37,6 +37,8 @@ class cjoExtendMeta {
         global $CJO;
         
         $fields = self::getFields();
+        $article_id = $CJO['ARTICLE_ID'];
+        $article = OOArticle::getArticleById($article_id);
 
         foreach($fields['name'] as $key=>$name) {
             
@@ -66,10 +68,9 @@ class cjoExtendMeta {
                 if (!empty($fields['helptext'][$key])) {
                     $params['fields'][$name]->setHelp($fields['helptext'][$key]);
                 }
+                $params['fields'][$name]->setValue($article->getValue($name));
             }
         }
-            
-        
     }
     
     public static function saveFormFields($params) {
@@ -87,7 +88,7 @@ class cjoExtendMeta {
         
         foreach($fields['name'] as $key=>$name) {
             if (empty($name) || 
-                $fields['field'][$key] == 'slideheadlineField' || 
+                $fields['field'][$key] == 'headlineField' || 
                 $fields['field'][$key] == 'slideheadlineField' ) continue;
                 
             $sql->flush();
@@ -100,32 +101,110 @@ class cjoExtendMeta {
         }
     }
     
+    public static function removeField($name) {
+        
+        $sql = new cjoSql();
+        $sql->setTable(TBL_30_EXTEND_META);
+        $sql->setWhere(array('name'=>$name));
+        $sql->Delete();
+    }
+    
     public static function generateMata($params) {
         
         global $CJO;
-        
+
         $content = $params['subject'];
         $fields = self::getFields();
-        $article_id = $CJO['ARTICLE_ID'];
-        $clang = $CJO['CUR_CLANG']; 
+        $article_id = $params['article_id'];
+        $clang = $params['clang'];
         $sql = new cjoSql();
 
         foreach($fields['name'] as $key=>$name) {
             
             if (empty($name) || 
-                $fields['field'][$key] == 'slideheadlineField' || 
+                $fields['field'][$key] == 'headlineField' || 
                 $fields['field'][$key] == 'slideheadlineField' ) continue;
                 
             $sql->flush();
             $sql->setTable(TBL_30_EXTEND_META);
-            $sql->setWhere(array('article_id'=>$article_id,'clang'=>$clang));
+            $sql->setWhere(array('article_id'=>$article_id,'clang'=>$clang,'name'=>$name));
             $sql->Select();
             
             $value = ($sql->getRows() == 1) ? cjoAssistance::addSlashes($sql->getValue('value')) : '';
             
-            $content .= '$CJO[\'ART\'][\''.$article_id.'\'][\''.$name.'\'][\''.$clang.'\'] = "'.$value.'";'."\r\n";
+            $CJO['ART'][$article_id][$name][$clang] = $value;
         }
-        
         return $content;
+    }
+    
+    public static function generateContejoClassVars($params) {
+
+        $vars = $params['subject'];            
+        $fields = self::getFields();
+        foreach($fields['name'] as $key=>$name) {
+
+            if (empty($name) || 
+                $fields['field'][$key] == 'headlineField' || 
+                $fields['field'][$key] == 'slideheadlineField' ) continue;
+            $vars[] = $name;
+        }
+
+        return $vars;
+    }
+
+    public static function deleteArticle($params) {
+        
+        $sql = new cjoSql();
+        $sql->setTable(TBL_30_EXTEND_META);
+        $sql->setWhere(array('article_id'=>$params['id']));
+        $sql->Delete();
+    }
+    
+    public static function copyArticle($params) {
+        
+        $sql = new cjoSql();
+        $sql->setTable(TBL_30_EXTEND_META);
+        $sql->setWhere('article_id='.$params['source_id'].' AND article_id !='.$params['target_id']);
+        $sql->Select();
+        
+        if ($sql->getRows() == 0) return;
+        
+        $results = $sql->getArray();
+        foreach($results as $result) {
+            $result['article_id'] = $params['target_id'];
+            $sql->flush();
+            $sql->setTable(TBL_30_EXTEND_META);
+            $sql->setValues($result);
+            $sql->addGlobalCreateFields();
+            $sql->Insert();
+        }
+    }
+    
+    public static function addClang($params) {
+        
+        $sql = new cjoSql();
+        $sql->setTable(TBL_30_EXTEND_META);
+        $sql->setWhere(array('clang'=>'0'));
+        $sql->Select();
+        
+        if ($sql->getRows() == 0) return;
+        
+        $results = $sql->getArray();
+        foreach($results as $result) {
+            $result['clang'] = $params['id'];
+            $sql->flush();
+            $sql->setTable(TBL_30_EXTEND_META);
+            $sql->setValues($result);
+            $sql->addGlobalCreateFields();
+            $sql->Insert();
+        }
+    }
+    
+    public static function deleteClang($params) {
+        
+        $sql = new cjoSql();
+        $sql->setTable(TBL_30_EXTEND_META);
+        $sql->setWhere(array('clang'=>$params['id']));
+        $sql->Delete();
     }
 }

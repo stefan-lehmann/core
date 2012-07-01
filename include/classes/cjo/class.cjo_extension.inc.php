@@ -62,10 +62,16 @@ class cjoExtension {
     				self::callFunction($ext, $params);
     			}
     		} else {
-
+//cjo_Debug($CJO['EXTENSIONS']);
     			foreach ($CJO['EXTENSIONS'][$extension] as $ext) {
-    			    
+    			                     if ($ext == 'XXX') {
+                        cjo_debug($result,'','orange'); die();
+                    }
     				$result = self::callFunction($ext, $params);
+    				
+    				if ($ext == 'XXX') {
+    				    cjo_debug($result,'','orange'); die();
+    				}
     				// Rückgabewert nur auswerten wenn auch einer vorhanden ist
     				// damit $params['subject'] nicht verfälscht wird
 

@@ -23,15 +23,16 @@
  * @filesource
  */
 
-$dataset = $CJO['ADDON']['settings'][$mypage];
 
 //create formular
 $form = new cjoForm();
 $form->setEditMode(true);
 
+$CJO['ADDON']['settings'][$mypage]['FIELDS']['name'] = array_diff($CJO['ADDON']['settings'][$mypage]['FIELDS']['name'],array(''));
+
 $dataset = $_POST ? $_POST : $CJO['ADDON']['settings'][$mypage]['FIELDS'];
 
-    $length = count($dataset['name']);
+    $length = count($CJO['ADDON']['settings'][$mypage]['FIELDS']['name']);
     $ii = 0;
     for($i=0; $i<=$length;$i++) {
         
@@ -52,8 +53,13 @@ $dataset = $_POST ? $_POST : $CJO['ADDON']['settings'][$mypage]['FIELDS'];
         $fields['label_'.$i]->setValue($dataset['label'][$i]);        
         
         $fields['name_'.$i] = new textField('name['.$ii.']', $I18N_30->msg('label_name'));
-        if ($i<$length)
-        $fields['name_'.$i]->addValidator('notEmpty', $I18N_30->msg('err_empty_name'), false);
+        if ($i<$length) {
+            $fields['name_'.$i]->addAttribute('readonly', 'readonly');
+            $fields['name_'.$i]->addValidator('notEmpty', $I18N_30->msg('err_empty_name'), false);
+        }
+        else {
+            $fields['name_'.$i]->addValidator('isNot', $I18N_30->msg('err_name_not_unique'), $CJO['ADDON']['settings'][$mypage]['FIELDS']['name']);
+        } 
         if (isset($dataset['name'][$i]))
         $fields['name_'.$i]->setValue($dataset['name'][$i]);
         
@@ -83,22 +89,22 @@ $dataset = $_POST ? $_POST : $CJO['ADDON']['settings'][$mypage]['FIELDS'];
             $fields['validator_'.$i]->addOption($type, $type); 
         }
         
-        $fields['compare_value_'.$i] = new textField('compare_value['.$ii.']', $I18N_30->msg('label_compare_value'), array('rows'=>2));
+        $fields['compare_value_'.$i] = new textField('compare_value['.$ii.']', $I18N_30->msg('label_compare_value'));
         $fields['compare_value_'.$i]->setHelp($I18N_30->msg("note_compare_value"));
         if (isset($dataset['compare_value'][$i]))
         $fields['compare_value_'.$i]->setValue($dataset['compare_value'][$i]);
         
-        $fields['message_'.$i] = new textAreaField('message['.$ii.']', $I18N_30->msg('label_message'));
+        $fields['message_'.$i] = new textAreaField('message['.$ii.']', $I18N_30->msg('label_message'), array('rows'=>1));
         if (isset($dataset['message'][$i]))
         $fields['message_'.$i]->setValue($dataset['message'][$i]);
         
-        $fields['helptext_'.$i] = new textAreaField('helptext['.$ii.']', $I18N_30->msg('label_helptext'), array('rows'=>2));
+        $fields['helptext_'.$i] = new textAreaField('helptext['.$ii.']', $I18N_30->msg('label_helptext'), array('rows'=>1));
         if (isset($dataset['message'][$i]))
         $fields['helptext_'.$i]->setValue($dataset['helptext'][$i]);
         
         if ($i<$length) {
             $fields['remove_'.$i] = new checkboxField('remove['.$ii.']', '&nbsp;');
-            $fields['remove_'.$i]->addBox($I18N_30->msg('label_remove_field'), '1');
+            $fields['remove_'.$i]->addBox('<strong style="color:red">'.$I18N_30->msg('label_remove_field').'</strong>', '1');
         }
         $ii++;
     }
@@ -109,36 +115,78 @@ $section = new cjoFormSection($dataset, $I18N->msg('title_edit_settings'));
 
 $section->addFields($fields);
 $form->addSection($section);
-$form->show(true);
+
 
 if ($form->validate()) {
     
-    if (cjo_post('remove', 'bool')) {
-        $remove = array_keys(cjo_post('remove', 'array'));
-        foreach($remove as $key) {
-            unset($_POST['label'][$key]); 
-            unset($_POST['name'][$key]); 
-            unset($_POST['field'][$key]); 
-            unset($_POST['empty'][$key]);
-            unset($_POST['validator'][$key]);
-            unset($_POST['compare_value'][$key]); 
-            unset($_POST['message'][$key]);      
-            unset($_POST['helptext'][$key]);         
+    $key = $length;
+
+
+    if (!empty($_POST['name'][$key])) {
+        if (empty($_POST['label'][$key])) {
+            cjoMessage::addError($I18N_30->msg('err_empty_label'));
+            $fields['label_'.$key]->addAttribute('class', 'invalid');
+            $form->valid_master = false;
+        }
+        if (empty($_POST['field'][$key])) {
+            cjoMessage::addError($I18N_30->msg('err_empty_field'));
+            $fields['field_'.$key]->addAttribute('class', 'invalid');
+            $form->valid_master = false;
         }
     }
-    
-    $json = json_encode(array('label'         => array_values($_POST['label']),
-                              'name'          => array_values($_POST['name']), 
-                              'field'         => array_values($_POST['field']), 
-                              'empty'         => array_values($_POST['empty']), 
-                              'validator'     => array_values($_POST['validator']),
-                              'compare_value' => array_values($_POST['compare_value']), 
-                              'message'       => array_values($_POST['message']),
-                              'helptext'      => array_values($_POST['helptext'])));
+    else {
+        if (!empty($_POST['label'][$key]) ||
+            !empty($_POST['field'][$key])) {
+            cjoMessage::addError($I18N_30->msg('err_empty_name'));
+            $fields['name_'.$key]->addAttribute('class', 'invalid');
+            $form->valid_master = false;
+        } else {
+            $_POST['remove'][$key] = 1;
+        }
+    }
 
-    $dataset = array('FIELDS' => $json);
+    $temp = $_POST['name'];
+    array_unique($temp);
     
-	if (cjoGenerate::updateSettingsFile($CJO['ADDON']['settings'][$mypage]['SETTINGS'], $dataset)) {
-		//cjoAssistance::redirectBE(array('function'=>'','msg'=>'msg_data_saved'));
-	}
+    if (count($temp) != count($_POST['name'])) {
+        cjoMessage::removeLastSuccess();
+        cjoMessage::addError($I18N->msg('msg_data_not_saved'));
+        cjoMessage::addError($I18N_30->msg('err_name_not_unique'));
+        $form->valid_master = false;
+    } 
+
+    if ($form->valid_master) {
+        
+        if (cjo_post('remove', 'bool')) {
+            $remove = array_keys(cjo_post('remove', 'array'));
+            foreach($remove as $key) {
+                cjoExtendMeta::removeField($_POST['name'][$key]);
+                unset($_POST['label'][$key]); 
+                unset($_POST['name'][$key]); 
+                unset($_POST['field'][$key]); 
+                unset($_POST['empty'][$key]);
+                unset($_POST['validator'][$key]);
+                unset($_POST['compare_value'][$key]); 
+                unset($_POST['message'][$key]);      
+                unset($_POST['helptext'][$key]);     
+            }
+        }
+    
+        $json = json_encode(array('label'         => array_values($_POST['label']),
+                                  'name'          => array_values($_POST['name']), 
+                                  'field'         => array_values($_POST['field']), 
+                                  'empty'         => array_values($_POST['empty']), 
+                                  'validator'     => array_values($_POST['validator']),
+                                  'compare_value' => array_values($_POST['compare_value']), 
+                                  'message'       => array_values($_POST['message']),
+                                  'helptext'      => array_values($_POST['helptext'])));
+
+        $dataset = array('FIELDS' => $json);
+        
+    	if (cjoGenerate::updateSettingsFile($CJO['ADDON']['settings'][$mypage]['SETTINGS'], $dataset)) {
+    	    cjoGenerate::generateAll();
+    		cjoAssistance::redirectBE(array('function'=>'','msg'=>'msg_data_saved'));
+    	}
+    }
 }
+$form->show(true);

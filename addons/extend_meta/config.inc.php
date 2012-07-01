@@ -37,12 +37,14 @@ $CJO['ADDON']['compat'][$mypage] 	    = '2.6.2';
 $CJO['ADDON']['support'][$mypage] 	    = 'http://contejo.com/addons/'.$mypage;
 $CJO['ADDON']['settings'][$mypage]['SETTINGS'] = $CJO['ADDON_CONFIG_PATH']."/".$mypage."/settings.inc.php"; // settings file
 
-include_once $CJO['ADDON']['settings'][$mypage]['SETTINGS'];
-include_once $CJO['ADDON_PATH']."/".$mypage."/classes/class.extend_meta.inc.php";
-
 if (!defined('TBL_30_EXTEND_META')) {
     define('TBL_30_EXTEND_META', $CJO['TABLE_PREFIX'].'30_extend_meta');
 }
+
+if ($CJO['ADDON']['status'][$mypage] != 1) return;
+
+include_once $CJO['ADDON']['settings'][$mypage]['SETTINGS'];
+include_once $CJO['ADDON_PATH']."/".$mypage."/classes/class.extend_meta.inc.php";
 
 $CJO['ADDON']['settings'][$mypage]['FIELDTYPES'] = array('cjoLinkButtonField',
                                                          'cjoMediaButtonField',
@@ -86,6 +88,18 @@ $CJO['ADDON']['settings'][$mypage]['FIELDS'] = cjoAssistance::toArray(json_decod
 cjoExtension::registerExtension('META_FORM_INIT','cjoExtendMeta::addFormFields'); 
 cjoExtension::registerExtension('META_FORM_VALID','cjoExtendMeta::saveFormFields'); 
 cjoExtension::registerExtension('GENERATE_ARTICLE_META','cjoExtendMeta::generateMata'); 
+cjoExtension::registerExtension('CONTEJO_CLASS_VARS_GENERATED','cjoExtendMeta::generateContejoClassVars');
+
+if (!$CJO['CONTEJO']) return false;
+
+cjoExtension::registerExtension('ARTICLE_DELETED','cjoExtendMeta::deleteArticle'); 
+cjoExtension::registerExtension('ARTICLE_COPIED','cjoExtendMeta::copyArticle'); 
+cjoExtension::registerExtension('CLANG_ADDED','cjoExtendMeta::addClang'); 
+cjoExtension::registerExtension('CLANG_DELETED','cjoExtendMeta::deleteClang'); 
+
+
+
+
 
 
 

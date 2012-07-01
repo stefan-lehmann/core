@@ -36,7 +36,7 @@ $page = !empty($_REQUEST['page']) ? $_REQUEST['page'] : '';
 
 $CJO['SETUP'] 				= true;
 $CJO['VERSION'] 			= "2.6";
-$CJO['RELEASE'] 			= "2";
+$CJO['RELEASE'] 			= "3";
 $CJO['BACKEND_PATH']        = $CJO['HTDOCS_PATH']."core";
 $CJO['INCLUDE_PATH'] 		= $CJO['BACKEND_PATH']."/include";
 $CJO['JQUERY_PATH']			= $CJO['BACKEND_PATH']."/js/jQuery";
@@ -179,11 +179,12 @@ require_once $CJO['INCLUDE_PATH']."/functions/function.cjo_globals.inc.php";
 
 if (isset($CJO['ONLY_FUNCTIONS']) && $CJO['ONLY_FUNCTIONS']) return false;
 
-cjoProcess::start();
 
 if (!empty($CJO['FILE_CONFIG_ADDONS'])) {
     include_once $CJO['FILE_CONFIG_ADDONS'];
 }   
+
+cjoProcess::start();
 
 require_once $CJO['INCLUDE_PATH']."/authentication.inc.php";
 require_once $CJO['INCLUDE_PATH']."/frontend_auth.inc.php";

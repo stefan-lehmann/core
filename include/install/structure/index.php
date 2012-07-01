@@ -56,29 +56,6 @@ $CJO['HTDOCS_PATH'] = "./";
 require_once $CJO['HTDOCS_PATH']."core/include/functions/function.cjo_mquotes.inc.php";
 require_once $CJO['HTDOCS_PATH']."core/include/master.inc.php";
 
-// Starte einen neuen Artikel und setzte die aktuelle
-// artikel id. wenn nicht vorhanden, nimm einen
-// speziellen artikel. z.b. fehler seite oder home seite
-
-if ($CJO['SETUP']) {
-    header('Location: core/index.php');
-    exit();
-} 
-
-if (cjo_get('process_image', 'bool')) {
-    cjoGenerate::processImage();
-    exit();
-}
-
-if (cjo_get('cjo_anchor', 'bool')) {
-    cjoAssistance::redirectAchor();
-}
-
-if (!cjo_request('article_id','cjo-article-id') || 
-    !$CJO['CLANG'][cjo_request('clang','cjo-clang-id', -1)]) {
-    cjoAssistance::redirectFE($CJO['ARTICLE_ID'], cjo_request('clang','cjo-clang-id', false));
-}
-
 $CJO_ARTICLE = new cjoArticle();
 $CJO_ARTICLE->setCLang($CJO['CUR_CLANG']);
 $CJO_ARTICLE->setArticleId($CJO['ARTICLE_ID']);

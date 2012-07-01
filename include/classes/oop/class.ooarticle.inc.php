@@ -60,6 +60,7 @@ class OOArticle extends OOContejo {
             if (!file_exists($article_path)) return $article_path;
             include_once ($article_path);
         }
+
         return new OOArticle(OOContejo :: convertGeneratedArray($CJO['ART'][$article_id], $clang));
     }
 

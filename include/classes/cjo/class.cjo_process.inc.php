@@ -38,19 +38,30 @@ class cjoProcess {
                          
         global $CJO;        
 
-        cjoExtension::registerExtensionPoint('CJO_PROCESS_STARTS');    
-
+        cjoExtension::registerExtensionPoint('CJO_PROCESS_STARTS'); 
+           
         new cjoMessage();
         
-        $CJO['CUR_CLANG'] = cjo_request('clang', 'cjo-clang-id', $CJO['START_CLANG_ID']);
+        self::unregisterGlobals();
         
-        if (!$CJO['CONTEJO']) {
-            $CJO['ARTICLE_ID'] = (cjo_request('article_id', 'int') == 0)
-                               ? $CJO['START_ARTICLE_ID']
-                               : cjo_request('article_id','cjo-article-id', $CJO['NOTFOUND_ARTICLE_ID']);
-        } else {
-            $CJO['ARTICLE_ID'] = cjo_request('article_id', 'cjo-article-id');
+        if ($CJO['SETUP']) {
+            header('Location: core/index.php');
+            exit();
+        } 
+
+        if (cjo_get('process_image', 'bool')) {
+            cjoGenerate::processImage();
         }
+        
+        if (cjo_get('cjo_anchor', 'bool')) {
+            cjoAssistance::redirectAchor();
+        }
+
+        self::getAdjustPath();  
+        self::setFavicon();
+        self::setIndividualUploadFolder();
+        self::getCurrentClangId();
+        self::getCurrentArticleId();
         
         require_once $CJO['INCLUDE_PATH'].'/classes/var/class.cjo_vars.inc.php';
         
@@ -59,15 +70,11 @@ class cjoProcess {
             $CJO['VARIABLES'][$key] = new $value;
         }
         
-        self::unregisterGlobals();
-        self::getAdjustPath();
-        self::setFavicon();
-        self::setIndividualUploadFolder();
-        
         cjoExtension::registerExtension('OUTPUT_FILTER','i18n::searchAndTranslate');    
-        cjoExtension::registerExtensionPoint('CJO_PROCESS_STARTED');      
-         
-    }                                   
+        cjoExtension::registerExtensionPoint('CJO_PROCESS_STARTED'); 
+
+    }      
+                                  
     private static function unregisterGlobals() {
 
         if (!ini_get('register_globals') ) return;
@@ -83,9 +90,43 @@ class cjoProcess {
                 $GLOBALS[$k] = NULL;
                 unset($GLOBALS[$k]);
             }
-    }             
+    }      
+    
+    private static function getCurrentClangId() {
+        global $CJO;  
+        $CJO['CUR_CLANG'] = cjo_request('clang', 'cjo-clang-id', $CJO['START_CLANG_ID']);
+    }
+    
+    private static function getCurrentArticleId() {
+        
+        global $CJO;  
+        
+        if ($CJO['CONTEJO']) {
+            $CJO['ARTICLE_ID'] = cjo_request('article_id', 'cjo-article-id');
+            return;
+        }  
+           
+        if (!cjo_request('article_id', 'bool')) {
+            
+            cjoExtension::registerExtensionPoint('GET_ARTICLE_ID');   
+            if (empty($CJO['ARTICLE_ID'])) {
+                $CJO['ARTICLE_ID'] = $CJO['START_ARTICLE_ID'];
+            }   
+            else {
+                return;
+            }
+        }
+        else {
+            $CJO['ARTICLE_ID'] = cjo_request('article_id','cjo-article-id', $CJO['NOTFOUND_ARTICLE_ID']);
+        } 
+        
+        if (!cjo_request('article_id','cjo-article-id') || 
+            !$CJO['CLANG'][cjo_request('clang','cjo-clang-id', -1)]) {
+            cjoAssistance::redirectFE($CJO['ARTICLE_ID'], cjo_request('clang','cjo-clang-id', false));
+        }
+    }       
                        
-    private static function getAdjustPath() {
+    public static function getAdjustPath() {
     
         global $CJO;
         
@@ -105,16 +146,17 @@ class cjoProcess {
         $uri_path    = (empty($uri_info['extension']) || substr($request_uri,-1) == '/') 
                      ? $_SERVER['REQUEST_URI'] 
                      : $uri_info['dirname'];
-                     
+         
+        $script_path = preg_replace('/\/$/','',$script_path);
+        $uri_path = preg_replace('/\/$/','',$uri_path);
+         
         if (strpos($uri_path,$script_path) === false) {
             $CJO['ADJUST_PATH'] = $adjust_path;
             return;
         } 
         
-        $uri_path_array     = cjoAssistance::toArray($uri_path,'/');
-        $script_path_array  = cjoAssistance::toArray($script_path,'/');
-        
-        $offset = count($uri_path_array) - count($script_path_array);
+        $CJO['VIRTUAL_PATH'] = str_replace($script_path,'',$uri_path);
+        $offset  = count(cjoAssistance::toArray($CJO['VIRTUAL_PATH'],'/'));
     
         if ($offset < 1) {
             $CJO['ADJUST_PATH'] = $adjust_path;
@@ -124,8 +166,8 @@ class cjoProcess {
         for ($i=0;$i < $offset;$i++) {
             $adjust_path .= '../';
         }
-    
-        $CJO['ADJUST_PATH'] =  $adjust_path;
+
+        $CJO['ADJUST_PATH'] = $adjust_path;
     }
                               
     private static function setFavicon(){
@@ -138,12 +180,7 @@ class cjoProcess {
         }
         $CJO['FAVICON'] = 'favicon_local.ico';
         return;
-    }            
-                        
-
-
-
-
+    }      
 
     private static function setIndividualUploadFolder() {
 
