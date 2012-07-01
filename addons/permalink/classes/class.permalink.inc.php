@@ -41,9 +41,8 @@ class cjoPermalink {
         
         if ($sql->getRows() != 0) {
             $CJO['ARTICLE_ID'] = $sql->getValue('article_id');
-            $CJO['CLANG_ID'] = $sql->getValue('clang');
+            $CJO['CUR_CLANG'] = $sql->getValue('clang');
         }
-        $CJO['ADJUST_PATH'] = './';
     }
     
     public static function generatedUrl($params) {
@@ -54,7 +53,7 @@ class cjoPermalink {
         $sql->Select();
         
         if ($sql->getRows() != 0) {
-            $params['deeplink'] = '%name%';
+            $params['deeplink'] = '%name%/';
             $params['name'] = $sql->getValue('value');
         }
         return $params;

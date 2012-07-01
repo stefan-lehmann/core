@@ -52,7 +52,8 @@ class cjoClientCache {
         }
         
         if ($CJO['ADJUST_PATH']) {
-            $content = str_replace($CJO['HTDOCS_PATH'], $CJO['ADJUST_PATH'],$content);
+            $content = preg_replace('#(?<!\.)'.preg_quote($CJO['HTDOCS_PATH']).'#', $CJO['ADJUST_PATH'],$content);
+            $content = preg_replace('#(?<!\.)'.str_replace('/', '\\\/', preg_quote($CJO['HTDOCS_PATH'])).'#', str_replace('/', '\/', $CJO['ADJUST_PATH']),$content);
         }
 
         $content = cjoOutput::prettifyOutput($content);

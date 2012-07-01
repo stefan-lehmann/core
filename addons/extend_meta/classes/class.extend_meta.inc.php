@@ -94,6 +94,7 @@ class cjoExtendMeta {
             $sql->flush();
             $sql->setTable(TBL_30_EXTEND_META);
             $sql->setValue('article_id', $article_id);
+            $sql->setValue('clang', $clang);
             $sql->setValue('name', $name);
             $sql->setValue('value', cjo_post($name, 'string'));
             $sql->addGlobalCreateFields();
