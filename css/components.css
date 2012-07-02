@@ -161,7 +161,7 @@ input[type=submit].yellow:hover,
 .cjo_slice_head .cjo_slice_right .cjo_button_move_up,.cjo_slice_head .cjo_slice_right .cjo_button_move_down {display:block;padding:1px!important;margin: 3px 0!important}
 .cjo_slice_head .cjo_slice_right .cjo_button_move_up {margin: 3px 3px 0 10px!important}
 
-.cjo_slice {background:#ebf7fa;font-size:110%;padding:10px;}
+.cjo_slice {background:#ebf7fa;font-size:110%;padding:10px;overflow-x: auto;overflow-y: hidden;}
 .cjo_slice .settings {overflow:visible !important;clear:both;background:#ccd7dd;z-index:2;zoom:1;margin:0 0 10px;}
 .cjo_slice .settings h2 {font-weight:400;text-transform:uppercase;font-size:11px !important;color:#fff;border:1px solid;background-color:#b0bdc3;background-image:url(../img/silk_icons/control_up_down.png);background-repeat:no-repeat;background-position:right center!important;cursor:pointer;border-color:#ddd #a6a6a6 #888;margin:0;padding:2px 40px 10px 3px!important;}
 .cjo_slice .up_down {float:right;background-color:#cfc;margin:-26px 1px 0 0;padding:4px 3px 5px;}
