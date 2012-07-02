@@ -150,10 +150,10 @@ class cjoProcess {
         $script_path = preg_replace('/\/$/','',$script_path);
         $uri_path = preg_replace('/\/$/','',$uri_path);
          
-        if (strpos($uri_path,$script_path) === false) {
+        if (!empty($script_path) && strpos($uri_path, $script_path) === false) {
             $CJO['ADJUST_PATH'] = $adjust_path;
             return;
-        } 
+        }
         
         $CJO['VIRTUAL_PATH'] = str_replace($script_path,'',$uri_path);
         $offset  = count(cjoAssistance::toArray($CJO['VIRTUAL_PATH'],'/'));
