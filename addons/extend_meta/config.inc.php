@@ -85,6 +85,13 @@ $CJO['ADDON']['settings'][$mypage]['VALIDATORTYPES'] = array('isCCExpDate',
 
 $CJO['ADDON']['settings'][$mypage]['FIELDS'] = cjoAssistance::toArray(json_decode(stripslashes($CJO['ADDON']['settings'][$mypage]['FIELDS'])));
  
+foreach($CJO['ADDON']['settings'][$mypage]['FIELDS'] as $field=>$values) {
+    foreach($values as $key=>$value) {
+        $CJO['ADDON']['settings'][$mypage]['FIELDS'][$field][$key] = htmlspecialchars_decode($CJO['ADDON']['settings'][$mypage]['FIELDS'][$field][$key]);
+    }
+}
+ 
+ 
 cjoExtension::registerExtension('META_FORM_INIT','cjoExtendMeta::addFormFields'); 
 cjoExtension::registerExtension('META_FORM_VALID','cjoExtendMeta::saveFormFields'); 
 cjoExtension::registerExtension('GENERATE_ARTICLE_META','cjoExtendMeta::generateMata'); 

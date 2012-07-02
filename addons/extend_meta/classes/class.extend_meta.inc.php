@@ -57,6 +57,21 @@ class cjoExtendMeta {
                 $params['fields'][$name] =  new $fields['field'][$key]($name, $fields['label'][$key]);
                 $params['fields'][$name]->ActivateSave(false) ;
                 
+                if($fields['field'][$key] == 'checkboxField') {
+                    
+                    $params['fields'][$name.'_hidden'] = new hiddenField($name); 
+                    $params['fields'][$name.'_hidden']->setValue('');    
+                    
+                    $params['fields'][$name] =  new $fields['field'][$key]($name, '&nbsp;');
+                    $params['fields'][$name]->addBox($fields['label'][$key], '1');  
+                }
+                
+                else {
+                    $params['fields'][$name] =  new $fields['field'][$key]($name, $fields['label'][$key]);
+                }
+                
+                $params['fields'][$name]->ActivateSave(false) ;
+                
                 if (!empty($fields['empty'][$key])) {            
                     $params['fields'][$name]->addValidator('notEmpty', $fields['message'][$key], true);
                 }

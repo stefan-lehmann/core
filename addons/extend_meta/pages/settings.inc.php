@@ -27,8 +27,8 @@
 //create formular
 $form = new cjoForm();
 $form->setEditMode(true);
-
-$CJO['ADDON']['settings'][$mypage]['FIELDS']['name'] = array_diff($CJO['ADDON']['settings'][$mypage]['FIELDS']['name'],array(''));
+$CJO['ADDON']['settings'][$mypage]['FIELDS']['name'] = array_diff(cjoAssistance::toArray($CJO['ADDON']['settings'][$mypage]['FIELDS']['name']),
+                                                                  array(''));
 
 $dataset = $_POST ? $_POST : $CJO['ADDON']['settings'][$mypage]['FIELDS'];
 
@@ -171,19 +171,26 @@ if ($form->validate()) {
                 unset($_POST['helptext'][$key]);     
             }
         }
-    
-        $json = json_encode(array('label'         => array_values($_POST['label']),
-                                  'name'          => array_values($_POST['name']), 
-                                  'field'         => array_values($_POST['field']), 
-                                  'empty'         => array_values($_POST['empty']), 
-                                  'validator'     => array_values($_POST['validator']),
-                                  'compare_value' => array_values($_POST['compare_value']), 
-                                  'message'       => array_values($_POST['message']),
-                                  'helptext'      => array_values($_POST['helptext'])));
-
-        $dataset = array('FIELDS' => $json);
+        $data = array('label'         => array_values($_POST['label']),
+                      'name'          => array_values($_POST['name']), 
+                      'field'         => array_values($_POST['field']), 
+                      'empty'         => array_values($_POST['empty']), 
+                      'validator'     => array_values($_POST['validator']),
+                      'compare_value' => array_values($_POST['compare_value']), 
+                      'message'       => array_values($_POST['message']),
+                      'helptext'      => array_values($_POST['helptext']));
+                      
+        foreach($data as $field=>$values) {
+          foreach($values as $key=>$value) {
+            $data[$field][$key] = htmlspecialchars($data[$field][$key]);
+          }
+        }
         
-    	if (cjoGenerate::updateSettingsFile($CJO['ADDON']['settings'][$mypage]['SETTINGS'], $dataset)) {
+        $content  = '// --- DYN'."\r\n";
+        $content .= '$CJO[\'ADDON\'][\'settings\'][$mypage][\'FIELDS\'] = "'.addslashes(json_encode($data)).'";'."\r\n";
+        $content .= '// --- /DYN'."\r\n";
+
+    	if (cjoGenerate::replaceFileContents($CJO['ADDON']['settings'][$mypage]['SETTINGS'], $content)) {
     	    cjoGenerate::generateAll();
     		cjoAssistance::redirectBE(array('function'=>'','msg'=>'msg_data_saved'));
     	}
