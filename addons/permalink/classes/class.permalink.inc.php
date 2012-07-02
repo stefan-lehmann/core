@@ -52,7 +52,7 @@ class cjoPermalink {
         $sql->setWhere(array('name'=>'permalink', 'article_id'=> $params['query']['article_id'], 'clang'=> $params['query']['clang']));
         $sql->Select();
         
-        if ($sql->getRows() != 0) {
+        if ($sql->getRows() != 0 && strpos($sql->getValue('value'), '/') !== false) {
             $params['deeplink'] = '%name%/';
             $params['name'] = $sql->getValue('value');
         }

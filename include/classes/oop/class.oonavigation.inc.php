@@ -587,7 +587,7 @@ class OONavigation {
                 $params['xpage'] = $xpage;
             }
 
-            if ($parent_link_text != 'default') {
+            if (!empty($parent_link_text) && $parent_link_text != 'default') {
                 $list_article->_name = $parent_link_text;
             }
             $this->_navis['backtolist'] = $list_article->toLink($params, array('class'=>'cjo_back_to_list'));
