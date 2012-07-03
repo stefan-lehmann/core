@@ -148,6 +148,8 @@ msg_checkout_id_notEmpty = Bitte wählen Sie den Checkout-Artikel aus!
 msg_currency_names_format = Format: EUR=Euro|USD=US Dollar|... <br/><br/> <b>ACHTUNG:</b> Die erstaufgeführte Währung ist die Standard-Währung des Shops.
 msg_delivery_id_notEmpty = Bitte wählen Sie einen Versandkosten-Artikel aus!
 msg_no_php_mailer_account = Bitte wählen Sie einen Mail-Account aus!
+msg_shop_owner_email_notEmpty = Bitte geben Sie die E-Mail-Adresse des Shop-Besitzers an!
+msg_no_php_mailer_account = Bitte wählen Sie einen Mail-Account aus!
 msg_post_order_id_notEmpty = Bitte wählen Sie den Artikel aus, der nach Abschluss der Bestellung angezeigt wird!
 note_currency_signs_format = Format: EUR=€|USD=US $|...
 note_exchange_ratio_format = Format: EUR=1|USD=1.2|...
@@ -166,6 +168,7 @@ shop_edit_business_terms = AGB's eingeben
 shop_exchange_ratio = Wechselkurse
 shop_modul_id = Warenkorb-Modul
 shop_php_mailer_account = Mail-Account
+shop_owner_email = E-Mail des Shop-Besitzers 
 shop_post_order_id = Bestätigungs-Artikel
 shop_separators = Währungstrennzeichen
 shop_themes = Shop-Layout

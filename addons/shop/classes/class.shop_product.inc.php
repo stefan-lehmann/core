@@ -283,14 +283,14 @@ class cjoShopProduct {
             if ($product->product_id)
                 $table[1][$i] = '<td style="width:30px">'.$product->product_id.'</td>'."\r\n";
 			
-			$table[2][$i] = '<td style="white-space:pre"><strong>'.$product->product_name.'</strong>'."\r\n".$product->attribute.'</td>'."\r\n";
+			$table[2][$i] = '<td><strong>'.$product->product_name.'</strong><br/>'."\r\n".$product->attribute.'</td>'."\r\n";
             
 			$table[3][$i] = '<td class="right">'.$product->getFormattedProductValue('netto_price').'</td>'."\r\n";
             
             if ($product->getProductValue('discount'))
-                $table[4][$i] = '<td class="right" style="white-space:pre">'.cjoShopPrice::formatNumber($product->getProductValue('discount'), '%')."\r\n(".$product->getFormattedProductValue('total_discount').')</td>'."\r\n";
+                $table[4][$i] = '<td class="right">'.cjoShopPrice::formatNumber($product->getProductValue('discount'), '%')."\r\n(".$product->getFormattedProductValue('total_discount').')</td>'."\r\n";
 			
-			$table[5][$i] = '<td class="right" style="white-space:pre">'.cjoShopPrice::formatNumber($product->getProductValue('taxes'), '%')."\r\n(".$product->getFormattedProductValue('total_taxes').')</td>'."\r\n";
+			$table[5][$i] = '<td class="right">'.cjoShopPrice::formatNumber($product->getProductValue('taxes'), '%')."\r\n(".$product->getFormattedProductValue('total_taxes').')</td>'."\r\n";
 			$table[6][$i] = '<td class="right"><b>'.cjoShopPrice::toCurrency($product->getProductValue('final_price') * $product->getAmount()).'</b></td>'."\r\n";
 			$i++;
 		}
