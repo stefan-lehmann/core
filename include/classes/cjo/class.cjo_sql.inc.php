@@ -657,7 +657,7 @@ class cjoSql implements Iterator{
           $this->printError($query, $params);
         }
         else if ($hasError) {
-          cjoMessage::addError($this->getError());
+          cjoMessage::addError($this->getError().' '.$this->getTable());
         }
 
         return !$hasError;
@@ -686,7 +686,7 @@ class cjoSql implements Iterator{
           $this->printError($query, $params);
         }
         else if ($hasError) {
-          cjoMessage::addError($this->getError());
+          cjoMessage::addError($this->getError().' '.$this->getTable());
         }
 
         return !$hasError;
@@ -729,7 +729,7 @@ class cjoSql implements Iterator{
             if ($success) {
                 cjoMessage::addSuccess($message);
             } else {
-                cjoMessage::addError($this->getError());
+                cjoMessage::addError($this->getError().' '.$this->getTable());
             }
         }
         return $success;
@@ -760,7 +760,7 @@ class cjoSql implements Iterator{
             if ($success) {
                 cjoMessage::addSuccess($message);
             } else {
-                cjoMessage::addError($this->getError());
+                cjoMessage::addError($this->getError().' '.$this->getTable());
             }
         }
         return $success;

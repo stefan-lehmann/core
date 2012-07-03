@@ -31,7 +31,7 @@ class cjoLog {
     public static function writeLog($extension, $params) {
 
         global $CJO;
-        
+
         if (!$CJO['CONTEJO']) return false;
                 
         $incl = $CJO['ADDON']['settings'][self::$mypage]['SETTINGS']['INCL_EXTENSIONS'];
@@ -57,10 +57,15 @@ class cjoLog {
         $insert = new cjoSql();
         $insert->setTable(TBL_27_LOG);
         $insert->setValue('extension', $extension);        
-        $insert->setValue('params', serialize($params));        
+        $insert->setValue('params', serialize($params));   
+        $insert->setValue('url', cjo_server('REQUEST_URI','string'));        
         $insert->setValue('user_id', $user_id);
         $insert->setValue('date', time());
-        $insert->Insert();  
+        
+        if (!$insert->Insert()) {
+            $sql = new cjoSql();
+            $sql->setDirectQuery("ALTER TABLE ".TBL_27_LOG." ADD `url` VARCHAR( 255 ) NOT NULL AFTER `params` ");
+        }  
     }
     
     public static function updateArticleLockedByUser($article_id, $clang=false) {
