@@ -35,8 +35,8 @@ if (empty($CJO['GG'])) $CJO['GG'] = false;
 $page = !empty($_REQUEST['page']) ? $_REQUEST['page'] : '';
 
 $CJO['SETUP'] 				= true;
-$CJO['VERSION'] 			= "2.6";
-$CJO['RELEASE'] 			= "3";
+$CJO['VERSION'] 			= "2.7";
+$CJO['RELEASE'] 			= "0";
 $CJO['BACKEND_PATH']        = $CJO['HTDOCS_PATH']."core";
 $CJO['INCLUDE_PATH'] 		= $CJO['BACKEND_PATH']."/include";
 $CJO['JQUERY_PATH']			= $CJO['BACKEND_PATH']."/js/jQuery";
@@ -179,6 +179,7 @@ require_once $CJO['INCLUDE_PATH']."/functions/function.cjo_globals.inc.php";
 
 if (isset($CJO['ONLY_FUNCTIONS']) && $CJO['ONLY_FUNCTIONS']) return false;
 
+cjoProcess::getCurrentClangId();
 
 if (!empty($CJO['FILE_CONFIG_ADDONS'])) {
     include_once $CJO['FILE_CONFIG_ADDONS'];

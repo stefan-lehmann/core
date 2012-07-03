@@ -8,7 +8,7 @@
  *
  * @package     contejo
  * @subpackage  core
- * @version     2.6.0
+ * @version     2.7.0
  *
  * @author      Stefan Lehmann <sl@contejo.com>
  * @copyright   Copyright (c) 2008-2012 CONTEJO. All rights reserved. 
@@ -23,42 +23,4 @@
  * @filesource
  */
 
-error_reporting(E_ALL ^ E_NOTICE);
-
-ob_start();
-
-if (preg_match('#.*?/contejo$#', $_SERVER['REQUEST_URI'], $matches)) {
-    header('Location: ./core/index.php');
-    exit();
-} 
-
-if (preg_match('#.*?/contejo/*[^/]*$#', $_SERVER['REQUEST_URI'], $matches)) {
-    header('Location: ../core/index.php');
-    exit();
-} 
-
-$CJO = array();
-
-// Flag ob Inhalte mit CONTEJO aufgerufen oder
-// von der Webseite aus
-// Kann wichtig für die Darstellung sein
-// Sollte immer false bleiben
-$CJO['CONTEJO'] = false;
-
-// Wenn $CJO[GG] = true; dann wird der
-// Content aus den contejo/include/generated/
-// genommen
-$CJO['GG'] = true;
-
-// setzte pfad und includiere klassen und funktionen
-$CJO['HTDOCS_PATH'] = "./";
-
-require_once $CJO['HTDOCS_PATH']."core/include/functions/function.cjo_mquotes.inc.php";
-require_once $CJO['HTDOCS_PATH']."core/include/master.inc.php";
-
-$CJO_ARTICLE = new cjoArticle();
-$CJO_ARTICLE->setCLang($CJO['CUR_CLANG']);
-$CJO_ARTICLE->setArticleId($CJO['ARTICLE_ID']);
-$CONTENT = $CJO_ARTICLE->getArticleTemplate();
-
-cjoClientCache::sendArticle($CJO_ARTICLE, $CONTENT, 'frontend', true);
+require_once dirname(__FILE__)."/core/include/frontend_index.inc.php";

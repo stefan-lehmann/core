@@ -60,7 +60,6 @@ class cjoProcess {
         self::getAdjustPath();  
         self::setFavicon();
         self::setIndividualUploadFolder();
-        self::getCurrentClangId();
         self::getCurrentArticleId();
         
         require_once $CJO['INCLUDE_PATH'].'/classes/var/class.cjo_vars.inc.php';
@@ -92,7 +91,7 @@ class cjoProcess {
             }
     }      
     
-    private static function getCurrentClangId() {
+    public static function getCurrentClangId() {
         global $CJO;  
         $CJO['CUR_CLANG'] = cjo_request('clang', 'cjo-clang-id', $CJO['START_CLANG_ID']);
     }
