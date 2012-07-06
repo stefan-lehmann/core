@@ -1,0 +1,7 @@
+
+permalink = Permalinks
+
+
+
+msg_err_extend_meta_not_present = Das AddOn benötigt das Extend-Meta-AddOn! <a href="{0}"><u>Jetzt installieren.</u></a>
+msg_err_permalink_not_present = Das AddOn benötigt im  Extend-Meta-AddOn ein Meta-Feld mit dem Namen "permalink"! <a href="{0}"><u>Jetzt anlegen</u></a>

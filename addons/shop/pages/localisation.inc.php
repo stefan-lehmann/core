@@ -65,13 +65,18 @@ $fields['order_send_mail'] = new textAreaField('ORDER_SEND_MAIL',
 											   array('rows' => '10'));
 $fields['order_send_mail']->setHelp($I18N_21->msg('shop_mail_wildcards'));
 
+// edit text of the products delivered mail
+$fields['order_send_mail'] = new textAreaField('ORDER_SEND_MAIL',
+                                               $I18N_21->msg('label_order_send_mail'),
+                                               array('rows' => '10'));
+$fields['order_send_mail']->setHelp($I18N_21->msg('shop_mail_wildcards'));
+
 $fields['update_button'] = new buttonField();
 $fields['update_button']->addButton('cjoform_update_button',$I18N->msg("button_update"), true, 'img/silk_icons/tick.png');
 $fields['update_button']->setButtonAttributes('cjoform_update_button', 'id="cjoform_update_button1"');
 
 //Add Fields
-$section = new cjoFormSection('', $I18N_21->msg('label_lang_setup'), array ());
-$section->dataset = $dataset;
+$section = new cjoFormSection($dataset, $I18N_21->msg('label_lang_setup'), array ());
 
 $section->addFields($fields);
 $form->addSection($section);

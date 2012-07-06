@@ -36,7 +36,7 @@ class cjoArchive {
             !empty($CJO['ADDON']['settings'][self::$mypage]['DISABLED']))  return false;
         
         $cats     = cjoAssistance::toArray($CJO['ADDON']['settings'][self::$mypage]['CATEGORIES']);
-        $duration = (int) cjoAssistance::toArray($CJO['ADDON']['settings'][self::$mypage]['DURATION']);        
+        $duration = (int) $CJO['ADDON']['settings'][self::$mypage]['DURATION'];        
         $now      = time();
         $add_sql  = array();
         $clangs   = count($CJO['CLANG']);

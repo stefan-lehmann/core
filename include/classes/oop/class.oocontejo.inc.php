@@ -529,13 +529,11 @@ class OOContejo {
      */
     public static function getClassVars() {
 
-        static $vars = array ();
+         $vars = array();
 
         if (empty($vars)) {
 
             global $CJO;
-
-            $vars = array();
 
             $file = $CJO['FOLDER_GENERATED_ARTICLES']."/".$CJO['START_ARTICLE_ID'].".0.article";
 
@@ -550,16 +548,18 @@ class OOContejo {
                     $vars[] = $name;
                 }
             } else {
-            
                 foreach(cjoSql::getFieldNames(TBL_ARTICLES) as $field) {
                     $vars[] = $field;
                 }
+                $vars = cjoExtension::registerExtensionPoint('CONTEJO_CLASS_VARS_GENERATED', array('subject'=>$vars));
             }
-            
+                 
             if (empty($vars)) $vars = self::getClassVars();
             
             $vars[] = 'set_template_id';
+
         }
+
         return array_unique($vars);
     }
 

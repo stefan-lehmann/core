@@ -7,10 +7,10 @@
  * PHP Version: 5.3.1+
  *
  * @package     Addons
- * @subpackage  log
- * @version     2.6.0
+ * @subpackage  permalink
+ * @version     2.6.2
  *
- * @author      Stefan Lehmann <sl@raumsicht.com>
+ * @author      Stefan Lehmann <sl@contejo.com>
  * @copyright   Copyright (c) 2008-2012 CONTEJO. All rights reserved. 
  * @link        http://contejo.com
  *
@@ -23,12 +23,22 @@
  * @filesource
  */
 
-$mypage = 'log';
 
-// --- DYN
-$CJO['ADDON']['settings'][$mypage]['SETTINGS']['INCL_EXTENSIONS'] = 'ARTICLE_|SQL_|CLANG_|MEDIA_|ADDON_|USER_|SPECIALS_|TEMPLATE_|MODULE_|SLICE_|CTYPES_|ACTION_|CATGROUP_';
-$CJO['ADDON']['settings'][$mypage]['SETTINGS']['EXCL_EXTENSIONS'] = 'ARTICLE_CONTENT_GENERATED|ARTICLE_INIT|SLICE_HEAD_BUILD|CJO_FORM_|CJO_LIST_|OUTPUT_FILTER|PRIOR_|GENERATE_ARTICLE_META|ALL_GENERATED';
- 
-$CJO['ADDON']['settings'][$mypage]['SETTINGS']['LOG_LIFETIME'] = '20';
+$mypage = "permalink";
 
-// --- /DYN
+$I18N_31 = new i18n($CJO['LANG'],$CJO['ADDON_PATH'].'/'.$mypage.'/lang');  // CREATE LANG OBJ FOR THIS ADDON
+    
+if (!OOAddon::isActivated('extend_meta')) {
+    
+    $url = cjoAssistance::createBEUrl(array('page' => 'addons'));
+    $CJO['ADDON']['installmsg'][$mypage] = $I18N_31->msg('msg_err_extend_meta_not_present', $url);
+} 
+else if (!in_array('permalink',$CJO['ADDON']['settings']['extend_meta']['FIELDS']['name'])) {
+    
+    $url = cjoAssistance::createBEUrl(array('page' => 'extend_meta', 'subpage'=>'settings'));
+    $CJO['ADDON']['installmsg'][$mypage] = $I18N_31->msg('msg_err_permalink_not_present', $url);
+}
+else {
+    
+    $CJO['ADDON']['install'][$mypage] = true;
+}

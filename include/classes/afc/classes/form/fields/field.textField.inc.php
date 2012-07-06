@@ -31,6 +31,7 @@ class textField extends cjoFormField {
 
 	public function get() {
 		$value = htmlspecialchars($this->getValue(), ENT_QUOTES, "UTF-8");
+
 		return sprintf('<input type="text" name="%s" value="%s" id="%s" tabindex="%s"%s />%s', 
 		                $this->getName(), 
 		                $value, 

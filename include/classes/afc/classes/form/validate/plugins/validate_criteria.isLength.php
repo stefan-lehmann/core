@@ -38,12 +38,16 @@ function smarty_validate_criteria_isLength($value, $empty, &$params, &$formvars)
 
     if (isset($params['empty']['min'])) {
         $_min = $params['empty']['min'];
+    } else if (isset($params['field2'])) {
+        $_min = $params['field2'];
     } else {
         $_min = -1;
     }
 
     if (isset($params['empty']['max'])) {
         $_max = $params['empty']['max'];
+    } else if (isset($params['field2'])) {
+        $_max = $params['field2'];
     } else {
         $_max = -1;
     }

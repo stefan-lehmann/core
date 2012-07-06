@@ -1022,9 +1022,9 @@ class OOMedia {
                                              $crop_data["img"][4],
                                              $shadow,
                                              $fullpath );
-                                             
-
-                return !empty($params['get_src']) ? $img : '<img src="'.$img.'"'.$attributes.' />';
+          
+                $size = @getimagesize($img);
+                return !empty($params['get_src']) ? $img : '<img src="'.$img.'"'.$attributes.' '.$size[3].' />';
             }
             else {
                 if ($size[0] > $size[1] && $size[0] > $width) {

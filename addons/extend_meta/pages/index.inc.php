@@ -7,8 +7,8 @@
  * PHP Version: 5.3.1+
  *
  * @package     Addons
- * @subpackage  log
- * @version     2.6.0
+ * @subpackage  extend_meta
+ * @version     2.6.2
  *
  * @author      Stefan Lehmann <sl@raumsicht.com>
  * @copyright   Copyright (c) 2008-2012 CONTEJO. All rights reserved. 
@@ -23,12 +23,12 @@
  * @filesource
  */
 
-$mypage = 'log';
+$mypage    = 'extend_meta';
 
-// --- DYN
-$CJO['ADDON']['settings'][$mypage]['SETTINGS']['INCL_EXTENSIONS'] = 'ARTICLE_|SQL_|CLANG_|MEDIA_|ADDON_|USER_|SPECIALS_|TEMPLATE_|MODULE_|SLICE_|CTYPES_|ACTION_|CATGROUP_';
-$CJO['ADDON']['settings'][$mypage]['SETTINGS']['EXCL_EXTENSIONS'] = 'ARTICLE_CONTENT_GENERATED|ARTICLE_INIT|SLICE_HEAD_BUILD|CJO_FORM_|CJO_LIST_|OUTPUT_FILTER|PRIOR_|GENERATE_ARTICLE_META|ALL_GENERATED';
- 
-$CJO['ADDON']['settings'][$mypage]['SETTINGS']['LOG_LIFETIME'] = '20';
+// register subpages
+$subpages = new cjoSubPages($subpage, $mypage);
+$subpages->addPage( array('settings', 'title' => $I18N_30->msg('label_settings')));
 
-// --- /DYN
+require_once $CJO['INCLUDE_PATH'].'/layout/top.php';
+require_once $subpages->getPage();
+require_once $CJO['INCLUDE_PATH'].'/layout/bottom.php';

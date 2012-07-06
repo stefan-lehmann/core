@@ -356,7 +356,9 @@ class cjoVarArticle extends cjoVars {
                         'CJO_NOTFOUND_ARTICLE_ID'   => $CJO['NOTFOUND_ARTICLE_ID'],
                         'CJO_HTDOCS_PATH'           => $CJO['HTDOCS_PATH'],
                         'CJO_MEDIAFOLDER'           => $CJO['MEDIAFOLDER'],
-                        'CJO_FRONTPAGE_PATH'        => $CJO['FRONTPAGE_PATH']);
+                        'CJO_FRONTPAGE_PATH'        => $CJO['FRONTPAGE_PATH'],
+                        'CJO_ADJUST_PATH'           => $CJO['ADJUST_PATH']);
+                        
 
         foreach($search as $key => $replace) {
            $content = preg_replace('/(?<!\[\[)'.preg_quote($key).'(?!\]\])/', $replace, $content); 

@@ -57,6 +57,7 @@ class cjoShopMail {
 		$separator 			= $settings['CURRENCY']['DEFAULT_SEPARATOR'];
 		$currency  			= $settings['CURRENCY']['DEFAULT_SIGN'];
 		$pay_methods_path 	= $settings['PAY_METHODS_PATH'];
+        $shop_owner_email   = isset($settings['SHOP_OWNER_EMAIL']) ? $settings['SHOP_OWNER_EMAIL'] : false;
 		$all_pay_costs 		= cjoShopPayMethod::getAllCosts();
         $html               = false;
 
@@ -106,11 +107,14 @@ class cjoShopMail {
         $order_comment   = $result['comment'];
 		$address1 	   	 = new cjoShopAddress($result['address1']);
 		$address1_full   = preg_replace('/(\r\n|\r|\n){2,}/',"\r\n", $customer."\r\n".$address1->out());
+        $address1_full   = nl2br($address1_full);
 		$address2 	  	 = new cjoShopSupplyAddress($result['address2']);
 		$address2 		 = preg_replace('/(\r\n|\r|\n){2,}/',"\r\n", $address2->out());
+        $address2        = nl2br($address2);
 		$product_list 	 = cjoShopProduct::productsOut($result['products']);
         $product_table   = cjoShopProduct::toTable($id, false);
 		$pay_object	  	 = cjoShopPayMethod::getPayObject($pay_method, $result['pay_data']);
+        $pay_data        = nl2br($pay_object->out());
 		$payment_costs	 = cjoShopPrice::toCurrency($all_pay_costs[$pay_method]);
 	    $order_date		 = strftime($I18N->msg('datetimeformat'),$result['createdate']);
 		$total_sum       = cjoShopPrice::convToFloat($order_value);
@@ -127,7 +131,7 @@ class cjoShopMail {
 								 '%product_table%'    => $product_table,
 								 '%order_value%' 	  => cjoShopPrice::toCurrency($order_value),
 								 '%pay_method%' 	  => $I18N_21->msg('shop_'.$pay_method),
-								 '%pay_data%' 		  => $pay_object->out(),
+								 '%pay_data%' 		  => $pay_data,
 								 '%payment_costs%'	  => $payment_costs,
 								 '%delivery_costs%'   => cjoShopPrice::toCurrency($delivery_costs),
 								 '%delivery_method%'  => $delivery_method,
@@ -168,11 +172,17 @@ class cjoShopMail {
         }
         else {
             $phpmailer->setBodyHtml($html, $text);
-            
         }
 
-		return $phpmailer->Send(true);
-
+		$state = $phpmailer->Send(true);
+        
+        if ($state && $subject == 'ORDER_CONFIRM_SUBJECT' && $shop_owner_email) {
+            $phpmailer->Body = preg_replace('/<!-- NOPRINT START -->.*<!-- NOPRINT END -->/msU','',$phpmailer->Body);
+            $phpmailer->ClearAllRecipients();
+            $phpmailer->AddAddress($shop_owner_email);
+            $phpmailer->Send(true);
+        }
+        return $state;
 	} // end function sendMail
 
 /*

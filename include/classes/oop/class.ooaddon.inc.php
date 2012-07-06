@@ -43,7 +43,7 @@ class OOAddon {
     }
 
     /**
-     * Returns true if a addon is avtivated
+     * Returns true if a addon is activated
      * @param string $addon name of the addon
      * @return boolean
      * @access public

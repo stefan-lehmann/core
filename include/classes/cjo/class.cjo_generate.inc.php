@@ -93,7 +93,7 @@ class cjoGenerate {
         $pattern .= ",*.article";    
         if ($aspath) $pattern .= ",*.aspath";           
 
-        $pattern = $CJO['FOLDER_GENERATED_ARTICLES']."/".$article_id.".[0-9]{".$pattern."}";
+        $pattern = $CJO['FOLDER_GENERATED_ARTICLES'].'/'.$article_id.'.[0-9]{'.$pattern.'}';
 
     	foreach (cjoAssistance::toArray(glob($pattern,GLOB_BRACE)) as $filename) {
     	    @unlink($filename);
@@ -180,22 +180,24 @@ class cjoGenerate {
 								 $CJO['FOLDER_GENERATED_ARTICLES']);
 	         return false;
         }
+        
+        cjoExtension::registerExtensionPoint('GENERATE_ARTICLE_META', array('article_id' => $article_id, 'clang' => $clang));
 
         $new_content = '<?php'."\r\n";
     	$new_content .= '$CJO[\'ART\'][\''.$article_id.'\'][\'article_id\'][\''.$clang.'\'] = "'.$article_id.'";'."\r\n";
     	$new_content .= '$CJO[\'ART\'][\''.$article_id.'\'][\'slices\'][\''.$clang.'\'] = "'.addslashes($article->getSlicesOfArticle(false)).'";'."\r\n";    	
 
+ 
         foreach(OOContejo::getClassVars() as $field) {
-
-            if (!in_array($field, array('pid', 'id', 'slices')) || empty($field)) continue
-
-    	    $new_content .= '$CJO[\'ART\'][\''.$article_id.'\'][\''.$field.'\'][\''.$clang.'\'] = "'.
-    	                    cjoAssistance::addSlashes($article->getValue($field)).'";'."\r\n";
-
+            if (in_array($field, array('pid', 'id', 'slices')) || empty($field)) continue;
+                
+    	    $new_content .= '$CJO[\'ART\'][\''.$article_id.'\'][\''.$field.'\'][\''.$clang.'\'] = "'.cjoAssistance::addSlashes($article->getValue($field)).'";'."\r\n";
         }
+        
     	$new_content .= '$CJO[\'ART\'][\''.$article_id.'\'][\'last_update_stamp\'][\''.$clang.'\'] = "'.time().'";'."\r\n";
-    	$new_content .= '?>'."\r\n";
 
+        $new_content .= '?>'."\r\n";
+        
 		foreach (cjoAssistance::toArray(glob($CJO['FOLDER_GENERATED_ARTICLES']."/"."*.".$clang.".aspath")) as $filename) {
 	    	@ unlink($filename);
 		}
@@ -639,7 +641,10 @@ class cjoGenerate {
 
     		$generate_ids[$new_id] = false;
     	}
-
+                                                                   
+        cjoExtension::registerExtensionPoint('ARTICLE_COPIED', array("source_id" => $id, 
+                                                                     "target_id" => $new_id),
+                                                                     true);
     	self::toggleStartpageArticle('', $target_id);
 
     	$generate_ids[$id] = false;

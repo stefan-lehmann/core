@@ -64,8 +64,8 @@ class cjoExtension {
     		} else {
 
     			foreach ($CJO['EXTENSIONS'][$extension] as $ext) {
-    			    
     				$result = self::callFunction($ext, $params);
+    				
     				// Rückgabewert nur auswerten wenn auch einer vorhanden ist
     				// damit $params['subject'] nicht verfälscht wird
 

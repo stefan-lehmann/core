@@ -26,7 +26,6 @@
 //Form
 $form = new cjoForm();
 $form->setEditMode($article_id);
-//$form->debug = true;
 
 //Hidden Fields
 $hidden['article_id'] = new hiddenField('article_id');
@@ -50,6 +49,8 @@ $fields['keywords'] = new textAreaField('keywords', $I18N->msg("label_keywords")
 
 $fields['description'] = new textAreaField('description', $I18N->msg("label_description"));
 
+cjoExtension::registerExtensionPoint('META_FORM_INIT', array('fields' => & $fields));    
+
 $fields['button'] = new buttonField();
 $fields['button']->addButton('cjoform_update_button', $I18N->msg('button_update'), true, 'img/silk_icons/tick.png');
 $fields['button']->needFullColumn(true);
@@ -63,5 +64,7 @@ $form->addFields($hidden);
 $form->show(false);
 
 if ($form->validate()) {
+    
+    cjoExtension::registerExtensionPoint('META_FORM_VALID');    
 	cjoGenerate::generateArticle($article_id);
 }

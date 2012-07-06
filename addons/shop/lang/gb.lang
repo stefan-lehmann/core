@@ -186,7 +186,9 @@ msg_exchange_ratio_notEmpty =  Please specify an exchange ratio.
 msg_post_order_id_notEmpty =  Please specify the order confirmation article.
 msg_separators_notEmpty = Please specify a separator.
 shop_php_mailer_account = Mail Account
+shop_owner_email = Shop Owner E-Mail
 msg_no_php_mailer_account = Specify a Mail-Account, please.
+msg_shop_owner_email_notEmpty = Please write in the shop owner email adress!
 
 ## ----------------------------------------------------------------
 

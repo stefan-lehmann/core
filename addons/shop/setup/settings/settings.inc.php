@@ -21,6 +21,7 @@ $CJO['ADDON']['settings'][$mypage]['CHECKOUT_ARTICLE_ID'] = "";
 $CJO['ADDON']['settings'][$mypage]['POST_ORDER_ARTICLE_ID'] = "";
 $CJO['ADDON']['settings'][$mypage]['COUNTRY'] = "DE";
 $CJO['ADDON']['settings'][$mypage]['PHP_MAILER_ACCOUNT'] = "1";
+$CJO['ADDON']['settings'][$mypage]['SHOP_OWNER_EMAIL'] = "";
 $CJO['ADDON']['settings'][$mypage]['SHOP_THEME'] = "default";
 $CJO['ADDON']['settings'][$mypage]['SHOP_MODUL_ID'] = "";
 $CJO['ADDON']['settings'][$mypage]['HTTPS'] = "";

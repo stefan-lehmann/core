@@ -83,6 +83,10 @@ $fields['php_mailer_account']->addAttribute('size', '1', true);
 $fields['php_mailer_account']->addValidator('notEmpty', $I18N_21->msg("msg_no_php_mailer_account"));
 
 // edit currency names
+$fields['shop_owner_email'] = new textField('SHOP_OWNER_EMAIL', $I18N_21->msg('shop_owner_email'));
+$fields['shop_owner_email']->addValidator('isEmail', $I18N->msg("msg_shop_owner_email_notEmpty"),false, false);
+
+// edit currency names
 $fields['currency_names'] = new textField('CURRENCY_NAMES', $I18N_21->msg('shop_currency_names'));
 $fields['currency_names']->addValidator('notEmpty', $I18N->msg("msg_currency_names_notEmpty"),false, false);
 $fields['currency_names']->setHelp($I18N_21->msg('msg_currency_names_format'));
