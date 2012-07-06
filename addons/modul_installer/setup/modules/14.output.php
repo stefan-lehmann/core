@@ -32,11 +32,13 @@ elseif ($form->hasFormeElments()) {
                               'FORM_NAME'   => $form->getName(),
                               'ACTION_URL'  => preg_replace('/&(?!amp;)/i','&amp;', $_SERVER["REQUEST_URI"]),
                               'SHOW_FORM'   => 1,
-                              'HIDE_LEGEND' => ("CJO_VALUE[19]" != 1)
+                              'HIDE_LEGEND' => ("CJO_VALUE[19]" != 1),
+                              'HAS_ERRORS'  => $form->has_errors
                               ));
 
     cjoModulTemplate::addVarsArray('FORM_ELEMENTS', $form->getFormeElmentsOut());
     cjoModulTemplate::addVarsArray('ERROR_MESSAGES', $form->getErrorMessages());    
+
 }
 
 cjoModulTemplate::getModul();
