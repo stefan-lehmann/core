@@ -36,7 +36,7 @@ elseif ($form->hasFormeElments()) {
                               ));
 
     cjoModulTemplate::addVarsArray('FORM_ELEMENTS', $form->getFormeElmentsOut());
-
+    cjoModulTemplate::addVarsArray('ERROR_MESSAGES', $form->getErrorMessages());    
 }
 
 cjoModulTemplate::getModul();

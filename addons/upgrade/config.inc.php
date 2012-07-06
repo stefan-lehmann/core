@@ -27,7 +27,7 @@ $mypage = 'upgrade'; // only for this file
 
 $I18N_29 = new i18n($CJO['LANG'],$CJO['ADDON_PATH'].'/'.$mypage.'/lang');  // CREATE LANG OBJ FOR THIS ADDON
 
-$CJO['ADDON']['addon_id'][$mypage]      = '28';
+$CJO['ADDON']['addon_id'][$mypage]      = '29';
 $CJO['ADDON']['page'][$mypage] 		    = $mypage; // pagename/foldername
 $CJO['ADDON']['name'][$mypage] 		    = $I18N_29->msg($mypage);  // name
 $CJO['ADDON']['perm'][$mypage] 		    = 'upgrade[]'; // permission
