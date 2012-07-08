@@ -198,6 +198,8 @@ class cjoVarMeta extends cjoVars {
 
         	if ($article_id != $cat_id)
     			$article = OOArticle::getArticleById($cat_id);
+            
+            if (!OOArticle::isValid($article)) continue;
 
     		$file        = $article->getFile(false);
     		$description = $article->getDescription();
