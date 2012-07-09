@@ -169,9 +169,9 @@ cjoAssistance::resetAfcVars();
     function startSend(block) {
         $.get('ajax.php', {'function': 'cjoGroupLetter::ajaxSend'}, function(data) {
             if (data == 1) {
-                startSend();
+                setTimeout(function() { startSend(); }, 5000);
             } else {
-              location.href = '<?php echo cjoAssistance::createBEUrl(); ?>';
+              setTimeout(function() {location.href = '<?php echo cjoAssistance::createBEUrl(); ?>'; }, 5000);
             }
         });
     }
