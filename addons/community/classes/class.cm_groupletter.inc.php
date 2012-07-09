@@ -411,8 +411,8 @@ class cjoGroupLetter {
                 if ($recipient['bounce'] > 0) {
                     $user->flush();
                     $user->setTable(TBL_COMMUNITY_USER);
-                    $user->setWhere('user_id='.$recipient['user_id'].' LIMIT 1');
-                    $user->setValue('bounce', ($recipient['bounce']-2));
+                    $user->setWhere('id='.$recipient['user_id'].' LIMIT 1');
+                    $user->setValue('bounce', ($recipient['bounce']-1));
                     $user->Update();
                 }
             }
