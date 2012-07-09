@@ -352,6 +352,7 @@ class cjoGroupLetter {
         			firstname,
         			name,
         			email,
+        			bounce,
         			us.activation_key AS activation_key
 	            FROM
 	            	".TBL_COMMUNITY_PREPARED." pr
@@ -391,6 +392,7 @@ class cjoGroupLetter {
 
         $sql->flush();
         $update = $sql;
+        $user = new cjoSql();
 
         foreach ($recipients as $recipient) {
 
@@ -403,6 +405,16 @@ class cjoGroupLetter {
             if ($this->sendGroupletter()) {
             	$update->setValue("status", '0');
                 $this->send++;
+                
+                $recipient['bounce'] = (int) $recipient['bounce'];
+                
+                if ($recipient['bounce'] > 0) {
+                    $user->flush();
+                    $user->setTable(TBL_COMMUNITY_USER);
+                    $user->setWhere('user_id='.$recipient['user_id'].' LIMIT 1');
+                    $user->setValue('bounce', ($recipient['bounce']-2));
+                    $user->Update();
+                }
             }
             else {
                 $update->setValue("status", '-1');
