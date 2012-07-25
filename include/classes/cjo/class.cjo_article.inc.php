@@ -149,8 +149,10 @@ class cjoArticle {
     public function setTemplateId($template_id, $change_mode=false) {
 
         global $CJO;
-        if (!$template_id || $this->template_id == $template_id) return true;
-
+        if (!$template_id || $this->template_id == $template_id) {
+            $CJO['ART'][$this->getArticleId()]['set_template_id'][$this->getClang()] = '';
+            return true;
+        }
         $this->template_id = $template_id;
         $CJO['ART'][$this->getArticleId()]['set_template_id'][$this->getClang()] = $template_id;
 
@@ -370,7 +372,9 @@ class cjoArticle {
         elseif ($this->getTemplateId() != 0 && $this->article_id != 0) {
 
             ob_implicit_flush(0);
-
+            
+            $this->setTemplateId($this->getTemplateId());
+            
             $template = new cjoTemplate();
             $template->setId($this->getTemplateId());
             $content = $template->getTemplate($this->article_id);
