@@ -36,7 +36,7 @@ class cjoVarTemplate extends cjoVars {
     }
 
     public function getTemplate($content, $article_id = false) {
-        return $this->matchTemplate($content);
+        return $this->matchTemplate($content,$article_id);
     }
 
     /**

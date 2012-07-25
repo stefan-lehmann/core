@@ -139,7 +139,7 @@ class cjoGenerate {
         	}
 
         	if ($generate_content) {
-        	    if (!self::generateArticleContent($article)) {
+        	    if (!self::generateArticleContent($article, $template_id)) {
         	        return false;
         	    }
         	}
@@ -206,14 +206,14 @@ class cjoGenerate {
     }
 
 
-    public static function generateArticleContent($article) {
+    public static function generateArticleContent($article, $template_id=0) {
 
         global $CJO, $I18N;
         $temp = $CJO['CONTEJO'];
         $article_id = $article->getValue("id");
         $clang = $article->getValue("clang");
 
-        $file = $CJO['FOLDER_GENERATED_ARTICLES']."/".$article_id.".".$clang.".content";
+        $file = $CJO['FOLDER_GENERATED_ARTICLES']."/".$article_id.".".$clang.".".$template_id.".content";
 
         if (!cjoAssistance::isWritable($CJO['FOLDER_GENERATED_ARTICLES'])) {
 

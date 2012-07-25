@@ -373,8 +373,6 @@ class cjoArticle {
 
             ob_implicit_flush(0);
             
-            $this->setTemplateId($this->getTemplateId());
-            
             $template = new cjoTemplate();
             $template->setId($this->getTemplateId());
             $content = $template->getTemplate($this->article_id);
@@ -469,7 +467,7 @@ class cjoArticle {
 
         if (empty($this->article_id)) return false;
 
-        $filename = $CJO['FOLDER_GENERATED_ARTICLES']."/". $this->article_id.".".$this->clang.".content";
+        $filename = $CJO['FOLDER_GENERATED_ARTICLES']."/". $this->article_id.".".$this->clang.".".$this->getTemplateId().".content";
 
         if (!file_exists($filename)) {
             require_once $CJO['INCLUDE_PATH']."/classes/cjo/class.cjo_generate.inc.php";
