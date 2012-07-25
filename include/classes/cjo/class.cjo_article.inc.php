@@ -373,6 +373,7 @@ class cjoArticle {
 
             ob_implicit_flush(0);
             
+            $this->setTemplateId($this->getTemplateId());
             $template = new cjoTemplate();
             $template->setId($this->getTemplateId());
             $content = $template->getTemplate($this->article_id);
