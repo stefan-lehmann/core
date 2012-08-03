@@ -59,7 +59,6 @@ class cjoProcess {
 
         self::getAdjustPath();  
         self::setFavicon();
-        self::setIndividualUploadFolder();
         self::getCurrentArticleId();
         
         require_once $CJO['INCLUDE_PATH'].'/classes/var/class.cjo_vars.inc.php';
@@ -181,9 +180,10 @@ class cjoProcess {
         return;
     }      
 
-    private static function setIndividualUploadFolder() {
+    public static function setIndividualUploadFolder() {
 
         global $CJO;
+        
         if (!$CJO['CONTEJO'] || empty($CJO['USER']) || !is_object($CJO['USER'])) return false;
         
         $login = cjoRewrite::parseArticleName($CJO['USER']->getValue('login'));

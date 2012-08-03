@@ -191,5 +191,7 @@ require_once $CJO['INCLUDE_PATH']."/authentication.inc.php";
 require_once $CJO['INCLUDE_PATH']."/frontend_auth.inc.php";
 require_once $CJO['INCLUDE_PATH']."/local.inc.php";
 
+cjoProcess::setIndividualUploadFolder();
+
 // ----------------- set to default
 $CJO['NOFUNCTIONS'] = true;
