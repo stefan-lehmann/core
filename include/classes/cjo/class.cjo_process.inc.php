@@ -44,7 +44,7 @@ class cjoProcess {
         
         self::unregisterGlobals();
         
-        if ($CJO['SETUP']) {
+        if ($CJO['SETUP'] && !$CJO['CONTEJO']) {
             header('Location: core/index.php');
             exit();
         } 
