@@ -188,7 +188,6 @@ if ($cur_page['header']) {
 cjoValidateEngine::cleanup();
 cjoMessage::outputMessages();
 
-
 // ----- caching end für output filter
 $CONTENT = ob_get_contents();
 while(@ob_end_clean());
