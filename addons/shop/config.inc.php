@@ -8,7 +8,7 @@
  *
  * @package     Addons
  * @subpackage  shop
- * @version     2.6.0
+ * @version     2.7.x
  *
  * @author      Matthias Schomacker <ms@raumsicht.com>
  * @copyright   Copyright (c) 2008-2012 CONTEJO. All rights reserved. 
@@ -36,7 +36,7 @@ $CJO['ADDON']['name'][$mypage] 		= $I18N_21->msg($mypage);  // name
 $CJO['ADDON']['perm'][$mypage] 		= 'shop[]'; // permission
 $CJO['ADDON']['author'][$mypage] 	= 'Matthias Schomacker, Stefan Lehmann 2010';
 $CJO['ADDON']['version'][$mypage] 	= '1.0';
-$CJO['ADDON']['compat'][$mypage] 	= '2.6.0';
+$CJO['ADDON']['compat'][$mypage] 	= '2.7.x';
 $CJO['ADDON']['support'][$mypage] 	= 'http://contejo.com/addons/shop';
 
 // define table constants

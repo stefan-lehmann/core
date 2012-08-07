@@ -8,7 +8,7 @@
  *
  * @package     contejo
  * @subpackage  core
- * @version     2.6.0
+ * @version     2.7.x
  *
  * @author      Stefan Lehmann <sl@contejo.com>
  * @copyright   Copyright (c) 2008-2012 CONTEJO. All rights reserved. 
@@ -36,7 +36,7 @@ $page = !empty($_REQUEST['page']) ? $_REQUEST['page'] : '';
 
 $CJO['SETUP'] 				= true;
 $CJO['VERSION'] 			= "2.7";
-$CJO['RELEASE'] 			= "0";
+$CJO['RELEASE'] 			= "1";
 $CJO['BACKEND_PATH']        = $CJO['HTDOCS_PATH']."core";
 $CJO['INCLUDE_PATH'] 		= $CJO['BACKEND_PATH']."/include";
 $CJO['JQUERY_PATH']			= $CJO['BACKEND_PATH']."/js/jQuery";
