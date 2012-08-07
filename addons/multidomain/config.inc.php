@@ -32,8 +32,8 @@ $CJO['ADDON']['page'][$mypage] 	   = $mypage;
 $CJO['ADDON']['name'][$mypage] 	   = $I18N_15->msg($mypage);
 $CJO['ADDON']['perm'][$mypage] 	   = 'multidomain[]';
 $CJO['ADDON']['author'][$mypage]   = 'Stefan Lehmann 2009';
-$CJO['ADDON']['version'][$mypage]  = '0.3';
-$CJO['ADDON']['compat'][$mypage]   = '2.2';
+$CJO['ADDON']['version'][$mypage]  = '0.4';
+$CJO['ADDON']['compat'][$mypage]   = '2.7';
 $CJO['ADDON']['support'][$mypage]  = 'http://contejo.com/multidomain';
 
 if (!defined('TBL_MULTIDOMAIN')) {
