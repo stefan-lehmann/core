@@ -29,11 +29,11 @@ $CJO['ADDON']['install'][$mypage] = true;
 
 require_once dirname(__FILE__).'/config.inc.php';
 
-$source[] = $CJO['INCLUDE_PATH']."/addons/".$mypage."/setup/list.default.html";
-$source[] = $CJO['INCLUDE_PATH']."/addons/".$mypage."/setup/filter.default.html";
+$source[] = $CJO['ADDON_PATH'].'/'.$mypage.'/setup/list.default.html';
+$source[] = $CJO['ADDON_PATH'].'/'.$mypage.'/setup/filter.default.html';
 
-$dest[] = $CJO['ADDON_PATH'].'/'.$mypage.'/list.default.'.$CJO['TMPL_FILE_TYPE'];
-$dest[] = $CJO['ADDON_PATH'].'/'.$mypage.'.$mypage."/filter.default.'.$CJO['TMPL_FILE_TYPE'];
+$dest[] = $CJO['ADDON_CONFIG_PATH'].'/'.$mypage.'/list.default.'.$CJO['TMPL_FILE_TYPE'];
+$dest[] = $CJO['ADDON_CONFIG_PATH'].'/'.$mypage.'/filter.default.'.$CJO['TMPL_FILE_TYPE'];
 
 foreach ($source as $key=>$value){
 	if (!@copy($source[$key], $dest[$key])){

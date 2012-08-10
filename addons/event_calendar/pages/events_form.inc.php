@@ -29,6 +29,8 @@ if ($function != 'add'){
     $event = cjoAssistance::toArray($data[0]);
 }
 
+$id       = cjo_request('id', 'int', $oid);
+
 //Form
 $form = new cjoForm();
 
@@ -56,13 +58,14 @@ $fields['start_date'] = new datepickerField('start_date', $I18N_16->msg("label_s
 $fields['start_date']->addSettings("buttonImage: 'img/silk_icons/calendar_begin.png'");
 $fields['start_date']->addColAttribute('style', 'width: 37%');
 $fields['start_date']->setDefault(time());
-$fields['start_date']->addValidator('notEmpty', $I18N_16->msg("msg_err_start_date_notEmpty"), false, false);
+$fields['start_date']->addValidator('notEmptyOrNull', $I18N_16->msg("msg_err_start_date_notEmpty"), false, false);
 
 $fields['start_time'] = new textField('start_time', '', array('style' => 'width: 50px'));
 $fields['start_time']->addAttribute('maxlength', '5');
 $fields['start_time']->setNote($I18N_16->msg("label_start_time"));
 $fields['start_time']->addValidator('isDate', $I18N_16->msg("msg_err_no_time"), false, false);
-$fields['start_time']->addValidator('isRegExp', $I18N_16->msg("msg_err_no_time"), array('expression' => '/[0-9\.:]{5}/s'));
+$fields['start_time']->addValidator('isRegExp', $I18N_16->msg("msg_err_no_time"), array('expression' => '!([01][0-9]|2[0-3]):[0-5][0-9]+!i'), false);
+$fields['start_time']->addValidator('notEmpty', $I18N_16->msg("msg_err_no_time"),false, false);
 
 $fields['start_time_clear'] = new readOnlyField('', '');
 
@@ -70,15 +73,19 @@ $fields['end_date'] = new datepickerField('end_date', $I18N_16->msg("label_end_d
 $fields['end_date']->addSettings("buttonImage: 'img/silk_icons/calendar_end.png'");
 $fields['end_date']->addColAttribute('style', 'width: 37%');
 $fields['end_date']->setDefault(time());
+$fields['end_date']->addValidator('notEmptyOrNull', $I18N_16->msg("msg_err_end_date_notEmpty"), false, false);
 
 $fields['end_time'] = new textField('end_time', '', array('style' => 'width: 50px'));
 $fields['end_time']->addAttribute('maxlength', '5');
 $fields['end_time']->setNote($I18N_16->msg("label_end_time"));
 $fields['end_time']->addValidator('isDate', $I18N_16->msg("msg_err_no_time"), false, false);
+$fields['end_time']->addValidator('isRegExp', $I18N_16->msg("msg_err_no_time"), array('expression' => '!([01][0-9]|2[0-3]):[0-5][0-9]+!i'), false);
+$fields['end_time']->addValidator('notEmpty', $I18N_16->msg("msg_err_no_time"),false, false);
+$fields['end_time']->addValidator('notEmpty', $I18N_16->msg("msg_err_no_time"),false, false);
 
 $fields['end_time_clear'] = new readOnlyField('', '');
 
-$fields['file'] = new cjoMediaButtonField('file', $I18N_16->msg('label_event_file'), array('preview'=>true));
+$fields['file'] = new cjoMediaButtonField('file', $I18N_16->msg('label_event_file'), array('preview'=> array('enabled' => true)));
 $fields['file']->needFullColumn(true);
 
 $fields['article'] = new cjoLinkButtonField('article_id', $I18N_16->msg('label_event_article'));
@@ -174,9 +181,10 @@ for($i=1;$i<=10;$i++) {
             break;
 
        case "time":
-            $fields[$attribute] = new datepickerField($attribute, $attribute_title, array('style' => 'width: 50px'));
+            $fields[$attribute] = new textField($attribute, $attribute_title, array('style' => 'width: 50px'));
             $fields[$attribute]->addAttribute('maxlength', '5');
             $fields[$attribute]->addValidator('isDate', $I18N_16->msg("msg_err_no_time"), false, false);
+            $fields[$attribute]->addValidator('isRegExp', $I18N_16->msg("msg_err_no_time"), array('expression' => '!([01][0-9]|2[0-3]):[0-5][0-9]+!i'), false);
             $fields[$attribute]->needFullColumn(true);
             break;
 
@@ -285,5 +293,5 @@ if ($form->validate()) {
 	if (cjo_post('cjoform_save_button','bool')) {
 	   cjoAssistance::redirectBE(array('function' => '', 'oid'=>'',  'msg' => 'msg_data_saved'));
 	}
-    cjoAssistance::redirectBE(array('function' => $function, 'oid'=>$oid,  'msg' => 'msg_data_saved'));
+    cjoAssistance::redirectBE(array( 'msg' => 'msg_data_saved'));
 }

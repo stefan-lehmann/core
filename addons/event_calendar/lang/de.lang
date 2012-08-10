@@ -91,6 +91,7 @@ label_status_offline = offline
 label_status_online = online 
 msg_err_no_time = Die Zeitangabe hat kein gültiges Format (z.B. 09:20, 07.00)! 
 msg_err_start_date_notEmpty = Bitte geben Sie ein Beginn-Datum an! 
+msg_err_end_date_notEmpty = Bitte geben Sie ein End-Datum an! 
 msg_err_status_notEmpty = Bitte wählen Sie einen Status (online/offline) aus! 
 msg_err_title_notEmpty = Bitte geben Sie einen Event-Titel an! 
 note_delimiter_comma = Mehrere Werte durch Komma trennen

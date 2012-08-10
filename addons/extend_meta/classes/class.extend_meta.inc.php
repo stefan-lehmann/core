@@ -157,14 +157,15 @@ class cjoExtendMeta {
 
         $vars = $params['subject'];            
         $fields = self::getFields();
-        foreach($fields['name'] as $key=>$name) {
-
-            if (empty($name) || 
-                $fields['field'][$key] == 'headlineField' || 
-                $fields['field'][$key] == 'slideheadlineField' ) continue;
-            $vars[] = $name;
+        if (!empty($fields)) {
+            foreach($fields['name'] as $key=>$name) {
+    
+                if (empty($name) || 
+                    $fields['field'][$key] == 'headlineField' || 
+                    $fields['field'][$key] == 'slideheadlineField' ) continue;
+                $vars[] = $name;
+            }
         }
-
         return $vars;
     }
 

@@ -115,7 +115,7 @@ $img = '<img src="img/silk_icons/page_white_edit.png" title="'.$I18N->msg("butto
 $cols['edit'] = new staticColumn($img, $I18N->msg("label_functions"));
 $cols['edit']->setHeadAttributes('colspan="3"');
 $cols['edit']->setBodyAttributes('width="20"');
-$cols['edit']->setParams(array ('function' => 'edit', 'id' => '%id%'));
+$cols['edit']->setParams(array ('function' => 'edit', 'oid' => '%id%'));
 
 // Status link
 $cond['stat'][0] = '<img src="img/silk_icons/eye_off.png" title="'.$I18N_16->msg("label_status_do_online").'" alt="'.$I18N_16->msg("label_status_offline").'" />';
@@ -132,12 +132,11 @@ $cols['delete'] = new staticColumn($cond['delete'], NULL);
 $cols['delete']->setBodyAttributes('width="60"');
 $cols['delete']->setBodyAttributes('class="cjo_delete"');
 
-if (!cjoAssistance::inMultival('short_description', $CJO['ADDON']['settings'][$mypage]['enabled_fields'])) unset($cols['short_description']);
-if (empty($CJO['ADDON']['settings'][$mypage]['times']))                                                    unset($cols['start_time']);
-if (empty($CJO['ADDON']['settings'][$mypage]['times']))                                                    unset($cols['end_time']);
-if (empty($CJO['ADDON']['settings'][$mypage]['end_date']))                                                 unset($cols['end_date']);
-if (empty($CJO['ADDON']['settings'][$mypage]['article']))                                                  unset($cols['article']);
-
+if (strpos('|'.$CJO['ADDON']['settings'][$mypage]['enabled_fields'].'|', '|short_description|') === false) unset($cols['short_description']);
+if (strpos('|'.$CJO['ADDON']['settings'][$mypage]['enabled_fields'].'|', '|times|') === false)             unset($cols['start_time']);
+if (strpos('|'.$CJO['ADDON']['settings'][$mypage]['enabled_fields'].'|', '|times|') === false)             unset($cols['end_time']);
+if (strpos('|'.$CJO['ADDON']['settings'][$mypage]['enabled_fields'].'|', '|end_date|') === false)          unset($cols['end_date']);
+if (strpos('|'.$CJO['ADDON']['settings'][$mypage]['enabled_fields'].'|', '|article|') === false)           unset($cols['article']);
 
 $list->addColumns($cols);
 
