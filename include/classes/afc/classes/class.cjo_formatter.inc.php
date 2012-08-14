@@ -226,7 +226,7 @@ class cjoFormatter {
 
         cjo_valid_type($format, 'string', __FILE__, __LINE__);
 
-        if (empty ($value)) {
+        if (empty($value) && $value !== '0' && $value !== 0) {
             return '';
         }
 

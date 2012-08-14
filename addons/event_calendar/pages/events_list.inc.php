@@ -59,9 +59,9 @@ $cols['short_description'] = new resultColumn('short_description', $I18N_16->msg
 $cols['short_description']->setBodyAttributes('width="200" valign="top"');
 
 $cols['start_date'] = new resultColumn('start_date', $I18N_16->msg('label_start_date'), 'strftime', $I18N->msg("dateformat"));
-$cols['start_time'] = new resultColumn('start_time', $I18N_16->msg('label_start_time'));
+$cols['start_time'] = new resultColumn('start_time', $I18N_16->msg('label_start_time'),'strftime','%H:%M');
 $cols['end_date'] = new resultColumn('end_date', $I18N_16->msg('label_end_date'), 'strftime', $I18N->msg("dateformat"));
-$cols['end_time'] = new resultColumn('end_time', $I18N_16->msg('label_end_time'));
+$cols['end_time'] = new resultColumn('end_time', $I18N_16->msg('label_end_time'),'strftime','%H:%M');
 
 for ($i=1;$i<=10;$i++) {
 
