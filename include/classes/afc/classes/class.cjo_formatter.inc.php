@@ -238,7 +238,7 @@ class cjoFormatter {
             // Default CJO-Datetimeformat
             $format = $I18N->msg('datetimeformat');
         }
-        return strftime($format, $value);
+        return ($value >= 86400) ? strftime($format, $value) : gmstrftime($format, $value);
     }
 
     private static function _formatNumber($value, $format) {

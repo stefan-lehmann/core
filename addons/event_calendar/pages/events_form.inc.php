@@ -290,11 +290,14 @@ $form->addSection($section);
 $form->addFields($hidden);
 
 if ($form->validate()) {
+
     if (cjo_post('start_time','bool')) {
-        $_POST['start_time'] = (int) strtotime('1970-01-01 '.cjo_post('start_time','string').':00');
+        $start_time = cjoAssistance::toArray(cjo_post('start_time','string'),':');
+        $_POST['start_time'] = ((int) $start_time[0]*60*60) + ((int) $start_time[1] *60);
     }
     if (cjo_post('end_time','bool')) {
-        $_POST['end_time'] = (int) strtotime('1970-01-01 '.cjo_post('end_time','string').':00');
+        $end_time = cjoAssistance::toArray(cjo_post('end_time','string'),':');
+        $_POST['end_time'] = ((int) $end_time[0]*60*60) + ((int) $end_time[1] *60);
     }
 }
 
