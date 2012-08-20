@@ -158,44 +158,58 @@ $list->show(false);
 			var cl = el.attr('class');
 			var mode = cl.substr(4);
 
-			if(mode == 'delete'){
-				if(!cjo,confirm(el.find('img'))){
-					return false;
-				}
-			}
-			cjo.toggleOnOff(el);
 
-			$.get('ajax.php',{
-				   'function': 'cjoEventCalendar::updateEvent',
-				   'id': oid,
-				   'mode' : mode,
-				   'clang': clang },
-				  function(message){
+            var confirm_action = function() {
+    
+                cjo.toggleOnOff(el);
+    
+                $.get('ajax.php',{
+                       'function': 'cjoEventCalendar::updateEvent',
+                       'id': oid,
+                       'mode' : mode,
+                       'clang': cjo.conf.clang },
+                      function(message){
+    
+                        if (cjo.setStatusMessage(message)){
+    
+                            el.find('img.ajax_loader').remove();
+    
+                            el.find('img').toggle();
+    
+                            if (mode == 'delete' &&
+                                $('.statusmessage p.error').length == 0){
+    
+                                el.parent('tr')
+                                  .siblings()
+                                  .find('.tablednd')
+                                  .each(function(i){
+                                        $(this).children().text(i+1);
+                                  });
+    
+                                el.parent('tr').remove();
+                            }
+                        }
+                    });
+                };
+    
+                if(mode == 'delete'){
+                    var jdialog = cjo.appendJDialog('<?php echo $I18N_16->msg("label_delete_event"); ?> ?');
+    
+                    $(jdialog).dialog({
+                        buttons: {
+                            '<?php echo $I18N->msg('label_ok'); ?>': function() {
+                                $(this).dialog('close');
+                                confirm_action();
+                            },
+                            '<?php echo $I18N->msg('label_cancel'); ?>': function() {
+                                $(this).dialog('close');
+                            }
+                        }
+                    });
+                } else {
+                    confirm_action();
+                }
 
-					if (cjo.setStatusMessage(message)){
-
-					  	el.find('img.ajax_loader')
-					  	  .remove();
-
-					  	el.find('img')
-					  	  .toggle();
-
-						if (mode == 'delete' &&
-							$('.statusmessage p.error').length == 0){
-
-							el.parent('tr')
-							  .siblings()
-							  .find('.tablednd')
-							  .each(function(i){
-							  		$(this).children().text(i+1);
-							  });
-
-							el.parent('tr').remove();
-
-							$('div[id^=cs_options][id$='+article_id+']').remove();
-						}
-					}
-			});
 		});
     });
 
