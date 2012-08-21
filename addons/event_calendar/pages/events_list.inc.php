@@ -26,10 +26,14 @@
 //LIST Ausgabe
 $sql = "SELECT
 			*,
+			(start_date+start_time) AS start, 
+            (end_date+end_time) AS end,
+            IF((start_date+start_time) < ".time().", IF((end_date+end_time) > ".time().", 1, 0), 0) AS broadcasting,
 			(SELECT name FROM ".TBL_ARTICLES." WHERE id=article_id AND clang='".$clang."' LIMIT 1) AS article
 		FROM ".TBL_16_EVENTS." WHERE clang='".$clang."'";
-$list = new cjolist($sql,
-                    'start_date',
+
+$list = new cjoList($sql,
+                    'status DESC,start',
                     'ASC',
                     '',
                     100);
@@ -58,10 +62,13 @@ $cols['title']->setBodyAttributes('class="large_item" width="200"');
 $cols['short_description'] = new resultColumn('short_description', $I18N_16->msg('label_short_description'), 'truncate', array('length' => 120));
 $cols['short_description']->setBodyAttributes('width="200" valign="top"');
 
-$cols['start_date'] = new resultColumn('start_date', $I18N_16->msg('label_start_date'), 'strftime', $I18N->msg("dateformat"));
-$cols['start_time'] = new resultColumn('start_time', $I18N_16->msg('label_start_time'),'strftime','%H:%M');
-$cols['end_date'] = new resultColumn('end_date', $I18N_16->msg('label_end_date'), 'strftime', $I18N->msg("dateformat"));
-$cols['end_time'] = new resultColumn('end_time', $I18N_16->msg('label_end_time'),'strftime','%H:%M');
+$cols['start_date'] = new resultColumn('start', $I18N_16->msg('label_start'), 'strftime', $I18N->msg("dateformat_sort"));
+$cols['start_date']->addCondition('broadcasting', 1,'<strong style="color:green">%s</strong>');
+$cols['start_date']->addCondition('end', array('<', time()),'<span style="color:red">%s</span>');
+         
+$cols['end_date'] = new resultColumn('end', $I18N_16->msg('label_end'), 'strftime', $I18N->msg("dateformat_sort"));
+$cols['end_date']->addCondition('broadcasting', 1,'<strong style="color:green">%s</strong>');
+$cols['end_date']->addCondition('end', array('<', time()),'<span style="color:red">%s</span>');
 
 for ($i=1;$i<=10;$i++) {
 
