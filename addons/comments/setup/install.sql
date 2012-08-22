@@ -14,12 +14,12 @@ CREATE TABLE IF NOT EXISTS `%TBL_COMMENTS%` (
   `md5_message` varchar(50) default NULL,
   `md5_ip` varchar(50) default NULL,
   PRIMARY KEY (`id`)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 CREATE TABLE IF NOT EXISTS `%TBL_COMMENTS_B8%` (
   `token` VARCHAR(255) BINARY PRIMARY KEY,
   `count` VARCHAR(255)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 INSERT IGNORE INTO `%TBL_COMMENTS_B8%` (`token`, `count`) VALUES
 ('bayes*dbversion', '2'),
@@ -53,6 +53,6 @@ CREATE TABLE IF NOT EXISTS `%TBL_COMMENTS_CONFIG%` (
   `blacklist_1` text,
   `debuging` int(11) NOT NULL default '0',
   PRIMARY KEY (`id`)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 INSERT IGNORE INTO `%TBL_COMMENTS_CONFIG%` (`id`, `form_article_id`, `reference_article_id`, `filter_comments_by`, `clang`, `comment_function`, `new_online_global`, `list_typ`, `short_comments`, `short_comments_length`, `allow_html_tags`, `order_comments`, `oversize_length`, `oversize_replace`, `no_entries_text`, `date_format`, `b8_autolearn`, `b8_spam_border`, `blacklist_0`, `blacklist_1`, `debuging`) VALUES (1, -1, -1, '', 0, 1, 1, 'visible', 1, 160, 0, 'ASC', 30, '-', '', '%d. %b. %Y - %H:%M', '1', '0,5', 'sex\r\nsays my memory\r\ndrugs\r\nincest\r\nviagra\r\nmoney\r\ndiscount\r\nbuy\r\nteen\r\nfuck\r\npuss\r\ncash\r\narsch\r\nhref\r\nselect\r\ninsert\r\nupdate', '', 1);

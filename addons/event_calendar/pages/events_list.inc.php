@@ -29,12 +29,13 @@ $sql = "SELECT
 			(start_date+start_time) AS start, 
             (end_date+end_time) AS end,
             IF((start_date+start_time) < ".time().", IF((end_date+end_time) > ".time().", 1, 0), 0) AS broadcasting,
+            IF((start_date+start_time) > ".time().", (start_date+start_time-".time()."), (1".time()."-start_date-start_time)) AS tempsort,
 			(SELECT name FROM ".TBL_ARTICLES." WHERE id=article_id AND clang='".$clang."' LIMIT 1) AS article
 		FROM ".TBL_16_EVENTS." WHERE clang='".$clang."'";
 
 $list = new cjoList($sql,
-                    'status DESC,start',
-                    'ASC',
+                    'broadcasting DESC,tempsort ASC',
+                    '',
                     '',
                     100);
 
@@ -46,7 +47,7 @@ $add_button = cjoAssistance::createBELink('<img src="img/silk_icons/add.png" tit
 $cols['id'] = new resultColumn('id', $add_button, 'sprintf', '<span>%s</span>');
 $cols['id']->setHeadAttributes('class="icon "');
 $cols['id']->setBodyAttributes('class="icon cjo_id"');
-$cols['id']->delOption(OPT_ALL);
+$cols['id']->delOption(OPT_SORT);
 
 $cols['file'] = new resultColumn('file', '&nbsp;', 'call_user_func', array('OOMedia::toThumbnail',array('%s')));
 if (cjoAssistance::inMultival('file', $CJO['ADDON']['settings'][$mypage]['enabled_fields'])) {
@@ -65,10 +66,12 @@ $cols['short_description']->setBodyAttributes('width="200" valign="top"');
 $cols['start_date'] = new resultColumn('start', $I18N_16->msg('label_start'), 'strftime', $I18N->msg("dateformat_sort"));
 $cols['start_date']->addCondition('broadcasting', 1,'<strong style="color:green">%s</strong>');
 $cols['start_date']->addCondition('end', array('<', time()),'<span style="color:red">%s</span>');
+$cols['start_date']->delOption(OPT_SEARCH);
          
 $cols['end_date'] = new resultColumn('end', $I18N_16->msg('label_end'), 'strftime', $I18N->msg("dateformat_sort"));
 $cols['end_date']->addCondition('broadcasting', 1,'<strong style="color:green">%s</strong>');
 $cols['end_date']->addCondition('end', array('<', time()),'<span style="color:red">%s</span>');
+$cols['end_date']->delOption(OPT_SEARCH);
 
 for ($i=1;$i<=10;$i++) {
 
@@ -146,8 +149,7 @@ if (strpos('|'.$CJO['ADDON']['settings'][$mypage]['enabled_fields'].'|', '|end_d
 if (strpos('|'.$CJO['ADDON']['settings'][$mypage]['enabled_fields'].'|', '|article|') === false)           unset($cols['article']);
 
 $list->addColumns($cols);
-
-$list->show(false);
+$list->show();
 
 ?>
 <script type="text/javascript">
