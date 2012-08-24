@@ -43,7 +43,7 @@ class liveEdit {
 
         if ($handle = opendir($this->livePath.$this->ModulePath)) {
             while (false !== ($file = readdir($handle))) {
-                if ($file != "." && $file != ".." && $file != '.svn') {
+                if (!preg_match('/^\./', $file)) {
                     if (strstr($file,$this->ModuleInputExtension)){
                         $id = str_replace($this->ModuleInputExtension,"",$file);
                         $moduleFiles[] = $id;
@@ -59,7 +59,7 @@ class liveEdit {
 
         if ($handle = opendir($this->livePath.$this->TemplatePath)) {
             while (false !== ($file = readdir($handle))) {
-                if ($file != "." && $file != ".." && $file != '.svn') {
+                if (!preg_match('/^\./', $file)) {
                     $id = str_replace($this->TemplateExtension,"",$file);
                     $templateFiles[] = $id;
                 }

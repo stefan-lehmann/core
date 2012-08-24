@@ -7,10 +7,10 @@
  * PHP Version: 5.3.1+
  *
  * @package     Addons
- * @subpackage  facebook_sdk
+ * @subpackage  oauth
  * @version     2.7.2
  *
- * @author      Stefan Lehmann <sl@contejo.com> based on Markus Lorch's (http://www.it-kult.de) REDAXO AddOn
+ * @author      Stefan Lehmann <sl@contejo.com> inspired by Saran Chamling's (saaraan@gmail.com) Facebook Ajax Connect
  * @copyright   Copyright (c) 2008-2012 CONTEJO. All rights reserved. 
  * @link        http://contejo.com
  *
@@ -23,12 +23,12 @@
  * @filesource
  */
 
- $mypage = 'facebook_sdk';
+ $mypage = 'oauth';
  
 // --- DYN
 
-$CJO['ADDON']['settings'][$mypage]['APPID'] = "";
-$CJO['ADDON']['settings'][$mypage]['SECRET'] = "";
-$CJO['ADDON']['settings'][$mypage]['FILEUPLOADSUPPORT'] = "";
+$CJO['ADDON']['settings'][$mypage]['providers'] = "facebook|twitter";
+$CJO['ADDON']['settings'][$mypage]['ajax'] = "1";
+
 
 // --- /DYN
