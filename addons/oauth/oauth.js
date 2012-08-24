@@ -18,7 +18,7 @@ if (typeof $ != 'undefined') {
 			
 			cjo_oauth_popup = window.open(href, 
 										  "cjo_oauth", 
-										 "location=no,status=no,scrollbars=yes,height="+size[0]+"px,width="+size[1]+"px");
+										  "location=no,status=no,scrollbars=yes,width="+size[0]+"px,height="+size[1]+"px");
 	
 			var interval = setInterval(function() { 
 				
