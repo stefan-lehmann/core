@@ -62,7 +62,10 @@ class cjoFacebook extends cjoOAuthProvider {
     protected function redirectToPublisher() {
         $this->setCookie();
         $_SERVER['REQUEST_URI'] .= '&oauth_redirect=1';
-        $redirect_uri = $this->provider->getLoginUrl(array('display' => 'popup', 'response_type' => 'code'));
+        $parameter = array('response_type' => 'code');
+        if (self::isAjax()) $parameter['display'] = 'popup';
+        if (isset($this->settings->scope)) $parameter['scope'] = $this->settings->scope;
+        $redirect_uri = $this->provider->getLoginUrl();
         cjoAssistance::redirect($redirect_uri);
     }
 }

@@ -23,7 +23,7 @@
  * @filesource
  */
 
-abstract class cjoOAuthProvider {
+class cjoOAuthProvider {
 
     protected $name = false;
     protected static $mypage = 'oauth';
@@ -62,16 +62,17 @@ abstract class cjoOAuthProvider {
                 $content = str_replace($key, self::generateLink($provider), $content);
             }
         }
-        if ($CJO['ADDON']['settings'][self::$mypage]['ajax']) {
+        if (self::isAjax()) {
             require_once $CJO['INCLUDE_PATH']."/classes/afc/functions/function_cjo_common.inc.php";
             $content = cjo_insertJS($content, $CJO['ADDON']['settings'][self::$mypage]['oauth_js']);
         }
         return $content;
     }
 
-    protected function getSettings() {
+    protected function getSettings($provider = false) {
         global $CJO;
-        $json = file_get_contents($CJO['ADDON_CONFIG_PATH'] . '/' . self::$mypage . '/' . $this->name . '/settings.json');
+        if ($provider === false) $provider = $this->name;
+        $json = file_get_contents($CJO['ADDON_CONFIG_PATH'] . '/' . self::$mypage . '/' . $provider . '/settings.json');
         $this->settings = json_decode($json);
     }
 
@@ -93,9 +94,11 @@ abstract class cjoOAuthProvider {
         
         global $CJO;
         
+        cjoExtension::registerExtensionPoint('OAUTH_CONNECTED', $user);
+        
         cjo_set_session('oauth_user', $user);
         
-        if ($CJO['ADDON']['settings'][self::$mypage]['ajax']) {
+        if (self::isAjax()) {
             cjo_set_session('oauth_page', NULL);
             $this->setCookie($user);
             $this->closePopUpWindow();
@@ -140,8 +143,14 @@ abstract class cjoOAuthProvider {
         setcookie('cjo_oauth', $data, $duration);
     }
 
-    private function generateLink($provider) {
-        return  '<a class="cjo_oauth '.$provider.'" href="./?'.self::generateGetKey($provider).'='.$provider.'">'.$provider.'</a>';
+    protected static function generateLink($provider) {
+        $oauth = new cjoOAuthProvider();
+        $oauth->getSettings($provider);
+        $hash = '';
+        if (self::isAjax() && is_array($oauth->settings->popup))   {
+            $hash = '#'.$oauth->settings->popup[0].'-'.$oauth->settings->popup[1];
+        }
+        return  '<a class="cjo_oauth '.$provider.'" href="./?'.self::generateGetKey($provider).'='.$provider.$hash.'">'.$provider.'</a>';
     }
     
     protected static function generateGetKey($provider) {
@@ -172,6 +181,11 @@ abstract class cjoOAuthProvider {
     private static function getProviders(){
         global $CJO;
         return cjoAssistance::toArray($CJO['ADDON']['settings'][self::$mypage]['providers']);
+    }
+    
+    protected static function isAjax() {
+        global $CJO;        
+        return !empty($CJO['ADDON']['settings'][self::$mypage]['ajax']) && $CJO['ADDON']['settings'][self::$mypage]['ajax'] != 'false';
     }
 
     /**
