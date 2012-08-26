@@ -8,7 +8,7 @@
  *
  * @package     contejo
  * @subpackage  core
- * @version     2.6.0
+ * @version     2.7.x
  *
  * @author      Stefan Lehmann <sl@contejo.com>
  * @copyright   Copyright (c) 2008-2012 CONTEJO. All rights reserved. 
@@ -149,8 +149,10 @@ class cjoArticle {
     public function setTemplateId($template_id, $change_mode=false) {
 
         global $CJO;
-        if (!$template_id || $this->template_id == $template_id) return true;
-
+        if (!$template_id || $this->template_id == $template_id) {
+            $CJO['ART'][$this->getArticleId()]['set_template_id'][$this->getClang()] = '';
+            return true;
+        }
         $this->template_id = $template_id;
         $CJO['ART'][$this->getArticleId()]['set_template_id'][$this->getClang()] = $template_id;
 
@@ -370,7 +372,8 @@ class cjoArticle {
         elseif ($this->getTemplateId() != 0 && $this->article_id != 0) {
 
             ob_implicit_flush(0);
-
+            
+            $this->setTemplateId($this->getTemplateId());
             $template = new cjoTemplate();
             $template->setId($this->getTemplateId());
             $content = $template->getTemplate($this->article_id);
@@ -465,7 +468,7 @@ class cjoArticle {
 
         if (empty($this->article_id)) return false;
 
-        $filename = $CJO['FOLDER_GENERATED_ARTICLES']."/". $this->article_id.".".$this->clang.".content";
+        $filename = $CJO['FOLDER_GENERATED_ARTICLES']."/". $this->article_id.".".$this->clang.".".$this->getTemplateId().".content";
 
         if (!file_exists($filename)) {
             require_once $CJO['INCLUDE_PATH']."/classes/cjo/class.cjo_generate.inc.php";

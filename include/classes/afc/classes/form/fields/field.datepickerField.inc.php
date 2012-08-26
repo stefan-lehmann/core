@@ -8,7 +8,7 @@
  *
  * @package     contejo
  * @subpackage  core
- * @version     2.6.0
+ * @version     2.7.x
  *
  * @author      Stefan Lehmann <sl@contejo.com>
  * @copyright   Copyright (c) 2008-2012 CONTEJO. All rights reserved. 
@@ -30,10 +30,13 @@ class datepickerField extends readOnlyField {
 
 	public function datepickerField($name, $label, $attributes = array (), $id = '') {
 
+        global $I18N;
+
 		if (is_array($id)) {
 			$this->id2 = $id[1];
 			$id = $id[0];
 		}
+        $dateformat = str_replace(array('%y','%d','%m'), array('yy','dd','mm'),strtolower($I18N->msg('dateformat')));
 		$this->cjoFormField($name, $label, $attributes, $id);
 		$this->addAttribute('style', 'width: 120px;');
 		$this->setFormat('strftime','dateformat');
@@ -43,7 +46,7 @@ class datepickerField extends readOnlyField {
 								  defaultDate: 'd',
 								  minDate: 'd',
 								  altFormat: '@',
-								  dateFormat: 'dd.mm.yy',
+								  dateFormat: '".$dateformat."',
 								  yearRange: '%s:%s',";
 
 	}

@@ -8,7 +8,7 @@
  *
  * @package     contejo
  * @subpackage  core
- * @version     2.6.0
+ * @version     2.7.x
  *
  * @author      Stefan Lehmann <sl@contejo.com>
  * @copyright   Copyright (c) 2008-2012 CONTEJO. All rights reserved. 
@@ -129,6 +129,7 @@ class cjoExtension {
 
     	$func = '';
 
+        
     	if (is_string($function) && strlen($function) > 0) {
     		// static class method
     		if (strpos($function, '::') !== false) {

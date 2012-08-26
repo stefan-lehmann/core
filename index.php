@@ -8,7 +8,7 @@
  *
  * @package     contejo
  * @subpackage  core
- * @version     2.6.0
+ * @version     2.7.x
  *
  * @author      Stefan Lehmann <sl@contejo.com>
  * @copyright   Copyright (c) 2008-2012 CONTEJO. All rights reserved. 
@@ -187,7 +187,6 @@ if ($cur_page['header']) {
 }
 cjoValidateEngine::cleanup();
 cjoMessage::outputMessages();
-
 
 // ----- caching end für output filter
 $CONTENT = ob_get_contents();

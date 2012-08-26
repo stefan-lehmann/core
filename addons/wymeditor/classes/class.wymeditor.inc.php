@@ -8,7 +8,7 @@
  *
  * @package     Addons
  * @subpackage  wymeditor
- * @version     2.6.0
+ * @version     2.7.x
  *
  * @author      Stefan Lehmann <sl@contejo.com>
  * @copyright   Copyright (c) 2008-2012 CONTEJO. All rights reserved. 
@@ -76,7 +76,7 @@ class WYMeditor {
     public $id;
     
     public static $WYMPath			= "./js/wymeditor/wymeditor/";
-    public static $jQueryPath		= "./js/jQuery/jquery-1.7.0.min.js";
+    public static $jQueryPath       = "./js/jQuery/jquery-latest.min.js";
     public static $tidy				= false;
     
     public function __construct() {

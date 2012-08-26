@@ -8,7 +8,7 @@
  *
  * @package     contejo
  * @subpackage  core
- * @version     2.6.0
+ * @version     2.7.x
  *
  * @author      Stefan Lehmann <sl@contejo.com>
  * @copyright   Copyright (c) 2008-2012 CONTEJO. All rights reserved. 
@@ -36,7 +36,7 @@ class cjoVarTemplate extends cjoVars {
     }
 
     public function getTemplate($content, $article_id = false) {
-        return $this->matchTemplate($content);
+        return $this->matchTemplate($content,$article_id);
     }
 
     /**

@@ -8,7 +8,7 @@
  *
  * @package     Addons
  * @subpackage  event_calendar
- * @version     2.6.0
+ * @version     2.7.x
  *
  * @author      Stefan Lehmann <sl@raumsicht.com>
  * @copyright   Copyright (c) 2008-2012 CONTEJO. All rights reserved. 
@@ -36,7 +36,6 @@ if ($CJO_USER->isAdmin() && cjo_post('cjoform_delete_all_button', 'bool')) {
 
 // IMPORT
 $form = new cjoForm($mypage.'_'.$subpage.'_import');
-$form->setApplyUrl();
 $form->setEnctype('multipart/form-data');
 
 $fields['import'] = new readOnlyField('import', $I18N_16->msg('label_csv'), array( 'style' => 'float: left;'));

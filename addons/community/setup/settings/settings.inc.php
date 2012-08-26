@@ -8,7 +8,7 @@
  *
  * @package     Addons
  * @subpackage  community
- * @version     2.6.0
+ * @version     2.7.x
  *
  * @author      Stefan Lehmann <sl@raumsicht.com>
  * @copyright   Copyright (c) 2008-2012 CONTEJO. All rights reserved. 

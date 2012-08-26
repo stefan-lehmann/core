@@ -8,7 +8,7 @@
  *
  * @package     Addons
  * @subpackage  multidomain
- * @version     2.6.0
+ * @version     2.7.x
  *
  * @author      Stefan Lehmann <sl@raumsicht.com>
  * @copyright   Copyright (c) 2008-2012 CONTEJO. All rights reserved. 
@@ -32,8 +32,8 @@ $CJO['ADDON']['page'][$mypage] 	   = $mypage;
 $CJO['ADDON']['name'][$mypage] 	   = $I18N_15->msg($mypage);
 $CJO['ADDON']['perm'][$mypage] 	   = 'multidomain[]';
 $CJO['ADDON']['author'][$mypage]   = 'Stefan Lehmann 2009';
-$CJO['ADDON']['version'][$mypage]  = '0.3';
-$CJO['ADDON']['compat'][$mypage]   = '2.2';
+$CJO['ADDON']['version'][$mypage]  = '0.4';
+$CJO['ADDON']['compat'][$mypage]   = '2.7';
 $CJO['ADDON']['support'][$mypage]  = 'http://contejo.com/multidomain';
 
 if (!defined('TBL_MULTIDOMAIN')) {

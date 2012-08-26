@@ -8,7 +8,7 @@
  *
  * @package     contejo
  * @subpackage  core
- * @version     2.6.0
+ * @version     2.7.x
  *
  * @author      Stefan Lehmann <sl@contejo.com>
  * @copyright   Copyright (c) 2008-2012 CONTEJO. All rights reserved. 
@@ -36,7 +36,7 @@ $page = !empty($_REQUEST['page']) ? $_REQUEST['page'] : '';
 
 $CJO['SETUP'] 				= true;
 $CJO['VERSION'] 			= "2.7";
-$CJO['RELEASE'] 			= "0";
+$CJO['RELEASE'] 			= "2";
 $CJO['BACKEND_PATH']        = $CJO['HTDOCS_PATH']."core";
 $CJO['INCLUDE_PATH'] 		= $CJO['BACKEND_PATH']."/include";
 $CJO['JQUERY_PATH']			= $CJO['BACKEND_PATH']."/js/jQuery";
@@ -118,10 +118,11 @@ $CJO['VARIABLES'][] = 'cjoVarNavigation';
 $CJO['VARIABLES'][] = 'cjoVarTemplate';
 $CJO['VARIABLES'][] = 'cjoVarWYMeditor';
 
-require_once $CJO['INCLUDE_PATH']."/classes/cjo/class.cjo_client_cache.inc.php";
-
 // ----------------- INCLUDE FUNCTIONS
-if (isset($CJO['NOFUNCTIONS']) && !$CJO['NOFUNCTIONS']) return false;
+require_once $CJO['INCLUDE_PATH']."/classes/cjo/class.cjo_client_cache.inc.php";
+require_once $CJO['INCLUDE_PATH']."/functions/function.cjo_globals.inc.php";
+
+if (isset($CJO['NOFUNCTIONS']) && $CJO['NOFUNCTIONS']) return false;
 
 // ----------------- CONTEJO INCLUDES
 require_once $CJO['INCLUDE_PATH']."/classes/oop/class.oocontejo.inc.php";
@@ -174,9 +175,6 @@ if ($CJO['CONTEJO']) {
     require_once $CJO['INCLUDE_PATH']."/classes/afc/functions/function_cjo_string.inc.php";
 }
 
-// ----- FUNCTIONS
-require_once $CJO['INCLUDE_PATH']."/functions/function.cjo_globals.inc.php";
-
 if (isset($CJO['ONLY_FUNCTIONS']) && $CJO['ONLY_FUNCTIONS']) return false;
 
 cjoProcess::getCurrentClangId();
@@ -190,6 +188,8 @@ cjoProcess::start();
 require_once $CJO['INCLUDE_PATH']."/authentication.inc.php";
 require_once $CJO['INCLUDE_PATH']."/frontend_auth.inc.php";
 require_once $CJO['INCLUDE_PATH']."/local.inc.php";
+
+cjoProcess::setIndividualUploadFolder();
 
 // ----------------- set to default
 $CJO['NOFUNCTIONS'] = true;

@@ -1,0 +1,94 @@
+<?php
+
+// --- DYN
+
+$CJO['ADDON']['settings'][$mypage]['enabled_fields'] = "";
+$CJO['ADDON']['settings'][$mypage]['search_fields'] = "";
+$CJO['ADDON']['settings'][$mypage]['select_fields'] = "";
+
+$CJO['ADDON']['settings'][$mypage]['date_output_format'] = "";
+$CJO['ADDON']['settings'][$mypage]['list_crop_num'] = "";
+$CJO['ADDON']['settings'][$mypage]['elements_per_page'] = "20";
+$CJO['ADDON']['settings'][$mypage]['results_order_by'] = "start_date";
+$CJO['ADDON']['settings'][$mypage]['results_order_dir'] = "ASC";
+$CJO['ADDON']['settings'][$mypage]['no_data_text'] = "<p>Sorry nothing found!</p>";
+
+$CJO['ADDON']['settings'][$mypage]['date_input_enabled'] = "1";
+$CJO['ADDON']['settings'][$mypage]['date_input_format'] = "%d.%m.%Y";
+$CJO['ADDON']['settings'][$mypage]['cookie_enabled'] = "0";
+
+
+$CJO['ADDON']['settings'][$mypage]['attribute_typ1'] = "";
+$CJO['ADDON']['settings'][$mypage]['attribute_display1'] = "";
+$CJO['ADDON']['settings'][$mypage]['attribute_title1'] = "";
+$CJO['ADDON']['settings'][$mypage]['attribute_crop_num1'] = "";
+$CJO['ADDON']['settings'][$mypage]['attribute_date_format1'] = "";
+$CJO['ADDON']['settings'][$mypage]['attribute_values1'] = "";
+
+$CJO['ADDON']['settings'][$mypage]['attribute_typ2'] = "";
+$CJO['ADDON']['settings'][$mypage]['attribute_display2'] = "";
+$CJO['ADDON']['settings'][$mypage]['attribute_title2'] = "";
+$CJO['ADDON']['settings'][$mypage]['attribute_crop_num2'] = "";
+$CJO['ADDON']['settings'][$mypage]['attribute_date_format2'] = "";
+$CJO['ADDON']['settings'][$mypage]['attribute_values2'] = "";
+
+$CJO['ADDON']['settings'][$mypage]['attribute_typ3'] = "";
+$CJO['ADDON']['settings'][$mypage]['attribute_display3'] = "";
+$CJO['ADDON']['settings'][$mypage]['attribute_title3'] = "";
+$CJO['ADDON']['settings'][$mypage]['attribute_crop_num3'] = "";
+$CJO['ADDON']['settings'][$mypage]['attribute_date_format3'] = "";
+$CJO['ADDON']['settings'][$mypage]['attribute_values3'] = "";
+
+$CJO['ADDON']['settings'][$mypage]['attribute_typ4'] = "";
+$CJO['ADDON']['settings'][$mypage]['attribute_display4'] = "";
+$CJO['ADDON']['settings'][$mypage]['attribute_title4'] = "";
+$CJO['ADDON']['settings'][$mypage]['attribute_crop_num4'] = "";
+$CJO['ADDON']['settings'][$mypage]['attribute_date_format4'] = "";
+$CJO['ADDON']['settings'][$mypage]['attribute_values4'] = "";
+
+$CJO['ADDON']['settings'][$mypage]['attribute_typ5'] = "";
+$CJO['ADDON']['settings'][$mypage]['attribute_display5'] = "";
+$CJO['ADDON']['settings'][$mypage]['attribute_title5'] = "";
+$CJO['ADDON']['settings'][$mypage]['attribute_crop_num5'] = "";
+$CJO['ADDON']['settings'][$mypage]['attribute_date_format5'] = "";
+$CJO['ADDON']['settings'][$mypage]['attribute_values5'] = "";
+
+$CJO['ADDON']['settings'][$mypage]['attribute_typ6'] = "";
+$CJO['ADDON']['settings'][$mypage]['attribute_display6'] = "";
+$CJO['ADDON']['settings'][$mypage]['attribute_title6'] = "";
+$CJO['ADDON']['settings'][$mypage]['attribute_crop_num6'] = "";
+$CJO['ADDON']['settings'][$mypage]['attribute_date_format6'] = "";
+$CJO['ADDON']['settings'][$mypage]['attribute_values6'] = "";
+
+$CJO['ADDON']['settings'][$mypage]['attribute_typ7'] = "";
+$CJO['ADDON']['settings'][$mypage]['attribute_display7'] = "";
+$CJO['ADDON']['settings'][$mypage]['attribute_title7'] = "";
+$CJO['ADDON']['settings'][$mypage]['attribute_crop_num7'] = "";
+$CJO['ADDON']['settings'][$mypage]['attribute_date_format7'] = "";
+$CJO['ADDON']['settings'][$mypage]['attribute_values7'] = "";
+
+$CJO['ADDON']['settings'][$mypage]['attribute_typ8'] = "";
+$CJO['ADDON']['settings'][$mypage]['attribute_display8'] = "";
+$CJO['ADDON']['settings'][$mypage]['attribute_title8'] = "";
+$CJO['ADDON']['settings'][$mypage]['attribute_crop_num8'] = "";
+$CJO['ADDON']['settings'][$mypage]['attribute_date_format8'] = "";
+$CJO['ADDON']['settings'][$mypage]['attribute_values8'] = "";
+
+$CJO['ADDON']['settings'][$mypage]['attribute_typ9'] = "";
+$CJO['ADDON']['settings'][$mypage]['attribute_display9'] = "";
+$CJO['ADDON']['settings'][$mypage]['attribute_title9'] = "";
+$CJO['ADDON']['settings'][$mypage]['attribute_crop_num9'] = "";
+$CJO['ADDON']['settings'][$mypage]['attribute_date_format9'] = "";
+$CJO['ADDON']['settings'][$mypage]['attribute_values9'] = "";
+
+$CJO['ADDON']['settings'][$mypage]['attribute_typ10'] = "";
+$CJO['ADDON']['settings'][$mypage]['attribute_display10'] = "";
+$CJO['ADDON']['settings'][$mypage]['attribute_title10'] = "";
+$CJO['ADDON']['settings'][$mypage]['attribute_crop_num10'] = "";
+$CJO['ADDON']['settings'][$mypage]['attribute_date_format10'] = "";
+$CJO['ADDON']['settings'][$mypage]['attribute_values10'] = "";
+
+
+// --- /DYN
+
+?>
