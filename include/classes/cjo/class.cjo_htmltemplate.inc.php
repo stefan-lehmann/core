@@ -245,7 +245,7 @@ class cjoHtmlTemplate {
                     }
                 }
             }   
-            $call = '$replace = '.$function.'('.$params_out.');'."\r\n";
+            $call = '$replace = @'.$function.'('.$params_out.');'."\r\n";
 
             $test = cjoAssistance::toArray($function,'::');
             if (count($test) == 2 && method_exists($test[0], $test[1])) {
