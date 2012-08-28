@@ -105,19 +105,22 @@ $cols['prio']->setBodyAttributes('class="icon dragHandle tablednd"');
 $cols['prio']->setBodyAttributes('title="'.$I18N->msg("label_change_prio").'"');
 $cols['prio']->delOption(OPT_ALL);
 
-$cols['online_from'] = new resultColumn('online_from', $I18N->msg('label_from_to'), 'strftime', $I18N->msg("dateformat"));
-$cols['online_from']->addCondition('online_from', array('>', time()), '<i>'.$I18N->msg("date_from").'</i><span class="begin_date date_error">%s</span>');
-$cols['online_from']->addCondition('online_from', array('<', time()), '<i>'.$I18N->msg("date_from").'</i><span class="begin_date">%s</span>');
-if (!$CJO['USER']->hasPerm('editContentOnly[]')) $cols['online_from']->setBodyAttributes('class="online_from_to"');
-$cols['online_from']->delOption(OPT_ALL);
-
-$cols['online_to'] = new resultColumn('online_to', null, 'strftime', $I18N->msg("dateformat"));
-$cols['online_to']->addCondition('online_to', array('<', time()), '<i>'.$I18N->msg("date_to").'</i><span class="end_date date_error">%s</span>');
-$cols['online_to']->addCondition('online_to', array('>', time()), '<i>'.$I18N->msg("date_to").'</i><span class="end_date">%s</span>');
-
-$cols['type_id'] = new resultColumn('type_id', $I18N->msg('label_login'), 'sprintf', '<span>%s</span>');
-$cols['type_id']->setBodyAttributes('width="100"');
-$cols['type_id']->delOption(OPT_ALL);
+if ($CJO['ONLINE_FROM_TO_ENABLED'] == true) { 
+    $cols['online_from'] = new resultColumn('online_from', $I18N->msg('label_from_to'), 'strftime', $I18N->msg("dateformat"));
+    $cols['online_from']->addCondition('online_from', array('>', time()), '<i>'.$I18N->msg("date_from").'</i><span class="begin_date date_error">%s</span>');
+    $cols['online_from']->addCondition('online_from', array('<', time()), '<i>'.$I18N->msg("date_from").'</i><span class="begin_date">%s</span>');
+    if (!$CJO['USER']->hasPerm('editContentOnly[]')) $cols['online_from']->setBodyAttributes('class="online_from_to"');
+    $cols['online_from']->delOption(OPT_ALL);
+    
+    $cols['online_to'] = new resultColumn('online_to', null, 'strftime', $I18N->msg("dateformat"));
+    $cols['online_to']->addCondition('online_to', array('<', time()), '<i>'.$I18N->msg("date_to").'</i><span class="end_date date_error">%s</span>');
+    $cols['online_to']->addCondition('online_to', array('>', time()), '<i>'.$I18N->msg("date_to").'</i><span class="end_date">%s</span>');
+}
+if ($CJO['LOGIN_ENABLED'] == true) {
+    $cols['type_id'] = new resultColumn('type_id', $I18N->msg('label_login'), 'sprintf', '<span>%s</span>');
+    $cols['type_id']->setBodyAttributes('width="100"');
+    $cols['type_id']->delOption(OPT_ALL);
+}
 
 $colspan = false;
 $count = 0;
