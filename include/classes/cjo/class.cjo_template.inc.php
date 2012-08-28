@@ -132,10 +132,10 @@ class cjoTemplate {
         }
     }
 
-    public function replaceTemplateVars($content, $article_id = false) {
+    public function replaceTemplateVars($content, $article_id = false, $template_id = false) {
         global $CJO;
         foreach($CJO['VARIABLES'] as $var){
-            $content = $var->getTemplate($content, $article_id);
+            $content = $var->getTemplate($content, $article_id, $template_id);
         }
         return $content;
     }

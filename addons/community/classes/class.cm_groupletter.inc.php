@@ -653,7 +653,7 @@ class cjoGroupLetter {
         $article = new cjoArticle();
         $article->setArticleId($article_id);
         $article->setClang($clang);
-        $article->setTemplateId($template_id);
+        $article->setTemplateId($template_id, true);
         $content = $article->getArticleTemplate(); 
         $content = cjoOutput::replaceLinks($content);
         $content = cjoOpfLang::translate($content);
