@@ -333,7 +333,7 @@ class cjoVarArticle extends cjoVars {
         
 
         $search = array('CJO_ARTICLE_ID'            => $article->getId(),
-                        'CJO_TEMPLATE_ID'           => $this->template_id,
+                        'CJO_TEMPLATE_ID'           => $article->getTemplateId(),
                         'CJO_ARTICLE_PARENT_ID'     => $article->getParentId(),
 					    'CJO_PARENT_ID'             => $article->getParentId(),
                         'CJO_ARTICLE_ROOT_ID'       => @array_shift(cjoAssistance::toArray($article->getPath().$article_id.'|')),
