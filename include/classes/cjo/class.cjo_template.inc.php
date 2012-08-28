@@ -115,11 +115,12 @@ class cjoTemplate {
         return $CJO['FOLDER_GENERATED_TEMPLATES'];
     }
 
-    public function getTemplate($article_id = false) {
+    public function getTemplate($article_id = false, $template_id = false) {
         $tempalte_file = $this->getFile();
         if (!$tempalte_file) return false;
+        if (!$template_id) $template_id = $this->getId();
         $content = @file_get_contents($tempalte_file);
-        return $this->replaceTemplateVars($content, $article_id, $this->getId());
+        return $this->replaceTemplateVars($content, $article_id, $template_id);
     }
     
     public function executeTemplate($article_id = false) {
