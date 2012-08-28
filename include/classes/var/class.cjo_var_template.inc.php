@@ -46,7 +46,13 @@ class cjoVarTemplate extends cjoVars {
 
         $var = 'CJO_TEMPLATE';
         $matches = $this->getVarParams($content, $var);
-
+        
+        if ($article_id) {
+            $article = OOArticle::getArticleById($article_id);
+            if (!OOArticle::isValid($article)) return $content;
+            $origin_template_id = $article->getTemplateId();
+        }
+        
         foreach ($matches as $match) {
 
             list ($param_str, $args) = $match;
@@ -56,7 +62,7 @@ class cjoVarTemplate extends cjoVars {
                 $varname = '$__cjo_template'. $template_id;
                 $tpl = '<?php
                        '. $varname .' = new cjoTemplate('. $template_id .');
-                       eval(\'?>\'.'. $this->handleGlobalVarParamsSerialized($var, $args, $varname .'->getTemplate('.$article_id.')') .');
+                       eval(\'?>\'.'. $this->handleGlobalVarParamsSerialized($var, $args, $varname .'->getTemplate('.$article_id.','.$origin_template_id.')') .');
                        ?>';
                 $content = str_replace($var.'['.$param_str.']', $tpl, $content);
             }
