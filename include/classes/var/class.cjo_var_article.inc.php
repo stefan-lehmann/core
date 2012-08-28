@@ -37,9 +37,10 @@
 class cjoVarArticle extends cjoVars {
     // --------------------------------- Output
 
-    public function getTemplate($content, $article_id = false) {
+    public function getTemplate($content, $article_id = false, $template_id = false) {
         global $CJO;
         if (empty($article_id)) $article_id = $CJO['ARTICLE_ID'];
+        $this->template_id = $template_id;
         $content = $this->replaceCommonVars($content, $article_id);
         $content = $this->matchCtype($content, $article_id);
         $content = $this->matchParentsCtype($content, $article_id);
@@ -102,7 +103,7 @@ class cjoVarArticle extends cjoVars {
             list ($clang, $args)      = $this->extractArg('clang', $args, $CJO['CUR_CLANG']);
             list ($ctype, $args)      = $this->extractArg('ctype', $args, -1);
             list ($field, $args)      = $this->extractArg('field', $args, '');
-            list ($template, $args)   = $this->extractArg('template', $args, 0);            
+            list ($template, $args)   = $this->extractArg('template', $args, $this->template_id);            
 
             $tpl = '';
             if ($article_id == 0) {
@@ -323,13 +324,16 @@ class cjoVarArticle extends cjoVars {
             $article_id = cjo_request('article_id', 'cjo-article-id', $CJO['START_ARTICLE_ID']);
 
         $article = OOArticle::getArticleById($article_id);
-
-        $this->template_id = $article->getTemplateId();
-
-        if (!OOArticle::isValid($article)) return $content;
+        
+        if (!OOArticle::isValid($article)) 
+            return $content;
+        
+        if (empty($this->template_id))
+            $this->template_id = $article->getTemplateId();
+        
 
         $search = array('CJO_ARTICLE_ID'            => $article->getId(),
-                        'CJO_TEMPLATE_ID'           => $article->getTemplateId(),
+                        'CJO_TEMPLATE_ID'           => $this->template_id,
                         'CJO_ARTICLE_PARENT_ID'     => $article->getParentId(),
 					    'CJO_PARENT_ID'             => $article->getParentId(),
                         'CJO_ARTICLE_ROOT_ID'       => @array_shift(cjoAssistance::toArray($article->getPath().$article_id.'|')),

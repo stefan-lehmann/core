@@ -67,7 +67,7 @@
     /*common defaults for all sections*/
         .wym_skin_contejo .wym_section            { margin-left: auto; margin-right: auto; }
         .formular .wym_skin_contejo .wym_section  { margin-left: 0!important; padding-right:15px; }    
-         .formular .wym_skin_contejo 			  { margin-bottom:10px!important }
+         .formular .wym_skin_contejo 			  { padding-bottom:10px!important }
         .wym_skin_contejo .wym_section h2,
         .wym_skin_contejo .wym_section h3,
         .wym_skin_contejo .wym_area_main .wym_section h2,

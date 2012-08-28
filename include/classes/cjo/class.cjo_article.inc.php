@@ -391,8 +391,6 @@ class cjoArticle {
     private function editSlice($re, $curr_re_id) {
 
         global $CJO, $I18N;
-        
-
                 
         $slice_content = '<form enctype="multipart/form-data" action="index.php#slice'.$re['conts'][$curr_re_id].'" '."\r\n".
                          '     method="post" accept-charset="'.$I18N->msg("htmlcharset").'" id="CJO_FORM">'."\r\n".
