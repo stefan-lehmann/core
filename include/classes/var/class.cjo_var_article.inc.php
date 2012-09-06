@@ -103,7 +103,7 @@ class cjoVarArticle extends cjoVars {
             list ($clang, $args)      = $this->extractArg('clang', $args, $CJO['CUR_CLANG']);
             list ($ctype, $args)      = $this->extractArg('ctype', $args, -1);
             list ($field, $args)      = $this->extractArg('field', $args, '');
-            list ($template, $args)   = $this->extractArg('template', $args, $this->template_id);            
+            list ($template, $args)   = $this->extractArg('template', $args, 0);            
 
             $tpl = '';
             if ($article_id == 0) {

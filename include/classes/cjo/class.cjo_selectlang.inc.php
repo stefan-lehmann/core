@@ -95,7 +95,7 @@ class cjoSelectLang {
      * @param string|boolean $icon link icon
      * @return string
      */
-    function addItem($id, $name=false, $url=false, $icon=false ) {
+    public function addItem($id, $name=false, $url=false, $icon=false ) {
 
         global $CJO;
 
@@ -125,7 +125,7 @@ class cjoSelectLang {
      * @param string $ext file extension
      * @return string
      */
-    function getLinkIcon($iso, $path = false, $alt = false, $title = false, $ext = 'png'){
+    public function getLinkIcon($iso, $path = false, $alt = false, $title = false, $ext = 'png'){
 
         if ($path === false) $path = 'img/flags';
         if ($alt === false) $alt = $iso;
@@ -140,7 +140,7 @@ class cjoSelectLang {
      * the selected language.
      * @return void
      */
-    function setBackButton() {
+    public function setBackButton() {
         
         global $CJO, $I18N;
         
@@ -165,7 +165,7 @@ class cjoSelectLang {
      * @param array $params parameter set by output filter
      * @return string
      */
-    function insertLangTabs($params) {
+    public static function insertLangTabs($params) {
     	global $CJO;
     	$tabs = '<ul class="v_tabnmenu">'.$CJO['SEL_LANG']->items.'</ul>'."\n\r";
     	return preg_replace('/<div([^>]*)id="cjo_lang_tabs"([^>]*)>/i','$0'.$tabs,$params['subject']);
@@ -176,7 +176,7 @@ class cjoSelectLang {
      * insert the language selection via output filter.
      * @return void;
      */
-    function get(){
+    public function get(){
         cjoExtension::registerExtension('OUTPUT_FILTER', 'cjoSelectLang::insertLangTabs');
     }
 }
