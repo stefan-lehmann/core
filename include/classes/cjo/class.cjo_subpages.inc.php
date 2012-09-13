@@ -132,7 +132,7 @@ class cjoSubPages {
      * @return void
      * @access public
      */
-    public function insertTabs($params) {
+    public static function insertTabs($params) {
         
     	global $CJO;
     	
@@ -154,7 +154,7 @@ class cjoSubPages {
      * @return void
      * @access public
      */
-    public function insertSubTabs($params) {
+    public static function insertSubTabs($params) {
         
     	global $CJO;
 
@@ -176,7 +176,7 @@ class cjoSubPages {
      * @return void
      * @access public
      */
-    public function insertTitle($params) {
+    public static function insertTitle($params) {
     	global $CJO;
     	$content = preg_replace('/<\/title>/',' | '.$CJO['title'].'\0',$params['subject'],1);
     	$content = cjoExtension::registerExtensionPoint('OUTPUT_FILTER[TITLE_INSERTED]', $content);

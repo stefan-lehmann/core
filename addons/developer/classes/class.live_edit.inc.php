@@ -472,7 +472,7 @@ class liveEdit {
         }
     }
 
-    public function insertCss($params) {
+    public static function insertCss($params) {
 
         global $CJO;
 

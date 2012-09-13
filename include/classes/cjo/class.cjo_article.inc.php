@@ -1037,6 +1037,7 @@ class cjoArticle {
                 $user_login = '';
             }
         }
+        $path = cjoAssistance::toArray($this->getValue('path').$this->article_id.'|');
            
         $search = array('GLOBALS[\'CJO_ARTICLE_ID\']'    => 'GLOBALS[\'CJ_O_ARTICLE_ID\']',
                         'GLOBALS[\'CJO_CLANG_ID\']'      => 'GLOBALS[\'CJ_O_CLANG_ID\']',
@@ -1046,7 +1047,7 @@ class cjoArticle {
                         'CJO_TEMPLATE_ID'                =>  $this->getTemplateId(),
                         'CJO_ARTICLE_PARENT_ID'          =>  $this->parent_id,
                         'CJO_PARENT_ID'                  =>  $this->parent_id,
-                        'CJO_ARTICLE_ROOT_ID'            =>  array_shift(cjoAssistance::toArray($this->getValue('path').$this->article_id.'|')),
+                        'CJO_ARTICLE_ROOT_ID'            =>  array_shift($path),
                         'CJO_ARTICLE_AUTHOR'             =>  $this->getValue('author'),
                         'CJO_ARTICLE_NAME'               =>  $this->getValue('name'),
                         'CJO_ARTICLE_TITLE'              =>  $this->getValue('title'),

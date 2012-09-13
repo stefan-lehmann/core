@@ -206,7 +206,7 @@ class i18n {
      * @return string
      * @access public
      */
-    public function searchAndTranslate($params) {
+    public static function searchAndTranslate($params) {
 
         global $CJO, $I18N;
 
