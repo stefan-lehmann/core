@@ -22,8 +22,7 @@
  *  details.
  * @filesource
  */
-
-error_reporting(E_ALL ^ E_NOTICE);
+error_reporting(E_ALL & ~E_STRICT & ~E_NOTICE);
 
 ob_start();
 
