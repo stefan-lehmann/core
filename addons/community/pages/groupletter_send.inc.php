@@ -179,9 +179,9 @@ cjoAssistance::resetAfcVars();
     function updateNumbers() {
         $.getJSON('ajax.php', {'function': 'cjoGroupLetter::currentNumbers'},
             function(data) { 
-                if (data.open == 0 || data.open == "0") {
-                    location.href = '<?php echo cjoAssistance::createBEUrl(); ?>';
-                }
+               // if (data.open == 0 || data.open == "0") {
+               //     location.href = '<?php echo cjoAssistance::createBEUrl(); ?>';
+               // }
                 $('#gl_open').text(data.open);
                 $('#gl_errors').text(data.errors);
                 $('#gl_send').text(data.send); 

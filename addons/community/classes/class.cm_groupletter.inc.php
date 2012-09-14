@@ -662,8 +662,10 @@ class cjoGroupLetter {
 
         $base  = cjoRewrite::setServerUri(true, false);
         $base .= cjoRewrite::setServerPath();
-  
+
         $content = str_replace(array('"../','"./'), '"'.$base, $content);
+        $content = str_replace(array('(../','(./'), '('.$base, $content);
+//cjo_Debug($content); die();
         $content = cjoExtension::registerExtensionPoint('OUTPUT_FILTER', array('subject' => $content, 'environment' => 'frontend'));
         return $content;
     }
