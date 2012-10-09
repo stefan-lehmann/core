@@ -100,7 +100,6 @@ $qry = "SELECT
 			modultyp_id = '".$shop_modul_id."' AND
 			clang = '".$clang."'";
 
-
 // define list
 $list = new cjolist($qry, 'article_id', 'DESC', 'clang', 20);
 $list->addGlobalParams(cjo_a22_getDefaultGlobalParams());

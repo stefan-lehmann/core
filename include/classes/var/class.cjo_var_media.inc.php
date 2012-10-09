@@ -97,6 +97,7 @@ class cjoVarMedia extends cjoVars {
     public function getOutput(& $sql, $content) {
         $content = $this->matchMedia($sql, $content);
         $content = $this->matchImage($sql, $content);
+        $content = $this->matchVideoUrl($sql, $content);
         $content = $this->matchVideoLink($sql, $content);      
         $content = $this->matchVideo($sql, $content);
         $content = $this->matchMediaList($sql, $content);
@@ -322,6 +323,70 @@ class cjoVarMedia extends cjoVars {
         }
         return $content;
     } 
+
+    /**
+     * Wert für die Ausgabe
+     */
+    private function matchVideoUrl(& $sql, $content) {
+
+        global $CJO;
+        
+        $vars = array('CJO_VIDEO_URL');
+        $performed = array();  
+        
+        foreach ($vars as $var) {
+
+            $matches = $this->getVarParams($content, $var);
+        
+            foreach ($matches as $match) {
+                
+                list ($param_str, $args) = $match;
+                list ($id, $args) = $this->extractArg('id', $args, 0);
+                list ($file, $args) = $this->extractArg('file', $args, 0);         
+
+                if (!$file && (!empty($performed[$var][md5($param_str)]) || $id < 1 || $id > 10)) continue;  
+                
+                if (!$file) $file = $this->getValue($sql, 'file'.$id);
+
+                $mediaset = OOMedia::getMediaSetByName($file);
+     
+                if (OOMedia::isValid($mediaset['image']) && OOMedia::isValid($mediaset['video'])) {
+                
+                    $params = array();
+                    if (isset($args['width']))        $params['width']     = $args['width']; 
+                    if (isset($args['height']))       $params['height']    = $args['height']; 
+                    if (isset($args['crop_num']))     $params['crop_num']  = $args['crop_num'];  
+                          
+                    if (!empty($args['crop_auto']) && 
+                        empty($params['crop_num']))   $params['crop_auto'] = true;        
+
+                    $image = OOMedia::toThumbnail($mediaset['image']->getFileName(), false, $params);
+
+                    $params = array();
+                    $params['html5video'] = $mediaset['video']->getId();                    
+                    $params['width']      = $mediaset['image']->getWidth(); 
+                    $params['height']     = $mediaset['image']->getHeight();   
+                    $params['preload']    = (isset($args['preload']))   ? true : false;                                                   
+                    $params['autoplay']   = (!isset($args['autoplay']) || !empty($args['autoplay']))  ? true : false;  
+                    $params['controls']   = (!isset($args['autoplay']) || !empty($args['controls'])) ? true : false;
+                    
+                    $replace = cjoRewrite::getUrl($CJO['ARTICLE_ID'],$params['clang'],$params);
+                }
+                else {
+                    $replace = '<!-- Sorry, MediaSet of '.$file.' has no supportet video file and/or no valid preview image. -->';
+                }
+
+                $replace = $this->handleGlobalVarParams($var, $args, $replace); 
+                $content = preg_replace('/(?<!\[\[)'.$var.'\['.$param_str.'\](?!\]\])/', $replace, $content);
+                $content = str_replace('[['.$var.'['.$param_str.']]]', $var.'['.$param_str.']', $content);
+                $performed[$var][md5($param_str)] = true;
+            }
+        }
+        
+        return $content;
+    }   
+
+
     /**
      * Wert für die Ausgabe
      */
@@ -347,7 +412,7 @@ class cjoVarMedia extends cjoVars {
                 if (!$file) $file = $this->getValue($sql, 'file'.$id);
 
                 $mediaset = OOMedia::getMediaSetByName($file);
-                
+     
                 if (OOMedia::isValid($mediaset['image']) && OOMedia::isValid($mediaset['video'])) {
                 
                     $params = array();
@@ -361,12 +426,12 @@ class cjoVarMedia extends cjoVars {
                     $image = OOMedia::toThumbnail($mediaset['image']->getFileName(), false, $params);
 
                     $params = array();
-                    $params['video']     = $mediaset['video']->getId();                    
-                    $params['width']     = $mediaset['image']->getWidth(); 
-                    $params['height']    = $mediaset['image']->getHeight();   
-                    $params['preload']   = (isset($args['preload']))   ? true : false;                                                   
-                    $params['autoplay']  = (!isset($args['autoplay']) || !empty($args['autoplay']))  ? true : false;  
-                    $params['controls']  = (!isset($args['autoplay']) || !empty($args['controls'])) ? true : false;
+                    $params['html5video'] = $mediaset['video']->getId();                    
+                    $params['width']      = $mediaset['image']->getWidth(); 
+                    $params['height']     = $mediaset['image']->getHeight();   
+                    $params['preload']    = (isset($args['preload']))   ? true : false;                                                   
+                    $params['autoplay']   = (!isset($args['autoplay']) || !empty($args['autoplay']))  ? true : false;  
+                    $params['controls']   = (!isset($args['autoplay']) || !empty($args['controls'])) ? true : false;
 
                     $url = cjoRewrite::getUrl($CJO['ARTICLE_ID'],$params['clang'],$params);
                     $css = !empty($args['class']) ? ' '.$args['class'] : ''; 
@@ -383,7 +448,7 @@ class cjoVarMedia extends cjoVars {
                 else {
                     $replace = '<!-- Sorry, MediaSet of '.$file.' has no supportet video file and/or no valid preview image. -->';
                 }
-                
+                           cjo_Debug($replace, $file);
                 $replace = $this->handleGlobalVarParams($var, $args, $replace); 
                 $content = preg_replace('/(?<!\[\[)'.$var.'\['.$param_str.'\](?!\]\])/', $replace, $content);
                 $content = str_replace('[['.$var.'['.$param_str.']]]', $var.'['.$param_str.']', $content);

@@ -31,7 +31,7 @@
 class cjoVarNavigation extends cjoVars {
     // --------------------------------- Output
 
-    public function getTemplate($content, $article_id = false) {
+    public function getTemplate($content, $article_id = false, $template_id = false) {
         return $this->matchNavigation($content, $article_id);
     }
 

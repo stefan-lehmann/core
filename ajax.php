@@ -23,7 +23,7 @@
  * @filesource
  */
 
-error_reporting(E_ALL ^ E_NOTICE);
+error_reporting(E_ALL & ~E_STRICT & ~E_NOTICE);
 // ----- caching start für output filter
 
 ob_start();

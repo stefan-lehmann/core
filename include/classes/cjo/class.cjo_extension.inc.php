@@ -129,6 +129,7 @@ class cjoExtension {
 
     	$func = '';
 
+        
     	if (is_string($function) && strlen($function) > 0) {
     		// static class method
     		if (strpos($function, '::') !== false) {

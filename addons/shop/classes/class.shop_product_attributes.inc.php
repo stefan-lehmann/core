@@ -301,9 +301,9 @@ class cjoShopProductAttributes {
 
     	if (empty($attribute_string)) return 0;
 
-    	$attribute_ids = str_replace('|', ' or id=',$attribute_string);
+    	$attribute_ids = str_replace('|', ' OR id=',$attribute_string);
     	$sql = new cjoSql();
-    	$qry = "SELECT SUM(offset) AS sum FROM ".TBL_21_ATTRIBUTE_VALUES." WHERE id=".$attribute_ids;
+    	$qry = "SELECT SUM(offset) AS sum FROM ".TBL_21_ATTRIBUTE_VALUES." WHERE id='".$attribute_ids."'";
     	$result = $sql->getArray($qry);
 
     	return !empty($result) ? $result[0]['sum'] : 0;
@@ -345,11 +345,13 @@ class cjoShopProductAttributes {
            				ON a.id = b.attribute_id)
            			ON a.translate_id=d.translate_id
            		WHERE
-           			c.clang=".$clang."
+           			c.clang='".$clang."'
            		AND
-           			d.clang=".$clang."
+           			d.clang='".$clang."'
            		AND
-           			(b.id=".$attribute_ids.")";
+           			(b.id='".$attribute_ids."')";
+
+        
 
     	$results = $sql->getArray($qry);
     	$attributes = cjoAssistance::toArray($attribute_string);
@@ -645,49 +647,53 @@ class cjoShopProductAttributes {
     	$values = explode('&', $string);
     	$attribute_ids = str_replace('|', ' OR b.id=', $values[1]);
 		$clang = $CJO['CUR_CLANG'];
+        $attributes = '';
+        
+        if (!empty($values[1])) {
+        		// get attribute names and values from db
+            	$sql = new cjoSql();
+            	$qry = "SELECT
+            				b.id AS id,
+            				d.name AS attribute_name,
+            				c.name AS value_name
+            			FROM "
+            				.TBL_21_ATTRIBUTE_TRANSLATE." d
+            				INNER JOIN ("
+            					.TBL_21_ATTRIBUTES." a
+                   				INNER JOIN ("
+                          			.TBL_21_ATTRIBUTE_VALUES." b
+                        			INNER JOIN "
+                                       .TBL_21_ATTRIBUTE_TRANSLATE." c
+                                    ON c.translate_id = b.translate_id)
+                   				ON a.id = b.attribute_id)
+                   			ON a.translate_id=d.translate_id
+                   		WHERE
+                   			c.clang='".$clang."'
+                   		AND
+                   			d.clang='".$clang."'
+                   		AND
+                   			(b.id='".$attribute_ids."')";
+        
+                // prepare attribute values
+                $results = $sql->getArray($qry);
+        
+                $return = array();
+        
+                foreach($results as $result) {
+                	if(empty($return[$result['attribute_name']]))
+                		$return[$result['attribute_name']] = $result['value_name'];
+                	else
+                		$return[$result['attribute_name']] .= ' | '.$result['value_name'];
+                }
 
-		// get attribute names and values from db
-    	$sql = new cjoSql();
-    	$qry = "SELECT
-    				b.id AS id,
-    				d.name AS attribute_name,
-    				c.name AS value_name
-    			FROM "
-    				.TBL_21_ATTRIBUTE_TRANSLATE." d
-    				INNER JOIN ("
-    					.TBL_21_ATTRIBUTES." a
-           				INNER JOIN ("
-                  			.TBL_21_ATTRIBUTE_VALUES." b
-                			INNER JOIN "
-                               .TBL_21_ATTRIBUTE_TRANSLATE." c
-                            ON c.translate_id = b.translate_id)
-           				ON a.id = b.attribute_id)
-           			ON a.translate_id=d.translate_id
-           		WHERE
-           			c.clang=".$clang."
-           		AND
-           			d.clang=".$clang."
-           		AND
-           			(b.id=".$attribute_ids.")";
-
-        // prepare attribute values
-        $results = $sql->getArray($qry);
-        $return = array();
-
-        foreach($results as $result) {
-        	if(empty($return[$result['attribute_name']]))
-        		$return[$result['attribute_name']] = $result['value_name'];
-        	else
-        		$return[$result['attribute_name']] .= ' | '.$result['value_name'];
-        }
-
-        // build output string
-        foreach($return as $key =>  $value) {
-        	if (empty($attributes)) {
-        		$attributes = $key.': '.$value;
-        	} else {
-        		$attributes .= '<br/>'.$key.': '.$value;
-        	}
+            // build output string
+            foreach($return as $key =>  $value) {
+            	if (empty($attributes)) {
+            		$attributes = $key.': '.$value;
+            	} else {
+            		$attributes .= '<br/>'.$key.': '.$value;
+            	}
+            }
         }
     	$values[0] ='<span class="large_item">'.$values[0].'</span><br/>';
     	return $values[0].$attributes;
