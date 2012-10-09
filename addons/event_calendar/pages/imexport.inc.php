@@ -36,7 +36,6 @@ if ($CJO_USER->isAdmin() && cjo_post('cjoform_delete_all_button', 'bool')) {
 
 // IMPORT
 $form = new cjoForm($mypage.'_'.$subpage.'_import');
-$form->setApplyUrl();
 $form->setEnctype('multipart/form-data');
 
 $fields['import'] = new readOnlyField('import', $I18N_16->msg('label_csv'), array( 'style' => 'float: left;'));

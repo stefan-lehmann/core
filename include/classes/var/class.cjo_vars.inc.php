@@ -102,7 +102,7 @@ class cjoVars {
     /**
      * Ausgabe eines Templates
      */
-    public function getTemplate($content, $article_id = false) {
+    public function getTemplate($content, $article_id = false, $template_id = false) {
         return $content;
     }
 

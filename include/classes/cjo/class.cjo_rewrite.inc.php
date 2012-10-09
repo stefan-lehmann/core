@@ -41,7 +41,7 @@ class cjoRewrite {
      * @access public
      */
     public static function parseArticleName($name) {
-        $name = str_replace(array(' ', ' -- ',' - ','.'), '-', $name);
+        $name = str_replace(array(' ', ' -- ',' - ','.'), '-', trim($name));
         $name = html_entity_decode($name);
         $name = cjo_specialchars($name);     
         $name = preg_replace("/[^a-zA-Z\-0-9]/", "", $name);

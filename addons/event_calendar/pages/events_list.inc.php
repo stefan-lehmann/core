@@ -26,11 +26,16 @@
 //LIST Ausgabe
 $sql = "SELECT
 			*,
+			(start_date+start_time) AS start, 
+            (end_date+end_time) AS end,
+            IF((start_date+start_time) < ".time().", IF((end_date+end_time) > ".time().", 1, 0), 0) AS broadcasting,
+            IF((start_date+start_time) > ".time().", (start_date+start_time-".time()."), (1".time()."-start_date-start_time)) AS tempsort,
 			(SELECT name FROM ".TBL_ARTICLES." WHERE id=article_id AND clang='".$clang."' LIMIT 1) AS article
 		FROM ".TBL_16_EVENTS." WHERE clang='".$clang."'";
-$list = new cjolist($sql,
-                    'start_date',
-                    'ASC',
+
+$list = new cjoList($sql,
+                    'broadcasting DESC,tempsort ASC',
+                    '',
                     '',
                     100);
 
@@ -42,7 +47,7 @@ $add_button = cjoAssistance::createBELink('<img src="img/silk_icons/add.png" tit
 $cols['id'] = new resultColumn('id', $add_button, 'sprintf', '<span>%s</span>');
 $cols['id']->setHeadAttributes('class="icon "');
 $cols['id']->setBodyAttributes('class="icon cjo_id"');
-$cols['id']->delOption(OPT_ALL);
+$cols['id']->delOption(OPT_SORT);
 
 $cols['file'] = new resultColumn('file', '&nbsp;', 'call_user_func', array('OOMedia::toThumbnail',array('%s')));
 if (cjoAssistance::inMultival('file', $CJO['ADDON']['settings'][$mypage]['enabled_fields'])) {
@@ -58,10 +63,15 @@ $cols['title']->setBodyAttributes('class="large_item" width="200"');
 $cols['short_description'] = new resultColumn('short_description', $I18N_16->msg('label_short_description'), 'truncate', array('length' => 120));
 $cols['short_description']->setBodyAttributes('width="200" valign="top"');
 
-$cols['start_date'] = new resultColumn('start_date', $I18N_16->msg('label_start_date'), 'strftime', $I18N->msg("dateformat"));
-$cols['start_time'] = new resultColumn('start_time', $I18N_16->msg('label_start_time'));
-$cols['end_date'] = new resultColumn('end_date', $I18N_16->msg('label_end_date'), 'strftime', $I18N->msg("dateformat"));
-$cols['end_time'] = new resultColumn('end_time', $I18N_16->msg('label_end_time'));
+$cols['start_date'] = new resultColumn('start', $I18N_16->msg('label_start'), 'strftime', $I18N->msg("dateformat_sort"));
+$cols['start_date']->addCondition('broadcasting', 1,'<strong style="color:green">%s</strong>');
+$cols['start_date']->addCondition('end', array('<', time()),'<span style="color:red">%s</span>');
+$cols['start_date']->delOption(OPT_SEARCH);
+         
+$cols['end_date'] = new resultColumn('end', $I18N_16->msg('label_end'), 'strftime', $I18N->msg("dateformat_sort"));
+$cols['end_date']->addCondition('broadcasting', 1,'<strong style="color:green">%s</strong>');
+$cols['end_date']->addCondition('end', array('<', time()),'<span style="color:red">%s</span>');
+$cols['end_date']->delOption(OPT_SEARCH);
 
 for ($i=1;$i<=10;$i++) {
 
@@ -115,7 +125,7 @@ $img = '<img src="img/silk_icons/page_white_edit.png" title="'.$I18N->msg("butto
 $cols['edit'] = new staticColumn($img, $I18N->msg("label_functions"));
 $cols['edit']->setHeadAttributes('colspan="3"');
 $cols['edit']->setBodyAttributes('width="20"');
-$cols['edit']->setParams(array ('function' => 'edit', 'id' => '%id%'));
+$cols['edit']->setParams(array ('function' => 'edit', 'oid' => '%id%'));
 
 // Status link
 $cond['stat'][0] = '<img src="img/silk_icons/eye_off.png" title="'.$I18N_16->msg("label_status_do_online").'" alt="'.$I18N_16->msg("label_status_offline").'" />';
@@ -132,16 +142,14 @@ $cols['delete'] = new staticColumn($cond['delete'], NULL);
 $cols['delete']->setBodyAttributes('width="60"');
 $cols['delete']->setBodyAttributes('class="cjo_delete"');
 
-if (!cjoAssistance::inMultival('short_description', $CJO['ADDON']['settings'][$mypage]['enabled_fields'])) unset($cols['short_description']);
-if (empty($CJO['ADDON']['settings'][$mypage]['times']))                                                    unset($cols['start_time']);
-if (empty($CJO['ADDON']['settings'][$mypage]['times']))                                                    unset($cols['end_time']);
-if (empty($CJO['ADDON']['settings'][$mypage]['end_date']))                                                 unset($cols['end_date']);
-if (empty($CJO['ADDON']['settings'][$mypage]['article']))                                                  unset($cols['article']);
-
+if (strpos('|'.$CJO['ADDON']['settings'][$mypage]['enabled_fields'].'|', '|short_description|') === false) unset($cols['short_description']);
+if (strpos('|'.$CJO['ADDON']['settings'][$mypage]['enabled_fields'].'|', '|times|') === false)             unset($cols['start_time']);
+if (strpos('|'.$CJO['ADDON']['settings'][$mypage]['enabled_fields'].'|', '|times|') === false)             unset($cols['end_time']);
+if (strpos('|'.$CJO['ADDON']['settings'][$mypage]['enabled_fields'].'|', '|end_date|') === false)          unset($cols['end_date']);
+if (strpos('|'.$CJO['ADDON']['settings'][$mypage]['enabled_fields'].'|', '|article|') === false)           unset($cols['article']);
 
 $list->addColumns($cols);
-
-$list->show(false);
+$list->show();
 
 ?>
 <script type="text/javascript">
@@ -159,44 +167,58 @@ $list->show(false);
 			var cl = el.attr('class');
 			var mode = cl.substr(4);
 
-			if(mode == 'delete'){
-				if(!cjo,confirm(el.find('img'))){
-					return false;
-				}
-			}
-			cjo.toggleOnOff(el);
 
-			$.get('ajax.php',{
-				   'function': 'cjoEventCalendar::updateEvent',
-				   'id': oid,
-				   'mode' : mode,
-				   'clang': clang },
-				  function(message){
+            var confirm_action = function() {
+    
+                cjo.toggleOnOff(el);
+    
+                $.get('ajax.php',{
+                       'function': 'cjoEventCalendar::updateEvent',
+                       'id': oid,
+                       'mode' : mode,
+                       'clang': cjo.conf.clang },
+                      function(message){
+    
+                        if (cjo.setStatusMessage(message)){
+    
+                            el.find('img.ajax_loader').remove();
+    
+                            el.find('img').toggle();
+    
+                            if (mode == 'delete' &&
+                                $('.statusmessage p.error').length == 0){
+    
+                                el.parent('tr')
+                                  .siblings()
+                                  .find('.tablednd')
+                                  .each(function(i){
+                                        $(this).children().text(i+1);
+                                  });
+    
+                                el.parent('tr').remove();
+                            }
+                        }
+                    });
+                };
+    
+                if(mode == 'delete'){
+                    var jdialog = cjo.appendJDialog('<?php echo $I18N_16->msg("label_delete_event"); ?> ?');
+    
+                    $(jdialog).dialog({
+                        buttons: {
+                            '<?php echo $I18N->msg('label_ok'); ?>': function() {
+                                $(this).dialog('close');
+                                confirm_action();
+                            },
+                            '<?php echo $I18N->msg('label_cancel'); ?>': function() {
+                                $(this).dialog('close');
+                            }
+                        }
+                    });
+                } else {
+                    confirm_action();
+                }
 
-					if (cjo.setStatusMessage(message)){
-
-					  	el.find('img.ajax_loader')
-					  	  .remove();
-
-					  	el.find('img')
-					  	  .toggle();
-
-						if (mode == 'delete' &&
-							$('.statusmessage p.error').length == 0){
-
-							el.parent('tr')
-							  .siblings()
-							  .find('.tablednd')
-							  .each(function(i){
-							  		$(this).children().text(i+1);
-							  });
-
-							el.parent('tr').remove();
-
-							$('div[id^=cs_options][id$='+article_id+']').remove();
-						}
-					}
-			});
 		});
     });
 

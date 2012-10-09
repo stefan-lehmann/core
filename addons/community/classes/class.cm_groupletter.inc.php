@@ -653,7 +653,7 @@ class cjoGroupLetter {
         $article = new cjoArticle();
         $article->setArticleId($article_id);
         $article->setClang($clang);
-        $article->setTemplateId($template_id);
+        $article->setTemplateId($template_id, true);
         $content = $article->getArticleTemplate(); 
         $content = cjoOutput::replaceLinks($content);
         $content = cjoOpfLang::translate($content);
@@ -662,8 +662,10 @@ class cjoGroupLetter {
 
         $base  = cjoRewrite::setServerUri(true, false);
         $base .= cjoRewrite::setServerPath();
-  
+
         $content = str_replace(array('"../','"./'), '"'.$base, $content);
+        $content = str_replace(array('(../','(./'), '('.$base, $content);
+//cjo_Debug($content); die();
         $content = cjoExtension::registerExtensionPoint('OUTPUT_FILTER', array('subject' => $content, 'environment' => 'frontend'));
         return $content;
     }

@@ -1,7 +1,7 @@
 input.hasDatepicker{float:left}
 button.ui-datepicker-trigger{cursor:pointer;width:25px}
 img.ui-datepicker-trigger{float:left;display:block;margin:3px 0 0 -21px}
-.ui-datepicker{width:206px;z-index:2;overflow:hidden !important;background:#fff}
+.ui-datepicker{display:none;width:206px;z-index:2;overflow:hidden !important;background:#fff}
 .ui-datepicker th,.ui-datepicker td{float:left;width:25px !important;padding:2px}
 .ui-datepicker th span,.ui-datepicker td a,.ui-datepicker td span{width:21px !important}
 .ui-datepicker a.ui-state-active{background:#99d8f3 !important}

@@ -226,7 +226,7 @@ class cjoFormatter {
 
         cjo_valid_type($format, 'string', __FILE__, __LINE__);
 
-        if (empty ($value)) {
+        if (empty($value) && $value !== '0' && $value !== 0) {
             return '';
         }
 
@@ -238,7 +238,7 @@ class cjoFormatter {
             // Default CJO-Datetimeformat
             $format = $I18N->msg('datetimeformat');
         }
-        return strftime($format, $value);
+        return ($value >= 86400) ? strftime($format, $value) : gmstrftime($format, $value);
     }
 
     private static function _formatNumber($value, $format) {

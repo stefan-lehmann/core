@@ -54,7 +54,7 @@ class cjoSql implements Iterator{
      * last auto_increment number
      * @var int
      */
-    public $last_insert_id;
+    public $last_insert_id; 
 
     /**
      * debugging enabled
@@ -67,6 +67,12 @@ class cjoSql implements Iterator{
      * @var array
      */
     public $values;
+    
+    /**
+     * ignore changes INSERT to INSERT IGNORE
+     * @var bool
+     */
+    protected $ignore;  
     
     /**
      * Columns in the ResultSet
@@ -837,11 +843,12 @@ class cjoSql implements Iterator{
      */
     public function Insert($success_message = false) {
         
-        $table = $this->getTable();
+        $table  = $this->getTable();
         $values = $this->values;
+        $ignore = (bool) $this->ignore ? 'IGNORE ' : '';
         
         $state = $this->preparedStatusQuery(
-        				'INSERT INTO `'.$this->getTable().'` SET '.$this->buildPreparedValues(),
+        				'INSERT '.$ignore.'INTO `'.$this->getTable().'` SET '.$this->buildPreparedValues(),
                         $values,
                         $success_message);
     
@@ -897,6 +904,15 @@ class cjoSql implements Iterator{
         				'DELETE FROM `'.$this->getTable().'` '. $this->buildPreparedWhere().' '.$this->getLimit(),
                         $this->where_params,
                         $success_message);
+    }
+    
+    /**
+     * Changes the value of ignore var.
+     * @param bool 
+     * @access public
+     */
+    public function setIgnore($ignore=true){
+        return $this->ignore = (bool) $ignore;
     }
 
     /**

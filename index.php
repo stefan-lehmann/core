@@ -23,7 +23,7 @@
  * @filesource
  */
 
-error_reporting(E_ALL ^ E_NOTICE);
+error_reporting(E_ALL & ~E_STRICT & ~E_NOTICE);
 // ----- caching start für output filter
 
 ob_start();
@@ -187,7 +187,6 @@ if ($cur_page['header']) {
 }
 cjoValidateEngine::cleanup();
 cjoMessage::outputMessages();
-
 
 // ----- caching end für output filter
 $CONTENT = ob_get_contents();

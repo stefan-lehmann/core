@@ -110,11 +110,11 @@ class cjoPiwikExtension {
         
         parse_str(cjo_server('QUERY_STRING', 'string'), $params);
         
-        $url = parse_url(cjoRewrite::getUrl($CJO['ARTICLE_ID']));
+        $url = parse_url(cjoRewrite::getUrl(cjo_get('article_id','cjo-article-id')));
         $replace = !empty($params['pk_campaign']) ? $params['pk_campaign'] : 'cjo_piwik';
         $url['path']  = preg_replace('/\/[^\/]+\//', '/'.$replace.'/', $url['path'], 1);
         $url['query'] = !empty($url['query']) ? '?'.$url['query'] : '';
-        
+
         $params['url'] = $url['scheme'].'://'.$url['host'].$url['path'].$url['query'];
         
         cjo_set_session('piwik_track_session', self::generateUrl($params));
@@ -127,7 +127,7 @@ class cjoPiwikExtension {
         
         $params['url'] = null;
         
-        cjoAssistance::redirectFE($CJO['ARTICLE_ID'], $CJO['CUR_CLANG'], $params, $anchor);
+        cjoAssistance::redirectFE(cjo_get('article_id','cjo-article-id'), false, $params, $anchor);
     }
 
     public static function getSessionTrackRequest() {
@@ -145,7 +145,6 @@ class cjoPiwikExtension {
     public static function redirectEmailPixelTracking() {
         
     	global $CJO;
-    	
         $path    = pathinfo(cjo_server('REQUEST_URI','string'));
         $dirname = preg_replace('/^.*\cjo_piwik\//','',$path['dirname']);
         $get     = explode('/',$dirname);

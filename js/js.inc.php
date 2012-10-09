@@ -24,7 +24,7 @@
  */
 ?>
 
-<script type="text/javascript" src="<?php echo $CJO['JQUERY_PATH']; ?>/jquery-1.7.0.min.js"></script>
+<script type="text/javascript" src="<?php echo $CJO['JQUERY_PATH']; ?>/jquery-latest.min.js"></script>
 <script type="text/javascript" src="<?php echo $CJO['BACKEND_PATH']; ?>/js/contejo.js"></script>
 <script type="text/javascript" src="<?php echo $CJO['JQUERY_PATH']; ?>/iutil.js"></script>
 <script type="text/javascript" src="<?php echo $CJO['JQUERY_PATH']; ?>/easing.js"></script>

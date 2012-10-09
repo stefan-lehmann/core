@@ -23,16 +23,16 @@
  * @filesource
  */
 
-error_reporting(E_ALL ^ E_NOTICE);
+error_reporting(E_ALL & ~E_STRICT & ~E_NOTICE);
 // ----- caching start für output filter
 
 ob_start();
 
-$CJO                = array();
-$CJO['HTDOCS_PATH'] = '../';
-$CJO['CONTEJO']     = false;
-$CJO['NOFUNCTIONS'] = true;
-$cur_page           = array();
+$CJO                   = array();
+$CJO['HTDOCS_PATH']    = '../';
+$CJO['CONTEJO']        = false;
+$CJO['ONLY_FUNCTIONS'] = true;
+$cur_page              = array();
 
 require_once "include/master.inc.php";
 

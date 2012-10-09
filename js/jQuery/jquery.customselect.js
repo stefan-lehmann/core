@@ -385,7 +385,7 @@
                                         row_v.eq(ii).attr('src', el.conf.imgdir + el.conf.lines.cline);
                                     }
                                 }
-                                else if ($(this).is('img[src$='+el.conf.lines.cline+']') && dif==0) {
+                                else if ($(this).is('img[src$="'+el.conf.lines.cline+'"]') && dif==0) {
 									row_v.eq(ii).attr('src', el.conf.imgdir + el.conf.lines.vline);
                                 }
                                 else if (prr_v.eq(ii).css('visibility') == 'hidden' &&

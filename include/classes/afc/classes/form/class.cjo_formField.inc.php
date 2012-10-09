@@ -197,6 +197,7 @@ class cjoFormField {
                     $temp = ''; 
                     break;
                 }
+                if ($key != '') 
                 $temp = $temp[$key];
             }
             
