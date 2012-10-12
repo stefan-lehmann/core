@@ -221,7 +221,7 @@ function _cjo_cast_var($var, $vartype, $default, $mode='default') {
 
     global $CJO;
 
-    if (!is_string($vartype)) {
+    if (!is_string($vartype) || empty($vartype)) {
         trigger_error('String expected for $vartype in _cjo_cast_var()!', E_USER_ERROR);
         exit();
     }
@@ -281,7 +281,8 @@ function _cjo_cast_var($var, $vartype, $default, $mode='default') {
         case ''       : break;
 
         // Evtl Typo im vartype, deshalb hier fehlermeldung!
-        default: trigger_error('Unexpected vartype "'. $vartype .'" in _cjo_cast_var()!', E_USER_ERROR); exit();
+        default: trigger_error('Unexpected vartype "'. $vartype .'" in _cjo_cast_var()!', E_USER_ERROR); 
+        exit();
     }
 
     return $var;

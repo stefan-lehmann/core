@@ -48,7 +48,7 @@ class cjoFacebook extends cjoOAuthProvider {
                      'firstname'   => $me['first_name'], 
                      'lastname'    => $me['last_name'], 
                      'username'    => $me['username'], 
-                     'name'        => $me['name'], 
+                     'name'        => str_replace('+',' ',$me['name']), 
                      'link'        => $me['link'], 
                      'image'       => 'https://graph.facebook.com/'.$me['id'].'/picture?type=normal');
                      
