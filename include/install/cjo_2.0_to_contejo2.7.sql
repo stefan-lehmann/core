@@ -1,4 +1,4 @@
-## CONTEJO Database Dump Version 2.6 [.0]
+## CONTEJO Database Dump Version 2.7 [.0]
 ## Prefix cjo_
 
 
