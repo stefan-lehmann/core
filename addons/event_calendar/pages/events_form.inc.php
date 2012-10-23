@@ -167,7 +167,7 @@ for($i=1;$i<=10;$i++) {
 
          case "select":
             $fields[$attribute] = new selectField($attribute, $attribute_title);
-            $fields[$attribute]->addOption('','');
+            $fields[$attribute]->addOption($I18N->msg('please_choose'),'');
             foreach($attribute_values as $value) {
                 $fields[$attribute]->addOption($value,$value);
             }
