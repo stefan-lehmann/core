@@ -38,7 +38,7 @@ require_once 'include/master.inc.php';
 
 $mode           = cjo_request('mode', 'string', '');
 $filename       = cjo_request('filename', 'string', '');
-$media_category = cjo_request('media_category','int', cjo_session('MEDIA_CATEGORY'));
+$media_category = cjo_request('media_category','int', cjo_session('MEDIA_CATEGORY', 'cjo-mediacategory-id'));
 $filenames      = cjoAssistance::toArray($filename, ',');
 $media          = '';
 $cjo_tbx_cur_id = '';
