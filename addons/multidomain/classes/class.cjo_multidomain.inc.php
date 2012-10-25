@@ -109,7 +109,6 @@ class cjoMultidomain {
                                      '.'.
                                      $clang.
                                      '.html';
-
         header('Location: '.$url);
         exit;
     }

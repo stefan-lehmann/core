@@ -245,8 +245,8 @@ function cjoFormateCells($cell){
     switch($cell['name']){
 
     	case 'thumb':
-    			$icon = ($cell['row']['children']['unformated'] > 0) ? 'folders' : 'folder';
-    			$icon = ($cell['row']['file_num']['unformated'] > 0) ? $icon.'2' : $icon;
+    			$icon = ($cell['row']['children'] > 0) ? 'folders' : 'folder';
+    			$icon = ($cell['row']['file_num'] > 0) ? $icon.'2' : $icon;
         		$icon = '<img src="img/radium_icons/'.$icon.'.png" alt="" />';
         		$curr_cell = '<span style="position: relative; display: block;">'.$icon.'</span>';
         		break;

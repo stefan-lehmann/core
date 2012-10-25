@@ -42,7 +42,7 @@ class cjoVarMeta extends cjoVars {
         if (empty($article_id)) $article_id = $CJO['ARTICLE_ID'];
         if (empty($article_id)) $article_id = cjo_request('article_id', 'cjo-article-id', $CJO['START_ARTICLE_ID']);
 
-        $this->getMeta($article_id);
+        $this->getMeta($content, $article_id);
 
         $content = $this->matchMeta($content, $article_id);
         $content = $this->matchMetaFile($content, $article_id);
@@ -101,7 +101,6 @@ class cjoVarMeta extends cjoVars {
         $var = 'CJO_META';
         $matches = $this->getVarParams($content, $var);
     	$meta = array();
-
         foreach ($matches as $match) {
 
             list ($param_str, $args)  = $match;
@@ -172,15 +171,24 @@ class cjoVarMeta extends cjoVars {
         return $content;
     }
 
-    private function getMeta($article_id){
+    private function getMeta($content, $article_id){
 
         global $CJO;
-
+        $var = 'CJO_META';
         $meta = array();
 
        	$article = OOArticle::getArticleById($article_id);
         $tree = cjoAssistance::toArray($article->_path.$article_id);
 
+        $matches = $this->getVarParams($content, $var);
+        $get = array();
+        foreach ($matches as $match) {
+            list ($param_str, $args)  = $match;
+                
+            list ($temp, $args) = $this->extractArg('get', $args, 0); 
+            if ($temp) $get[] = $temp;      
+        }
+        
         krsort($tree);
 
         $meta['title'] = ($article->getTitle() == '')
@@ -192,13 +200,14 @@ class cjoVarMeta extends cjoVars {
     	if ($article_id != $CJO['START_ARTICLE_ID'])
         	$tree[] = $CJO['START_ARTICLE_ID'];
 
+                
         foreach ($tree as $cat_id) {
 
             if ($cat_id == 0) continue;
 
         	if ($article_id != $cat_id)
     			$article = OOArticle::getArticleById($cat_id);
-            
+
             if (!OOArticle::isValid($article)) continue;
 
     		$file        = $article->getFile(false);
@@ -217,7 +226,14 @@ class cjoVarMeta extends cjoVars {
             if (empty($meta['keywords'])) {
                 $meta['keywords'] = $keywords;
             }
+            
+            foreach($get as $var) {
+                if (empty($meta[$var])) {
+                    $meta[$var] = $article->getValue($var);
+                }
+            }
         }
+        
         $this->meta[$article_id] = $meta;
     }
 }

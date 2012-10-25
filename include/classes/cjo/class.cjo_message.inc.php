@@ -63,9 +63,9 @@ class cjoMessage {
 
         global $CJO;
 
-        if (!isset($CJO['MESSAGES']) || !is_object($CJO['MESSAGES'])) {
+        if (!isset($CJO['MESSAGES']) || !is_object($CJO['MESSAGES']) || !is_a($CJO['MESSAGES'], 'cjoMessage')) {
             $CJO['MESSAGES'] = $this;
-            $CJO['MESSAGES']->flushAllMessages();
+            self::flushAllMessages();
         }
     }
 

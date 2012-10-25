@@ -343,23 +343,25 @@ class OONavigation {
      *
      * @param int|boolean $text_length if true the language name is truncated by this value (eg. false = deutsch, 2 = de, 3 = deu)
      * @param string $navi_name name of the menu (default is 'lang')
+     * @param string $_online_only only link to online articles
      * @return void
      */
-    public function genereateLangNavi($text_length = false, $navi_name = 'lang') {
+    public function genereateLangNavi($text_length = false, $navi_name = 'lang', $_online_only=false) {
 
         global $CJO;
 
         if (count($CJO['CLANG']) < 2) return false;
 
-        $output = '';
-
+        $output = array();
         foreach ($CJO['CLANG'] as $key => $name) {
+            
+            if ($_online_only && !OOArticle::isOnline($this->_article_id, true, false, $key)) continue;
 
-            $first_css  = ($output == '') ? ' class="first"' : '';
+            $first_css  = (count($output) == 0) ? ' class="first"' : '';
             $current    = ($key == $this->_clang) ? ' current' : '';
             $short_name = $text_length ? self::truncateLinkText($name,$text_length) : $name;
 
-            $output .= sprintf("\r\n\t".'<li%s><a href="%s" title="%s" class="%s %s %s%s">%s</a></li>',
+            $output[] = sprintf("\r\n\t".'<li%s><a href="%s" title="%s" class="%s %s %s%s">%s</a></li>',
                                $first_css,
                                cjoRewrite::getUrl($this->_article_id,$key),
                                $name,
@@ -369,8 +371,10 @@ class OONavigation {
                                $current,
                                $short_name);
         }
-
-        $this->_navis[$navi_name]  = "\r\n".'<ul class="lang_nav">'.$output."\r\n".'</ul> ';
+ 
+        $this->_navis[$navi_name]  = (count($output) > 1) 
+                                   ? "\r\n".'<ul class="lang_nav">'.implode('',$output)."\r\n".'</ul> '
+                                   : '';
     }
 
     /**

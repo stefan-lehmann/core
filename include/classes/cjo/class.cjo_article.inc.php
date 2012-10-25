@@ -377,7 +377,6 @@ class cjoArticle {
             $template = new cjoTemplate();
             $template->setId($this->getTemplateId());
             $content = $template->getTemplate($this->article_id);
-           
             eval("?>".$content);
         }
         else {
