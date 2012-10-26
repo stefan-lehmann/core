@@ -69,10 +69,10 @@ class cjoGroupLetter {
 
         $sql = new cjoSql();
         $qry = "SELECT *
-        		FROM ".TBL_COMMUNITY_ARCHIV."
-        		WHERE
-        			status='1' AND
-        			(SELECT COUNT(*) FROM ".TBL_COMMUNITY_PREPARED.") > 0";
+                FROM ".TBL_COMMUNITY_ARCHIV."
+                WHERE
+                    status='1' AND
+                    (SELECT COUNT(*) FROM ".TBL_COMMUNITY_PREPARED.") > 0";
 
         $preferences = array_shift($sql->getArray($qry));
 
@@ -153,26 +153,26 @@ class cjoGroupLetter {
            
         $state = $insert->Insert($I18N_10->msg('msg_recipients_prepared',$this->prepared));
 
-    	$clang_conf = $CJO['ADDON']['settings'][self::$mypage]['CLANG_CONF'];
-    	$settings = $CJO['ADDON']['settings'][self::$mypage]['SETTINGS'];     	
+        $clang_conf = $CJO['ADDON']['settings'][self::$mypage]['CLANG_CONF'];
+        $settings = $CJO['ADDON']['settings'][self::$mypage]['SETTINGS'];       
 
         if ($state && cjoAssistance::isWritable($settings) && cjoAssistance::isWritable($clang_conf)) {
 
-			$config_data = file_get_contents($clang_conf);
-			$config_data = preg_replace("!(CJO\['ADDON'\]\['settings'\]\[.mypage\]\['MAIL_ACCOUNT'\].?\=.?)[^;]*!",
-										"\\1\"".$this->mail_account."\"",  $config_data);
+            $config_data = file_get_contents($clang_conf);
+            $config_data = preg_replace("!(CJO\['ADDON'\]\['settings'\]\[.mypage\]\['MAIL_ACCOUNT'\].?\=.?)[^;]*!",
+                                        "\\1\"".$this->mail_account."\"",  $config_data);
             $state = cjoGenerate::replaceFileContents($clang_conf, $config_data);
             
             if (!$state) return $state;            
             
-			$config_data = file_get_contents($clang_conf);
-			$config_data = preg_replace("!(CJO\['ADDON'\]\['settings'\]\[.mypage\]\['TEMPLATE'\].?\=.?)[^;]*!",
-										"\\1\"".$this->template."\"", $config_data);			                            
-			$config_data = preg_replace("!(CJO\['ADDON'\]\['settings'\]\[.mypage\]\['ATONCE'\].?\=.?)[^;]*!",
-										"\\1\"".$this->atonce."\"", $config_data);
+            $config_data = file_get_contents($clang_conf);
+            $config_data = preg_replace("!(CJO\['ADDON'\]\['settings'\]\[.mypage\]\['TEMPLATE'\].?\=.?)[^;]*!",
+                                        "\\1\"".$this->template."\"", $config_data);                                        
+            $config_data = preg_replace("!(CJO\['ADDON'\]\['settings'\]\[.mypage\]\['ATONCE'\].?\=.?)[^;]*!",
+                                        "\\1\"".$this->atonce."\"", $config_data);
             $state = cjoGenerate::replaceFileContents($clang_conf, $config_data);
             
-    	}
+        }
         return $state;
     }
     
@@ -210,12 +210,12 @@ class cjoGroupLetter {
     public function resetPreferences($status=0) {
 
         $update = new cjoSql();
-    	$update->setTable(TBL_COMMUNITY_ARCHIV);
-    	$update->setWhere("status='1'");
-    	$update->setValue("status",$status);
-    	$update->Update();
+        $update->setTable(TBL_COMMUNITY_ARCHIV);
+        $update->setWhere("status='1'");
+        $update->setValue("status",$status);
+        $update->Update();
 
-    	$this->setPreferences(array());
+        $this->setPreferences(array());
     }
 
     public function prepareGroupLetter($new_prefs){
@@ -246,31 +246,31 @@ class cjoGroupLetter {
         $this->atonce       = $new_prefs['ATONCE'] < 1 ? 1 : $new_prefs['ATONCE'];
 
         foreach($new_prefs['groups'] as $id) {
-        	$this->prepareGroups($id);
+            $this->prepareGroups($id);
         }
         
         if ($this->prepared > 0) {
              return $this->savePreferences();
         }
         else {
-        	cjoMessage::addError($I18N_10->msg('err_no_recipients_selected'));
-        	return false;
+            cjoMessage::addError($I18N_10->msg('err_no_recipients_selected'));
+            return false;
         }
         return false;
     }
 
     private function prepareGroups($re_id){
 
-    	$this->prepareRecipients($re_id);
+        $this->prepareRecipients($re_id);
    
-    	$sql = new cjoSql();
-    	$qry = "SELECT id FROM ".TBL_COMMUNITY_GROUPS." WHERE re_id='".$re_id."'";
+        $sql = new cjoSql();
+        $qry = "SELECT id FROM ".TBL_COMMUNITY_GROUPS." WHERE re_id='".$re_id."'";
         $groups = $sql->getArray($qry);
 
-    	foreach ($groups as $group) {
-    		if ($group['id'] == $re_id) continue;
-    		$this->prepareGroups($group['id']);
-    	} 	
+        foreach ($groups as $group) {
+            if ($group['id'] == $re_id) continue;
+            $this->prepareGroups($group['id']);
+        }   
     }
     
     public function resetprepearedRecipients(){
@@ -324,7 +324,7 @@ class cjoGroupLetter {
 
         foreach($recipients as $recipient) {
 
-    		$insert->flush();
+            $insert->flush();
             $insert->setTable(TBL_COMMUNITY_PREPARED);
             $insert->setValue('user_id', $recipient['user_id']);
             $insert->setValue('article_id', $this->article_id);
@@ -338,54 +338,54 @@ class cjoGroupLetter {
 
     public function sendPrepared(){
 
-		global $CJO, $I18N, $I18N_10;
+        global $CJO, $I18N, $I18N_10;
 
         if (!$this->hasContent()) {
-     		cjoMessage::addError($I18N_10->msg("msg_err_no_content"));
-	        return false;
+            cjoMessage::addError($I18N_10->msg("msg_err_no_content"));
+            return false;
         }
 
         $sql = new cjoSql();
         $qry = "SELECT
-        	        us.id AS user_id,
-        			gender,
-        			firstname,
-        			name,
-        			email,
-        			bounce,
-        			us.activation_key AS activation_key
-	            FROM
-	            	".TBL_COMMUNITY_PREPARED." pr
-	            LEFT JOIN
-	            	".TBL_COMMUNITY_USER." us
-	            ON
-	            	pr.user_id=us.id
-	            WHERE
-	            	pr.clang='".$this->clang."' AND
-	            	pr.status = '1' AND
-	            	us.status = '1' AND
-	            	us.newsletter = '1'
-	            	LIMIT ".$this->atonce ;
+                    us.id AS user_id,
+                    gender,
+                    firstname,
+                    name,
+                    email,
+                    bounce,
+                    us.activation_key AS activation_key
+                FROM
+                    ".TBL_COMMUNITY_PREPARED." pr
+                LEFT JOIN
+                    ".TBL_COMMUNITY_USER." us
+                ON
+                    pr.user_id=us.id
+                WHERE
+                    pr.clang='".$this->clang."' AND
+                    pr.status = '1' AND
+                    us.status = '1' AND
+                    us.newsletter = '1'
+                    LIMIT ".$this->atonce ;
 
         $recipients = $sql->getArray($qry);
 
         if ($sql->getError() != '') {
-        	cjoMessage::addError($I18N_10->msg("msg_err_get_prepared_recipients").'<br/>'.$sql->getError());
-        	return false;
+            cjoMessage::addError($I18N_10->msg("msg_err_get_prepared_recipients").'<br/>'.$sql->getError());
+            return false;
         }
 
         if (count($recipients) == 0) {
 
-        	cjoMessage::addSuccess($I18N_10->msg("msg_all_gl_send",
-        	                                     $this->send,
-        	                                     $this->prepared,
-        	                                     $this->errors));
-        	if ($this->errors > 0) {
-        		$this->resetPreferences(0);
-        	} else {
+            cjoMessage::addSuccess($I18N_10->msg("msg_all_gl_send",
+                                                 $this->send,
+                                                 $this->prepared,
+                                                 $this->errors));
+            if ($this->errors > 0) {
+                $this->resetPreferences(0);
+            } else {
                 $this->resetPreferences(2);
             }
-	        return false;
+            return false;
         }
         
         $this->embedImages();
@@ -397,13 +397,13 @@ class cjoGroupLetter {
         foreach ($recipients as $recipient) {
 
             $update->flush();
-           	$update->setTable(TBL_COMMUNITY_PREPARED);
-			$update->setWhere('user_id='.$recipient['user_id'].' LIMIT 1');
+            $update->setTable(TBL_COMMUNITY_PREPARED);
+            $update->setWhere('user_id='.$recipient['user_id'].' LIMIT 1');
 
             $this->setRecipient($recipient);
 
             if ($this->sendGroupletter()) {
-            	$update->setValue("status", '0');
+                $update->setValue("status", '0');
                 $this->send++;
                 
                 $recipient['bounce'] = (int) $recipient['bounce'];
@@ -440,7 +440,7 @@ class cjoGroupLetter {
             $update->setValue("send",$this->send);
             $update->setValue("error",$this->errors);
             if (!$this->firstsenddate)
-            	$update->setValue("firstsenddate", time());
+                $update->setValue("firstsenddate", time());
             $update->setValue("lastsenddate", time());
             $update->setValue("user", $this->user);
             $update->setWhere('status=1');
@@ -449,10 +449,10 @@ class cjoGroupLetter {
 
         $this->mail->SmtpClose();
 
-		if (($this->send+$this->errors) == $this->prepared){
-			if (!$this->sendPrepared()) return false;
-		}
-		return true;
+        if (($this->send+$this->errors) == $this->prepared){
+            if (!$this->sendPrepared()) return false;
+        }
+        return true;
     }
 
     /**
@@ -488,14 +488,19 @@ class cjoGroupLetter {
         $this->mail->AddAddress($email, $firstname.' '.$name);
 
         if ($subject != "") {
+            $subject = str_replace("%25", "%", $subject); 
             $subject = str_replace("%email%", $email, $subject);
             $subject = str_replace("%name%", ' '.$name, $subject);
             $subject = str_replace("%firstname%", ' '.$firstname , $subject);
+            $subject = str_replace("%user_id%", $user_id, $subject);
+            $subject = str_replace("%group_id%", $group_id , $subject);
+            $subject = str_replace("%clang%", $clang, $subject);
             $subject = preg_replace_callback("#%([^<^>^%]+)%#imsU",array(&$this, "replaceTitleType"), $subject);
             $this->mail->Subject = $subject;
         }
 
         if ($this->article_id != -1) {
+            $html = str_replace("%25", "%", $html); 
             $html = str_replace("%email%", $email, $html);
             $html = str_replace("%name%", ' '.$name, $html);
             $html = str_replace("%firstname%", ' '.$firstname, $html);
@@ -504,25 +509,25 @@ class cjoGroupLetter {
             $html = str_replace("%group_id%", $group_id, $html);
             $html = str_replace("%clang%", $clang, $html);
             
-            
             if ($url != "") {
                 $html = str_replace("%link%", $link, $html);
             }
             $html = preg_replace_callback( "#%([^<^>^%]+)%#imsU",array(&$this, "replaceTitleType"),$html);
         }
 
+        $text = str_replace("%25", "%", $text); 
         $text = str_replace("%email%", $email, $text);
         $text = str_replace("%name%", $name, $text);
         $text = str_replace("%firstname%", $firstname, $text);
-        $html = str_replace("%link_url%", $url, $html);
-        $html = str_replace("%user_id%", $user_id, $html);
-        $html = str_replace("%group_id%", $group_id, $html);
-        $html = str_replace("%clang%", $clang, $html);
+        $text = str_replace("%link_url%", $url, $text);
+        $text = str_replace("%user_id%", $user_id, $text);
+        $text = str_replace("%group_id%", $group_id, $text);
+        $text = str_replace("%clang%", $clang, $text);
         
         if ($url != "") {
             $text = str_replace("%link%", $url, $text);
         }
-        
+ 
         $text = preg_replace_callback( "#%([^<^>^%]+)%#imsU",array(&$this, "replaceTitleType"),$text);
 
         if ($this->article_id == -1){
@@ -536,7 +541,7 @@ class cjoGroupLetter {
 
     /**
      * Object: Newsletter erstellen und senden. Der Newsletter wird auch gleich personalisiert.
-	 */
+     */
     function sendGroupletter($optin = false) {
 
         if (!$this->hasContent()) return false;
@@ -560,10 +565,9 @@ class cjoGroupLetter {
      * @return Ausgewählter Text
      */
     public function replaceTitleType($m) {
-        $string = trim($m[1]);
-        if (rawurldecode($string) != $string) return $string;
+        if (rawurldecode($m[0]) != $m[0]) return $m[0];
         $gender = $this->recipient['gender'];
-    	preg_match('/(?<=\|'.$gender.'\=|^'.$gender.'\=).*?(?=\||$)/', trim($string), $matches);
+        preg_match('/(?<=\|'.$gender.'\=|^'.$gender.'\=).*?(?=\||$)/', trim($m[1]), $matches);
         return $matches[0];
     }
 
@@ -688,8 +692,8 @@ class cjoGroupLetter {
         
         $sql = new cjoSql();
         $qry = "SELECT id
-        		FROM ".TBL_20_MAIL_SETTINGS."
-        		WHERE id='".$this->mail_account."'";
+                FROM ".TBL_20_MAIL_SETTINGS."
+                WHERE id='".$this->mail_account."'";
         $sql->setQuery($qry);
         
         if ($sql->getRows() == 1) return true;
@@ -724,7 +728,6 @@ class cjoGroupLetter {
                 }
             }
         }
-        
         return json_encode($results);
     }
     

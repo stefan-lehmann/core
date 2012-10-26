@@ -225,10 +225,10 @@ class cjoCommunityExtension {
                  ? 'Newsletter-'.$article->getName()
                  : 'Newsletter-'.strftime('%Y%m%d',time());
         
-        $params['path']                .= 'cjo_piwik/';
-        $params['query']['pk_campaign'] = $campain;
-        $params['query']['pk_kwd']      = $params['name'];  
-        $params['query']['_cvar']       = '{"1":["NL clicked","User-ID: %user_id%"]}}';  
+        $params['path']                  .= 'cjo_piwik/';
+        $params['query']['pk_campaign']   = $campain;
+        $params['query']['pk_kwd']        = $params['name'];  
+        $params['query']['_cvar_clicked'] = '%user_id%"';   
         return $params;
     }
     

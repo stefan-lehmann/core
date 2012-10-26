@@ -129,7 +129,11 @@ class cjoPiwikExtension {
         $url['path']  = preg_replace('/\/[^\/]+\//', '/'.$replace.'/', $url['path'], 1);
         $url['query'] = !empty($url['query']) ? '?'.$url['query'] : '';
 
-        $params['url'] = $url['scheme'].'://'.$url['host'].$url['path'].$url['query'];
+        $params['url']   = $url['scheme'].'://'.$url['host'].$url['path'].$url['query'];
+        if (isset($params['_cvar_clicked'])) {
+            $params['_cvar'] = '{"1":["NL clicked","User-ID: '.$params['_cvar'].'"]}}';
+            unset($params['_cvar_clicked']);
+        }
         
         cjo_set_session('piwik_track_session', self::generateUrl($params));
         
