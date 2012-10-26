@@ -131,8 +131,8 @@ class cjoPiwikExtension {
 
         $params['url']   = $url['scheme'].'://'.$url['host'].$url['path'].$url['query'];
         if (isset($params['_cvar_clicked'])) {
-            $params['_cvar'] = '{"1":["NL clicked","User-ID: '.$params['_cvar'].'"]}}';
-            unset($params['_cvar_clicked']);
+            $params['_cvar'] = '{"1":["NL clicked","User-ID: '.$params['_cvar_clicked'].'"]}';
+            $params['_cvar_clicked'] = null;
         }
         
         cjo_set_session('piwik_track_session', self::generateUrl($params));
@@ -144,7 +144,7 @@ class cjoPiwikExtension {
         }
         
         $params['url'] = null;
-        
+        $params['_cvar'] = null;
         cjoAssistance::redirectFE(cjo_get('article_id','cjo-article-id'), false, $params, $anchor);
     }
 
@@ -166,9 +166,7 @@ class cjoPiwikExtension {
         $path    = pathinfo(cjo_server('REQUEST_URI','string'));
         $dirname = preg_replace('#^.*\/cjo_piwik\/#','',$path['dirname']);
         $get     = explode('/',$dirname);
-        $params  = array();
-
-        cjo_debug(cjo_server('REMOTE_ADDR','string').$CJO['INSTNAME'],md5(cjo_server('REMOTE_ADDR','string').$CJO['INSTNAME']));
+        $params  = array();x
 
         $article = OOArticle::getArticleById($get[0]);
 

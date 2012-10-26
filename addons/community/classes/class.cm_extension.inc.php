@@ -228,7 +228,7 @@ class cjoCommunityExtension {
         $params['path']                  .= 'cjo_piwik/';
         $params['query']['pk_campaign']   = $campain;
         $params['query']['pk_kwd']        = $params['name'];  
-        $params['query']['_cvar_clicked'] = '%user_id%"';   
+        $params['query']['_cvar_clicked'] = '%user_id%';   
         return $params;
     }
     
