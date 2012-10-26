@@ -63,9 +63,9 @@ class cjoMessage {
 
         global $CJO;
 
-        if (!isset($CJO['MESSAGES']) || !is_object($CJO['MESSAGES'])) {
+        if (!isset($CJO['MESSAGES']) || !is_object($CJO['MESSAGES']) || !is_a($CJO['MESSAGES'], 'cjoMessage')) {
             $CJO['MESSAGES'] = $this;
-            $CJO['MESSAGES']->flushAllMessages();
+            self::flushAllMessages();
         }
     }
 
@@ -335,12 +335,11 @@ class cjoMessage {
 
     	global $CJO, $I18N;
 
-    	if (!is_object($CJO['MESSAGES'])) {
+    	if (!is_object($CJO['MESSAGES']) || get_class($CJO['MESSAGES']) != 'cjoMessage') {
     	    return false;
     	}
-    	
     	$message_out = array();
-        
+ 
         cjoExtension::registerExtensionPoint('MESSAGE_OUTPUT', array());
     	
     	//overwrite all messages, if db write access ist permitted (demo)

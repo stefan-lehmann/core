@@ -64,15 +64,17 @@ class cjoComments {
         return $sql->Delete($I18N_7->msg("msg_comment_deleted"));
     }
     
-    public static function getComments($article_id = false){
+    public static function getComments($article_id = false, $strict = true){
     
         global $CJO;
     
         if ($article_id === false) $article_id = $CJO['ARTICLE_ID'];
+        
         $article = OOArticle::getArticleById($article_id);
+        if ($strict && (!OOArticle::isValid($article) || !$article->getComments())) return false;
+        
+        $article_title = OOArticle::isValid($article) ? '[translate: comments_for] &quot;'.$article->getName().'&quot;' : '';
 
-        if (!OOArticle::isValid($article) || !$article->getComments()) return false;
-    
         $results_lenght = 0;
         
         // Config aus DB holen
@@ -110,7 +112,7 @@ class cjoComments {
     
             // FUNKTION FÜR KOMMENTARHEADLINE (show/hide oder ...' zu Artikel XY')
             if($conf['list_typ'] == 'visible'){
-                $headline = '<h3 class="comments_headline">'.$headline.' [translate: comments_for] &quot;'.$article->getName().'&quot;</h3>';
+                $headline = '<h3 class="comments_headline">'.$headline.' '.$article_title.'</h3>';
             }
             else{
                 $comments_hide = ' style="display:none;"';
@@ -135,7 +137,7 @@ class cjoComments {
     
         // Ausgabe nur im Frontend
         if ($CJO['CONTEJO']) return false;
-    
+
         if($conf['filter_comments_by'] != ''){
     
             $filter_comments_by = "";
@@ -162,7 +164,7 @@ class cjoComments {
                     id ".$conf['order_comments'];
     
         $results = $sql->getArray($qry);
-    
+
         // URSPRÜNGLICHE LÄNGE DES RESULTS-ARRAY
         $results_lenght = count($results);
     

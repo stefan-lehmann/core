@@ -62,6 +62,7 @@ class cjoLinkButtonField extends popupButtonField {
 		$selected_path = ($selected_article->_id != '') ? $selected_article->_path.'|'.$select_id : $select_id;
 
 		$CJO['SEL_ARTICLE']->setName($this->getName());
+        $CJO['SEL_ARTICLE']->setId($this->getName());
 		$CJO['SEL_ARTICLE']->setStyle($attributes);
 		$CJO['SEL_ARTICLE']->setSize(1);
 		$CJO['SEL_ARTICLE']->setDisabled(0);

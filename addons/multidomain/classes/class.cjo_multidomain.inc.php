@@ -109,7 +109,9 @@ class cjoMultidomain {
                                      '.'.
                                      $clang.
                                      '.html';
-
+                                     
+        if (cjo_server('SCRIPT_URI','string') == $url) return false;
+        
         header('Location: '.$url);
         exit;
     }

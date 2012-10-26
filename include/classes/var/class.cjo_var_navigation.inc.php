@@ -147,9 +147,13 @@ class cjoVarNavigation extends cjoVars {
                 !$$nav->getNavi($name)) {
 
                 $text_length = null;
+                $online_only = false;
                 if ($args['text_length']) $text_length = $args['text_length'];
+                if ($args['_online_only']) $online_only = $args['_online_only'];
 
-                $$nav->genereateLangNavi($text_length);
+                $$nav->genereateLangNavi($text_length, $name, $online_only);
+                unset($args['custom_nav']);
+                
             }
 
             if ($name == 'prevnext' &&
@@ -205,6 +209,7 @@ class cjoVarNavigation extends cjoVars {
                     $$nav->genereateNavis();
                 }
             }
+
 			$content = str_replace($var.'['.$param_str.']', $$nav->getNavi($name), $content);
         }
         return $content;
