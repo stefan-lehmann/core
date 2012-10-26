@@ -560,10 +560,10 @@ class cjoGroupLetter {
      * @return Ausgewählter Text
      */
     public function replaceTitleType($m) {
-        
-        if(rawurldecode($m) != $m) return $m;
+        $string = trim($m[1]);
+        if (rawurldecode($string) != $string) return $string;
         $gender = $this->recipient['gender'];
-    	preg_match('/(?<=\|'.$gender.'\=|^'.$gender.'\=).*?(?=\||$)/', trim($m[1]), $matches);
+    	preg_match('/(?<=\|'.$gender.'\=|^'.$gender.'\=).*?(?=\||$)/', trim($string), $matches);
         return $matches[0];
     }
 
