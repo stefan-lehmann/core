@@ -452,11 +452,6 @@ class cjoGroupLetter {
 		if (($this->send+$this->errors) == $this->prepared){
 			if (!$this->sendPrepared()) return false;
 		}
-		// else {
-			// $CJO['ADDON']['settings'][self::$mypage]['reload'] = true;
-        	// cjoMessage::addSuccess($I18N_10->msg("msg_gl_send", $this->send, $this->prepared, $this->errors));
-		    // cjoMessage::addSuccess($I18N_10->msg("msg_pease_wait"));
-		// }
 		return true;
     }
 
@@ -655,6 +650,8 @@ class cjoGroupLetter {
             return false;
         }
 
+        cjoExtension::registerExtension('GENERATE_URL', 'cjoCommunityExtension::changeNewsletterUrls');
+
         cjoGenerate::deleteGeneratedArticle($article_id);
         $CJO['CONTEJO'] = false;
         $CJO['ARTICLE_ID'] = $article_id;
@@ -674,8 +671,9 @@ class cjoGroupLetter {
 
         $content = str_replace(array('"../','"./'), '"'.$base, $content);
         $content = str_replace(array('(../','(./'), '('.$base, $content);
-//cjo_Debug($content); die();
+
         $content = cjoExtension::registerExtensionPoint('OUTPUT_FILTER', array('subject' => $content, 'environment' => 'frontend'));
+
         return $content;
     }
     
