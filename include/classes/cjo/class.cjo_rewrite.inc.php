@@ -245,6 +245,6 @@ class cjoRewrite {
         if ($path[$length] == str_replace($CJO['HTDOCS_PATH'], '', $CJO['BACKEND_PATH'])) {
             $temp = array_pop($path);
         }
-        return '/'.implode('/', $path).'/';
+        return preg_replace('!\/{1,}!', '/', '/'.implode('/', $path).'/');
     } 
 }
