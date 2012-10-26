@@ -505,6 +505,11 @@ class cjoGroupLetter {
             $html = str_replace("%name%", ' '.$name, $html);
             $html = str_replace("%firstname%", ' '.$firstname, $html);
             $html = str_replace("%link_url%", $url, $html);
+            $html = str_replace("%user_id%", $user_id, $html);
+            $html = str_replace("%group_id%", $group_id, $html);
+            $html = str_replace("%clang%", $clang, $html);
+            
+            
             if ($url != "") {
                 $html = str_replace("%link%", $link, $html);
             }
@@ -515,6 +520,10 @@ class cjoGroupLetter {
         $text = str_replace("%name%", $name, $text);
         $text = str_replace("%firstname%", $firstname, $text);
         $html = str_replace("%link_url%", $url, $html);
+        $html = str_replace("%user_id%", $user_id, $html);
+        $html = str_replace("%group_id%", $group_id, $html);
+        $html = str_replace("%clang%", $clang, $html);
+        
         if ($url != "") {
             $text = str_replace("%link%", $url, $text);
         }
