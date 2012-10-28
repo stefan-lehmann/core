@@ -28,7 +28,7 @@
  *
  * Falls die Variable nicht vorhanden ist, wird $default zurückgegeben
  */
-function cjo_get($varname, $vartype = '', $default = '', $secure = NULL, $function = NULL) {
+function cjo_get($varname, $vartype = 'string', $default = '', $secure = NULL, $function = NULL) {
     global $CJO;
     $secure = $secure === NULL && !$CJO['CONTEJO'] ? true : $secure;    
     $data =  _cjo_array_key_cast($_GET, $varname, $vartype, $default);
@@ -41,7 +41,7 @@ function cjo_get($varname, $vartype = '', $default = '', $secure = NULL, $functi
  *
  * Falls die Variable nicht vorhanden ist, wird $default zurückgegeben
  */
-function cjo_post($varname, $vartype = '', $default = '', $secure = NULL, $function = NULL) {
+function cjo_post($varname, $vartype = 'string', $default = '', $secure = NULL, $function = NULL) {
     global $CJO;
     $secure = $secure === NULL && !$CJO['CONTEJO'] ? true : $secure;
     $data =  _cjo_array_key_cast($_POST, $varname, $vartype, $default);
@@ -54,7 +54,7 @@ function cjo_post($varname, $vartype = '', $default = '', $secure = NULL, $funct
  *
  * Falls die Variable nicht vorhanden ist, wird $default zurückgegeben
  */
-function cjo_request($varname, $vartype = '', $default = '', $secure = NULL, $function = NULL) {
+function cjo_request($varname, $vartype = 'string', $default = '', $secure = NULL, $function = NULL) {
     global $CJO;
     $secure = $secure === NULL && !$CJO['CONTEJO'] ? true : $secure;    
     $data =  _cjo_array_key_cast($_REQUEST, $varname, $vartype, $default);
@@ -67,7 +67,7 @@ function cjo_request($varname, $vartype = '', $default = '', $secure = NULL, $fu
  *
  * Falls die Variable nicht vorhanden ist, wird $default zurückgegeben
  */
-function cjo_server($varname, $vartype = '', $default = '') {
+function cjo_server($varname, $vartype = 'string', $default = '') {
     return _cjo_array_key_cast($_SERVER, $varname, $vartype, $default);
 }
 
@@ -84,7 +84,7 @@ function cjo_get_sys_id() {
  *
  * Falls die Variable nicht vorhanden ist, wird $default zurückgegeben
  */
-function cjo_session($varname, $vartype = '', $default = '', $sys_id = false) {
+function cjo_session($varname, $vartype = 'string', $default = '', $sys_id = false) {
     if (!$sys_id) $sys_id = cjo_get_sys_id();   
     if (isset ($_SESSION[$sys_id][$varname])) {
         return _cjo_cast_var($_SESSION[$sys_id][$varname], $vartype, $default);
@@ -147,7 +147,7 @@ function cjo_destroy_session() {
  *
  * Falls die Variable nicht vorhanden ist, wird $default zurückgegeben
  */
-function cjo_cookie($varname, $vartype = '', $default = '') {
+function cjo_cookie($varname, $vartype = 'string', $default = '') {
     return _cjo_array_key_cast($_COOKIE, $varname, $vartype, $default);
 }
 
@@ -156,7 +156,7 @@ function cjo_cookie($varname, $vartype = '', $default = '') {
  *
  * Falls die Variable nicht vorhanden ist, wird $default zurückgegeben
  */
-function cjo_files($varname, $vartype = '', $default = '') {
+function cjo_files($varname, $vartype = 'string', $default = '') {
     return _cjo_array_key_cast($_FILES, $varname, $vartype, $default);
 }
 
@@ -165,7 +165,7 @@ function cjo_files($varname, $vartype = '', $default = '') {
  *
  * Falls die Variable nicht vorhanden ist, wird $default zurückgegeben
  */
-function cjo_env($varname, $vartype = '', $default = '') {
+function cjo_env($varname, $vartype = 'string', $default = '') {
     return _cjo_array_key_cast($_ENV, $varname, $vartype, $default);
 }
 
