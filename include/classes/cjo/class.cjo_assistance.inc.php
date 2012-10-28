@@ -1113,4 +1113,15 @@ class cjoAssistance {
         // return all found files
         return $files;
     }
+    
+    public static function correctTimestampOnDay($daystamp, $timestamp) {
+        
+        $change_time  = 60*60*3; 
+        $midnight     = mktime(0, 0, 0, strftime("%m",$daystamp), strftime("%d",$daystamp), strftime("%Y",$daystamp));
+        $test_time    = strftime("%H",$midnight+(60*60*12));
+        
+        if ($timestamp <= $change_time) return $timestamp;
+
+        return  $timestamp-(60*60*($test_time-12));
+    }
 }

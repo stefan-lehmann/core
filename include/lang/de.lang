@@ -475,7 +475,7 @@ msg_first_upload_some_files = Bitte erst Medien hochladen!
 msg_install_or_upgrade_flash = <b>Initialisierung des Upload-Moduls ist fehlgeschlagen.</b><br/> Bitte stellen Sie sicher, dass in Ihrem Browser der <a href="http://get.adobe.com/flashplayer/" target="_blank">Adobe Flash Player</a> (Version {0}) installiert ist.
 
 ##./contejo/include/pages/media/categories.inc.php
-dateformat_sort = %d.%m.%y :: %H:%M:%S
+dateformat_sort = %d.%m.%y&nbsp;::&nbsp;%H:%M:%S
 label_category_comment = Kategorie-Kommentar
 label_delete_category = Medien-Kategorie löschen
 label_display_category_media = Medien der Kategorie anzeigen

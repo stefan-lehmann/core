@@ -17,7 +17,7 @@ input[type=submit] {width:auto !important;}
 .a22-cjolist-toolbars-top p.statusBar,.a22-cjolist-toolbars-btm p.statusBar {float:none;}
 .a22-cjolist-toolbars-top p.browseBar,.a22-cjolist-toolbars-btm p.browseBar {padding-top:3px;}
 .a22-cjolist-data {border-top:none;background-color:#fff;clear:both;overflow:visible;margin:0;padding:0;}
-.a22-cjolist-data table thead tr th {background:#fff !important;height:22px;padding:3px 5px !important;}
+.a22-cjolist-data table thead tr th {background:#fff !important;height:22px;padding:3px 5px !important;white-space: nowrap;overflow:hidden;text-overflow:ellipsis}
 .a22-cjolist-data table tr,.a22-cjolist-data table.no_current tr.current,.a22-cjolist-data table.no_hover tr:hover,.a22-cjolist-data table.no_hover tr td,.a22-cjolist-data table.no_hover tr:hover td {background-color:#f2f2f2;}
 .a22-cjolist-data table tr.current:hover,.a22-cjolist-data table tr.selected,.a22-cjolist-data table tr.selected:hover {background-color:#ffe097 !important;}
 .a22-cjolist-data table th.header:hover .a22-cjolist-data table th.header.headerSortUp,.a22-cjolist-data table th.header.headerSortDown {background-image:url(../img/contejo/bg/black_05.png) !important;background-repeat:repeat;}

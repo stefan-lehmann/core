@@ -439,4 +439,16 @@ class cjoEventCalendar {
     		}
     	}
     }
+    
+    public static function test($params) {
+        $params = $params['subject'];
+
+        $start_time = cjoAssistance::correctTimestampOnDay($params['start_date'],$params['start_time']);
+        $end_time   = cjoAssistance::correctTimestampOnDay($params['end_date'],$params['end_time']);
+
+        $params['start_time'] = $params['start_time'] + $params['start_time']-$start_time;
+        $params['end_time'] = $params['end_time'] + $params['end_time']-$end_time;
+        
+        return $params;
+    }
 }

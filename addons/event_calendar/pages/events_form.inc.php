@@ -293,14 +293,17 @@ if ($form->validate()) {
 
     if (cjo_post('start_time','bool')) {
         $start_time = cjoAssistance::toArray(cjo_post('start_time','string'),':');
-        $_POST['start_time'] = ((int) $start_time[0]*60*60) + ((int) $start_time[1] *60);
+        $_POST['start_time'] = cjoAssistance::correctTimestampOnDay(cjo_post('start_date','int'), 
+                                                                       ((int) $start_time[0]*60*60) + ((int) $start_time[1] *60));
     }
     if (cjo_post('end_time','bool')) {
         $end_time = cjoAssistance::toArray(cjo_post('end_time','string'),':');
-        $_POST['end_time'] = ((int) $end_time[0]*60*60) + ((int) $end_time[1] *60);
+        $_POST['end_time'] = cjoAssistance::correctTimestampOnDay(cjo_post('end_date','int'), 
+                                                                     ((int) $end_time[0]*60*60) + ((int) $end_time[1] *60));
     }
 }
 
+cjoExtension::registerExtension('CJO_FORM_'.strtoupper($form->getName()).'_GET_DATA_SET', 'cjoEventCalendar::test');
 $form->show();
 
 if ($form->validate()) {
@@ -310,4 +313,5 @@ if ($form->validate()) {
 	}
     cjoAssistance::redirectBE(array( 'msg' => 'msg_data_saved'));
 }
+
 

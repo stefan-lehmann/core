@@ -124,7 +124,7 @@ class cjoFieldController extends cjoFieldContainer {
             // Der Datensatz wird in _getMode() bestimmt
             $this->_getMode();
         }
-        return $this->dataset;
+        return cjoExtension::registerExtensionPoint('CJO_FORM_' . strtoupper($this->cjoform->getName()) . '_GET_DATA_SET', array('subject' => $this->dataset));
     }
 
     public function _transformDataSet($results) {
