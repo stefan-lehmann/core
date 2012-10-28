@@ -130,9 +130,9 @@ class cjoPiwikExtension {
         $url['query'] = !empty($url['query']) ? '?'.$url['query'] : '';
 
         $params['url']   = $url['scheme'].'://'.$url['host'].$url['path'].$url['query'];
-        if (isset($params['_cvar_clicked'])) {
-            $params['_cvar'] = '{"1":["NL clicked","User-ID: '.$params['_cvar_clicked'].'"]}';
-            $params['_cvar_clicked'] = null;
+        if (isset($params['pk_clicked'])) {
+            $params['cvar'] = '{"1":["NL clicked","User-ID: '.$params['pk_clicked'].'"]}';
+            $params['pk_clicked'] = null;
         }
         
         cjo_set_session('piwik_track_session', self::generateUrl($params));
@@ -144,7 +144,7 @@ class cjoPiwikExtension {
         }
         
         $params['url'] = null;
-        $params['_cvar'] = null;
+        $params['cvar'] = null;
         cjoAssistance::redirectFE(cjo_get('article_id','cjo-article-id'), false, $params, $anchor);
     }
 
@@ -166,7 +166,7 @@ class cjoPiwikExtension {
         $path    = pathinfo(cjo_server('REQUEST_URI','string'));
         $dirname = preg_replace('#^.*\/cjo_piwik\/#','',$path['dirname']);
         $get     = explode('/',$dirname);
-        $params  = array();x
+        $params  = array();
 
         $article = OOArticle::getArticleById($get[0]);
 
@@ -179,7 +179,7 @@ class cjoPiwikExtension {
         $params['action_name'] = 'Images loaded';
         $params['idgoal']      = $get[1];    
         $params['rand']        = $get[3];   
-        $params['_cvar']       = '{"1":["NL Images Loaded","User-ID: '.$get[2].'"]}';
+        $params['cvar']        = '{"1":["NL Images Loaded","User-ID: '.$get[2].'"]}';
     
         // Alle OBs schließen
         while (ob_get_level() > 0){ ob_end_clean(); };
@@ -199,11 +199,11 @@ class cjoPiwikExtension {
                                        ? $get_params['idsite'] 
                                        : (string) $CJO['ADDON']['settings'][self::$mypage]['IDSITE'];
                                        
-        $set_params['utm_campaign']    = !empty($get_params['pk_campaign'])
+        $set_params['pk_campaign']     = !empty($get_params['pk_campaign'])
                                        ? $get_params['pk_campaign'] 
                                        : cjo_request('pk_campaign', 'string');
                                        
-        $set_params['utm_term']        = !empty($get_params['pk_kwd'])
+        $set_params['pk_kwd']          = !empty($get_params['pk_kwd'])
                                        ? $get_params['pk_kwd'] 
                                        : cjo_request('pk_kwd', 'string');
                                        

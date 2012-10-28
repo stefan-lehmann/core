@@ -220,6 +220,8 @@ class cjoCommunityExtension {
         
         global $CJO;
         
+        if (!OOAddon::isAvailable('piwik')) return false;
+        
         $article = OOArticle::getArticleById($CJO['ARTICLE_ID']);
         $campain = OOArticle::isValid($article) 
                  ? 'Newsletter-'.$article->getName()
@@ -228,7 +230,7 @@ class cjoCommunityExtension {
         $params['path']                  .= 'cjo_piwik/';
         $params['query']['pk_campaign']   = $campain;
         $params['query']['pk_kwd']        = $params['name'];  
-        $params['query']['_cvar_clicked'] = '%user_id%';   
+        $params['query']['pk_clicked'] = '%user_id%';   
         return $params;
     }
     
