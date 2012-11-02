@@ -32,12 +32,10 @@ $hidden['mode'] = new hiddenField('mode');
 $hidden['mode']->setValue($mode);
 
 //Fields
-$fields['input'] = new textAreaField('input', $I18N->msg("label_input"));
-$fields['input']->addAttribute('class', 'inp75 codepress php linenumbers-on');
+$fields['input'] = new codeField('input', $I18N->msg("label_input"));
 $fields['input']->addAttribute('rows', '30');
 
-$fields['output'] = new textAreaField('output', $I18N->msg("label_output"));
-$fields['output']->addAttribute('class', 'inp75 codepress php linenumbers-on');
+$fields['output'] = new codeField('output', $I18N->msg("label_output"));
 $fields['output']->addAttribute('rows', '30');
 
 $fields['updatedate_hidden'] = new hiddenField('updatedate');

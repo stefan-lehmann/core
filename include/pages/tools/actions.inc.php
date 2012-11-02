@@ -71,10 +71,8 @@ if ($function == "add" || $function == "edit" ) {
     $fields['name'] = new textField('name', $I18N->msg("label_name"));
     $fields['name']->addValidator('notEmpty', $I18N->msg("msg_name_notEmpty"));
 
-    $fields['action'] = new textAreaField('action', $I18N->msg("label_input"));
-    $fields['action']->addAttribute('class', 'inp75 codepress php linenumbers-on');
+    $fields['action'] = new codeField('action', $I18N->msg("label_input"));
     $fields['action']->addAttribute('rows', '30');
-    $fields['action']->addAttribute('wrap', 'off');
 
     $fields['prepost'] = new selectField('prepost', "PRE/POST");
     $fields['prepost']->addOption("PRE",0);

@@ -307,8 +307,8 @@ $hidden['action']->setValue('edit');
 $fields['path'] = new readOnlyField('path', $I18N->msg("label_path"), array('class' => 'large_item'));
 $fields['path']->activateSave(false);
 
-$fields['html'] = new textAreaField('html', $I18N->msg("label_".$type));
-$fields['html']->addAttribute('class', 'inp75 codepress html linenumbers-on');
+$fields['html'] = new codeField('html', $I18N->msg("label_".$type));
+$fields['html']->addAttribute('class', 'inp75');
 $fields['html']->addAttribute('rows', '30');
 $fields['html']->activateSave(false);
 $fields['html']->setNote('<a href="http://contejo.com/contejo-variablen.104.0.html" target="_blank" title="'.$I18N->msg("label_help").'"><img src="./img/silk_icons/help.png" alt="?" /></a>');

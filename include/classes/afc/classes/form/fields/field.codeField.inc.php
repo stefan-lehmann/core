@@ -26,7 +26,7 @@
 class codeField extends textAreaField {
 
 	public function codeField($name, $label, $attributes = array(), $id = '') {
-	    if (!isset($attributes['width'])) $attributes['width'] = '750';
+	    if (!isset($attributes['width'])) $attributes['width'] = '735';
         if (!isset($attributes['height'])) $attributes['height'] = 550;
         
 		$this->cjoFormField($name, $label, $attributes, $id);
@@ -72,7 +72,7 @@ class codeField extends textAreaField {
         
         $edit_note = '<span class="multiple_note">' . $I18N->msg('code_fullscreen') . '</span>';
         
-		return sprintf('<textarea name="%s" id="%s" tabindex="%s"%s>%s</textarea>%s%s%s', $this->getName(), $this->getId(), cjo_a22_nextTabindex(), $this->getAttributes(), $value, $edit_note, $this->getNote(),$js);
+		return sprintf('<textarea name="%s" id="%s" tabindex="%s"%s>%s</textarea>%s%s%s', $this->getName(), $this->getId(), cjo_a22_nextTabindex(), $this->getAttributes(), $value, $this->getNote(),$edit_note,$js);
 	}
         
 }
