@@ -57,6 +57,9 @@ button_save = Save
 ##.//contejo/include/classes/afc/classes/form/fields/field.selectField.inc.php 
 ctrl = Hold <b>Ctrl</b> when editing 
 
+##.//core/include/classes/afc/classes/form/fields/field.codeField.inc.php
+code_fullscreen = Press <b>F11</b> to toggle full screen editing, when cursor is in the editor.
+
 ##.//contejo/include/classes/afc/classes/list/class.cjo_list.inc.php 
 msg_af_empty = No entries available! 
 msg_af_no_found = Database does not contain suitable entries! Please change settings and try again! 

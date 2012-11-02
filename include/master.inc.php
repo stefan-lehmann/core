@@ -36,7 +36,7 @@ $page = !empty($_REQUEST['page']) ? $_REQUEST['page'] : '';
 
 $CJO['SETUP'] 				= true;
 $CJO['VERSION'] 			= "2.7";
-$CJO['RELEASE'] 			= "2";
+$CJO['RELEASE'] 			= "3";
 $CJO['BACKEND_PATH']        = $CJO['HTDOCS_PATH']."core";
 $CJO['INCLUDE_PATH'] 		= $CJO['BACKEND_PATH']."/include";
 $CJO['JQUERY_PATH']			= $CJO['BACKEND_PATH']."/js/jQuery";
@@ -47,7 +47,7 @@ $CJO['FILE_CONFIG_PATH']    = $CJO['FRONTPAGE_PATH']."/include";
 $CJO['ADDON_CONFIG_PATH'] 	= $CJO['FILE_CONFIG_PATH'];
 $CJO['FILE_CONFIG_MASTER']  = $CJO['FILE_CONFIG_PATH']."/config_master.inc.php";
 $CJO['FILEPERM']            = octdec(777); // oktaler wert
-$CJO['PHP_VERSION']			= "5.3.1";
+$CJO['PHP_VERSION']			= "5.3.4";
 $CJO['SYSTEM_ADDONS']       = array('developer', 'html5video', 'image_processor', 'import_export', 'log', 'phpmailer', 'opf_lang', 'wymeditor');
 
 // ----- CONFIG FILES

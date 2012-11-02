@@ -500,6 +500,7 @@ require_once $CJO['INCLUDE_PATH'].'/classes/afc/classes/form/fields/field.passwo
 require_once $CJO['INCLUDE_PATH'].'/classes/afc/classes/form/fields/field.colorpickerField.inc.php';
 require_once $CJO['INCLUDE_PATH'].'/classes/afc/classes/form/fields/field.datepickerField.inc.php';
 require_once $CJO['INCLUDE_PATH'].'/classes/afc/classes/form/fields/field.simpleButtonField.inc.php';
+require_once $CJO['INCLUDE_PATH'].'/classes/afc/classes/form/fields/field.codeField.inc.php';
 
 // CONTEJO Field-Klassen
 require_once $CJO['INCLUDE_PATH'].'/classes/afc/classes/form/fields/cjo/field.cjoSaveField.inc.php';

@@ -104,8 +104,7 @@ if ($function == "add" || $function == "edit" ) {
 	$fields['active'] = new checkboxField('active', '&nbsp;',  array('style' => 'width: auto;'));
 	$fields['active']->addBox($I18N->msg("label_active"), '1');
 
-	$fields['content'] = new textAreaField('content', $I18N->msg("label_input"));
-	$fields['content']->addAttribute('class', 'inp75 codepress php linenumbers-on');
+	$fields['content'] = new codeField('content', $I18N->msg("label_input"));
 	$fields['content']->addAttribute('rows', '30');
 
     if (count($CJO['CTYPE']) > 0) {
