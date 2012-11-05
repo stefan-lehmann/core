@@ -82,9 +82,10 @@ class cjoRewrite {
 
     	global $CJO;
         
-    	$params = self::setServerUri();
-    	$params['path'] = self::setServerPath(); 
-    	$redirect = false;
+    	$params         = self::setServerUri();
+    	$params['path'] = self::setServerPath();
+        $query_params   = array(); 
+    	$redirect       = false;
    	
     	if (!empty($hash) && $hash != '#') {
     	    $params['hash'] = (strpos($hash,'#') === false) ? '#'.$hash : $hash;
@@ -105,9 +106,8 @@ class cjoRewrite {
         	                            ? $CJO['CUR_CLANG'] : $clang;
     	
         	$query_params['article_id'] = (strlen($article_id) == 0 || $article_id == 0) 
-        	                            ? cjo_request('article_id','cjo-article-id', $CJO['START_ARTICLE_ID'])
+        	                            ? cjo_get('article_id','cjo-article-id', $CJO['START_ARTICLE_ID'])
         	                            : $article_id;
-        	}
 
     		$article = OOArticle :: getArticleById($query_params['article_id'], $query_params['clang']);
     		if (!OOArticle::isValid($article)) return false;
@@ -116,13 +116,13 @@ class cjoRewrite {
                 is_numeric($article->getRedirect()) &&
                 $article->getRedirect() > 0) {
                     
-		        $redirect = OOArticle::getArticleById($article->getRedirect(), $clang);
-		        if (OOArticle::isValid($redirect)) {
-		            $article = & $redirect;
-		            $query_params['article_id'] = $article->getId();
-		        }
-		    }
-			$params['name'] = cjoRewrite::parseArticleName($article->getName());
+    	        $redirect = OOArticle::getArticleById($article->getRedirect(), $clang);
+    	        if (OOArticle::isValid($redirect)) {
+    	            $article = & $redirect;
+    	            $query_params['article_id'] = $article->getId();
+    	        }
+    	    }
+    		$params['name'] = cjoRewrite::parseArticleName($article->getName());
     		
         	if (empty($params['name'])) $params['name'] = 'article';
             
@@ -133,7 +133,7 @@ class cjoRewrite {
         	$temp = cjoExtension::registerExtensionPoint('GENERATE_URL', $params);
         	
         	if (!empty($temp) && is_array($temp)) $params = $temp;
-
+    
         	if (!empty($params['hash'])) {
         	    $hash = $params['hash'];
         	    unset($params['hash']);
@@ -160,19 +160,20 @@ class cjoRewrite {
             if (isset($params['name']))                unset($params['name']);
             if (isset($params['query']['article_id'])) unset($params['query']['article_id']);
             if (isset($params['query']['clang']))      unset($params['query']['clang']);
+        }
 
-        	if ($redirect === false &&
-        	    !empty($CJO['MODREWRITE']['LINK_REDIRECT']) && 
-                preg_match('/\D/',$article->getRedirect())) {
-                $url = $article->getRedirect();
-            }
-            else {
-                $params['query'] = is_array($params['query']) && !empty($params['query']) ? http_build_query($params['query']) : null;
-                $url = http_build_url('',$params,HTTP_URL_STRIP_AUTH | HTTP_URL_JOIN_PATH | HTTP_URL_JOIN_QUERY | HTTP_URL_STRIP_FRAGMENT).$hash;
-            }
-            $url = preg_replace('/(?<!:)\/{2,}/','/', $url);
-
-            return cjoExtension::registerExtensionPoint('GENERATED_URL', array('subject' => $url));
+    	if ($redirect === false &&
+    	    !empty($CJO['MODREWRITE']['LINK_REDIRECT']) && 
+            preg_match('/\D/',$article->getRedirect())) {
+            $url = $article->getRedirect();
+        }
+        else {
+            $params['query'] = is_array($params['query']) && !empty($params['query']) ? http_build_query($params['query']) : null;
+            $url = http_build_url('',$params,HTTP_URL_STRIP_AUTH | HTTP_URL_JOIN_PATH | HTTP_URL_JOIN_QUERY | HTTP_URL_STRIP_FRAGMENT).$hash;
+        }
+        $url = preg_replace('/(?<!:)\/{2,}/','/', $url);
+        
+        return cjoExtension::registerExtensionPoint('GENERATED_URL', array('subject' => $url));
     }
 
     /**

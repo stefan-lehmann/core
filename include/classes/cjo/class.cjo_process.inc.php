@@ -170,9 +170,7 @@ class cjoProcess {
                               
     private static function setFavicon(){
         global $CJO;
-        if (!$CJO['CONTEJO'] ||
-            (cjo_server('HTTP_HOST','string') != 'localhost' &&
-             cjo_server('HTTP_HOST','string') != $CJO['LOCALHOST'])) {
+        if (!$CJO['CONTEJO'] || !cjoAssistance::isLocalhost()) {
             $CJO['FAVICON'] = 'favicon.ico';
             return;
         }

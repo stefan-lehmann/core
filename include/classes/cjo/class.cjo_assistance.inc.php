@@ -378,6 +378,13 @@ class cjoAssistance {
         $fields 	= array();
         $cols 		= array();
     }
+    
+    public static function isLocalhost() {
+        global $CJO;
+        $host = cjo_server('HTTP_HOST','string');
+        $localhosts = explode(',',$CJO['LOCALHOST']);
+        return ($host == 'localhost' || in_array($host, $localhosts));
+    }
 
     /**
      * Unserializes a string of parameters serialized by jQuery.

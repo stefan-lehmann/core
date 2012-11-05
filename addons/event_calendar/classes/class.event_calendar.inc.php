@@ -420,7 +420,10 @@ class cjoEventCalendar {
     	$update->setTable(TBL_16_EVENTS);
     	$update->setWhere("id='".$id."' AND clang='".$clang."'");
     	$update->setValue('status', $new_val);
-    	return $update->update($I18N_16->msg('msg_event_status_updated'));
+    	$state = $update->update($I18N_16->msg('msg_event_status_updated'));
+        
+        cjoExtension::registerExtensionPoint('EVENT_CALENDAR_UPDATE_EVENT', array ('id' => $id));
+        return $state;
     }
     
     public static function copyConfig($params) {

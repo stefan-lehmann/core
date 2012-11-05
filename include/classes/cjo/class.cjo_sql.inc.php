@@ -190,8 +190,9 @@ class cjoSql implements Iterator{
         if (!is_array($db)) {
             $db = (int) $db;
             if ($db < 2) {
-                $dbid = (cjo_server('HTTP_HOST','string') == 'localhost' ||
-                         cjo_server('HTTP_HOST','string') == $CJO['LOCALHOST']) ? 'LOCAL' : 1;
+                $host = cjo_server('HTTP_HOST','string');
+                $localhosts = explode(',',$CJO['LOCALHOST']);
+                $dbid = cjoAssistance::isLocalhost() ? 'LOCAL' : 1;
             }
             $db = $CJO['DB'][$dbid];
         }
