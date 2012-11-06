@@ -418,7 +418,7 @@ class cjoForm extends cjoFieldContainer {
     public function redirectForm($type) {
         
         $params = $this->redirect[$type];
-        
+
         if (empty($params)) return false;
         
         if (is_string($params)) {

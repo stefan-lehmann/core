@@ -443,7 +443,7 @@ class cjoEventCalendar {
     	}
     }
     
-    public static function test($params) {
+    public static function prepareDataset($params) {
         $params = $params['subject'];
 
         $start_time = cjoAssistance::correctTimestampOnDay($params['start_date'],$params['start_time']);

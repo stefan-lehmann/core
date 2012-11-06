@@ -33,7 +33,6 @@ $id       = cjo_request('id', 'int', $oid);
 
 //Form
 $form = new cjoForm();
-
 //Fields
 $fields['clang'] = new hiddenField('clang');
 $fields['clang']->setValue($clang);
@@ -303,11 +302,11 @@ if ($form->validate()) {
     }
 }
 
-cjoExtension::registerExtension('CJO_FORM_'.strtoupper($form->getName()).'_GET_DATA_SET', 'cjoEventCalendar::test');
+cjoExtension::registerExtension('CJO_FORM_'.strtoupper($form->getName()).'_GET_DATA_SET', 'cjoEventCalendar::prepareDataset');
 $form->show();
 
 if ($form->validate()) {
-
+cjo_Debug(2222);
 	if (cjo_post('cjoform_save_button','bool')) {
 	   cjoAssistance::redirectBE(array('function' => '', 'oid'=>'',  'msg' => 'msg_data_saved'));
 	}
