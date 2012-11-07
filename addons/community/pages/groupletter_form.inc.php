@@ -25,6 +25,9 @@
 
 $send_type = cjo_post('SEND_TYPE', 'string', $CJO['ADDON']['settings'][$mypage]['SEND_TYPE']);
 
+if (cjo_get('msg_10', 'boolean')) {
+    cjoMessage::addSuccess($I18N_10->msg(cjoAssistance::cleanInput(cjo_get('msg_10', 'string'))));
+}
 
 //Form
 $form = new cjoForm();

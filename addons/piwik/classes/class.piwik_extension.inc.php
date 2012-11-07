@@ -79,8 +79,6 @@ class cjoPiwikExtension {
                '                if (i>=4) break;'.
                '            }'.
                '        }'.
-               '        piwikTracker.setCustomVariable(1, "Newsletter1", "Image Loaded", "page");'.
-               '        piwikTracker.setCustomVariable(2, "Newsletter1", "User-Id: 188", "page");'.
                '        piwikTracker.setDownloadExtensions("'.$CJO['ADDON']['settings'][self::$mypage]['TRACK_AS_DOWNLOADS'].'" );'.
                '        piwikTracker.setDownloadClasses("'.$CJO['ADDON']['settings'][self::$mypage]['DOWNLOAD_CLASS'].'" );'.        
                '        piwikTracker.trackPageView();'.
@@ -105,16 +103,12 @@ class cjoPiwikExtension {
         if (!OOArticle::isValid($article)) return false;
         
         $url = cjoRewrite::setServerUri(false, false).cjoRewrite::setServerPath();
-        
-        $ip  = cjo_server('HTTP_X_FORWARDED_FOR','bool') 
-             ? cjo_server('HTTP_X_FORWARDED_FOR','string') 
-             : cjo_server('REMOTE_ADDR','string');   
 
         return sprintf('<img src="%scjo_piwik/%s/%s/%%user_id%%/%s/%s" width="1" height="1" alt="" border="0">',
                         $url,
                         $article_id,
                         (int) $goal,                        
-                        md5($ip.$CJO['INSTNAME']),
+                        md5($CJO['INSTNAME']),
                         $CJO['ADDON']['settings'][self::$mypage]['EMAIL_CAMPAIGN_FILENAME']);
     }
 
@@ -172,15 +166,14 @@ class cjoPiwikExtension {
 
         if (!OOArticle::isValid($article) ||
             $path['basename'] != $CJO['ADDON']['settings'][self::$mypage]['EMAIL_CAMPAIGN_FILENAME'] || 
-            $get[3] != md5(cjo_server('REMOTE_ADDR','string').$CJO['INSTNAME'])) return false;
+            $get[3] != md5($CJO['INSTNAME'])) return false;
 
         $CJO['ARTICLE_ID'] = $article->getId();
         
         $params['action_name'] = 'Images loaded';
-        $params['idgoal']      = $get[1];    
         $params['rand']        = $get[3];   
         $params['cvar']        = '{"1":["NL Images Loaded","User-ID: '.$get[2].'"]}';
-    
+
         // Alle OBs schließen
         while (ob_get_level() > 0){ ob_end_clean(); };
 
@@ -250,6 +243,10 @@ class cjoPiwikExtension {
         $set_params['h']               = ltrim(date('G',$_SERVER['REQUEST_TIME']), 0);
         $set_params['m']               = ltrim(date('i',$_SERVER['REQUEST_TIME']), 0);
         $set_params['s']               = ltrim(date('s',$_SERVER['REQUEST_TIME']), 0);
+        
+        if (!empty($set_params['cvar'])) {
+            $set_params['idgoal'] = '';
+        }
 
         foreach($set_params as $key=>$value) {
             if ($value == '') {

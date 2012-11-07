@@ -171,7 +171,7 @@ cjoAssistance::resetAfcVars();
             if (data == 1) {
                 setTimeout(function() { startSend(); }, 5000);
             } else {
-              setTimeout(function() {location.href = '<?php echo cjoAssistance::createBEUrl(); ?>'; }, 5000);
+              setTimeout(function() {location.href = '<?php echo cjoAssistance::createBEUrl(array('msg_10' => 'msg_all_send')); ?>'; }, 6000);
             }
         });
     }
@@ -180,7 +180,7 @@ cjoAssistance::resetAfcVars();
         $.getJSON('ajax.php', {'function': 'cjoGroupLetter::currentNumbers'},
             function(data) { 
                // if (data.open == 0 || data.open == "0") {
-               //     location.href = '<?php echo cjoAssistance::createBEUrl(); ?>';
+               //     location.href = '<?php echo cjoAssistance::createBEUrl(array('msg_10' => 'msg_all_send')); ?>';
                // }
                 $('#gl_open').text(data.open);
                 $('#gl_errors').text(data.errors);
