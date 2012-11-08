@@ -40,7 +40,7 @@ class cjoHtml5Video {
         $domain                = cjoRewrite::setServerUri();   
         $params[self::$mypage] = $media->getId();
         $params['clang']       = (!empty($params['clang']))  ? (int) $params['clang']  : $CJO['CUR_CLANG'];  
-        $params                = self:: toHtml5VideoParams($filename, $params);
+        $params                = self::toHtml5VideoParams($filename, $params);
         
         foreach($params as $key=>$param) {
             if (in_array($key, $valid_params, true)) continue;

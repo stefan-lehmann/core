@@ -78,13 +78,12 @@ class cjoRewrite {
      *
      * @access public
      */
-    public static function getUrl($article_id = 0, $clang = false, $query_params = '', $hash = '') {
+    public static function getUrl($article_id = 0, $clang = false, $query_params = array(), $hash = '') {
 
     	global $CJO;
         
     	$params         = self::setServerUri();
     	$params['path'] = self::setServerPath();
-        $query_params   = array(); 
     	$redirect       = false;
    	
     	if (!empty($hash) && $hash != '#') {
