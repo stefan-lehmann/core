@@ -181,6 +181,8 @@ function imageProcessor_getImg ($filename,
 	if (file_exists($cacheImgpath) &&
     	filemtime($fullpath) < filemtime($cacheImgpath)) {
 		//@ touch($cacheImgpath);
+		
+        if ($CJO['CONTEJO']) $cacheImgpath .= '?'.time();
 		return $cacheImgpath;
 	}
 
@@ -218,7 +220,7 @@ function imageProcessor_getImg ($filename,
 
 	@set_time_limit(60);
 	ini_set("memory_limit", "32M");
-
+    if ($CJO['CONTEJO']) $returnPath .= '?'.time();
 	return $returnPath;
 }
 

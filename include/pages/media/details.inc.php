@@ -65,7 +65,7 @@ $hidden['oid']->setValue($oid);
 $hidden['submit_type'] = new hiddenField('submit_type');
 $hidden['submit_type']->setValue(1);
 
-$icon = '<a href="'.$media->getFullPath().'" class="preview" title="'.$I18N->msg('label_preview').'">'.OOMedia::toIcon($media->getFileName()).'</a>';
+$icon = '<a href="'.$media->getFullPath().'?'.time().'" class="preview" title="'.$I18N->msg('label_preview').'">'.OOMedia::toIcon($media->getFileName()).'</a>';
 $fields['icon'] = new readOnlyField('icon', '&nbsp;');
 $fields['icon']->setValue($icon);
 $fields['icon']->needFullColumn(true);
