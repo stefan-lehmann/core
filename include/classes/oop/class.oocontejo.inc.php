@@ -126,7 +126,7 @@ class OOContejo {
                 return $this->getValue('file');
             }                
         }
-        return $this->$value;
+        return isset($this->$value) ? $this->$value : null;
     }
 
     /**
