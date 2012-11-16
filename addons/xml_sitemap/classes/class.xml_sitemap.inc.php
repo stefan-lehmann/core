@@ -212,7 +212,7 @@ class cjoXMLSitemap {
         
         $file = basename(cjo_server('REQUEST_URI','string'));
         if ($file == 'sitemap.xml') {
-            if ($CJO['ADDON']['status'][xml_sitemap] == 1) {
+            if ($CJO['ADDON']['status']['xml_sitemap'] == 1) {
                 $sitemap->send();
             } else {
                 header("HTTP/1.0 404 Not Found");
