@@ -32,7 +32,7 @@ $CJO['ADDON']['perm'][$mypage] 		    = 'xml_sitemap[]'; // permission
 $CJO['ADDON']['author'][$mypage] 	    = 'Stefan Lehmann';
 $CJO['ADDON']['version'][$mypage] 	    = '1';
 $CJO['ADDON']['compat'][$mypage] 	    = '2.7.2';
-$CJO['ADDON']['support'][$mypage] 	    = 'http://contejo.com/addons/'.$mypage;
+$CJO['ADDON']['menu'][$mypage]          = false;
 
 require_once $CJO['ADDON_PATH'].'/'.$mypage.'/classes/class.xml_sitemap.inc.php';
 
