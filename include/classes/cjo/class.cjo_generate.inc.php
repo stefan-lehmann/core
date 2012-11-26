@@ -212,6 +212,7 @@ class cjoGenerate {
         $temp = $CJO['CONTEJO'];
         $article_id = $article->getValue("id");
         $clang = $article->getValue("clang");
+        $template_id = (int) $template_id;
 
         $file = $CJO['FOLDER_GENERATED_ARTICLES']."/".$article_id.".".$clang.".".$template_id.".content";
 
