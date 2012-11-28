@@ -70,13 +70,27 @@ class cjoXMLSitemap {
                 $this->_entries[] = array('loc'         => $article->getUrl(),
                                           'priority'    => $this->getPriority($article, $level),
                                           'changefreq'  => $this->getChangefreq($article),
-                                          'lastmod'     => $article->getUpdateDate('%Y-%m-%d'));
+                                          'lastmod'     => $article->getUpdateDate('%Y-%m-%d'),
+                                          'alternate'   => $this->getAlternate($article));
                                           
                 if ($article->isStartPage() && $level < $this->_config['max_level']) {
                     $this->getEntries($article->getId(), ($level+1));
                 }                      
             }
         }
+    }
+
+    private function getAlternate($article) {
+        global $CJO;        
+        $alternate = array();
+        if (count($CJO['CLANG']) == 1) return $alternate;
+        foreach ($CJO['CLANG'] as $clang_id=>$name) {
+            if ($article->getCLang() == $clang_id) continue;
+            $sibling = OOArticle::getArticleById($article->getId(), $clang_id);
+            if (!OOArticle::isValid($sibling) || !$this->isSitemapArticle($sibling)) continue;
+            $alternate[] = array('hreflang' => strtolower(substr($name,0,2)), 'href'=> $sibling->getUrl());
+        }
+        return $alternate;
     }
     
     private function getPriority($article, $level) {
@@ -102,7 +116,7 @@ class cjoXMLSitemap {
     private function isSitemapArticle(&$article) {
         
         if ($article->getRedirect()) {
-            $article = OOArticle::getArticleById($article->getRedirect());
+            $article = OOArticle::getArticleById($article->getRedirect(), $article->getCLang());
             
             if (OOArticle::isValid($article) || !OOArticle::isOnline($article)) {
                 return false;
@@ -119,7 +133,7 @@ class cjoXMLSitemap {
     }
 
     private function generateValidationContent($articles) {
-        foreach(array_slice($articles, 0, 8) as $article) {
+        foreach(array_slice($articles, 0, 4) as $article) {
             $this->_content .= @file_get_contents($article->getUrl());
         }
     }
@@ -152,7 +166,8 @@ class cjoXMLSitemap {
     private function buildHeader() {
         $header  = '<'.'?'.'xml version="1.0" encoding="UTF-8"?'.'>'."\n";
         $header .= "\t".'<urlset ';
-        $header .= 'xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'."\n";
+        $header .= 'xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"'."\n";
+        $header .= 'xmlns:xhtml="http://www.w3.org/1999/xhtml">'."\n";
         return $header;
     }
 
@@ -169,13 +184,14 @@ class cjoXMLSitemap {
 
     private function buildEntry($entry) {
 
-        if (strpos($this->_content, $entry['loc']) === false) return '';
+       // if (strpos($this->_content, $entry['loc']) === false) return '';
 
-        return sprintf("<url>\n%s%s%s%s</url>\n",
+        return sprintf("<url>\n%s%s%s%s%s</url>\n",
                 $this->buildLine('loc', $entry['loc']),
                 $this->buildLine('priority', $entry['priority']),
                 $this->buildLine('changefreq', $entry['changefreq']),
-                $this->buildLine('lastmod', $entry['lastmod']));
+                $this->buildLine('lastmod', $entry['lastmod']),
+                $this->buildAlternateLines($entry['alternate']));
     }
 
     private function buildLine($tagname, $content) {
@@ -184,6 +200,23 @@ class cjoXMLSitemap {
         }
         return sprintf("\t<%s>%s</%s>\n",
                        $tagname, $content, $tagname);
+    }
+    
+    private function buildAlternateLines($alternates) {
+        
+        $output = '';
+        if (empty($alternates)) return $output;
+        
+        foreach($alternates as $alternate) {
+            $output .= sprintf("\t".'<xhtml:link'."\n".
+                               "\t\t".'rel="alternate"'."\n".
+                               "\t\t".'hreflang="%s"'."\n".
+                               "\t\t".'href="%s"'."\n".
+                               "\t\t".'/>'."\n", 
+                               $alternate['hreflang'],
+                               $alternate['href']);
+        }
+        return $output;
     }
 
     private function isUtf8($str) {
