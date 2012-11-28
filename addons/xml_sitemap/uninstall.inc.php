@@ -23,20 +23,5 @@
  * @filesource
  */
 
-$mypage = "xml_sitemap"; // only for this file
 
-$CJO['ADDON']['addon_id'][$mypage]      = '34';
-$CJO['ADDON']['page'][$mypage] 		    = $mypage; // pagename/foldername
-$CJO['ADDON']['name'][$mypage] 		    = 'XML-Sitemap';  // name
-$CJO['ADDON']['perm'][$mypage] 		    = 'xml_sitemap[]'; // permission
-$CJO['ADDON']['author'][$mypage] 	    = 'Stefan Lehmann';
-$CJO['ADDON']['version'][$mypage] 	    = '1';
-$CJO['ADDON']['compat'][$mypage] 	    = '2.7.2';
-$CJO['ADDON']['menu'][$mypage]          = false;
-
-
-if ($CJO['ADDON']['status'][$mypage] != 1) return;
-
-require_once $CJO['ADDON_PATH'].'/'.$mypage.'/classes/class.xml_sitemap.inc.php';
-
-cjoXMLSitemap::isRequested();
+$CJO['ADDON']['install']['xml_sitemap'] = 0;
