@@ -59,6 +59,8 @@ class cjoCommunityImportExport {
                 move_uploaded_file($_FILES['userfile']['tmp_name'], $settings['import_file']);
                 @chmod($settings['import_file'], $CJO['FILEPERM']);
             }
+
+            if ($settings['ignore_updates']) self::createUserTempTable();
         }
         elseif(cjo_session($settings['mode'],'bool')) {
            $settings = cjo_session($settings['mode'],'array',$settings);
@@ -70,6 +72,8 @@ class cjoCommunityImportExport {
            self::resetSession($settings['mode']);
            return false; 
         }
+        
+        $table = !$settings['ignore_updates'] ? TBL_COMMUNITY_USER : TBL_COMMUNITY_USER.'_temp';
 
         $data = file_get_contents($settings['import_file']);
         
@@ -128,9 +132,14 @@ class cjoCommunityImportExport {
             }
              
             $sql->flush();
-            $qry = "SELECT id FROM ".TBL_COMMUNITY_USER." WHERE email LIKE '".$curr['email']."' LIMIT 1";
+
+            $qry = "SELECT id FROM ".$table." WHERE email = '".$curr['email']."' LIMIT 1";
             $sql->setQuery($qry);
 
+            if ($settings['ignore_updates']) {
+                self::removeUserFromTempTable($curr['email']);
+            }    
+            
             if ($sql->getRows() > 0) {
                 
                 $curr['id'] =  $sql->getValue('id');
@@ -247,6 +256,23 @@ class cjoCommunityImportExport {
     	} 
     	
         return true;	
+    }
+
+    private static function createUserTempTable() {
+        $sql = new cjoSql();
+        $sql->setDirectQuery("DROP TABLE IF EXISTS ".TBL_COMMUNITY_USER."_temp");
+        $sql->setDirectQuery("CREATE TABLE ".TBL_COMMUNITY_USER."_temp (`id` int( 11 ), `email` varchar( 100 ) ) ENGINE = MYISAM DEFAULT CHARSET = utf8 COLLATE = utf8_unicode_ci");
+        $sql->setDirectQuery("INSERT IGNORE INTO ".TBL_COMMUNITY_USER."_temp SELECT `id`, `email` FROM ".TBL_COMMUNITY_USER." ORDER BY email");
+    }
+    
+    private static function dropUserTempTable() {
+        $sql = new cjoSql();
+        $sql->setDirectQuery("DROP TABLE IF EXISTS ".TBL_COMMUNITY_USER."_temp");
+    }  
+    
+    private static function removeUserFromTempTable($id) {
+        $sql = new cjoSql();
+        $sql->setQuery("DELETE FROM ".TBL_COMMUNITY_USER."_temp WHERE email='".$id."'");
     }
 
     public static function export($separator = ";", $limit=1000) {
