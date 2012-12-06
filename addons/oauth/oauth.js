@@ -45,6 +45,8 @@ else {
 	alert('ERROR: cjoOAuth requires jQuery!');
 }
 
-function cjo_oauth_onfinished() {
-	console.log($.cookies.get('cjo_oauth'));
+if (typeof cjo_oauth_onfinished == 'undefined') {
+	var cjo_oauth_onfinished = function () {
+		console.log($.cookies.get('cjo_oauth'));
+	};
 }
