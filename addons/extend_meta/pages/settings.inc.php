@@ -39,20 +39,25 @@ $dataset = $_POST ? $_POST : $CJO['ADDON']['settings'][$mypage]['FIELDS'];
         if (empty($dataset['name'][$i]) && $i<$length) continue;
         
         if ($i<$length) {
-            $fields['headline_'.$i] = new readOnlyField('headline_'.$i, '', array('class' => 'formheadline'));
-            $fields['headline_'.$i]->setValue($I18N_30->msg('label_form_headline', $i+1));
+            $fields['headline_'.$i] = new readOnlyField('headline_'.$i, '', array('class' => 'formheadline slide'));
+            $fields['headline_'.$i]->setValue($I18N_30->msg('label_form_headline', strtoupper($dataset['label'][$i])));
         }
         else {
             $fields['headline_'.$i] = new readOnlyField('headline_'.$i, '', array('class' => 'formheadline slide'));
             $fields['headline_'.$i]->setValue($I18N_30->msg('label_form_headline_new'));
         }
+       
+        
         $fields['label_'.$i] = new textField('label['.$ii.']', $I18N_30->msg('label_label'));
-        if ($i<$length)
-        $fields['label_'.$i]->addValidator('notEmpty', $I18N_30->msg('err_empty_label'), false);
-        if (isset($dataset['label'][$i]))
-        $fields['label_'.$i]->setValue($dataset['label'][$i]);        
+        if ($i<$length) {
+            $fields['label_'.$i]->addValidator('notEmpty', $I18N_30->msg('err_empty_label'), false);
+        }
+        if (isset($dataset['label'][$i])) {
+            $fields['label_'.$i]->setValue($dataset['label'][$i]);        
+        }
         
         $fields['name_'.$i] = new textField('name['.$ii.']', $I18N_30->msg('label_name'));
+        
         if ($i<$length) {
             $fields['name_'.$i]->addAttribute('readonly', 'readonly');
             $fields['name_'.$i]->addValidator('notEmpty', $I18N_30->msg('err_empty_name'), false);
@@ -60,30 +65,46 @@ $dataset = $_POST ? $_POST : $CJO['ADDON']['settings'][$mypage]['FIELDS'];
         else {
             $fields['name_'.$i]->addValidator('isNot', $I18N_30->msg('err_name_not_unique'), $CJO['ADDON']['settings'][$mypage]['FIELDS']['name']);
         } 
-        if (isset($dataset['name'][$i]))
-        $fields['name_'.$i]->setValue($dataset['name'][$i]);
+
+        if (isset($dataset['name'][$i])) {
+            $fields['name_'.$i]->setValue($dataset['name'][$i]);
+        }
+
+        $fields['prio_'.$i] = new textField('prio['.$i.']', $I18N_30->msg('label_prior'), array('style' => 'margin-bottom:-3px'));
+        $fields['prio_'.$i]->addAttribute('style', 'width: 16px; text-align: center;');
+        $fields['prio_'.$i]->addAttribute('maxlength', '2');
+        $fields['prio_'.$i]->setValue($i+1);  
+        $fields['prio_'.$i]->activateSave(false);         
+        $fields['prio_'.$i]->setHelp($I18N_30->msg("note_prio"));     
         
         $fields['field_'.$i] = new selectField('field['.$ii.']', $I18N_30->msg('label_field'), array('size'=>1));
-        if (isset($dataset['field'][$i]))
-        $fields['field_'.$i]->setValue($dataset['field'][$i]);
         $fields['field_'.$i]->setHelp($I18N_30->msg("note_field"));
-        if ($i<$length)
-        $fields['field_'.$i]->addValidator('notEmpty', $I18N_30->msg('err_empty_field'), false);
+        if (isset($dataset['field'][$i])) {
+            $fields['field_'.$i]->setValue($dataset['field'][$i]);
+        }
+        if ($i<$length) {
+            $fields['field_'.$i]->addValidator('notEmpty', $I18N_30->msg('err_empty_field'), false);
+        }
         $fields['field_'.$i]->addOption('', ''); 
         foreach($CJO['ADDON']['settings'][$mypage]['FIELDTYPES'] as $type) {
             $fields['field_'.$i]->addOption($type, $type); 
         }  
+
+        $fields['options_'.$i] = new textAreaField('options['.$i.']', $I18N_30->msg('label_options'));
+        $fields['options_'.$i]->setHelp($I18N_30->msg("note_options"));     
+        $fields['options_'.$i]->setValue(str_replace('|||', "\r\n", $dataset['options'][$i]));   
        
         $fields['empty_hidden_'.$i] = new hiddenField('empty['.$ii.']'); 
-        $fields['empty_hidden_'.$i]->setValue(0);      
+        $fields['empty_hidden_'.$i]->setValue('0');      
        
         $fields['empty_'.$i] = new checkboxField('empty['.$ii.']', '&nbsp;');
         $fields['empty_'.$i]->addBox($I18N_30->msg('label_field_must_not_be_empty'), '1');  
         
         $fields['validator_'.$i] = new selectField('validator['.$ii.']', $I18N_30->msg('label_validator'), array('size'=>1));
-        if (isset($dataset['validator'][$i]))
-        $fields['validator_'.$i]->setValue($dataset['validator'][$i]);
         $fields['validator_'.$i]->setHelp($I18N_30->msg("note_validator"));
+        if (isset($dataset['validator'][$i])) {
+            $fields['validator_'.$i]->setValue($dataset['validator'][$i]);
+        }
         $fields['validator_'.$i]->addOption('', '');   
         foreach($CJO['ADDON']['settings'][$mypage]['VALIDATORTYPES'] as $type) {
             $fields['validator_'.$i]->addOption($type, $type); 
@@ -95,13 +116,15 @@ $dataset = $_POST ? $_POST : $CJO['ADDON']['settings'][$mypage]['FIELDS'];
         $fields['compare_value_'.$i]->setValue($dataset['compare_value'][$i]);
         
         $fields['message_'.$i] = new textAreaField('message['.$ii.']', $I18N_30->msg('label_message'), array('rows'=>1));
-        if (isset($dataset['message'][$i]))
-        $fields['message_'.$i]->setValue($dataset['message'][$i]);
+        if (isset($dataset['message'][$i])) {
+            $fields['message_'.$i]->setValue($dataset['message'][$i]);
+        }
         
         $fields['helptext_'.$i] = new textAreaField('helptext['.$ii.']', $I18N_30->msg('label_helptext'), array('rows'=>1));
-        if (isset($dataset['message'][$i]))
-        $fields['helptext_'.$i]->setValue($dataset['helptext'][$i]);
-        
+        if (isset($dataset['message'][$i])) {
+            $fields['helptext_'.$i]->setValue($dataset['helptext'][$i]);
+        }
+
         if ($i<$length) {
             $fields['remove_'.$i] = new checkboxField('remove['.$ii.']', '&nbsp;');
             $fields['remove_'.$i]->addBox('<strong style="color:red">'.$I18N_30->msg('label_remove_field').'</strong>', '1');
@@ -111,7 +134,7 @@ $dataset = $_POST ? $_POST : $CJO['ADDON']['settings'][$mypage]['FIELDS'];
 
     
 
-$section = new cjoFormSection($dataset, $I18N->msg('title_edit_settings'));
+$section = new cjoFormSection($dataset, $I18N_30->msg('title_edit_settings'));
 
 $section->addFields($fields);
 $form->addSection($section);
@@ -120,7 +143,6 @@ $form->addSection($section);
 if ($form->validate()) {
     
     $key = $length;
-
 
     if (!empty($_POST['name'][$key])) {
         if (empty($_POST['label'][$key])) {
@@ -168,26 +190,38 @@ if ($form->validate()) {
                 unset($_POST['validator'][$key]);
                 unset($_POST['compare_value'][$key]); 
                 unset($_POST['message'][$key]);      
-                unset($_POST['helptext'][$key]);     
+                unset($_POST['helptext'][$key]);      
+                unset($_POST['prio'][$key]);    
             }
         }
         $data = array('label'         => array_values($_POST['label']),
                       'name'          => array_values($_POST['name']), 
-                      'field'         => array_values($_POST['field']), 
+                      'field'         => array_values($_POST['field']),  
+                      'options'       => array_values($_POST['options']),  
                       'empty'         => array_values($_POST['empty']), 
                       'validator'     => array_values($_POST['validator']),
                       'compare_value' => array_values($_POST['compare_value']), 
                       'message'       => array_values($_POST['message']),
                       'helptext'      => array_values($_POST['helptext']));
-                      
+     
+        $prio = cjo_post('prio', 'array', array());    
+        asort($prio);            
+        $new_data = array();
+        
         foreach($data as $field=>$values) {
-          foreach($values as $key=>$value) {
-            $data[$field][$key] = htmlspecialchars($data[$field][$key]);
+          if (!isset($new_data[$field])) $new_data[$field] = array();
+          foreach($prio as $key=>$value) {
+            if (empty($data['name'][$key])) continue;
+              
+            if ($data['field'][$key] != 'selectField') $data['options'][$key] = ''; else {
+                $data['options'][$key] = str_replace(array("\r\n","\r","\n"), '|||', $data['options'][$key]);
+            }
+            $new_data[$field][] = htmlspecialchars($data[$field][$key]);
           }
         }
-        
+
         $content  = '// --- DYN'."\r\n";
-        $content .= '$CJO[\'ADDON\'][\'settings\'][$mypage][\'FIELDS\'] = "'.addslashes(json_encode($data)).'";'."\r\n";
+        $content .= '$CJO[\'ADDON\'][\'settings\'][$mypage][\'FIELDS\'] = "'.addslashes(json_encode($new_data, JSON_UNESCAPED_UNICODE)).'";'."\r\n";
         $content .= '// --- /DYN'."\r\n";
 
     	if (cjoGenerate::replaceFileContents($CJO['ADDON']['settings'][$mypage]['SETTINGS'], $content)) {
@@ -197,3 +231,34 @@ if ($form->validate()) {
     }
 }
 $form->show(true);
+
+?>
+<script type="text/javascript">
+/* <![CDATA[ */
+
+    $(function() {
+        
+        $('select[name^="field"]').each(function(){
+            toggleOptions($(this));
+        });
+        
+        $('select[name^="field"]').change(function(){
+            toggleOptions($(this));
+        });
+    });
+    
+    function toggleOptions(obj){
+        var selected = obj.find(':selected');
+        var parent = obj.parent().parent();
+        
+        if (selected.val() == 'selectField') {
+            parent.next().addClass('hr');
+            parent.next().next().find('.field').show(); 
+            
+        } else {
+            parent.next().removeClass('hr');
+            parent.next().next().find('.field').hide(); 
+        }
+    }
+/* ]]> */
+</script>
