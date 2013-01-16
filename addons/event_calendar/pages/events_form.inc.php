@@ -140,7 +140,7 @@ for($i=1;$i<=10;$i++) {
     $attribute_typ    = $CJO['ADDON']['settings'][$mypage]['attribute_typ'.$i];
     $attribute_title  = $CJO['ADDON']['settings'][$mypage]['attribute_title'.$i];
     $attribute_values = preg_replace('/\r\n|\r/', "\n", $CJO['ADDON']['settings'][$mypage]['attribute_values'.$i]);
-    $attribute_values = cjo_to_array($attribute_values, "\n");
+    $attribute_values = cjoAssistance::toArray($attribute_values, "\n");
 
     if (!empty($attribute_typ)) $attributes_enabled = true;
 
