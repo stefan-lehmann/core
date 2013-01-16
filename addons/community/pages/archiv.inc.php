@@ -104,10 +104,8 @@ if ($CJO['USER']->isAdmin()){
 
 $list->addColumns($cols);
 
-    if ($list->numRows() != 0) {
-
-
-
+    if ($list->hasRows()) {
+        
     	$buttons = new popupButtonField('', '', '', '');
     	$buttons->addButton( $I18N_10->msg('label_delete_archiv_db'), false, 'img/silk_icons/bin.png', 'name="dbdelete" value="1" class="cjo_confirm red" style="margin-top:-28px"');
 

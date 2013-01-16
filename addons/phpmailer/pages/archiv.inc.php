@@ -120,7 +120,7 @@ else {
 
     $list->addColumns($cols);
 
-    if ($list->numRows() != 0) {
+    if ($list->hasRows()) {
 
     	$buttons = new popupButtonField('', '', '', '');
     	$buttons->addButton( $I18N_20->msg('label_delete_archiv_db'), false, 'img/silk_icons/bin.png', 'name="dbdelete" value="1" class="cjo_confirm" style="padding:2px;"');

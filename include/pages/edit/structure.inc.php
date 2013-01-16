@@ -192,7 +192,7 @@ if (!isset($cjo_data) || !$cjo_data['startpage']) $list->setVar(LIST_VAR_NO_DATA
 
 $list->addColumns($cols);
 
-if ($list->numRows() != 0) {
+if ($list->hasRows()) {
 
 	$CJO['SEL_ARTICLE']->setName("target_location");
 	$CJO['SEL_ARTICLE']->setStyle("width:250px;clear:none;");

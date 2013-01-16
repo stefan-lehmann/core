@@ -63,7 +63,7 @@ class cjoMultidomain {
 
         for ($i=0; $i<$sql->getRows(); $i++) {
 
-            $test_domain = preg_match('/\b'.$sql->getValue('domain').'\b/',
+            $test_domain = preg_match('/^\b'.$sql->getValue('domain').'\b/',
                                       $_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'],
                                       $matches);
 

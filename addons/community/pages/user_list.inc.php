@@ -30,6 +30,7 @@ $add_qry = (empty($group_id))
 		  : "ug.group_id = '".$group_id."'";
 
 $qry = "SELECT 
+            ug.user_id,
 			us.username,
 			us.gender,
 			us.firstname,
@@ -38,24 +39,25 @@ $qry = "SELECT
 			us.lasttrydate,
 			us.newsletter,	
 			us.status,		
-			us.id AS user_id,
 			us.id AS checkbox,
 			IF(us.password<>'',1,0) AS login
 		FROM
-			".TBL_COMMUNITY_USER." us
+            ".TBL_COMMUNITY_UG." ug
 		LEFT JOIN
-			".TBL_COMMUNITY_UG." ug
+            ".TBL_COMMUNITY_USER." us
 		ON
-			ug.user_id=us.id
+			ug.user_id=us.id AND
+            ".$add_qry." AND
+            us.clang = '".$clang."'
 		WHERE
 			".$add_qry." AND
 			us.clang = '".$clang."'";
 
-$list = new cjolist($qry, 'username', 'ASC', 'name', 50);
+$list = new cjoList($qry, 'ug.user_id', 'ASC', 'name', 50);
 $list->addGlobalParams(array ('group_id' => $group_id));
 $list->setName('USER_LIST');
 $list->setAttributes('id="user_list"');
-//$list->debug = true;
+$list->debug = false;
 
 $add_button = cjoAssistance::createBELink(
 						    '<img src="img/silk_icons/add.png" alt="'.$I18N->msg("button_add").'" />',
@@ -144,7 +146,7 @@ $cols['delete']->setBodyAttributes('class="cjo_delete"');
 
 $list->addColumns($cols);
 
-if ($list->numRows() != 0) {
+if ($list->hasRows()) {
 
 	$sel_group = cjoCommunityGroups::getSelectGroups($group_id);
 	$sel_group->setName("new_group_id");
