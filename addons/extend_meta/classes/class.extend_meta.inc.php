@@ -69,11 +69,21 @@ class cjoExtendMeta {
                 else {
                     $params['fields'][$name] =  new $fields['field'][$key]($name, $fields['label'][$key]);
                 }
+
+                if ($fields['field'][$key] == 'selectField') {
+                    $params['fields'][$name]->setMultiple(false); 
+                    $params['fields'][$name]->addAttribute('size', '1'); 
+                    $params['fields'][$name]->addOption('', '');  
+                    
+                    foreach(cjoAssistance::toArray($fields['options'][$key], '|||') as $value) {
+                        $params['fields'][$name]->addOption($value, $value);  
+                    }
+                }
                 
                 $params['fields'][$name]->ActivateSave(false) ;
                 
                 if (!empty($fields['empty'][$key])) {            
-                    $params['fields'][$name]->addValidator('notEmpty', $fields['message'][$key], true);
+                    $params['fields'][$name]->addValidator('notEmptyOrNull', $fields['message'][$key]);
                 }
                 
                 if (!empty($fields['validator'][$key])) {

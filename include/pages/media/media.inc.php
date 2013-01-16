@@ -105,7 +105,7 @@ if ($media_perm['w']) {
     $cols['delete']->setBodyAttributes('width="60"');
     $cols['delete']->setBodyAttributes('class="cjo_delete"');
 
-    if ($list->numRows() != 0) {
+    if ($list->hasRows()) {
 
     	$CJO['SEL_MEDIA']->setName("target_location");
     	$CJO['SEL_MEDIA']->setStyle("width:250px;clear:none;");

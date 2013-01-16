@@ -186,13 +186,13 @@ if ($function == 'add' || $function == 'edit') {
                 '            </tr>'."\r\n";
 
     if ($media_category) {
-        if ($list->numRows() != 0 ) $list->setVar(LIST_VAR_BEFORE_DATA, $up_link);
+        if ($list->hasRows()) $list->setVar(LIST_VAR_BEFORE_DATA, $up_link);
         else $list->setVar(LIST_VAR_NO_DATA, $up_link);
     }
 
     $list->addColumns($cols);
     
-    if ($list->numRows() != 0) {
+    if ($list->hasRows()) {
 
     	$CJO['SEL_MEDIA']->setName("target_location");
     	$CJO['SEL_MEDIA']->setStyle("width:250px;clear:none;");

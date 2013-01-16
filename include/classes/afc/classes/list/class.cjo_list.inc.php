@@ -219,7 +219,6 @@ class cjoList {
      * @access private
      */
     public $sql;
-
     /**
      * Query Builder (OOSQL)
      * @var object
@@ -239,7 +238,14 @@ class cjoList {
      * @access private
      */
     public $rows;
-
+    
+    /**
+     * hat das Dataset wenigstens einen Datensatz
+     * @var bool
+     * @access private
+     */
+    public $has_rows;
+    
     /**
      * Anzahl Datensätze im Dataset
      * @var integer
@@ -309,6 +315,7 @@ class cjoList {
         $this->sql = new cjoSql();
         $this->listsql = new OOSql($qry);
         $this->qry = $qry;
+        $this->has_rows = null;
         $this->rows = '';
         $this->num_rows = '';
         $this->curr_rows = '';
@@ -583,21 +590,7 @@ class cjoList {
         global $CJO;
 
         if (empty ($this->steps)) {
-
-            /*
-             $this->steps['prev'];
-             $this->steps['curr'];
-             $this->steps['next'];
-             */
-
-            /*
-             // SQL_CALC_FOUND_ROWS & FOUND_ROWS() ist ab MySQL 4.0 möglich
-             if (substr($CJO['MYSQL_VERSION'], 0, 1) == '4')
-             {
-             $qry = preg_replace('/SELECT/i', 'SELECT SQL_CALC_FOUND_ROWS', $qry);
-             }
-             */
-
+             
             // Calc next
             $curr = cjo_request('next','string','');
             $found = $this->numRows();
@@ -607,16 +600,11 @@ class cjoList {
                 $curr = 0;
             }
             elseif ($curr == 'last') {
-                // SQL_CACHE ist ab MySQL 4.0 möglich
-                if (substr($CJO['MYSQL_VERSION'], 0, 1) == '4') {
-                    $count_qry = preg_replace('/SELECT/i', 'SELECT SQL_CACHE', $this->qry);
-                } else {
-                    $count_qry = $this->qry;
-                }
-
-                $this->sql->setQuery($count_qry);
                 
-                $rows = $this->sql->getRows();
+                $count_qry = preg_replace('/SELECT.*FROM/imU', 'SELECT COUNT(*) as num FROM', $this->qry);
+                $this->sql->setQuery($count_qry);
+                $rows = $this->sql->getValue('num');
+                
                 if ($rows - $stepping < 0) {
                     $curr = 0;
                 } else {
@@ -625,8 +613,6 @@ class cjoList {
             } else {
                 $curr = (int) $curr;
             }
-
-            $stepping = $stepping;
 
             $this->steps = array ();
             $prev = $curr - $stepping >= 0 ? $curr - $stepping : 0;
@@ -675,6 +661,7 @@ class cjoList {
     public function getRows() {
             
         if (empty($this->rows)) {
+            //$this->sql->setQuery($this->qry);
             $this->rows = $this->sql->getArray($this->qry);
         }
         return $this->rows;
@@ -688,25 +675,32 @@ class cjoList {
      * @access protected
      */
     public function numRows() {
-
         if ($this->num_rows == '') {
-            $this->num_rows = count($this->getRows());
-            /*
-             // SQL_CALC_FOUND_ROWS & FOUND_ROWS() ist ab MySQL 4.0 möglich
-             if (substr($CJO['MYSQL_VERSION'], 0, 1) == '4')
-             {
-             $this->sql->setQuery('SELECT FOUND_ROWS() AS FOUND');
-             $res = $this->sql->getArray();
-             $this->num_rows = $res[0]['FOUND'];
-             }
-             else
-             {
-             $this->sql->setQuery($this->qry);
-             $this->num_rows = $this->getRows();
-             }
-             */
+            $listsql = $this->listsql;
+            $toolbars = $this->getToolbars();
+            
+            if (isset($toolbars['searchBar'])) {
+                $toolbars['searchBar']->prepareQuery($listsql);
+            }
+            $this->sql->setQuery($listsql->getQry());
+            $this->num_rows = $this->sql->getRows();
         }
         return $this->num_rows;
+    }
+    
+    public function hasRows() {
+        
+        if ($this->has_rows == null) {
+            $listsql = $this->listsql;
+            $toolbars = $this->getToolbars();
+            
+            if (isset($toolbars['searchBar'])) {
+                $toolbars['searchBar']->prepareQuery($listsql);
+            }
+            $this->sql->setQuery($listsql->getQry().' LIMIT 1');
+            $this->has_rows = $this->sql->getRows() != 0;
+        }
+        return $this->has_rows;
     }
 
     /**
@@ -726,11 +720,9 @@ class cjoList {
             foreach($toolbars as $key=>$toolbar) {
                 $toolbars[$key]->prepareQuery($listsql);
             }
-              
             $this->_generateToolbars($toolbars);
             $this->prepareQuery($listsql);
-            $this->sql->setQuery($listsql->getQry());
-            $this->curr_rows = $this->sql->getArray();
+            $this->curr_rows = $this->sql->getArray($listsql->getQry());
 
             if ($this->curr_rows == '' && !empty($listsql->where)) {
                 $this->search_result = false;
@@ -900,10 +892,6 @@ class cjoList {
         }
         // ------------ Tabellenkopf
 
-        if ($this->numCurrentRows() == 0){
-
-        }
-
         $s .= '        <table cellspacing="0" cellpadding="0" border="0" '.$this->getAttributes().'>'."\r\n";
         $s .= $this->_getColGroup();
 
@@ -1002,17 +990,15 @@ class cjoList {
 
                 $rowAttributes = '';
                 if ($extension_is_registered) {
-                    $rowAttributes = cjoExtension::registerExtensionPoint($extension_point,
-                    array('row' => $row,
-                                                                          		'line_number' => $t));
+                    $rowAttributes = cjoExtension::registerExtensionPoint($extension_point, array('row' => $row,'line_number' => $t));
                 }
 
 
                 if ($row[$id_key] != false) {
 
                     if ((isset ($_GET['id']) && $row[$id_key] == $_GET['id']) ||
-                    (isset ($_GET['oid']) && $row[$id_key] == $_GET['oid']) ||
-                    (isset ($_GET[$id_key]) && $row[$id_key] == $_GET[$id_key])) {
+                        (isset ($_GET['oid']) && $row[$id_key] == $_GET['oid']) ||
+                        (isset ($_GET[$id_key]) && $row[$id_key] == $_GET[$id_key])) {
 
                         if (strpos($rowAttributes, 'class') === false) {
                             $rowAttributes .= ' class="current"';

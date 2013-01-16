@@ -764,8 +764,8 @@ class cjoGenerate {
             return false;
         }
     	
-	    $article = OOArticle::getArticleById($id);
-    	$target = OOArticle::getArticleById($target_id);
+	    $article = OOArticle::getArticleById($id, $clang);
+    	$target = OOArticle::getArticleById($target_id, $target_clang);
     	$limit_ctype = isset($CJO['CTYPE'][$ctype]) ? true : false;
 
     	if (!OOArticle::isValid($article) ||
