@@ -182,7 +182,6 @@ cjoProcess::getCurrentClangId();
 if (!empty($CJO['FILE_CONFIG_ADDONS'])) {
     include_once $CJO['FILE_CONFIG_ADDONS'];
 }   
-
 cjoProcess::start();
 
 require_once $CJO['INCLUDE_PATH']."/authentication.inc.php";

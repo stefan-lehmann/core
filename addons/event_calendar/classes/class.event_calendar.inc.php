@@ -25,7 +25,7 @@
 
 class cjoEventCalendar {
 
-    private static $mypage = 'event_calendar';
+    protected static $mypage = 'event_calendar';
     
     public static function generateEventList($tmplfile='') {
     
@@ -38,43 +38,14 @@ class cjoEventCalendar {
         }
     
         $enabled_fields = $CJO['ADDON']['settings'][self::$mypage]['enabled_fields'];
+        $filter_data    = static::readFilterData();  
+
+        list($qry_where, $qry_order) = static::prepareSqlParams($filter_data);
     
-        $filter_data = self::readFilterData();  
-          
-        $qry = array();
-    
-        $qry['WHERE'][] = "status = '1'";
-        $qry['WHERE'][] = "clang = '".$CJO['CUR_CLANG']."'";
-    
-        if (cjoAssistance::inMultival('online_from_to', $enabled_fields)) {
-        	$qry['WHERE'][] = "online_from < '".time()."' AND online_to > '".time()."'";
-        }
-        else {
-            $qry['WHERE'][] = "(start_date >= '".($filter_data['datefrom']-86400)."' OR ".
-                          	  "(end_date  >= '".$filter_data['datefrom']."'))";
-            if ($filter_data['dateto']) {
-                $qry['WHERE'][] = "start_date <= '".$filter_data['dateto']."'";
-            }
-        }
-    
-        $columns = cjoSql::getFieldnames(TBL_16_EVENTS);
-    
-        foreach (cjoAssistance::toArray($filter_data['select']) as $key=>$val) {
-            if ($key == "" || $val == "" || !in_array($key, $columns)) continue;
-        	$qry['WHERE'][] = $key." LIKE '%".$val."%'";
-        }
-    
-        $qry['ORDER'] = " ORDER BY ".$filter_data['order_by']." ".$filter_data['order_dir'];
-    
-        $sql->flush();
-        $qry = "SELECT * FROM
-                    ".TBL_16_EVENTS."
-                WHERE
-                	".implode(" AND \r\n", $qry['WHERE'])."
-                    ".$qry['ORDER'];
-    
+        $sql = new cjoSql();
+        $qry = "SELECT * FROM ".TBL_16_EVENTS." WHERE ".$qry_where." ".$qry_order;
         $results = $sql->getArray($qry);
-    
+
         // URSPRÜNGLICHE LÄNGE DES RESULTS-ARRAY
         $results_lenght = count($results);
     
@@ -187,7 +158,7 @@ class cjoEventCalendar {
         }
     
         $html_tpl->fillTemplate('TEMPLATE', array(
-                                'FILTER'				=> cjoEventCalendar::generateEventFilter($filter_data),
+                                'FILTER'				=> static::generateEventFilter($filter_data),
                                 'NO_DATA'				=> $no_data_text,
                                 'PAGINATION' 			=> $pagination
                                 ));
@@ -288,10 +259,10 @@ class cjoEventCalendar {
     
     }    
    
-    private static function readFilterData() {
+    protected static function readFilterData() {
     
         global $CJO;    
-        
+
         if (cjo_post(self::$mypage, 'bool')) {
             //Session schreiben    
             $filter_data = cjo_post(self::$mypage, 'array', array());
@@ -337,12 +308,14 @@ class cjoEventCalendar {
         $filter_data = self::mergeFilterData($filter_data);
     
         cjo_set_session(self::$mypage, $filter_data);
+        
+        $filter_data['status'] = 1;
     
         return $filter_data;
     }    
     
     
-    private static function mergeFilterData($filter_data) {
+    protected static function mergeFilterData($filter_data) {
     
         global $CJO;
     
@@ -372,13 +345,46 @@ class cjoEventCalendar {
     }
     
     
-    private static function readCookie($cookie) {
+    protected static function readCookie($cookie) {
          $array = get_magic_quotes_gpc() ? unserialize(stripslashes($_COOKIE[$cookie])) : unserialize($_COOKIE[$cookie]);
          return cjoAssistance::cleanInput($array);
     }
     
-    private static function writeCookie($cookie, $array, $duration = 86400) {
+    protected static function writeCookie($cookie, $array, $duration = 86400) {
          setcookie($cookie, serialize($array), time()+$duration);
+    }
+    
+    protected static function prepareSqlParams($filter_data) {
+        
+        global $CJO;
+        
+        $enabled_fields = $CJO['ADDON']['settings'][self::$mypage]['enabled_fields'];
+        $output = array('WHERE' => array(), 'ORDER' => '');
+    
+        $output['WHERE'][] = "status = '".$filter_data['status']."'";
+        $output['WHERE'][] = "clang = '".$CJO['CUR_CLANG']."'";
+    
+        if (cjoAssistance::inMultival('online_from_to', $enabled_fields)) {
+            $output['WHERE'][] = "online_from < '".time()."' AND online_to > '".time()."'";
+        }
+        else {
+            $output['WHERE'][] = "(start_date >= '".($filter_data['datefrom']-86400)."' OR ".
+                              "(end_date  >= '".$filter_data['datefrom']."'))";
+            if ($filter_data['dateto']) {
+                $output['WHERE'][] = "start_date <= '".$filter_data['dateto']."'";
+            }
+        }
+    
+        $columns = cjoSql::getFieldnames(TBL_16_EVENTS);
+    
+        foreach (cjoAssistance::toArray($filter_data['select']) as $key=>$val) {
+            if ($key == "" || $val == "" || !in_array($key, $columns)) continue;
+            $output['WHERE'][] = $key." LIKE '%".$val."%'";
+        }
+    
+        $output['ORDER'] = " ORDER BY ".$filter_data['order_by']." ".$filter_data['order_dir'];
+        
+        return array(implode(" AND \r\n", $output['WHERE']), $output['ORDER']);
     }
     
     public static function replaceVars($params) {

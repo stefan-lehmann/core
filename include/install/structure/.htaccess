@@ -514,7 +514,7 @@ AddCharset utf-8 .css .js .xml .json .rss .atom
 	RewriteCond %{REQUEST_URI} !\.(css|js|gif|jpg|jpeg|png|gz|flv|f4v|swf|pdf)$ [NC]
 	RewriteCond %{REQUEST_FILENAME} !-f
 	RewriteCond %{REQUEST_FILENAME} !-d
-	RewriteRule (.*)\.([0-9]*)\.([0-9]*)\.(htm|html|json|xml)|(.*)/$ index.php?article_id=$2&clang=$3&%{QUERY_STRING} [L]
+	RewriteRule (.*)\.([0-9]*)\.([0-9]*)\.(htm|html|json|xml)|(.*)/(\?.*)?$ index.php?article_id=$2&clang=$3&%{QUERY_STRING} [L]
 
 	RewriteRule sitemap.xml$ index.php [L]
 

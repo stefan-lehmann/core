@@ -33,6 +33,7 @@ $CJO['ADDON']['author'][$mypage]        = 'Stefan Lehmann';
 $CJO['ADDON']['version'][$mypage]       = '1.0';
 $CJO['ADDON']['compat'][$mypage]        = '2.7.2';
 $CJO['ADDON']['support'][$mypage]       = 'http://contejo.com/addons/'.$mypage;
+$CJO['ADDON']['menu'][$mypage]          = '0';
 $CJO['ADDON']['settings'][$mypage]['oauth_js'] = '../'.$CJO['ADDON_CONFIG_PATH'].'/'.$mypage.'/oauth.js';
 
 if ($CJO['ADDON']['status'][$mypage] != 1) return;

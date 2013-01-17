@@ -71,8 +71,8 @@ $CJO['ADDON']['settings'][$mypage]['list_types'] = array (
                    );
 
 $CJO['ADDON']['settings'][$mypage]['date_input_formats'] = array (
-                   array ($I18N_16->msg('label_example').' 20.01.2010', '%d.%m.%Y'),
-                   array ($I18N_16->msg('label_example').' 01-20-2010', '%m-%d-%Y')
+                   array ($I18N_16->msg('label_example').' 20.01.2013', '%d.%m.%Y'),
+                   array ($I18N_16->msg('label_example').' 01-20-2013', '%m-%d-%Y')
                    );
 
 $CJO['ADDON']['settings'][$mypage]['date_output_formats'] = array (

@@ -142,11 +142,11 @@ class cjoProcess {
         
         $script_path = $script_info['dirname'];
         $uri_path    = (empty($uri_info['extension']) || substr($request_uri,-1) == '/') 
-                     ? $_SERVER['REQUEST_URI'] 
+                     ? cjo_server('REQUEST_URI','string') 
                      : $uri_info['dirname'];
          
         $script_path = preg_replace('/\/$/','',$script_path);
-        $uri_path = preg_replace('/\/$/','',$uri_path);
+        $uri_path    = preg_replace('/\/(\?.*)?$/','',$uri_path);
          
         if (!empty($script_path) && strpos($uri_path, $script_path) === false) {
             $CJO['ADJUST_PATH'] = $adjust_path;

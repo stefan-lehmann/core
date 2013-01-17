@@ -35,6 +35,7 @@ $CJO['ADDON']['author'][$mypage] 	    = 'Stefan Lehmann';
 $CJO['ADDON']['version'][$mypage] 	    = '1.0';
 $CJO['ADDON']['compat'][$mypage] 	    = '2.6.2';
 $CJO['ADDON']['support'][$mypage] 	    = 'http://contejo.com/addons/'.$mypage;
+$CJO['ADDON']['menu'][$mypage]          = '0';
 
 if ($CJO['ADDON']['status'][$mypage] != 1) return;
 
