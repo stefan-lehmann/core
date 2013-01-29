@@ -497,6 +497,15 @@ function cjo_uninstallAddon($file, $debug = false) {
     return cjoInstall::installDump($file, $debug);
 }
 
+function cjo_json_encode_utf8($arr) {
+        
+    if (version_compare(PHP_VERSION, '5.4.0') >= 0) return json_encode($arr, JSON_UNESCAPED_UNICODE);
+    
+    //convmap since 0x80 char codes so it takes all multibyte codes (above ASCII 127). So such characters are being "hidden" from normal json_encoding
+    array_walk_recursive($arr, function (&$item, $key) { if (is_string($item)) $item = mb_encode_numericentity($item, array (0x80, 0xffff, 0, 0xffff), 'UTF-8'); });
+    return mb_decode_numericentity(json_encode($arr), array (0x80, 0xffff, 0, 0xffff), 'UTF-8');
+}
+
 $CJO_USER                          = &$CJO["USER"];
 $CJO_LOGIN                         = &$CJO["LOGIN"];
 $article_id                        = &$CJO['ARTICLE_ID'];

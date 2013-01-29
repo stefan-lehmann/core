@@ -180,6 +180,8 @@ class cjoHtmlTemplate {
 
         if (OOArticleSlice::isValid($slice)) {
             $this->replaceSliceDefaultValues($slice, $tmpl_section);
+        } else {
+            $this->replaceDefaultValues($tmpl_section);
         }
          
         $replace_data = array_merge($this->getInterVals($section), $replace_data);
@@ -462,6 +464,43 @@ class cjoHtmlTemplate {
         $replace = array_values($replace_data);
         $this->html_buffer[$section] .= str_replace($search_keys, $replace, $tmpl_section);
     }
+    
+    /**
+     * Replaces the placeholders of a section by default CONTEJO values
+     * @param object $slice
+     * @return array
+     */
+    protected function replaceDefaultValues(&$content) {
+        
+        global $CJO;
+        
+        $article = OOArticle::getArticleById($CJO['ARTICLE_ID']);
+        
+        if (OOArticle::isValid($article)) {
+            
+            $search = array('[[CJO_IS_CONTEJO]]'            => $CJO['CONTEJO'],
+                            '[[CJO_ARTICLE_ID]]'            => $article->getId(),
+                            '[[CJO_TEMPLATE_ID]]'           => $article->getTemplateId(),
+                            '[[CJO_ARTICLE_PARENT_ID]]'     => $article->getParentId(),
+                            '[[CJO_PARENT_ID]]'             => $article->getParentId(),
+                            '[[CJO_ARTICLE_ROOT_ID]]'       => @array_shift(cjoAssistance::toArray($article->getPath().$article_id.'|')),
+                            '[[CJO_ARTICLE_AUTHOR]]'        => $article->getAuthor(),
+                            '[[CJO_ARTICLE_NAME]]'          => $article->getName(),
+                            '[[CJO_ARTICLE_TITLE]]'         => $article->getTitle(),
+                            '[[CJO_ARTICLE_DESCRIPTION]]'   => $article->getDescription(),
+                            '[[CJO_ARTICLE_KEYWORDS]]'      => $article->getKeywords(),
+                            '[[CJO_ARTICLE_URL]]'           => $article->getUrl(),
+                            '[[CJO_ARTICLE_ONLINE_FROM]]'   => $article->getOnlineFromDate(),
+                            '[[CJO_ARTICLE_ONLINE_TO]]'     => $article->getOnlineToDate(),
+                            '[[CJO_ARTICLE_CREATEUSER]]'    => $article->getCreateUser(),
+                            '[[CJO_ARTICLE_UPDATEUSER]]'    => $article->getUpdateUser(),
+                            '[[CJO_ARTICLE_CREATEDATE]]'    => $article->getCreateDate(),
+                            '[[CJO_ARTICLE_UPDATEDATE]]'    => $article->getUpdateDate());
+                                        
+            $content = str_replace(array_keys($search), array_values($search), $content);
+        }
+    }
+    
     
     /**
      * Replaces the placeholders of a section by default slice values

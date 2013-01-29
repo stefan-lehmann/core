@@ -221,7 +221,7 @@ if ($form->validate()) {
         }
 
         $content  = '// --- DYN'."\r\n";
-        $content .= '$CJO[\'ADDON\'][\'settings\'][$mypage][\'FIELDS\'] = "'.addslashes(json_encode($new_data, JSON_UNESCAPED_UNICODE)).'";'."\r\n";
+        $content .= '$CJO[\'ADDON\'][\'settings\'][$mypage][\'FIELDS\'] = "'.addslashes(cjo_json_encode_utf8($new_data)).'";'."\r\n";
         $content .= '// --- /DYN'."\r\n";
 
     	if (cjoGenerate::replaceFileContents($CJO['ADDON']['settings'][$mypage]['SETTINGS'], $content)) {
