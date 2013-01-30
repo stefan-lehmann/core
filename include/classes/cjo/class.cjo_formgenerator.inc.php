@@ -135,6 +135,11 @@ class cjoFormGenerator {
     public function setReturnMailtext($text) {
         $this->confirm_mail_text = $text;
     }
+    
+    private function addMailReplaceValue($key, $value) {
+        if (!isset($this->mail_replace['%'.strtolower($key).'%']))
+            $this->mail_replace['%'.strtolower($key).'%'] = $value;
+    }
         
     public function setScriptTemplate($template_id) {
         
@@ -289,6 +294,7 @@ class cjoFormGenerator {
                     $elements_mail['element_name'][$i] 	   = $elm['name'];
                     $elements_mail['element_label'][$i]    = $elm['label'];
                     $elements_mail['element_value'][$i]    = $send_value;
+                    
                     break;
 
                 case "password":
@@ -415,12 +421,15 @@ class cjoFormGenerator {
                         $elements_out['element_value'][$i]     = '';
                         $this->has_errors = true;
                     }
-                    }
-                    break;
+                }
+                break;
 
                 default: continue 2;
             }
-
+            
+            if (!empty($elements_mail['element_name'][$i])) {
+                $this->addMailReplaceValue($elements_mail['element_name'][$i],$elements_mail['element_value'][$i]);
+            }
             $i++;
         }        
 
@@ -705,6 +714,7 @@ class cjoFormGenerator {
         $this->phpmailer->ClearReplyTos();
         $this->phpmailer->AddReplyTo($this->sender_email);
         $this->phpmailer->Body = $this->mail_text;
+
         $this->phpmailer->Send(true); //
     }
     
@@ -712,16 +722,14 @@ class cjoFormGenerator {
         
         if (!$this->sender_email || !$this->settings['confirm_mail']) return false;
 
-        if (!empty($this->mail_text)) {
-            $this->mail_text = $this->mail_separator.$this->mail_text;
-        }
-
         if ($this->settings['attachments']) {
         	$this->phpmailer->AddMedialistAttachment($this->settings['attachments']);
         }
 
 		$this->phpmailer->ClearAddresses();
         $this->phpmailer->AddAddress($this->sender_email);
+        
+        $this->addMailReplaceValue('mail_body', $this->mail_text);
 
         if (is_array($this->mail_replace)) {
             foreach($this->mail_replace as $key=>$val) {
@@ -729,7 +737,7 @@ class cjoFormGenerator {
             }
         }
         
-        $this->phpmailer->Body = ($this->settings['recipients']) ? $this->confirm_mail_text.$this->mail_text : $this->confirm_mail_text;
+        $this->phpmailer->Body = $this->confirm_mail_text;
         $this->phpmailer->Send(true);
     }
     
