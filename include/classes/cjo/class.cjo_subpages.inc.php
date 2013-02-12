@@ -205,7 +205,8 @@ class cjoSubPages {
     			!$CJO['ADDON']['menu'][$key] ||
     			$CJO['ADDON']['menu'][$key] != $this->mypage) continue;
 
-    		$name = (isset($CJO['ADDON']['name'][$key])) ? $CJO['ADDON']['name'][$key] : false;
+    		$name = (isset($CJO['ADDON']['tabname'][$key])) ? $CJO['ADDON']['tabname'][$key] : false;
+    		$name = (!$name && isset($CJO['ADDON']['name'][$key])) ? $CJO['ADDON']['name'][$key] : $name;
 
     		if ($CJO['ADDON']['status'][$key] && $name && $CJO['USER']->hasAddonPerm($key, true)) {
     			$addon_subpages[] = array($key, 'title' => $name, 'addon'=>true);
@@ -242,8 +243,8 @@ class cjoSubPages {
     		if (empty($CJO['cjo_tabs'])) {
     			$this->params = array_merge($this->params, $this->getAddonSubPages());
     		}
+    		
     		$subpage = !empty($subpages[0][0]) ? $subpages[0][0] : '';
-
     		foreach($this->params as $cur) {
 
     			$per = true;
