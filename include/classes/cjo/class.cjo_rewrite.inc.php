@@ -162,7 +162,8 @@ class cjoRewrite {
         }
 
     	if ($redirect === false &&
-    	    !empty($CJO['MODREWRITE']['LINK_REDIRECT']) && 
+    	    !empty($CJO['MODREWRITE']['LINK_REDIRECT']) &&
+    	    OOArticle::isValid($article) && 
             preg_match('/\D/',$article->getRedirect())) {
             $url = $article->getRedirect();
         }
