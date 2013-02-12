@@ -280,8 +280,10 @@ class cjoPHPMailer extends PHPMailer {
 
         if ($this->ContentType == 'text/html') {
             $this->AltBody .= "\r\n\r\n".$this->footer;
+            $this->AltBody = html_entity_decode($this->AltBody);
         } elseif ($this->ContentType == 'text/plain') {
             $this->Body .= "\r\n\r\n".$this->footer;
+            $this->Body = html_entity_decode($this->Body);
         }
         parent::Send();
 
