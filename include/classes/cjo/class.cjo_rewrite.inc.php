@@ -240,12 +240,15 @@ class cjoRewrite {
      */
     public static function setServerPath() {
         global $CJO;
-        $path = cjoAssistance::toArray(pathinfo(cjo_server('PHP_SELF','string'),PATHINFO_DIRNAME),'/');
+        $path = pathinfo(cjo_server('PHP_SELF','string'),PATHINFO_DIRNAME);
+        $path = str_replace('\\','/',$path);
+        $path = cjoAssistance::toArray($path,'/');
         $length = count($path)-1;
         
         if ($path[$length] == str_replace($CJO['HTDOCS_PATH'], '', $CJO['BACKEND_PATH'])) {
             $temp = array_pop($path);
         }
+        
         return preg_replace('!\/{1,}!', '/', '/'.implode('/', $path).'/');
     } 
 }

@@ -38,7 +38,6 @@ class cjoPermalink {
         $sql->setTable(TBL_30_EXTEND_META);
         $sql->setWhere('name LIKE :name AND value LIKE :value', array('name'=>self::$mypage,'value'=>$CJO['VIRTUAL_PATH']));
         $sql->Select('article_id, clang');
-        
         if ($sql->getRows() != 0 && $CJO['VIRTUAL_PATH'] != '') {
             $CJO['ARTICLE_ID'] = $sql->getValue('article_id');
             $CJO['CUR_CLANG'] = $sql->getValue('clang');

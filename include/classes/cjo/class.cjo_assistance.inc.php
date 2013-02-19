@@ -542,28 +542,47 @@ class cjoAssistance {
      * @param mixed $variable
      * @param string $name
      * @param string $color
-     * @param boolean $specialchars
+     * @param boolean $show_backtrace
      * @return void
      * @access public
      */
-    public static function debug($variable, $name = '', $color = 'pink') {
-
-        preg_match_all('/^.*$/m', print_r($variable, true), $lines);
+    public static function debug($variable, $name = '', $color = 'pink', $show_backtrace=false) {
         
-        foreach($lines[0] as $key=>$line) {
-            $lines[0][$key] = '<li style="color:#999"><div style="color:#000">'.htmlspecialchars($line).'</div></li>';
+        $backtrace = debug_backtrace();
+        //echo '<pre>'.print_r($backtrace,true).'<pre>';
+        $info = '';
+        if ($backtrace[1]['function'] == 'cjo_debug') {
+            if (isset($backtrace[2]['function'])) {            
+                $info .= isset($backtrace[2]['class']) ? 'in <b>'.$backtrace[2]['class'].'::' : 'in <b>';
+                $info .= $backtrace[2]['function'].'()</b> ';      
+            }     
+            $info .= $backtrace[1]['file'].' at Line <b>'.$backtrace[1]['line'].'</b>';
+        }
+        else {
+            if (isset($backtrace[1]['function'])) {
+                $info .= isset($backtrace[1]['class']) ? 'in <b>'.$backtrace[1]['class'].'::' : 'in <b>';
+                $info .= $backtrace[1]['function'].'()</b> ';            
+            }  
+            
+            $info .= $backtrace[0]['file'].' at Line <b>'.$backtrace[0]['line'].'</b>';
         }
         
-        $out =  '<pre style="font-size: 12px; color:#000;background:'.$color.';padding:1em; '.
-        		'z-index: 1000; overflow: visible;">'.
-            	'<h3>'.$name.'</h3>'."\r\n".
-                '<ol>'."\r\n".
-                implode('',$lines[0])."\r\n".
-                '</ol>'."\r\n".
-          		'</pre><br/>';
+        if ($show_backtrace) {
+            $info = '<div style="border:2px solid #333; padding:20px;font-size:9px">'.print_r($backtrace,true).'</div>'.$info;
+        }
+        
+
+        preg_match_all('/^.*$/m', print_r($variable, true), $lines);
+
+        foreach ($lines[0] as $key => $line) {
+            $lines[0][$key] = '<li style="color:#999"><div style="color:#000">' . htmlspecialchars($line) . '</div></li>';
+        }
+
+        $out = '<pre style="font-size: 12px; color:#000;background:' . $color . ';padding:1em; ' . 'z-index: 1000; overflow: visible;">' . '<h3>' . $name . '</h3>' . "\r\n" . '<ol>' . "\r\n" . implode('', $lines[0]) . "\r\n" . '</ol>' . "\r\n".'<span style="font-size:85%">' .$info.'</span></pre><br/>';
 
         echo $out;
     }
+
 
     /**
      * Checks if a value exists in a multivalue string.

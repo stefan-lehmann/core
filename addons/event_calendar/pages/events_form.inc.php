@@ -306,7 +306,7 @@ cjoExtension::registerExtension('CJO_FORM_'.strtoupper($form->getName()).'_GET_D
 $form->show();
 
 if ($form->validate()) {
-cjo_Debug(2222);
+
 	if (cjo_post('cjoform_save_button','bool')) {
 	   cjoAssistance::redirectBE(array('function' => '', 'oid'=>'',  'msg' => 'msg_data_saved'));
 	}

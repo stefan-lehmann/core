@@ -448,7 +448,7 @@ class cjoVarMedia extends cjoVars {
                 else {
                     $replace = '<!-- Sorry, MediaSet of '.$file.' has no supportet video file and/or no valid preview image. -->';
                 }
-                           cjo_Debug($replace, $file);
+
                 $replace = $this->handleGlobalVarParams($var, $args, $replace); 
                 $content = preg_replace('/(?<!\[\[)'.$var.'\['.$param_str.'\](?!\]\])/', $replace, $content);
                 $content = str_replace('[['.$var.'['.$param_str.']]]', $var.'['.$param_str.']', $content);

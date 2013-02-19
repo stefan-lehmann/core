@@ -253,8 +253,8 @@ function cjo_to_array($value, $delimiter = '|') {
 /**
  * @deprecated
  */
-function cjo_debug($array, $name = '', $color = 'pink', $convert = true) {
-    cjoAssistance::debug($array, $name, $color, $convert);
+function cjo_debug($array, $name = '', $color = 'pink', $show_backtrace = false) {
+    cjoAssistance::debug($array, $name, $color, $show_backtrace);
 }
 
 /**

@@ -60,7 +60,6 @@ class cjoProcess {
         self::getAdjustPath();  
         self::setFavicon();
         self::getCurrentArticleId();
-        
         require_once $CJO['INCLUDE_PATH'].'/classes/var/class.cjo_vars.inc.php';
         
         foreach($CJO['VARIABLES'] as $key => $value) {
@@ -68,7 +67,7 @@ class cjoProcess {
             $CJO['VARIABLES'][$key] = new $value;
         }
         
-        cjoExtension::registerExtension('OUTPUT_FILTER','i18n::searchAndTranslate');    
+        cjoExtension::registerExtension('OUTPUT_FILTER','i18n::searchAndTranslate');  
         cjoExtension::registerExtensionPoint('CJO_PROCESS_STARTED'); 
 
     }      
@@ -138,9 +137,9 @@ class cjoProcess {
         $script_uri  = cjo_server('SCRIPT_NAME','string');
         $request_uri = cjo_server('REQUEST_URI','string');
         $uri_info    = pathinfo($request_uri);
-        $script_info = pathinfo($script_uri);
-        
-        $script_path = $script_info['dirname'];
+        $uri_info    = pathinfo($request_uri);
+        $script_path = str_replace('\\', '/',pathinfo($script_uri,PATHINFO_DIRNAME));
+
         $uri_path    = (empty($uri_info['extension']) || substr($request_uri,-1) == '/') 
                      ? cjo_server('REQUEST_URI','string') 
                      : $uri_info['dirname'];
