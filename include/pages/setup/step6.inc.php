@@ -135,6 +135,11 @@ if ($form->validate()) {
 	}
 
 	if (!cjoMessage::hasErrors()) {
+	            
+	    // Prüfen, welche Tabellen bereits vorhanden sind
+        $sql = new cjoSql();
+        $db_tables = $sql->showTables();    
+	    
     	// Benötigte Tabellen
     	$check_tables = array (TBL_ACTIONS => 0,
     						   TBL_ARTICLES => 0,
@@ -148,15 +153,11 @@ if ($form->validate()) {
     						   TBL_MODULES => 0,
     						   TBL_TEMPLATES => 0,
     						   TBL_USER => 0);
-    
-    	// Prüfen, welche Tabellen bereits vorhanden sind
-    	$sql = new cjoSql();
-    	$db_tables = $sql->getArray("SHOW TABLES");
-    
-    	foreach (cjoAssistance::toArray($db_tables) as $tablename_array) {
-    
-    		$tablename = array_shift($tablename_array);
-    		if (array_key_exists($tablename, $check_tables)){
+
+
+
+    	foreach (cjoAssistance::toArray($db_tables) as $tablename) {
+    		if (isset($check_tables[$tablename])){
     			$check_tables[$tablename] = 1;
     		}
     	}
@@ -167,9 +168,11 @@ if ($form->validate()) {
     		}
     	}
 	}
+
 	if (!cjoMessage::hasErrors()) {
 	    cjoAssistance::redirectBE(array('subpage' => 'step7', 'lang' => $lang));
 	}
+
 }
 
 $form->show(false);
