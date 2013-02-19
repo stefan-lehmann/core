@@ -138,7 +138,7 @@ class cjoProcess {
         $request_uri = cjo_server('REQUEST_URI','string');
         $uri_info    = pathinfo($request_uri);
         $uri_info    = pathinfo($request_uri);
-        $script_path = str_replace('\\', '/',pathinfo($script_uri,PATHINFO_DIRNAME));
+        $script_path = stripslashes(pathinfo($script_uri,PATHINFO_DIRNAME));
 
         $uri_path    = (empty($uri_info['extension']) || substr($request_uri,-1) == '/') 
                      ? cjo_server('REQUEST_URI','string') 
