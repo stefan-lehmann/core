@@ -269,6 +269,7 @@ if (cjoAssistance::inMultival('times', $enabled_fields)) unset($fields['start_ti
 if (!cjoAssistance::inMultival('end_date', $enabled_fields) ||
     $fields['end_time']) unset($fields['end_time_clear']);
 if (!cjoAssistance::inMultival('end_date', $enabled_fields)) unset($fields['end_date']);
+if (!cjoAssistance::inMultival('end_date', $enabled_fields)) unset($fields['end_time']);
 if (!cjoAssistance::inMultival('file', $enabled_fields)) unset($fields['file']);
 if (!cjoAssistance::inMultival('article', $enabled_fields)) unset($fields['article']);
 
