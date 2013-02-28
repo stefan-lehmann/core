@@ -502,12 +502,14 @@ class cjoSql implements Iterator{
      */
     protected function buildPreparedValues() {
         
-        $query = array();
-        
+        $query      = array();
+        $new_values = array();
         if (is_array($this->values)) {
             foreach ($this->values as $fieldname => $value) {
-                $query[] = '`'. $fieldname . '` = :'. $fieldname;
+                $new_values['set_'.$fieldname] = $value;
+                $query[] = '`'. $fieldname . '` = :set_'. $fieldname;
             }
+            $this->values = $new_values;
         }
 
         if (empty($query)) {
@@ -845,12 +847,11 @@ class cjoSql implements Iterator{
     public function Insert($success_message = false) {
         
         $table  = $this->getTable();
-        $values = $this->values;
         $ignore = (bool) $this->ignore ? 'IGNORE ' : '';
         
         $state = $this->preparedStatusQuery(
         				'INSERT '.$ignore.'INTO `'.$this->getTable().'` SET '.$this->buildPreparedValues(),
-                        $values,
+                        $this->values,
                         $success_message);
     
         $this->last_insert_id =  $this->getLastId();
