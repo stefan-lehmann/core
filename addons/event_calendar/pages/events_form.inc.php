@@ -311,7 +311,8 @@ if ($form->validate()) {
 	if (cjo_post('cjoform_save_button','bool')) {
 	   cjoAssistance::redirectBE(array('function' => '', 'oid'=>'',  'msg' => 'msg_data_saved'));
 	}
-    cjoAssistance::redirectBE(array( 'msg' => 'msg_data_saved'));
+    $params = ($form->last_insert_id) ? array('oid'=> $form->last_insert_id, 'msg' => 'msg_data_saved') : array( 'msg' => 'msg_data_saved');
+    cjoAssistance::redirectBE($params);
 }
 
 
