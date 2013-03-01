@@ -1073,7 +1073,14 @@ class cjoSql implements Iterator{
      */
     public function getError() {
         global $I18N;
-        return ($this->hasError()) ? '<b>'.$I18N->msg("msg_db_error").':</b> '.$this->errorInfo() : false;
+        $backtrace = debug_backtrace();
+        if (isset($backtrace[2]['function'])) {            
+            $info .= isset($backtrace[2]['class']) ? 'in <b>'.$backtrace[2]['class'].'::' : 'in <b>';
+            $info .= $backtrace[2]['function'].'()</b> ';     
+            $info .= $backtrace[1]['file'].' at Line <b>'.$backtrace[1]['line'].'</b>'; 
+        }     
+
+        return ($this->hasError()) ? '<b>'.$I18N->msg("msg_db_error").':</b> '.$this->errorInfo() .'<br/><br/>'.$this->query.'<br/><br/>'.$info : false;
     }
     
     /**

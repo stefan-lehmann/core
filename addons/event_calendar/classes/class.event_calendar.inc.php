@@ -417,7 +417,11 @@ class cjoEventCalendar {
         
         if ($mode == 'delete') {
             $qry = 'DELETE FROM '.TBL_16_EVENTS.' WHERE id='.$id;
-            return $sql->statusQuery($qry, $I18N_16->msg("msg_event_deleted"));
+            $state = $sql->statusQuery($qry, $I18N_16->msg("msg_event_deleted"));
+            if ($state) {
+                cjoExtension::registerExtensionPoint('EVENT_CALENDAR_DELETE_EVENT', array ('id' => $id, 'clang' => $clang));
+            }
+            return $state;
     	}
     
     	$new_val = ($sql->getValue('status') == 1) ? 0 : 1;
@@ -428,7 +432,7 @@ class cjoEventCalendar {
     	$update->setValue('status', $new_val);
     	$state = $update->update($I18N_16->msg('msg_event_status_updated'));
         
-        cjoExtension::registerExtensionPoint('EVENT_CALENDAR_UPDATE_EVENT', array ('id' => $id));
+        cjoExtension::registerExtensionPoint('EVENT_CALENDAR_UPDATE_EVENT', array ('id' => $id, 'mode' => $mode, 'clang' => $clang));
         return $state;
     }
     
