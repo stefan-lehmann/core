@@ -136,11 +136,12 @@ class cjoOAuthProvider {
 
     protected function setCookie($data=NULL) {
         $duration = time()-60;
+        $path = '/';        
         if (!empty($data)) {
             $data = json_encode($data);
             $duration = time()+86400;
         }
-        setcookie('cjo_oauth', $data, $duration);
+        setcookie('cjo_oauth', $data, $duration, $path);
     }
 
     protected static function generateLink($provider) {
