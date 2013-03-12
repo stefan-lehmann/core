@@ -86,7 +86,7 @@ $fields['end_time']->addValidator('notEmpty', $I18N_16->msg("msg_err_no_time"),f
 
 $fields['end_time_clear'] = new readOnlyField('', '');
 
-$fields['file'] = new cjoMediaButtonField('file', $I18N_16->msg('label_event_file'), array('preview'=> array('enabled' => true)));
+$fields['file'] = new cjoMediaButtonField('file', $I18N_16->msg('label_event_file'), array('preview'=> array('enabled' => 'auto')));
 $fields['file']->needFullColumn(true);
 
 $fields['article'] = new cjoLinkButtonField('article_id', $I18N_16->msg('label_event_article'));

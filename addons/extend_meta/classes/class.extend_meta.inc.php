@@ -76,7 +76,9 @@ class cjoExtendMeta {
                     $params['fields'][$name]->addOption('', '');  
                     
                     foreach(cjoAssistance::toArray($fields['options'][$key], '|||') as $value) {
-                        $params['fields'][$name]->addOption($value, $value);  
+                        $temp = cjoAssistance::toArray($value, ':');
+                        if (empty($temp[1])) $temp[1] = $temp[0];
+                        $params['fields'][$name]->addOption($temp[0], trim($temp[1]));  
                     }
                 }
                 

@@ -38,7 +38,7 @@ $hidden['ctype'] = new hiddenField('ctype');
 $hidden['ctype']->setValue($ctype);
 
 //Fields
-$fields['file'] = new cjoMediaButtonField('file', $I18N->msg('label_meta_image'), array('preview' => array('enabled' => true)));
+$fields['file'] = new cjoMediaButtonField('file', $I18N->msg('label_meta_image'), array('preview' => array('enabled' => 'auto')));
 $fields['file']->needFullColumn(true);
 
 $fields['title'] = new textField('title', $I18N->msg("label_meta_title"));
