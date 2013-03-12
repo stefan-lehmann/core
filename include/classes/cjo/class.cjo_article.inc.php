@@ -678,12 +678,12 @@ class cjoArticle {
                     if ($this->function=="edit" &&
                         $this->slice_id == $re['conts'][$curr_re_id] &&
                         $CJO['USER']->hasModulPerm($re['modul_id'][$curr_re_id])) {
-                        $pre_html = '<div class="cjo_slice input clearfix">';
+                        $pre_html = '<div class="cjo_slice input cjo_modultyp_'.$re['modul_id'][$curr_re_id].' clearfix">';
                         $slice_content .= $this->editSlice($re, $curr_re_id);
                     }
                     else {
                         
-                        $pre_html = '<div class="cjo_slice output clearfix">';
+                        $pre_html = '<div class="cjo_slice output cjo_modultyp_'.$re['modul_id'][$curr_re_id].' clearfix">';
                         
                         $content = "\r\n".
                                   '<!-- MODULE_ID '.$re['modul_id'][$curr_re_id].' ['.$re['modul_name'][$curr_re_id].'] >>> -->'."\r\n".
