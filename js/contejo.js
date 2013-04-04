@@ -75,13 +75,13 @@ $(function() {
 	
 	$('#cjo.conf.form').find('input[type=text]:not(:input[readonly]), select, textarea:not(textarea[readonly])').eq(0).focus();
 	
-	// $('a.cjo_ajax:not(.cjo_confirm)').click(function() {
-        // var el = $(this);
-        // var href = el.attr('href');       
-        // if(el.parent().is('.cjo_confirm')) return false;
-        // cjo.processAjaxCall(href, el);
-        // return false;
-	// });
+	$('a.cjo_ajax:not(.cjo_confirm)').click(function() {
+        var el = $(this);
+        var href = el.attr('href');       
+        if(el.parent().is('.cjo_confirm')) return false;
+        cjo.processAjaxCall(href, el);
+        return false;
+	});
 	
  
 	

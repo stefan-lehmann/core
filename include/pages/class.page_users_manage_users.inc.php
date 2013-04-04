@@ -25,15 +25,19 @@
 
 class cjoPageUsersManageUsers extends cjoPage {
      
-    protected function setEdit() {
+    private $match_mode = 'users';
      
+    protected function setEdit() {
+        
+        if ($this->mode != $this->match_mode) return false;
+
         $this->fields['name'] = new textField('name', cjoI18N::translate('label_name'));
         $this->fields['name']->addValidator('notEmpty', cjoI18N::translate('msg_name_notEmpty'));
         $this->fields['name']->addValidator('isNot', cjoI18N::translate('msg_name_inUse'),$used_inputs['names'],true);
 
         $this->fields['login'] = new textField('login', cjoI18N::translate('label_login'), array('style' => 'font-weight: bold', 'class'=>'readonly', 'readonly' => 'readonly'));
         $this->fields['login']->activateSave(false);
-    
+ 
         $this->fields['new_psw'] = new passwordField('new_psw', cjoI18N::translate('label_password'));
         $this->fields['new_psw']->addValidator('isLength', cjoI18N::translate('msg_new_psw_toShort'), array('min'=> 6));
         $this->fields['new_psw']->setHelp(cjoI18N::translate("note_psw_encrypted"));
@@ -58,7 +62,7 @@ class cjoPageUsersManageUsers extends cjoPage {
         }
     
         $this->fields['perm_admin']->activateSave(false);
-    
+
         $sql = new cjoSql();
         $sql->setQuery("SELECT SUBSTRING(login,7) AS group_name, user_id as group_id FROM ".TBL_USER." WHERE login REGEXP '^group_' ORDER BY name");
     
@@ -113,6 +117,8 @@ class cjoPageUsersManageUsers extends cjoPage {
     }
      
     protected function getDefault() {
+        
+        if ($this->mode != $this->match_mode && $this->oid) return false;
         
         $add_sql = array();
         foreach (cjoProp::getClangs() as $id =>$name) {
@@ -180,14 +186,15 @@ class cjoPageUsersManageUsers extends cjoPage {
         $this->cols['login_tries']->addCondition('login_tries', array('<',cjoProp::get('MAXLOGINS')), '<span title="'.cjoI18N::translate("label_reset_login_tries").'">%s</span>', array ('function' => 'reset_tries', 'mode' => 'user', 'oid' => '%user_id%'));
         $this->cols['login_tries']->addCondition('login_tries', array('>=',cjoProp::get('MAXLOGINS')), '<b style="color:red" title="'.cjoI18N::translate("label_reset_login_tries").'">%s</b>', array ('function' => 'reset_tries', 'mode' => 'user', 'oid' => '%user_id%'));
 
-        
-        $this->cols['edit'] = new editColumn(array ('function' => 'edit', 'mode' => 'users', 'oid' => '%user_id%'));
-        
-        $this->cols['status'] = new statusColumn('key2', array('function' => 'cjoPageUsersManage::updateSatus', 'oid' => '%user_id%', 'mode' => 'users'));
-        $this->cols['status']->addCondition('status', '1','', array('status'=>'0'));
-        $this->cols['status']->addCondition('status', '0','', array('status'=>'1'));
-        $this->cols['status']->addCondition('status', '-1','<img src="img/silk_icons/key2_start.png" title="" alt="'.cjoI18N::translate("label_admin").'" />');
+       
+        $this->cols['edit'] = new editColumn(array ('function' => 'edit', 'mode' => $this->match_mode, 'oid' => '%user_id%'));
   
+        $this->cols['status'] = new statusColumn('key2', array('function' => 'cjoPageUsersManage::updateSatus', 'oid' => '%user_id%'));
+        $this->cols['status']->addCondition('status', '1', cjoI18N::translate("label_status_do_false"), array('status'=>'0'));
+        $this->cols['status']->addCondition('status', '0', cjoI18N::translate("label_status_do_true"),  array('status'=>'1'));
+        $this->cols['status']->addCondition('status', '-1','<img src="img/silk_icons/key2_start.png" title="" alt="'.cjoI18N::translate("label_admin").'" style="cursor:default" />', array('function' => null));
+        $this->cols['status']->setConditionAttributes('class="cjo_confirm" data-callback="cjo.updatePage()"'); 
+        
         $this->cols['delete'] = new deleteColumn($this->getDeleteColParams(array('id'=>'%user_id%')));
 
         $this->list->addColumns($this->cols);

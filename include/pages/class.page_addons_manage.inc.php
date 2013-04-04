@@ -142,7 +142,7 @@ class cjoPageAddonsManage extends cjoPage {
         $this->cols['menu']->addCondition('index', false, ' ');
         $this->cols['menu']->delOption(OPT_ALL);
 
-        $this->cols['install'] = new StatusColumn('install', array(), true, cjoI18N::translate('label_functions'));
+        $this->cols['install'] = new StatusColumn('install', NULL, true, cjoI18N::translate('label_functions'));
         $this->cols['install']->addCondition('system', '1');
         $this->cols['install']->addCondition('install', '0', cjoI18N::translate("addon_install"), array('function' => 'cjoAddon::installAddon', 'addonname' => '%addonname%'));
         $this->cols['install']->addCondition('install', '1', cjoI18N::translate("addon_reinstall"), array('function' => 'cjoAddon::installAddon', 'addonname' => '%addonname%'));
@@ -151,7 +151,7 @@ class cjoPageAddonsManage extends cjoPage {
         $this->cols['install']->setBodyAttributes('width="16"');
         $this->cols['install']->delOption(OPT_ALL);
         
-        $this->cols['uninstall'] = new StatusColumn('uninstall');
+        $this->cols['uninstall'] = new StatusColumn('uninstall', NULL);
         $this->cols['uninstall']->addCondition('system', '1');
         $this->cols['uninstall']->addCondition('uninstall', '0');
         $this->cols['uninstall']->addCondition('uninstall', '1', cjoI18N::translate("addon_uninstall"), array('function' => 'cjoAddon::uninstallAddon', 'addonname' => '%addonname%'));
@@ -159,7 +159,7 @@ class cjoPageAddonsManage extends cjoPage {
         $this->cols['uninstall']->setBodyAttributes('width="16"');    
         $this->cols['uninstall']->delOption(OPT_ALL);
         
-        $this->cols['status'] = new StatusColumn('status');
+        $this->cols['status'] = new StatusColumn('status', NULL);
         $this->cols['status']->addCondition('system', '1');
         $this->cols['status']->addCondition('status', '-1');
         $this->cols['status']->addCondition('status', '0', cjoI18N::translate("addon_activate"), array('function' => 'cjoAddon::activateAddon', 'addonname' => '%addonname%'));

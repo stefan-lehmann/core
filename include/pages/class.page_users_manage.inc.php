@@ -32,9 +32,9 @@ class cjoPageUsersManage extends cjoPage {
     }
 
     
-    public static function updateSatus($id, $mode, $status) {
+    public static function updateSatus($id, $status) {
         
-        if ($mode != 'users') return false;
+        //if ($mode != 'users') return false;
         
         $update = new cjoSql();
         $update->setTable(TBL_USER);

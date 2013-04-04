@@ -569,10 +569,8 @@ class cjoProp {
             case 'writable' :
                 throw new cjoException('Destination "'.$var.'" not writable!'.$position);
             case 'callable' :
-                if (is_array($var))
-                $var = implode('::', $var);
+                if (is_array($var)) $var = implode('::', $var);
                 throw new cjoException('Function or Class "'.$var.'" not callable!'.$position);
-    
             default :
                 throw new cjoException('Unexpected type "'.$type.'" for "$'.$var.'"! Expecting type "'.$expected.'"'.$position);
         }

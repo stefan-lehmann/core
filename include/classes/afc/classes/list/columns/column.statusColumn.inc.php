@@ -51,9 +51,9 @@ class StatusColumn extends staticColumn {
         $this->ajax = (bool) $ajax;   
     }
 
-    public function addCondition($cond_column, $cond_value, $text = NULL, $params = NULL, $tags = '') {
+    public function addCondition($cond_column, $cond_value, $text = NULL, $params = array(), $tags = '') {
 
-        //if (!empty($params)) $params = array_merge($this->params,$params);
+        if (!empty($params)) $params = array_merge($this->params,$params);
 
         $this->conditions[] = array (
             $cond_column,
@@ -88,6 +88,7 @@ class StatusColumn extends staticColumn {
         }
 
         return cjoUrl::createAjaxLink($value, $params, $tags);
+        
     }
     
 

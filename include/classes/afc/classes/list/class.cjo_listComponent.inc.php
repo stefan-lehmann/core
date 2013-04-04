@@ -64,7 +64,7 @@ class cjoListComponent {
         if (is_array($params)) {
             $this->params = array_merge($this->params, $params);
         } else {
-            $this->params = $params;
+            $this->params = (array) $params;
         }
     }
 }

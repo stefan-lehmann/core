@@ -100,7 +100,7 @@ class cjoPage {
         $this->fields['createdate_hidden']->setValue(time());
         
         $this->fields['createuser_hidden'] = new hiddenField('createuser');
-        $this->fields['createuser_hidden']->setValue(cjoProp::getUser()->getValue("name"));
+        $this->fields['createuser_hidden']->setValue(cjoProp::getUser("name"));
     }
 
     protected function addUpdateFields() {
@@ -114,7 +114,7 @@ class cjoPage {
         $this->fields['updatedate_hidden']->setValue(time());
 
         $this->fields['updateuser_hidden'] = new hiddenField('updateuser');
-        $this->fields['updateuser_hidden']->setValue(cjoProp::getUser()->getValue("name"));
+        $this->fields['updateuser_hidden']->setValue(cjoProp::getUser("name"));
 
         $this->fields['headline1'] = new headlineField(cjoI18N::translate("label_info"), true);
 

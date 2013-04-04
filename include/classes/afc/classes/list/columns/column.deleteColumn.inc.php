@@ -52,7 +52,7 @@ class deleteColumn extends staticColumn {
         if (count($params) == 0) {
             $params = $this->params;
         }
-        
+
         return cjoUrl::createAjaxLink($value, $params, $tags);
     }
 

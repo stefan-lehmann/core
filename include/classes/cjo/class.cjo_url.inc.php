@@ -352,47 +352,49 @@ class cjoUrl {
     
     /**
      * Generates a link.
-     * @param string $link_text
-     * @param array $local_params
-     * @param array $global_params
-     * @param string $link_tags
+     * @param string $text
+     * @param array $params
+     * @param string $tags
      * @return string
      * @access public
      */
-    public static function createAjaxLink($link_text, $local_params = array (), $link_tags = '') {
+    public static function createAjaxLink($text, $params = array (), $tags = '') {
 
-        if (count($local_params) == 0 || $link_text == '')
-            return $link_text;
+        if (count($params) == 0 || 
+            trim($text) == '' || 
+            empty($params['function']))
+            return $text;
 
-        if (!empty($link_tags))
-            $link_tags = ' '.$link_tags;
+        if (!empty($tags))
+            $tags = ' '.$tags;
             
-        if (strpos($link_tags,'class="') === false) {
-            $link_tags .= ' class="cjo_ajax"';
+        if (strpos($tags,'class="') === false) {
+            $tags .= ' class="cjo_ajax"';
         }
         else {
-            $link_tags = str_replace('class="', 'class=" cjo_ajax ', $link_tags);
+            $tags = str_replace('class="', 'class=" cjo_ajax ', $tags);
         }
 
-        return sprintf('<a href="%s"%s>%s</a>', self::createAjaxUrl($local_params), $link_tags, $link_text);
+        return sprintf('<a href="%s"%s>%s</a>', self::createAjaxUrl($params), $tags, $text);
     }
         
     /**
      * Generates an url.
-     * @param array $local_params
-     * @param array $global_params
+     * @param array $params
      * @param string $ampersand
      * @return string
      * @access public
      */
-    public static function createAjaxUrl($local_params = array (), $ampersand = '&') {
-            
-        cjoProp::isValidType($local_params['function'], 'callable');
+    public static function createAjaxUrl($params = array (), $ampersand = '&') {
+        
+        if (!$params['function']) return false;
+        
+        cjoProp::isValidType($params['function'], 'callable');
                 
-        $function = $local_params['function'];
-        unset($local_params['function']);
+        $function = $params['function'];
+        unset($params['function']);
 
-        return self::createCjoUrl('ajax.php', $local_params, array('function'=>$function), $ampersand);
+        return self::createCjoUrl('ajax.php', $params, array('function'=>$function), $ampersand);
     }    
 
     /**

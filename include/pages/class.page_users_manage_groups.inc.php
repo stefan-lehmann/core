@@ -25,7 +25,11 @@
 
 class cjoPageUsersManageGroups extends cjoPage {
      
+    private $match_mode = 'groups';
+     
     protected function setEdit() {
+                
+        if ($this->mode != $this->match_mode) return false;
         
         $sql = new cjoSql();
         $sql->setQuery("SELECT * FROM ".TBL_USER." WHERE login REGEXP '^group_' AND user_id='".$this->oid."'");
@@ -331,6 +335,8 @@ class cjoPageUsersManageGroups extends cjoPage {
     }
     
     protected function getDefault() {
+
+        if ($this->mode != $this->match_mode && $this->oid) return false;
         
         $qry = "SELECT
             a.*,
@@ -363,7 +369,7 @@ class cjoPageUsersManageGroups extends cjoPage {
         $this->cols['users'] = new resultColumn('users', cjoI18N::translate("label_editors"));
         
 
-        $this->cols['edit'] = new editColumn(array ('function' => 'edit', 'mode' => 'groups', 'oid' => '%user_id%'));
+        $this->cols['edit'] = new editColumn(array ('function' => 'edit', 'mode' => $this->match_mode, 'oid' => '%user_id%'));
         
         $this->cols['delete'] = new deleteColumn($this->getDeleteColParams(array('id'=>'%user_id%')));
 
