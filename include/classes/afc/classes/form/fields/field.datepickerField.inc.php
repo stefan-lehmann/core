@@ -36,7 +36,7 @@ class datepickerField extends readOnlyField {
 			$this->id2 = $id[1];
 			$id = $id[0];
 		}
-        $dateformat = str_replace(array('%y','%d','%m'), array('yy','dd','mm'),strtolower($I18N->msg('dateformat')));
+        $dateformat = str_replace(array('%y','%d','%m'), array('yy','dd','mm'),strtolower(cjoI18N::translate('dateformat')));
 		$this->cjoFormField($name, $label, $attributes, $id);
 		$this->addAttribute('style', 'width: 120px;');
 		$this->setFormat('strftime','dateformat');

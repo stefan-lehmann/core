@@ -190,8 +190,6 @@ class OOMedia {
      */
     public static function getMediaById($id) {
 
-        global $CJO;
-
         $id = (int) $id;
         if (empty($id) || !is_numeric($id)) return null;
 
@@ -272,16 +270,14 @@ class OOMedia {
      */
     public static function getErrorFile($filename=false) {
 
-        global $CJO, $I18N;
-
-        $error_filename = $CJO['ADDON']['settings']['image_processor']['error_img'];
-        $fullpath       = $CJO['MEDIAFOLDER'].'/'.$error_filename;
+        $error_file = cjoImageProcessor::getErrorImage();
+        $fullpath   = cjoUrl::media($error_file);
 
         if (!file_exists($fullpath)) return null;
 
         $imagesize = @getimagesize($fullpath);
 
-		    $crop      = imageProcessor_initCropValues($imagesize);
+		    $crop      = cjoImageProcessor::initCropValues($imagesize);
 
         $media             = new OOMedia();
         $media->_id        = 0;
@@ -289,7 +285,7 @@ class OOMedia {
         $media->_cat_id    = 0;
         $media->_cat_name  = '';
 
-        $media->_name      = $error_filename;
+        $media->_name      = $error_file;
         $media->_orgname   = '';
         $media->_type      = '';
         $media->_size      = '';
@@ -298,8 +294,8 @@ class OOMedia {
         $media->_height    = $imagesize[1];
         $media->_title     = '';
 
-        foreach($CJO['CLANG'] as $clang_id=>$name) {
-            $desc[$clang_id] = ($filename) ? $I18N->msg('msg_file_not_found', $filename) : '&nbsp;';
+        foreach(cjoProp::getClangs() as $clang_id=>$name) {
+            $desc[$clang_id] = ($filename) ? cjoI18N::translate('msg_file_not_found', $filename) : '&nbsp;';
         }
 
         $media->_description = serialize($desc);
@@ -491,14 +487,12 @@ class OOMedia {
      */
     public function getDescription($clang=false, $specialchars = true) {
 
-        global $CJO, $I18N;
-
-        if ($clang === false)  $clang = $CJO['CUR_CLANG'];
+        if ($clang === false)  $clang = cjoProp::getClang();
         $desc_array = (!is_array($this->_description)) ? unserialize(stripslashes($this->_description)) : $this->_description;
         $description = trim(stripslashes($desc_array[$clang]));
 
         if (!$description) {
-            return ($CJO['CONTEJO']) ? $I18N->msg('label_no_media_description') : false;
+            return (cjoProp::isBackend()) ? cjoI18N::translate('label_no_media_description') : false;
         }
 
         $description = preg_replace('/(?![\(\s])"(?=[\w|\d])|„/', '„', $description);
@@ -519,14 +513,12 @@ class OOMedia {
      * @return string
      */
     public function getCopyright($full=false) {
-
-        global $CJO;
         
         if ($full !== true){
             return $this->_copyright;
         }
 
-        $copyright = empty($this->_copyright) ? $CJO['SERVERNAME'] : $this->_copyright;
+        $copyright = empty($this->_copyright) ? cjoProp::getServerName() : $this->_copyright;
         $copyright = (strpos($copyright, '|') > strlen($copyright)-3) ? substr($copyright, 0, -2) : $copyright;
         $copyright = str_replace(' ', '_', $copyright);
         $copyright = str_replace('|', '--', $copyright);
@@ -558,8 +550,7 @@ class OOMedia {
      * @access public
      */
     public function getFullPath() {
-        global $CJO;
-        return $CJO['MEDIAFOLDER'].'/'.$this->getFileName();
+        return cjoPath::media($this->getFileName());
     }
 
     /**
@@ -596,8 +587,6 @@ class OOMedia {
      */
     public function getSize() {
 
-        global $CJO;
-
         if (empty($this->_size) && file_exists($this->getFullPath())) {
             $this->_size = filesize($this->getFullPath());
 
@@ -631,22 +620,7 @@ class OOMedia {
      * @access public
      */
     public static function getFormattedSize($size) {
-
-        $kb = 1024;         // kB
-        $mb = 1024 * $kb;   // MB
-        $gb = 1024 * $mb;   // GB
-        $tb = 1024 * $gb;   // TB
-
-        if ($size < $kb)
-            return $size.' Bytes';
-        else if ($size < $mb)
-            return round($size/$kb,2).' kB';
-        else if ($size < $gb)
-            return round($size/$mb,2).' MB';
-        else if ($size < $tb)
-            return round($size/$gb,2).' GB';
-        else
-            return round($size/$tb,2).' TB';
+        cjoFile::getFormattedSize($size);
     }
 
     /**
@@ -710,12 +684,10 @@ class OOMedia {
      */
     public static function toImage($filename, $params = array ()) {
 
-        global $CJO;
-
-        $fullpath   = $CJO['MEDIAFOLDER']."/".$filename;         
-        $media_obj = self::getMediaByName($filename);
+        $fullpath    = cjoUrl::media($filename);         
+        $media_obj   = self::getMediaByName($filename);
         $description = '';  
-        $attributes = '';
+        $attributes  = '';
 
         if (!self::isValid($media_obj)) {
             if ($strict) return false;
@@ -750,8 +722,6 @@ class OOMedia {
 
     public static function toResizedImage($filename, $params=array(), $replace_folder=false, $return_array=false, $strict=true) {
 
-        global $CJO, $I18N;
-
         $image   = array();
         $search  = array();
         $replace = array();
@@ -768,8 +738,7 @@ class OOMedia {
             $filename  = $media_obj->getFileName();
         }
         
-        if (!isset($CJO['IMAGE_LIST_BUTTON']['DESCRIPTION']) || 
-            $CJO['IMAGE_LIST_BUTTON']['DESCRIPTION']) {
+        if (cjoProp::get('IMAGE_LIST_BUTTON|DESCRIPTION')) {
                 
             switch ($params['des']['settings']) {
                 case '-': $description = ''; break;
@@ -799,7 +768,7 @@ class OOMedia {
                           'width'       => $size[0].'px');
 
         if ($replace_folder) {
-            $replace[$CJO['MEDIAFOLDER'].'/'] = 'CJO_MEDIAFOLDER/';
+            $replace[cjoUrl::media()] = 'CJO_MEDIAFOLDER/';
         }
 
         $output = '%image%%description%';
@@ -836,7 +805,7 @@ class OOMedia {
         }
 
         foreach(array_keys($replace) as $key) {
-            if ($key != $CJO['MEDIAFOLDER'].'/') {
+            if ($key != cjoUrl::media()) {
                 $search[] = '%'.$key.'%';
             }
             else {
@@ -849,32 +818,28 @@ class OOMedia {
 
     private function getImageboxLink($params=array()) {
 
-        global $CJO;
-
-        if (!$CJO['IMAGE_LIST_BUTTON']['IMAGEBOX'])  return '%image%%description%';
+        if (!cjoProp::get('IMAGE_LIST_BUTTON|IMAGEBOX'))  return '%image%%description%';
         
         $params['get_src'] = 1;
         $url = $this->_toThumbnail($params);
-        $group = !empty($params['grp']) ? $params['grp'] : 'group_'.$CJO['ARTICLE_ID'];
+        $group = !empty($params['grp']) ? $params['grp'] : 'group_'.cjoProp::getArticleId();
 
         return '<a rel="imagebox-'.$group.'" href="'.$url.'" name="%copyright%"
                     title="%title%" class="imagelink zoom">%image%<span></span>%description%</a>'."\r\n";
     }
 
-    private function getFlashboxLink($flash_file, $params=array()) {
+    private function getFlashboxLink($filename, $params=array()) {
 
-        global $CJO;
+        $filename = cjoUrl::media($filename);
 
-        $flash_file = $CJO['MEDIAFOLDER']."/".$flash_file;
+        if (!file_exists($filename)) return '%image%%description%';
 
-        if (!file_exists($flash_file)) return '%image%%description%';
-
-        $flash_size = getimagesize($flash_file);
-        $group  = ($params['grp'] != '') ? $params['grp'] : 'group_'.$CJO['ARTICLE_ID'];
-        $width  = ($params['width'] != '') ? $params['width'] : $flash_size[0];
-        $height = ($params['height'] != '') ? $params['height'] : $flash_size[1];
+        $size   = getimagesize($filename);
+        $group  = ($params['grp'] != '') ? $params['grp'] : 'group_'.cjoProp::getArticleId();
+        $width  = ($params['width'] != '') ? $params['width'] : $size[0];
+        $height = ($params['height'] != '') ? $params['height'] : $size[1];
         $prams  = ($params['prams'] != '') ? '&amp;'.str_replace('&', '&amp;',$params['prams']) : '';
-        $url    = $flash_file.'?w='.$width.'&amp;h='.$height.$prams;
+        $url    = $filename.'?w='.$width.'&amp;h='.$height.$prams;
 
         return '<a rel="flashbox-'.$group.'" href="'.$url.'" name="%copyright%"
                     title="%title%" class="imagelink zoom flash">%image%<span></span>
@@ -883,13 +848,11 @@ class OOMedia {
 
     private function getImageIntLink($article_id, $clang=false) {
 
-        global $CJO;
-
         $article = OOArticle::getArticleById($article_id, $clang);
 
         if (!OOArticle::isValid($article)) return '%image%%description%';
 
-        return '<a href="'.cjoRewrite::getUrl($article_id, $article->getClang()).'"
+        return '<a href="'.cjoUrl::getUrl($article_id, $article->getClang()).'"
                     title="'.$article->getName().'" class="imagelink ">%image%%description%</a>'."\r\n";
 
     }
@@ -936,8 +899,6 @@ class OOMedia {
      */
     public static function toThumbnail($filename, $fullpath=false, $params=array('width'=>80, 'height'=>80)) {
 
-        global $CJO, $I18N;
-
         self::getDefaultImageSizes();
 
         $media_obj  = self::getMediaByName($filename);
@@ -945,7 +906,7 @@ class OOMedia {
         $attributes = '';
         
         if (empty($fullpath) || !file_exists($fullpath)) {
-            $fullpath = $CJO['MEDIAFOLDER'].'/'.$filename;
+            $fullpath = cjoPath::media($filename);
         }
 
         if (!file_exists($fullpath) || !is_file($fullpath)) {
@@ -957,11 +918,11 @@ class OOMedia {
 
         if (!empty($params['crop_num']) && $params['crop_num'] != '-') {
 
-            $width = $CJO['IMG_DEFAULT'][$params['crop_num']]['width'];
-            $height = $CJO['IMG_DEFAULT'][$params['crop_num']]['height'];
+            $width = cjoProp::get('IMG_DEFAULT|'.$params['crop_num'].'|width');
+            $height = cjoProp::get('IMG_DEFAULT|'.$params['crop_num'].'|height');;
 
             $crop_data['img'] = $media_obj->getCropData($params['crop_num']);
-            $shadow_crop_nums = $CJO['ADDON']['settings']['image_processor']['shadow']['shadow_crop_nums'];
+            $shadow_crop_nums = cjoAddon::getParameter('shadow|shadow_crop_nums', 'image_processor');
             $shadow           = in_array($params['crop_num'], $shadow_crop_nums) || !empty($params['shadow']);
             $brand_on_off     = (isset($params['brand']) && $params['brand'] == 'on') ? 'brand_on_off = 1' : 'brand_on_off = 0';
         }
@@ -970,7 +931,7 @@ class OOMedia {
             $height = $params['height'];
             if (!empty($params['crop_auto'])) {
                 $imagesize        = $media_obj->isErrorFile() ? getimagesize($fullpath) : array($media_obj->getWidth(),$media_obj->getHeight());
-                $crop_data['img'] = imageProcessor_calculateCrop($imagesize, $params);
+                $crop_data['img'] = cjoImageProcessor::calculateCrop($imagesize, $params);
             } else {
                 $crop_data['img'] = array(1=>null, 2=>null, 3=>null, 4=>null);
             }
@@ -988,7 +949,7 @@ class OOMedia {
         }
         
         if (empty($params['alt'])) {
-            $params['alt'] = $media_obj->getTitle() != $I18N->msg('label_no_title') ? $media_obj->getTitle() : '';
+            $params['alt'] = $media_obj->getTitle() != cjoI18N::translate('label_no_title') ? $media_obj->getTitle() : '';
         }
 
         foreach (cjoAssistance::toArray($params) as $tag => $value) {
@@ -996,10 +957,7 @@ class OOMedia {
             $attributes .= cjoAssistance::htmlToTxt(' '.$tag.'="'.$value.'"');
         }
 
-        if ($CJO['ADDON']['status']['image_processor'] == 1) {
-            if (!class_exists("resizecache")) {
-                require_once $CJO['ADDON_PATH'].'/image_processor/classes/class.resizecache.inc.php';
-            }
+        if (cjoAddon::isActivated('image_processor')) {
             $resize = !resizecache::is_conflict_memory_limit($fullpath);
         }
         $size = @getimagesize($fullpath);
@@ -1008,7 +966,7 @@ class OOMedia {
             self::isResizeImage($filename) &&
             $size != false) {
             if ($resize) {
-                $img = imageProcessor_getImg($filename,
+                $img = cjoImageProcessor::getImg($filename,
                                              $width,
                                              $height,
                                              $resize=null,
@@ -1051,14 +1009,12 @@ class OOMedia {
      */
     public static function toIcon($filename, $fullpath=false, $params=array(), $icon_path=false) {
 
-        global $CJO, $I18N;
-
         if (empty($fullpath))
-            $fullpath = $CJO['MEDIAFOLDER'].'/'.$filename;
+            $fullpath = cjoUrl::media($filename);
             
         $attributes = '';
         
-        if (!$icon_path) $icon_path = $CJO['BACKEND_PATH'].'/img/mime_icons';
+        if (!$icon_path) $icon_path = cjoUrl::backend('img/mime_icons');
 
         foreach (cjoAssistance::toArray($params) as $name => $value) {
             if ($name == 'width' || $name == 'height') continue;
@@ -1066,7 +1022,7 @@ class OOMedia {
         }
 
         if (!file_exists($fullpath) || !is_file($fullpath))
-            return '<img src="'.$icon_path.'/error.png" alt="'.$I18N->msg('msg_file_not_found', $fullpath).'" title="'.$I18N->msg('msg_file_not_found', $fullpath).'" />';
+            return '<img src="'.$icon_path.'/error.png" alt="'.cjoI18N::translate('msg_file_not_found', $fullpath).'" title="'.cjoI18N::translate('msg_file_not_found', $fullpath).'" />';
 
         $path_info = pathinfo($fullpath);
         $ext = strtolower($path_info["extension"]);
@@ -1085,10 +1041,8 @@ class OOMedia {
      * @access public
      */
     public static function toHTML($filename, $attributes='') {
-
-        global $CJO;
         
-        $fullpath = $CJO['MEDIAFOLDER'].'/'.$filename;
+        $fullpath = cjoUrl::media($filename);
 
         switch (self::getExtension($filename)) {
             case 'jpg' :
@@ -1110,6 +1064,16 @@ class OOMedia {
      */
     public static function isValid($media) {
         return is_object($media) && is_a($media, 'oomedia') && ($media->_id > 0 || !$media->_error_file);
+    }
+
+    /**
+     * Returns true if the given file is available.
+     * @param string $file
+     * @return boolean
+     * @access public
+     */
+    public static function isAvailable($file) {
+        return !empty($file) && file_exists(cjoPath::media($file)); 
     }
 
     /**
@@ -1144,7 +1108,7 @@ class OOMedia {
 
         $sql = new cjoSql();
         $qry = "SELECT DISTINCT
-              IFNULL(a.name,'".$I18N->msg("label_no_name")."') AS article_name,
+              IFNULL(a.name,'".cjoI18N::translate("label_no_name")."') AS article_name,
                   a.id AS article_id,
                   s.ctype AS ctype
                 FROM ".TBL_ARTICLES." a
@@ -1163,7 +1127,7 @@ class OOMedia {
      * @access public
      */
     public function _getExtension() {
-        return self::getExtension($this->getFileName());
+        return cjoFile::getExtension($this->getFileName());
     }
     
     /**
@@ -1173,7 +1137,7 @@ class OOMedia {
      * @access public
      */
     public static function getExtension($filename) {
-        return substr(strrchr($filename, "."), 1);
+        return cjoFile::getExtension($filename);
     }
 
     /**
@@ -1182,8 +1146,7 @@ class OOMedia {
      * @access public
      */
     public static function getDocTypes() {
-        global $CJO;
-        return $CJO['UPLOAD_EXTENSIONS'];
+        return cjoProp::get('UPLOAD_EXTENSIONS');
     }
 
     /**
@@ -1193,9 +1156,7 @@ class OOMedia {
      */
     public static function getDefaultImageSizes() {
 
-        global $CJO;
-
-        if (isset($CJO['img_default']) && is_array($CJO['img_default'])) return;
+        if (cjoProp::get('IMG_DEFAULT', false)) return;
 
         $img_default = array();
         $img_default['default'] = 0;
@@ -1231,7 +1192,7 @@ class OOMedia {
 
         ksort ($img_default);
 
-        $CJO['IMG_DEFAULT'] = $img_default;
+        cjoProp::set('IMG_DEFAULT', $img_default);
     }
 
     /**

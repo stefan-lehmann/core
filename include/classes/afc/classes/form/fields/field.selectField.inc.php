@@ -87,8 +87,6 @@ class selectField extends cjoFormMultiValueField {
      */
     public function get() {
 
-        global $I18N;
-
         $options = '';
         $name = $this->getName();
         $value = $this->getValue();
@@ -110,7 +108,7 @@ class selectField extends cjoFormMultiValueField {
             $this->addAttribute('multiple', 'multiple');
             $this->addAttribute('size', '8', false);
 
-            $multiple_note = '<span class="multiple_note">' . $I18N->msg('ctrl') . '</span>';
+            $multiple_note = '<span class="multiple_note">' . cjoI18N::translate('ctrl') . '</span>';
         } else {
             $this->addAttribute('size', '3', false);
         }

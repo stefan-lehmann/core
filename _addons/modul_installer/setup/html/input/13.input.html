@@ -1,0 +1,138 @@
+[%TEMPLATE%]
+
+<div class="settings">
+    <h2 class="no_bg_image">[translate: basic_settings]</h2>
+
+    <div class="formular floatbox">
+        <label>[translate: link_flash_file]</label>
+		CJO_MEDIA_BUTTON[1]
+    </div>
+    <div class="formular last">
+        <label>[translate: preview_image]</label>
+		CJO_MEDIA_BUTTON[id=3 crop_num=CJO_VALUE[14]]
+    </div>  
+    <div class="formular">    		
+        <label>[translate: preview_crop_selection]</label>		
+		[[PREVIEW_CROP_SELECTION]]
+    </div>
+    <div class="formular last">
+        <label>[translate: ipad_alternative_image]</label>
+		CJO_MEDIA_BUTTON[id=4 crop_num=CJO_VALUE[15]]
+    </div>  
+    <div class="formular">    
+        <label>[translate: ipad_alternative_image]</label>		
+		[[IPAD_ALTERNATIVE_CROP_SELECTION]]	
+    </div>        
+    <div class="formular">
+        <label>[translate: flash_version]</label>
+        [[FLASH_VERSION_SELECTION]]
+    </div>
+    <div class="formular last">
+        <label>[translate: description]</label>
+        [[CJO_DESC_SELECTION]]
+		<span class="hide_me"[[DISPLAY_MPOOL_DESC]]">
+			<textarea disabled="disabled" class="inp37">[[MPOOL_DESC]]</textarea>
+        </span>
+        <span class="hide_me"[[DISPLAY_DESC_INPUT]]">
+        	<textarea name="VALUE[3]" class="inp37">CJO_VALUE[3]</textarea>
+        </span>
+    </div>
+</div>
+
+<div class="settings floatbox">
+    <h2>[translate: link_flv_file][translate: optional]</h2>
+    <div class="formular last hide_me" IF(CJO_FILE[2]){% style="display: block;" %}ENDIF>
+         <label>[translate: link_flv_file]</label>
+		CJO_MEDIA_BUTTON[2]
+		<div style="clear: left; padding-top: 5px">
+         <label>[translate: width_height_in_pixel]</label>
+         <input type="text" class="inp10" name="VALUE[11]" value="CJO_VALUE[11]" style="display: inline" /> ×
+         <input type="text" class="inp10" name="VALUE[12]" value="CJO_VALUE[12]" style="display: inline" />
+         <br />
+         <input type="hidden" name="VALUE[13]" value="false" />
+         <input type="checkbox" name="VALUE[13]" value="true"
+             style=" vertical-align: text-bottom;"AUTOSTART_CHECKED />
+         <label class="right_label">[translate: autostart_flash]</label>
+	    </div>
+    </div>
+</div>
+
+<div class="settings">
+	<h2>[translate: flash_vars][translate: optional]</h2>
+    <div class="formular last">
+	    <div style="clear: left;">
+	        <label>Varname1 = Value1</label>
+	        <input type="hidden"  name="VALUE[7]" id="flashvar_input1" value="CJO_VALUE[7]" />
+	        <input type="text" size="10" class="inp20" name="flashvar_name1" value="" style="display: inline" /> :
+	        <input type="text" size="50" class="inp50" name="flashvar_value1" value="" style="display: inline" />
+	    </div>
+	    <div style="clear: left; padding-top: 5px">
+	        <label>Varname2 = Value2</label>
+	        <input type="hidden"  name="VALUE[8]" id="flashvar_input2" value="CJO_VALUE[8]" />
+	        <input type="text" size="10" class="inp20" name="flashvar_name2" value="" style="display: inline" /> :
+	        <input type="text" size="50" class="inp50" name="flashvar_value2" value="" style="display: inline" />
+	    </div>
+	    <div style="clear: left; padding-top: 5px">
+	        <label>Varname3 = Value3</label>
+	        <input type="hidden"  name="VALUE[9]" id="flashvar_input3" value="CJO_VALUE[9]" />
+	        <input type="text" size="10" class="inp20" name="flashvar_name3" value="" style="display: inline" /> :
+	        <input type="text" size="50" class="inp50" name="flashvar_value3" value="" style="display: inline" />
+	    </div>
+	    <div style="clear: left; padding-top: 5px">
+	        <label>Varname4 = Value4</label>
+	        <input type="hidden" name="VALUE[10]" id="flashvar_input4" value="CJO_VALUE[10]" />
+	        <input type="text" size="10" class="inp20" name="flashvar_name4" value="" style="display: inline" /> :
+	        <input type="text" size="50" class="inp50" name="flashvar_value4" value="" style="display: inline" />
+	    </div>
+	</div>
+</div>
+
+<script type="text/javascript">
+ //<![CDATA[
+
+    $(function() {
+
+        $('input[id^=flashvar_input]').each(function(){
+
+            var num, name, value, flash_var;
+
+           if ($(this).val() != ''){
+
+                num = $(this).attr('name');
+                num = num.substr(-1);
+
+                flash_var = $(this).val();
+                values = flash_var.split(":");
+
+                if(values[0] != undefined && values[0] != ''){
+                    $(this).siblings('input').eq(0).val(values[0]);
+                }
+                if(values[1] != undefined && values[1] != ''){
+                    $(this).siblings('input').eq(1).val(values[1].replace(/\\"/g,'') );
+                }
+            }
+        });
+
+        $('input[name^=flashvar_]').bind('change', function(){
+
+            var num, name, value, flash_var;
+
+            num = $(this).attr('name');
+            num = num.substr(-1);
+
+            name = $('input[name=flashvar_name'+num+']').val();
+            value = $('input[name=flashvar_value'+num+']').val();
+            flash_var = (name != '' && value!='')
+                      ? name+':"'+value+'"' : '';
+
+            $('#flashvar_input'+num).val(flash_var);
+        });
+
+        $('#CJO_VALUE_2').bind('change', function() {
+            $(this).nextAll('span').hide();
+            $(this).nextAll('span:eq('+this.selectedIndex+')').show();
+        });
+    });
+
+ //]]>
+</script>

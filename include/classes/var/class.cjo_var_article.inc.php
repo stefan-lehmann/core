@@ -38,8 +38,8 @@ class cjoVarArticle extends cjoVars {
     // --------------------------------- Output
 
     public function getTemplate($content, $article_id = false, $template_id = false) {
-        global $CJO;
-        if (empty($article_id)) $article_id = $CJO['ARTICLE_ID'];
+
+        if (empty($article_id)) $article_id = cjoProp::get('ARTICLE_ID');
         $this->template_id = $template_id;
         $content = $this->replaceCommonVars($content, $article_id);
         $content = $this->matchCtype($content, $article_id);
@@ -90,8 +90,6 @@ class cjoVarArticle extends cjoVars {
      */
     protected function matchArticle($content, $replaceInTemplate = false) {
 
-        global $CJO;
-
         $var = 'CJO_ARTICLE';
 
         $matches = $this->getVarParams($content, $var);
@@ -100,7 +98,7 @@ class cjoVarArticle extends cjoVars {
 
             list ($param_str, $args)  = $match;
             list ($article_id, $args) = $this->extractArg('id',    $args, 0);
-            list ($clang, $args)      = $this->extractArg('clang', $args, $CJO['CUR_CLANG']);
+            list ($clang, $args)      = $this->extractArg('clang', $args, cjoProp::getClang());
             list ($ctype, $args)      = $this->extractArg('ctype', $args, -1);
             list ($field, $args)      = $this->extractArg('field', $args, '');
             list ($template, $args)   = $this->extractArg('template', $args, 0);            
@@ -173,8 +171,6 @@ class cjoVarArticle extends cjoVars {
      */
     protected function matchCtype($content, $article_id) {
 
-        global $CJO;
-
         $var = 'CJO_ARTICLE_CTYPE';
 
         $matches = $this->getVarParams($content, $var);
@@ -185,7 +181,7 @@ class cjoVarArticle extends cjoVars {
 
             list ($param_str, $args)  = $match;
             list ($ctype, $args)      = $this->extractArg('id', $args, 0);
-            list ($clang, $args)      = $this->extractArg('clang', $args, $CJO['CUR_CLANG']);
+            list ($clang, $args)      = $this->extractArg('clang', $args, cjoProp::getClang());
             list ($template, $args)   = $this->extractArg('template', $args, $this->template_id);  
 
             $replace = 'CJO_ARTICLE[id='.$article_id.' ctype='.$ctype.' clang='.$clang.' template='.$template.']';
@@ -200,14 +196,12 @@ class cjoVarArticle extends cjoVars {
      */
     protected function matchParentsCtype($content, $article_id) {
 
-        global $CJO;
-
         $var     = 'CJO_PARENTS_CTYPE';
         $matches = $this->getVarParams($content, $var);
-        $clang   = $CJO['CUR_CLANG'];
+        $clang   = cjoProp::getClang();
 
        	$article = OOArticle::getArticleById($article_id);
-        $tree = cjoAssistance::toArray($CJO['START_ARTICLE_ID'].$article->_path.$article_id);
+        $tree = cjoAssistance::toArray(cjoProp::get('START_ARTICLE_ID').$article->_path.$article_id);
         $tree = array_unique($tree);
 
         krsort($tree);
@@ -268,7 +262,7 @@ class cjoVarArticle extends cjoVars {
 
             list ($param_str, $args) = $match;
             list ($crop_num, $args)  = $this->extractArg('crop_num', $args);
-            list ($clang, $args)     = $this->extractArg('clang', $args, $CJO['CUR_CLANG']);
+            list ($clang, $args)     = $this->extractArg('clang', $args, cjoProp::getClang());
             list ($get_src, $args)   = $this->extractArg('get_src', $args, 0);
 
             if (!$crop_num) {
@@ -302,17 +296,14 @@ class cjoVarArticle extends cjoVars {
 
     protected function replaceCommonVars($content, & $article_id = false) {
 
-        global $CJO;
-
         static $user_id = null;
         static $user_login = null;
 
         // UserId gibts nur im Backend
         if ($user_id === null) {
-
             if (is_object($CJO['USER'])) {
-                $user_id = $CJO['LOGIN']->getValue('user_id');
-                $user_login = $CJO['LOGIN']->getValue('login');
+                $user_id = cjoProp::getUser()->getValue('user_id');
+                $user_login = cjoProp::getUser()->getValue('login');
             }
             else {
                 $user_id = '';
@@ -321,16 +312,13 @@ class cjoVarArticle extends cjoVars {
         }
 
         if (empty($article_id))
-            $article_id = cjo_request('article_id', 'cjo-article-id', $CJO['START_ARTICLE_ID']);
+            $article_id = cjo_request('article_id', 'cjo-article-id', cjoProp::get('START_ARTICLE_ID'));
 
         $article = OOArticle::getArticleById($article_id);
-        
-        if (!OOArticle::isValid($article)) 
-            return $content;
-        
-        if (empty($this->template_id))
-            $this->template_id = $article->getTemplateId();
-        
+
+        $this->template_id = $article->getTemplateId();
+
+        if (!OOArticle::isValid($article)) return $content;
 
         $search = array('CJO_ARTICLE_ID'            => $article->getId(),
                         'CJO_TEMPLATE_ID'           => $article->getTemplateId(),
@@ -350,18 +338,18 @@ class cjoVarArticle extends cjoVars {
                         'CJO_ARTICLE_CREATEDATE'    => $article->getCreateDate(),
                         'CJO_ARTICLE_UPDATEDATE'    => $article->getUpdateDate(),
                         'CJO_CLANG_ID'              => $article->getClang(),
-                        'CJO_CLANG_ISO'             => $CJO['CLANG_ISO'][$article->getClang()],
-					    'CJO_CLANG_NAME'            => $CJO['CLANG'][$article->getClang()],
+                        'CJO_CLANG_ISO'             => cjoProp::getClangIso($article->getClang()),
+					    'CJO_CLANG_NAME'            => cjoProp::getClangName($article->getClang()),
                         'CJO_USER_ID'               => $user_id,
                         'CJO_USER_LOGIN'            => $user_login,
-                        'CJO_SERVERNAME'            => $CJO['SERVERNAME'],
-                        'CJO_SERVER'                => $CJO['SERVER'],
-                        'CJO_START_ARTICLE_ID'      => $CJO['START_ARTICLE_ID'],
-                        'CJO_NOTFOUND_ARTICLE_ID'   => $CJO['NOTFOUND_ARTICLE_ID'],
-                        'CJO_HTDOCS_PATH'           => $CJO['HTDOCS_PATH'],
-                        'CJO_MEDIAFOLDER'           => $CJO['MEDIAFOLDER'],
-                        'CJO_FRONTPAGE_PATH'        => $CJO['FRONTPAGE_PATH'],
-                        'CJO_ADJUST_PATH'           => $CJO['ADJUST_PATH']);
+                        'CJO_SERVERNAME'            => cjoProp::get('SERVERNAME'),
+                        'CJO_SERVER'                => cjoProp::get('SERVER'),
+                        'CJO_START_ARTICLE_ID'      => cjoProp::get('START_ARTICLE_ID'),
+                        'CJO_NOTFOUND_ARTICLE_ID'   => cjoProp::get('NOTFOUND_ARTICLE_ID'),
+                        'CJO_HTDOCS_PATH'           => cjoProp::get('HTDOCS_PATH'),
+                        'CJO_MEDIAFOLDER'           => cjoProp::get('MEDIAFOLDER'),
+                        'CJO_FRONTPAGE_PATH'        => cjoProp::get('FRONTPAGE_PATH'),
+                        'CJO_ADJUST_PATH'           => cjoProp::get('ADJUST_PATH'));
                         
 
         foreach($search as $key => $replace) {

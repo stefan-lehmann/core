@@ -30,7 +30,6 @@ $add_qry = (empty($group_id))
 		  : "ug.group_id = '".$group_id."'";
 
 $qry = "SELECT 
-            ug.user_id,
 			us.username,
 			us.gender,
 			us.firstname,
@@ -39,96 +38,95 @@ $qry = "SELECT
 			us.lasttrydate,
 			us.newsletter,	
 			us.status,		
+			us.id AS user_id,
 			us.id AS checkbox,
 			IF(us.password<>'',1,0) AS login
 		FROM
-            ".TBL_COMMUNITY_UG." ug
+			".TBL_COMMUNITY_USER." us
 		LEFT JOIN
-            ".TBL_COMMUNITY_USER." us
+			".TBL_COMMUNITY_UG." ug
 		ON
-			ug.user_id=us.id AND
-            ".$add_qry." AND
-            us.clang = '".$clang."'
+			ug.user_id=us.id
 		WHERE
 			".$add_qry." AND
 			us.clang = '".$clang."'";
 
-$list = new cjoList($qry, 'ug.user_id', 'ASC', 'name', 50);
+$list = new cjolist($qry, 'username', 'ASC', 'name', 50);
 $list->addGlobalParams(array ('group_id' => $group_id));
 $list->setName('USER_LIST');
 $list->setAttributes('id="user_list"');
-$list->debug = false;
+//$list->debug = true;
 
-$add_button = cjoAssistance::createBELink(
-						    '<img src="img/silk_icons/add.png" alt="'.$I18N->msg("button_add").'" />',
+$add_button = cjoUrl::createBELink(
+						    '<img src="img/silk_icons/add.png" alt="'.cjoI18N::translate("button_add").'" />',
 							array('re_id'=> $group_id, 'function' => 'add', 'clang' => $clang),
 							$list->getGlobalParams(),
-							'title="'.$I18N->msg("button_add").'"');
+							'title="'.cjoI18N::translate("button_add").'"');
 
 $cols['checkbox'] = new resultColumn('checkbox', $add_button, 'sprintf', '<input type="checkbox" class="checkbox" value="%s" />');
 $cols['checkbox']->setHeadAttributes('class="icon"');
 $cols['checkbox']->setBodyAttributes('class="icon"');
 $cols['checkbox']->delOption(OPT_ALL);
 
-$cols['id'] = new resultColumn('user_id', $I18N->msg("label_id"));
+$cols['id'] = new resultColumn('user_id', cjoI18N::translate("label_id"));
 $cols['id']->setHeadAttributes('class="icon"');
 $cols['id']->setBodyAttributes('class="icon"');
 $cols['id']->addCondition('activation', '0', '<span class="disabled">%s</span>');
 
-$cols['username'] = new resultColumn('username', $I18N_10->msg("label_username"), 'truncate', array( 'length' => 15, 'etc' => '...', 'break_words' => true));
+$cols['username'] = new resultColumn('username', cjoAddon::translate(10,"label_username"), 'truncate', array( 'length' => 15, 'etc' => '...', 'break_words' => true));
 $cols['username']->addCondition('status', '-1', '<strike>%s</strike>');
 $cols['username']->addCondition('activation', '0', '<span class="disabled">%s</span>');
 
-$cols['gender'] = new resultColumn('gender', $I18N_10->msg("label_gender"));
+$cols['gender'] = new resultColumn('gender', cjoAddon::translate(10,"label_gender"));
 $cols['gender']->delOption(OPT_SEARCH);
 $cols['gender']->addCondition('status', '-1', '<strike>%s</strike>');
 $cols['gender']->addCondition('activation', '0', '<span class="disabled">%s</span>');
 
-$cols['firstname'] = new resultColumn('firstname', $I18N_10->msg("label_firstname"), 'truncate', array( 'length' => 15, 'etc' => '...', 'break_words' => true));
+$cols['firstname'] = new resultColumn('firstname', cjoAddon::translate(10,"label_firstname"), 'truncate', array( 'length' => 15, 'etc' => '...', 'break_words' => true));
 $cols['firstname']->setOptions(OPT_ALL);
 $cols['firstname']->addCondition('status', '-1', '<strike>%s</strike>');
 $cols['firstname']->addCondition('activation', '0', '<span class="disabled">%s</span>');
 
-$cols['name'] = new resultColumn('name', $I18N_10->msg("label_name"), 'truncate', array( 'length' => 15, 'etc' => '...', 'break_words' => true));
+$cols['name'] = new resultColumn('name', cjoAddon::translate(10,"label_name"), 'truncate', array( 'length' => 15, 'etc' => '...', 'break_words' => true));
 $cols['name']->setOptions(OPT_ALL);
 $cols['name']->addCondition('status', '-1', '<strike>%s</strike>');
 $cols['name']->addCondition('activation', '0', '<span class="disabled">%s</span>');
 
-$cols['email'] = new resultColumn('email', $I18N_10->msg("label_email_to"), 'email', array('params' => "?subject=".$CJO['SERVERNAME']." -- Infomail"));
+$cols['email'] = new resultColumn('email', cjoAddon::translate(10,"label_email_to"), 'email', array('params' => "?subject=".$CJO['SERVERNAME']." -- Infomail"));
 $cols['email']->addOption(OPT_SEARCH);
 $cols['email']->addCondition('status', '-1', '<strike>%s</strike>');
 $cols['email']->addCondition('activation', '0', '<span class="disabled">%s</span>');
 
-$cols['lasttrydate'] = new resultColumn('lasttrydate', $I18N->msg("label_last_login"), 'strftime', $I18N->msg("dateformat_sort"));
+$cols['lasttrydate'] = new resultColumn('lasttrydate', cjoI18N::translate("label_last_login"), 'strftime', cjoI18N::translate("dateformat_sort"));
 $cols['lasttrydate']->addCondition('login', '0', ' ');
 $cols['lasttrydate']->setBodyAttributes('style="white-space:nowrap;"');
 $cols['lasttrydate']->addCondition('activation', '0', '<span class="disabled">%s</span>');
 
-$cols['newsletter'] = new resultColumn('newsletter', $I18N_10->msg("label_newsletter_list"));
+$cols['newsletter'] = new resultColumn('newsletter', cjoAddon::translate(10,"label_newsletter_list"));
 $cols['newsletter']->addCondition('activation', '0', ' ');
-$cols['newsletter']->addCondition('newsletter', '1', '<img src="img/silk_icons/newspaper.png" alt="'.$I18N_10->msg("label_newsletter_active").'" />');
+$cols['newsletter']->addCondition('newsletter', '1', '<img src="img/silk_icons/newspaper.png" alt="'.cjoAddon::translate(10,"label_newsletter_active").'" />');
 $cols['newsletter']->addCondition('newsletter', '0', ' ');
 $cols['newsletter']->setHeadAttributes('class="icon"');
 $cols['newsletter']->setBodyAttributes('class="icon"');
 
 //
-$cols['login'] = new resultColumn('login', $I18N_10->msg("label_login"));
-$cols['login']->addCondition('login', '1', '<img src="img/silk_icons/key2.png" alt="'.$I18N_10->msg("label_login_active").'" />');
+$cols['login'] = new resultColumn('login', cjoAddon::translate(10,"label_login"));
+$cols['login']->addCondition('login', '1', '<img src="img/silk_icons/key2.png" alt="'.cjoAddon::translate(10,"label_login_active").'" />');
 $cols['login']->addCondition('login', '0', ' ');
 $cols['login']->setHeadAttributes('class="icon"');
 $cols['login']->setBodyAttributes('class="icon"');
 
 // Bearbeiten link
-$img = '<img src="img/silk_icons/page_white_edit.png" title="'.$I18N->msg("button_edit").'" alt="'.$I18N->msg("button_edit").'" />';
-$cols['edit'] = new staticColumn($img, $I18N->msg("label_functions"));
+$img = '<img src="img/silk_icons/page_white_edit.png" title="'.cjoI18N::translate("button_edit").'" alt="'.cjoI18N::translate("button_edit").'" />';
+$cols['edit'] = new staticColumn($img, cjoI18N::translate("label_functions"));
 $cols['edit']->setHeadAttributes('colspan="3"');
 $cols['edit']->setBodyAttributes('width="16"');
 $cols['edit']->setParams(array ('function' => 'edit', 'oid' => '%user_id%'));
 
 // Status link
-$added = '<img src="img/silk_icons/user_add.png" title="'.$I18N_10->msg("label_not_activated").'"  alt="" />';
-$aktiv = '<img class="cjo_status" src="img/silk_icons/user.png" title="'.$I18N->msg("label_status_do_false").'" alt="'.$I18N->msg("label_status_true").'" />';
-$inaktiv = '<img class="cjo_status" src="img/silk_icons/user_off.png" title="'.$I18N->msg("label_status_do_false").'" alt="'.$I18N->msg("label_status_false").'" />';
+$added = '<img src="img/silk_icons/user_add.png" title="'.cjoAddon::translate(10,"label_not_activated").'"  alt="" />';
+$aktiv = '<img class="cjo_status" src="img/silk_icons/user.png" title="'.cjoI18N::translate("label_status_do_false").'" alt="'.cjoI18N::translate("label_status_true").'" />';
+$inaktiv = '<img class="cjo_status" src="img/silk_icons/user_off.png" title="'.cjoI18N::translate("label_status_do_false").'" alt="'.cjoI18N::translate("label_status_false").'" />';
 $disabled = '<img src="img/silk_icons/lock.png" title="" alt="" />';
 
 $cols['status'] = new staticColumn('status', NULL);
@@ -139,14 +137,14 @@ $cols['status']->addCondition('status', '0', $inaktiv);
 $cols['status']->addCondition('status', '-1', $disabled);
 
 // Lösch link
-$img = '<img src="img/silk_icons/bin.png" title="'.$I18N->msg("button_delete").'" alt="'.$I18N->msg("button_delete").'" />';
+$img = '<img src="img/silk_icons/bin.png" title="'.cjoI18N::translate("button_delete").'" alt="'.cjoI18N::translate("button_delete").'" />';
 $cols['delete'] = new staticColumn($img, NULL);
 $cols['delete']->setBodyAttributes('width="60"');
 $cols['delete']->setBodyAttributes('class="cjo_delete"');
 
 $list->addColumns($cols);
 
-if ($list->hasRows()) {
+if ($list->numRows() != 0) {
 
 	$sel_group = cjoCommunityGroups::getSelectGroups($group_id);
 	$sel_group->setName("new_group_id");
@@ -158,21 +156,21 @@ if ($list->hasRows()) {
 	$sel_group->setSelectedPath(cjoCommunityGroups::getPath($group_id));
 
 	$buttons = new popupButtonField('', '', '', '');
-	$buttons->addButton($I18N->msg('label_run_process'), false, 'img/silk_icons/tick.png', 'id="ajax_update_button"');
+	$buttons->addButton(cjoI18N::translate('label_run_process'), false, 'img/silk_icons/tick.png', 'id="ajax_update_button"');
 
     $update_sel = new cjoSelect();
     $update_sel->setName('update_selection');
     $update_sel->setSize(1);
     $update_sel->setStyle('class="cjo_float_l" disabled="disabled"');
-    $update_sel->addOption($I18N->msg('label_update_selection'), 0);
-    $update_sel->addOption($I18N_10->msg('label_copy_users'), 1);
-    $update_sel->addOption($I18N_10->msg('label_move_users'), 2);
-    $update_sel->addOption($I18N_10->msg('label_delete_users'), 3);
+    $update_sel->addOption(cjoI18N::translate('label_update_selection'), 0);
+    $update_sel->addOption(cjoAddon::translate(10,'label_copy_users'), 1);
+    $update_sel->addOption(cjoAddon::translate(10,'label_move_users'), 2);
+    $update_sel->addOption(cjoAddon::translate(10,'label_delete_users'), 3);
     $update_sel->setSelected(0);
 
 	$toolbar_ext = '<tr class="toolbar_ext">'."\r\n".
 				   '	<td class="icon">'.
-				   '    	<input type="checkbox" class="hidden_container check_all" title="'.$I18N->msg('label_select_deselect_all').'" />'.
+				   '    	<input type="checkbox" class="hidden_container check_all" title="'.cjoI18N::translate('label_select_deselect_all').'" />'.
 				   '	</td>'.
 				   '	<td colspan="'.(count($cols)-1).'">'.
 				   '		<div class="hidden_container">'.$update_sel->get().
@@ -191,7 +189,7 @@ if ($group_id == 0){
 	$qry = "SELECT COUNT(*) as count FROM ".TBL_COMMUNITY_USER." WHERE clang='".$clang."'";
 	$sql->setQuery($qry);
 	$temp = $sql->getValue('count');
-	$list->setVar(LIST_VAR_NO_DATA, $I18N_10->msg('msg_no_data_in_root', (int) $temp));
+	$list->setVar(LIST_VAR_NO_DATA, cjoAddon::translate(10,'msg_no_data_in_root', (int) $temp));
 }
 
 $list->show();
@@ -204,16 +202,16 @@ $form->debug = false;
 
 if ($CJO['ADDON']['settings'][$mypage]['BOUNCE']) {
 
-    $fields['mail_account'] = new selectField('BOUNCE_MAIL_ACCOUNT', $I18N_10->msg('label_php_mailer_account'));
+    $fields['mail_account'] = new selectField('BOUNCE_MAIL_ACCOUNT', cjoAddon::translate(10,'label_php_mailer_account'));
     $fields['mail_account']->addSqlOptions("SELECT CONCAT(from_name,' &lt;',from_email,'&gt;') AS name, id FROM ".TBL_20_MAIL_SETTINGS);
     $fields['mail_account']->setMultiple(false);
     $fields['mail_account']->addAttribute('size', '1', true);
     $fields['mail_account']->addColAttribute('style', 'height:46px', true);
-    $fields['mail_account']->addValidator('notEmpty', $I18N_10->msg("msg_php_mailer_account"));
+    $fields['mail_account']->addValidator('notEmpty', cjoAddon::translate(10,"msg_php_mailer_account"));
   
     $button = '<input type="submit" id="cjoform_bounce_button" class="cjo_form_button green"
-                   value="'.$I18N_10->msg("button_start_bounce").'" 
-                   title="'.$I18N_10->msg("button_start_bounce").'"
+                   value="'.cjoAddon::translate(10,"button_start_bounce").'" 
+                   title="'.cjoAddon::translate(10,"button_start_bounce").'"
                    name="cjoform_bounce_button" value="1" />
           </button>';
 
@@ -340,9 +338,9 @@ if ($CJO['ADDON']['settings'][$mypage]['BOUNCE']) {
 			var target = $('input[name="new_group_id"]').val() *1;
 
 			var messages 	= [];
-			 	messages[1] = '<?php echo $I18N_10->msg('msg_confirm_copy') ?>';
-			 	messages[2] = '<?php echo $I18N_10->msg('msg_confirm_move') ?>';
-			 	messages[3] = '<?php echo $I18N_10->msg('msg_confirm_delete') ?>';
+			 	messages[1] = '<?php echo cjoAddon::translate(10,'msg_confirm_copy') ?>';
+			 	messages[2] = '<?php echo cjoAddon::translate(10,'msg_confirm_move') ?>';
+			 	messages[3] = '<?php echo cjoAddon::translate(10,'msg_confirm_delete') ?>';
 
 			if (cb.length < 1) return false;
 
@@ -407,11 +405,11 @@ if ($CJO['ADDON']['settings'][$mypage]['BOUNCE']) {
 
 			$(jdialog).dialog({
     			buttons: {
-    				'<?php echo $I18N->msg('label_ok'); ?>': function() {
+    				'<?php echo cjoI18N::translate('label_ok'); ?>': function() {
     					$(this).dialog('close');
     					confirm_action();
     				},
-    				'<?php echo $I18N->msg('label_cancel'); ?>': function() {
+    				'<?php echo cjoI18N::translate('label_cancel'); ?>': function() {
     					$(this).dialog('close');
     				}
     			}
@@ -451,15 +449,15 @@ if ($CJO['ADDON']['settings'][$mypage]['BOUNCE']) {
 			};
 
 
-			var jdialog = cjo.appendJDialog('<?php echo $I18N_10->msg('msg_confirm_delete_user'); ?>');
+			var jdialog = cjo.appendJDialog('<?php echo cjoAddon::translate(10,'msg_confirm_delete_user'); ?>');
 
 			$(jdialog).dialog({
     			buttons: {
-    				'<?php echo $I18N->msg('label_ok'); ?>': function() {
+    				'<?php echo cjoI18N::translate('label_ok'); ?>': function() {
     					$(this).dialog('close');
     					confirm_action();
     				},
-    				'<?php echo $I18N->msg('label_cancel'); ?>': function() {
+    				'<?php echo cjoI18N::translate('label_cancel'); ?>': function() {
     					$(this).dialog('close');
     				}
     			}

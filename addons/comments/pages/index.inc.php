@@ -30,14 +30,17 @@ $article_id  = cjo_request('article_id', 'cjo-article-id', 0);
 $clang       = cjo_request('clang', 'cjo-clang-id', 0);
 
 $subpages = new cjoSubPages($subpage, $mypage);
-$subpages->addPage( array('comments', 'title' => $I18N_7->msg('subtitle_comments_list')));
-$subpages->addPage( array('settings', 'title' => $I18N_7->msg('subtitle_settings')));
-$subpages->addPage( array('manage_tokens', 'title' => $I18N_7->msg('subtitle_manage_tokens')));
+cjoSubPages::addPages( array(
+                        array('comments', 
+                              'title' => cjoAddon::translate(7,'subtitle_comments_list')),
+                        array('settings', 
+                              'title' => cjoAddon::translate(7,'subtitle_settings')),
+                        array('manage_tokens', 
+                              'title' => cjoAddon::translate(7,'subtitle_manage_tokens'))
+                     ));
 
-require_once $CJO['INCLUDE_PATH'].'/layout/top.php';
-require_once $subpages->getPage();
-require_once $CJO['INCLUDE_PATH'].'/layout/bottom.php';
+require_once cjoSubPages::getPagePath();
 
 if ($subpage == 'show') return false;
 
-$CJO['SEL_LANG']->get();
+cjoSelectLang::get();

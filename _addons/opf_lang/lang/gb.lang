@@ -1,0 +1,19 @@
+opf_lang = Language Filter
+
+add_replacement = Add replacement
+edit_replacement = Edit replacement
+
+label_var = Variable
+label_name = Replacement
+label_function = Function
+label_edit = Edit replacement
+label_delete = Delete replacement
+label_update_vars = Update variables
+label_used = in use
+
+err_name = Please enter a replacement!
+err_var = Please enter a variable!
+
+values_deleted = Replacement deleted successfully.
+values_saved = Replacement saved successfully.
+values_already_exists = Replacement already exists!

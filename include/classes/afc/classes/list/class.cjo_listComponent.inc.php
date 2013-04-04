@@ -40,12 +40,12 @@ class cjoListComponent {
 
     public function link($value, $params = array (), $tags = '') {
         if ($value == '&nbsp;' || $value == ' ')
-        return '&nbsp;'; // Hack Stefan Lehmann
+        return '&nbsp;';
 
         if (count($params) == 0) {
             $params = $this->params;
         }
-        return cjoAssistance::createBELink($value, $params, $this->getGlobalParams(), $tags);
+        return cjoUrl::createBELink($value, $params, $this->getGlobalParams(), $tags);
     }
 
     public function addGlobalParam($name, $value) {

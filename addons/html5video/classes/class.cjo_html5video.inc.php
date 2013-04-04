@@ -25,22 +25,22 @@
 
 class cjoHtml5Video {
 
-    public static $mypage = 'html5video';    
+    public static $addon = 'html5video';    
 
     public static function getVideoLink($filename, $params=array(), $return_array=false) {
 
         global $CJO;
 
-        $valid_params = array(self::$mypage, 'clang', 'width', 'height', 'autoplay', 'controls', 'poster');    
+        $valid_params = array(self::$addon, 'clang', 'width', 'height', 'autoplay', 'controls', 'poster');    
               
         $media = OOMedia::getMediaByName($filename);
         
         if (!OOMedia::isValid($media) || !file_exists($CJO['MEDIAFOLDER']."/".$file)) return false;
         
-        $domain                = cjoRewrite::setServerUri();   
-        $params[self::$mypage] = $media->getId();
-        $params['clang']       = (!empty($params['clang']))  ? (int) $params['clang']  : $CJO['CUR_CLANG'];  
-        $params                = self::toHtml5VideoParams($filename, $params);
+        $domain                = cjoUrl::setServerUri();   
+        $params[self::$addon] = $media->getId();
+        $params['clang']       = (!empty($params['clang']))  ? (int) $params['clang']  : cjoProp::getClang();  
+        $params                = self:: toHtml5VideoParams($filename, $params);
         
         foreach($params as $key=>$param) {
             if (in_array($key, $valid_params, true)) continue;
@@ -51,7 +51,7 @@ class cjoHtml5Video {
         if (!empty($params['autoplay'])) (bool) $params['autoplay'];
         if (!empty($params['controls'])) (bool) $params['controls'];
 
-        $params['url'] = cjoRewrite::getUrl($CJO['ARTICLE_ID'], $params['clang'], $params);
+        $params['url'] = cjoUrl::getUrl($CJO['ARTICLE_ID'], $params['clang'], $params);
 
         return  ($return_array) 
                     ? $params
@@ -74,8 +74,8 @@ class cjoHtml5Video {
 
         $sources  = array(); 
         $media    = OOMedia::getMediaSetByName($filename);
-        $codecs   = $CJO['ADDON']['settings'][self::$mypage]['CODECS'];
-        $autoplay = (int) $CJO['ADDON']['settings'][self::$mypage]['DEFAULT_AUTOPLAY'];
+        $codecs   = $CJO['ADDON']['settings'][self::$addon]['CODECS'];
+        $autoplay = (int) $CJO['ADDON']['settings'][self::$addon]['DEFAULT_AUTOPLAY'];
                     
         if (!OOMedia::isValid($media['video'])) return array();
         
@@ -85,8 +85,8 @@ class cjoHtml5Video {
             $poster = $media['image']->getFullPath();        
         }
         else {
-            $default_width = $CJO['ADDON']['settings'][self::$mypage]['DEFAULT_WIDTH'];
-            $default_height = $CJO['ADDON']['settings'][self::$mypage]['DEFAULT_HEIGHT']; 
+            $default_width = $CJO['ADDON']['settings'][self::$addon]['DEFAULT_WIDTH'];
+            $default_height = $CJO['ADDON']['settings'][self::$addon]['DEFAULT_HEIGHT']; 
             $poster = null;    
         }
         
@@ -131,7 +131,7 @@ class cjoHtml5Video {
             $params['fallback_url'] = $media['video']->getFullPath();
         }
         
-        $params['addon_path'] = $CJO['ADDON_CONFIG_PATH'].'/'.self::$mypage;
+        $params['addon_path'] = $CJO['ADDON_CONFIG_PATH'].'/'.self::$addon;
 
         return $params;
     }
@@ -139,6 +139,8 @@ class cjoHtml5Video {
     public static function processVideo($filename = false) {
 
         global $CJO;
+
+        if (!cjo_request(self::$addon,'bool')) return false;
 
         $content = '';
         $params  = array();
@@ -149,23 +151,23 @@ class cjoHtml5Video {
         $params['autoplay'] = cjo_get('autoplay', 'string', null);         
         $params['controls'] = cjo_get('controls', 'string', true);
         $params['clang']    = cjo_get('clang', 'cjo-clang-id', 0);   
-        $domain             = cjoRewrite::setServerUri();    
+        $domain             = cjoUrl::setServerUri();    
 
         if (!$filename) {
-            $id = cjo_get(self::$mypage, 'int');
+            $id = cjo_get(self::$addon, 'int');
             $media = OOMedia::getMediaById($id);
         }
         else {
              $media = OOMedia::getMediaByName($filename);
         }
 
-    	$tmpl_path = $CJO['ADDON_CONFIG_PATH'].'/'.self::$mypage.'/video.'.$CJO['TMPL_FILE_TYPE'];
+    	$tmpl_path = $CJO['ADDON_CONFIG_PATH'].'/'.self::$addon.'/video.'.liveEdit::getTmplExtension();
     	    	
     	$html_tmpl = new cjoHtmlTemplate($tmpl_path);       	   
 
     	if (!OOMedia::isValid($media)) {
     	    $html_tmpl->fillTemplate('ERROR', array(
-    	    						 'NOT_FOUND_LOCATION' => cjoRewrite::getUrl($CJO['NOTFOUND_ARTICLE_ID'], $params['clang']),
+    	    						 'NOT_FOUND_LOCATION' => cjoUrl::getUrl($CJO['NOTFOUND_ARTICLE_ID'], $params['clang']),
     	                             'TITLE'              => 'Error'));
     	}
     	else {
@@ -182,7 +184,7 @@ class cjoHtml5Video {
     	    
     	    $params['title']      = $media->getTitle();
     	    $params['file_name']  = pathinfo($media->getFileName(),PATHINFO_FILENAME);
-            $params['addon_path'] = $CJO['ADDON_CONFIG_PATH'].'/'.self::$mypage;
+            $params['addon_path'] = $CJO['ADDON_CONFIG_PATH'].'/'.self::$addon;
     	    $html_tmpl->fillTemplate('TEMPLATE', $params);   	    
     	}
 
@@ -195,12 +197,12 @@ class cjoHtml5Video {
         
         global $CJO;
         
-        $id = cjo_get(self::$mypage, 'int');
+        $id = cjo_get(self::$addon, 'int');
         $media = OOMedia::getMediaById($id);
         
         if (!OOMedia::isValid($media)) return false;
         
-        $url = cjoRewrite::setServerUri();
+        $url = cjoUrl::setServerUri();
         return $url['scheme'].'://'.$url['host'].'/'.$CJO['MEDIAFOLDER'].'/'.pathinfo($media->getFileName(), PATHINFO_FILENAME);
     }
     

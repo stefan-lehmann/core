@@ -184,10 +184,8 @@ class cjoVarLink extends cjoVars {
      */
     private function getLinkButton($id, $link_id, $attributes = array(), $id_tag = 'cjo_linkbutton_') {
 
-        global $CJO, $I18N;
-
-        $link_button = new cjoLinkButtonField('LINK['.$id.']', $I18N->msg('label_linkbutton'), $attributes, $id_tag.$id);
-		$link_button->setDisconnectAction('cjo.jconfirm(\''.$I18N->msg('label_remove_link').' ?\', \'cjo.disconnectLink\', [$(this)]); return false;');
+        $link_button = new cjoLinkButtonField('LINK['.$id.']', cjoI18N::translate('label_linkbutton'), $attributes, $id_tag.$id);
+		$link_button->setDisconnectAction('cjo.jconfirm(\''.cjoI18N::translate('label_remove_link').' ?\', \'cjo.disconnectLink\', [$(this)]); return false;');
         $link_button->setValue($link_id);
         return $link_button->get();
     }

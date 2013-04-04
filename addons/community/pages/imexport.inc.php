@@ -33,7 +33,7 @@ if (cjo_get('automate','bool') &&
 }
 
 if (cjo_post('cjoform_delete_all_button', 'bool') &&
-	$CJO['USER']->isAdmin()) {
+	cjoProp::getUser()->isAdmin()) {
 
     $sql_error = '';
 
@@ -59,7 +59,7 @@ if (cjo_post('cjoform_delete_all_button', 'bool') &&
 
 
     if ($sql_error == "") {
-        cjoMessage::addSuccess($I18N_10->msg("msg_all_db_deleted"));
+        cjoMessage::addSuccess(cjoAddon::translate(10,"msg_all_db_deleted"));
     } else {
         cjoMessage::addError($sql_error);
     }
@@ -73,29 +73,28 @@ if (cjo_post('cjoform_delete_all_button', 'bool') &&
     $form->setEnctype('multipart/form-data');
     $form->debug = false;
     
-    $fields['import'] = new readOnlyField('import', $I18N_10->msg('label_csv'), array( 'style' => 'float: left;'));
+    $fields['import'] = new readOnlyField('import', cjoAddon::translate(10,'label_csv'), array( 'style' => 'float: left;'));
     $fields['import']->setValue('<input type="file" name="userfile" value="'.$_FILES['userfile']['tmp_name'].'" size="40" />');
 
 	$sel_group = cjoCommunityGroups::getSelectGroups($group_id);
 
-	$fields['groups'] = new readOnlyField('groups[]', $I18N_10->msg('label_groups'));
+	$fields['groups'] = new readOnlyField('groups[]', cjoAddon::translate(10,'label_groups'));
 	$fields['groups']->setValue($sel_group->get());
-	$fields['groups']->addValidator('notEmpty', $I18N_10->msg('err_notEmpty_groups'));
+	$fields['groups']->addValidator('notEmpty', cjoAddon::translate(10,'err_notEmpty_groups'));
 
-    $fields['clang'] = new selectField('clang', $I18N_10->msg('label_language'));
+    $fields['clang'] = new selectField('clang', cjoAddon::translate(10,'label_language'));
     $qry = "SELECT name, id FROM ".TBL_CLANGS." ORDER BY id";
     $fields['clang']->addSQLOptions($qry);
     $fields['clang']->addAttribute('size', '1');
     $fields['clang']->addAttribute('style', 'width: 150px;');
-    $fields['clang']->setValue($CJO['CUR_CLANG']);
-    $fields['clang']->setNote($I18N_10->msg("note_clang"));
-    $fields['clang']->addValidator('notEmpty', $I18N_10->msg('err_notEmpty_lang'), false, false);
+    $fields['clang']->setValue(cjoProp::getClang());
+    $fields['clang']->setNote(cjoAddon::translate(10,"note_clang"));
+    $fields['clang']->addValidator('notEmpty', cjoAddon::translate(10,'err_notEmpty_lang'), false, false);
 
     //DATEI-EINSTELLUNGEN
-    $fields['headline2'] = new readOnlyField('headline2', '', array('class' => 'formheadline slide'));
-    $fields['headline2']->setValue($I18N_10->msg('label_file_settings'));
+    $fields['headline2'] = new headlineField(cjoAddon::translate(10,'label_file_settings'),true);
 
-    $fields['divider'] = new selectField('divider', $I18N_10->msg("label_divider"));
+    $fields['divider'] = new selectField('divider', cjoAddon::translate(10,"label_divider"));
     $fields['divider']->addAttribute('size', '1');
     $fields['divider']->addAttribute('style', 'width: 90px;');
 
@@ -104,29 +103,29 @@ if (cjo_post('cjoform_delete_all_button', 'bool') &&
         $fields['divider']->addOption('&nbsp;'.$value,$key);
     }
 
-    $fields['limit_start'] = new textField('limit_start', $I18N_10->msg('label_limit_start'));
+    $fields['limit_start'] = new textField('limit_start', cjoAddon::translate(10,'label_limit_start'));
     $fields['limit_start']->addAttribute('style', 'width: 80px;');
     $fields['limit_start']->setValue('1');
-    $fields['limit_start']->addValidator('isNumber', $I18N_10->msg("err_limit_start"));
+    $fields['limit_start']->addValidator('isNumber', cjoAddon::translate(10,"err_limit_start"));
 
-    $fields['limit_number'] = new textField('limit_number', $I18N_10->msg('label_limit_number'));
-    $fields['limit_number']->setNote($I18N_10->msg('note_limit_number'));
+    $fields['limit_number'] = new textField('limit_number', cjoAddon::translate(10,'label_limit_number'));
+    $fields['limit_number']->setNote(cjoAddon::translate(10,'note_limit_number'));
     $fields['limit_number']->addAttribute('style', 'width: 80px;');
-    $fields['limit_number']->addValidator('isNumber', $I18N_10->msg("err_limit_number"), true, true);
+    $fields['limit_number']->addValidator('isNumber', cjoAddon::translate(10,"err_limit_number"), true, true);
 
     $fields['ignore_updates'] = new checkboxField('ignore_updates', '&nbsp;',  array('style' => 'width: auto;'));
-    $fields['ignore_updates']->addBox($I18N_10->msg('label_ignore_updates'), '1');  
+    $fields['ignore_updates']->addBox(cjoAddon::translate(10,'label_ignore_updates'), '1');  
     $fields['ignore_updates']->setValue('1');      
     
     $fields['automate'] = new checkboxField('automate', '&nbsp;',  array('style' => 'width: auto;'));
-    $fields['automate']->addBox($I18N_10->msg('label_automate_import'), '1');  
+    $fields['automate']->addBox(cjoAddon::translate(10,'label_automate_import'), '1');  
     $fields['automate']->setValue('1');  
     
     $fields['button'] = new buttonField();
-    $fields['button']->addButton('cjoform_import_button',$I18N_10->msg('button_import'), true, 'img/silk_icons/database_go.png');
+    $fields['button']->addButton('cjoform_import_button',cjoAddon::translate(10,'button_import'), true, 'img/silk_icons/database_go.png');
 
     //Add Fields:
-    $section= new cjoFormSection('', $I18N_10->msg('section_import'), array());
+    $section= new cjoFormSection('', cjoAddon::translate(10,'section_import'), array());
 
     $section->addFields($fields);
     $form->addSection($section);
@@ -136,7 +135,7 @@ if (cjo_post('cjoform_delete_all_button', 'bool') &&
             !empty($_FILES['userfile']['name'])) {
             cjoCommunityImportExport::import();
         } else {
-            cjoMessage::addError($I18N_10->msg('file_not_found'));
+            cjoMessage::addError(cjoAddon::translate(10,'file_not_found'));
             $fields['import']->addAttribute('class', 'invalid', 'join');
         }
     }
@@ -149,32 +148,32 @@ if (cjo_post('cjoform_delete_all_button', 'bool') &&
     $form->setEditMode(false);
     $form->setEnctype('multipart/form-data');
     
-	$fields['groups'] = new readOnlyField('groups[]', $I18N_10->msg('label_groups'));
+	$fields['groups'] = new readOnlyField('groups[]', cjoAddon::translate(10,'label_groups'));
 	$fields['groups']->setValue($sel_group->get());
-	$fields['groups']->addValidator('notEmpty', $I18N_10->msg('err_notEmpty_groups'));
+	$fields['groups']->addValidator('notEmpty', cjoAddon::translate(10,'err_notEmpty_groups'));
 
-    $fields['clang'] = new selectField('clang', $I18N_10->msg('label_language'));
+    $fields['clang'] = new selectField('clang', cjoAddon::translate(10,'label_language'));
     $qry = "SELECT name, id FROM ".TBL_CLANGS." ORDER BY id";
     $fields['clang']->addSQLOptions($qry);
     $fields['clang']->addAttribute('size', '1');
     $fields['clang']->addAttribute('style', 'width: 150px;');
-    $fields['clang']->setValue($CJO['CUR_CLANG']);
-    $fields['clang']->addValidator('notEmpty', $I18N_10->msg('err_notEmpty_lang'), false, false);
+    $fields['clang']->setValue(cjoProp::getClang());
+    $fields['clang']->addValidator('notEmpty', cjoAddon::translate(10,'err_notEmpty_lang'), false, false);
     
-    $fields['limit'] = new selectField('limit', $I18N_10->msg('label_limit_user_export'));
-    $fields['limit']->addOption($I18N_10->msg('label_all_users'), 0);    
-    $fields['limit']->addOption($I18N_10->msg('label_online_users'), 1);
-    $fields['limit']->addOption($I18N_10->msg('label_offline_users'), 2);
-    $fields['limit']->addOption($I18N_10->msg('label_bounced_users'), 3);
-    $fields['limit']->addOption($I18N_10->msg('label_not_activated_users'), 4);
+    $fields['limit'] = new selectField('limit', cjoAddon::translate(10,'label_limit_user_export'));
+    $fields['limit']->addOption(cjoAddon::translate(10,'label_all_users'), 0);    
+    $fields['limit']->addOption(cjoAddon::translate(10,'label_online_users'), 1);
+    $fields['limit']->addOption(cjoAddon::translate(10,'label_offline_users'), 2);
+    $fields['limit']->addOption(cjoAddon::translate(10,'label_bounced_users'), 3);
+    $fields['limit']->addOption(cjoAddon::translate(10,'label_not_activated_users'), 4);
     $fields['limit']->addAttribute('size', '1');
     $fields['limit']->addAttribute('style', 'width: 150px;');
 
     $fields['button'] = new buttonField();
-    $fields['button']->addButton('cjoform_export_button',$I18N_10->msg('button_export'), true, 'img/silk_icons/disk.png');
+    $fields['button']->addButton('cjoform_export_button',cjoAddon::translate(10,'button_export'), true, 'img/silk_icons/disk.png');
 
     //Add Fields:
-    $section2= new cjoFormSection('', $I18N_10->msg('section_export'), array());
+    $section2= new cjoFormSection('', cjoAddon::translate(10,'section_export'), array());
     $section2->addFields($fields);    
     $form->addSection($section2);
     
@@ -188,7 +187,7 @@ if (cjo_post('cjoform_delete_all_button', 'bool') &&
 
 // DELETE ALL
 
-    if ($CJO['USER']->isAdmin()){
+    if (cjoProp::getUser()->isAdmin()){
 
         $form = new cjoForm($mypage.'_'.$subpage.'_delete');
         $form->setEditMode(false);
@@ -196,11 +195,11 @@ if (cjo_post('cjoform_delete_all_button', 'bool') &&
         $form->debug = false;
 
         $fields['button'] = new buttonField();
-        $fields['button']->addButton('cjoform_delete_all_button',$I18N_10->msg('delete_all'), true, 'img/silk_icons/bin.png');
+        $fields['button']->addButton('cjoform_delete_all_button',cjoAddon::translate(10,'delete_all'), true, 'img/silk_icons/bin.png');
         $fields['button']->setButtonAttributes('cjoform_delete_all_button', 'class="confirm red"');
 
         //Add Fields:
-        $section3= new cjoFormSection('', $I18N_10->msg('section_delete_all'), array());
+        $section3= new cjoFormSection('', cjoAddon::translate(10,'section_delete_all'), array());
         $section3->addField($fields['button']);
         $form->addSection($section3);
 

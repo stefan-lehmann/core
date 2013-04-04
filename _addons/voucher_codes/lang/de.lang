@@ -1,0 +1,31 @@
+voucher_codes = Gutschein-Codes
+subtitle_manage = Verwaltung
+subtitle_redemption = Übersicht
+
+##./contejo/include/addons/voucher_codes/functions/functions_vc_voucher.inc.php =
+msg_code_deleted = Der Gutschein-Code wurde gelöscht!
+msg_err_codes_notEmpty = Bitte mindestens einen Gutschein-Codes eingeben!
+msg_import_done = Import erfolgreich abgeschlossen. (Datensätze hinzugefügt {0} / Fehler {1})
+msg_import_failed = Beim Import sind Fehler aufgetreten, es konnten keine Daten importiert werden.
+
+##./contejo/include/addons/voucher_codes/pages/imexport.inc.php =
+button_export = Einlösungen exportieren
+button_import = Gutschein-Codes hinzufügen
+delete_all = Alle Gutscheine löschen
+label_codes = Gutschein-Codes
+label_event = Event
+msg_all_db_deleted = Die Datenbank wurde zurückgesetzt!
+note_separate_by_new_line = Bei mehren Werten jeden Wert in eine neue Zeile.
+section_delete_all = Zurücksetzen
+section_export = Einlösungen-Export
+section_import = Gutschein-Code-Import
+
+##./contejo/include/addons/voucher_codes/pages/redemption.inc.php =
+label_code = Gutschein-Code
+label_delete_voucher = Gutschein löschen
+label_firstname = Vorname
+label_email = eMail
+
+##./addons/voucher_codes/config.inc.php
+msg_err_configure_settings =  <b>Die Konfiguration des Gutschein-Codes-AddOns ist unvollständig.</b><br/>Um den vollen Funktionsumfang herzustellen, müssen die Einstellungen ergänzt werden. ><u><a href="{0}">Jetzt korrigieren</a></u>
+

@@ -30,7 +30,7 @@ if ($function == 'status' && $oid != '') {
     $update->setTable(TBL_IMG_CROP);
     $update->setWhere("id='".$oid."'");
     $update->setValue("status",$mode);
-    $update->Update($I18N_8->msg("msg_crop_num_status_updated"));
+    $update->Update(cjoAddon::translate(8,"msg_crop_num_status_updated"));
     unset($function);
 }
 
@@ -48,39 +48,39 @@ if ($function == 'edit' || $function == 'add') {
 
 	//Fields
 	$fields['note'] = new readOnlyField('note', '');
-	$fields['note']->setNote($I18N_8->msg('note_reset_cropsettings'), 'class="warning" style="position: relative; display:block; margin: 5px 0 0 200px!important"');
+	$fields['note']->setNote(cjoAddon::translate(8,'note_reset_cropsettings'), 'class="warning" style="position: relative; display:block; margin: 5px 0 0 200px!important"');
 	$fields['note']->activateSave(false);
 	$fields['note']->needFullColumn(true);
 
-	$fields['name'] = new textField('name', $I18N_8->msg('label_name'));
-	$fields['name']->addValidator('notEmpty', $I18N_8->msg('msg_empty_name'));
+	$fields['name'] = new textField('name', cjoAddon::translate(8,'label_name'));
+	$fields['name']->addValidator('notEmpty', cjoAddon::translate(8,'msg_empty_name'));
 	$fields['name']->needFullColumn(true);
 
 	$fields['status_hidden'] = new hiddenField('status');
 	$fields['status_hidden']->setValue($status);
 
 	$fields['status'] = new checkboxField('status', '&nbsp;',  array('style' => 'width: auto;'));
-	$fields['status']->addBox($I18N_8->msg('label_default_crop'), '-1');
+	$fields['status']->addBox(cjoAddon::translate(8,'label_default_crop'), '-1');
 	$fields['status']->needFullColumn(true);
 
-	$fields['width'] = new textField('width', $I18N_8->msg('label_size'));
-	$fields['width']->addValidator('isRange', $I18N_8->msg('msg_wrong_width'), array('low' => '0', 'high' => 10000));
+	$fields['width'] = new textField('width', cjoAddon::translate(8,'label_size'));
+	$fields['width']->addValidator('isRange', cjoAddon::translate(8,'msg_wrong_width'), array('low' => '0', 'high' => 10000));
 	$fields['width']->addAttribute('style', 'width: 50px; float: left;');
 	$fields['width']->addAttribute('maxlength', '4');
 	$fields['width']->setNote('&times;', 'style="width: auto;"');
 
 	$fields['height'] = new textField('height', null);
-	$fields['height']->addValidator('isRange', $I18N_8->msg('msg_wrong_height'), array('low' => '0', 'high' => 10000));
+	$fields['height']->addValidator('isRange', cjoAddon::translate(8,'msg_wrong_height'), array('low' => '0', 'high' => 10000));
 	$fields['height']->addAttribute('style', 'width: 50px');
 	$fields['height']->addAttribute('maxlength', '4');
-	$fields['height']->setNote($I18N_8->msg('label_pixel_bxh'));
+	$fields['height']->setNote(cjoAddon::translate(8,'label_pixel_bxh'));
 
 	$fields['clear2'] = new readOnlyField(null, null);
 	$fields['clear2']->addColAttribute('class', 'hide_me');
 	$fields['clear2']->needFullColumn(true);
 
 	$fields['aspectratio'] = new checkboxField('aspectratio', '&nbsp;',  array('style' => 'width: auto;'));
-	$fields['aspectratio']->addBox($I18N_8->msg('label_aspectratio_crop'), '1');
+	$fields['aspectratio']->addBox(cjoAddon::translate(8,'label_aspectratio_crop'), '1');
 	$fields['aspectratio']->setUncheckedValue();
 	$fields['aspectratio']->needFullColumn(true);
 
@@ -92,7 +92,7 @@ if ($function == 'edit' || $function == 'add') {
 		$fields['createdate_hidden']->setValue(time());
 
 		$fields['createuser_hidden'] = new hiddenField('createuser');
-		$fields['createuser_hidden']->setValue($CJO['USER']->getValue("name"));
+		$fields['createuser_hidden']->setValue(cjoProp::getUser()->getValue("name"));
 	}
 	else {
 
@@ -100,31 +100,29 @@ if ($function == 'edit' || $function == 'add') {
 		$fields['updatedate_hidden']->setValue(time());
 
 		$fields['updateuser_hidden'] = new hiddenField('updateuser');
-		$fields['updateuser_hidden']->setValue($CJO['USER']->getValue("name"));
+		$fields['updateuser_hidden']->setValue(cjoProp::getUser()->getValue("name"));
 
-		$fields['headline1'] = new readOnlyField('headline1', '', array('class' => 'formheadline slide'));
-		$fields['headline1']->setValue($I18N->msg("label_info"));
-		$fields['headline1']->needFullColumn(true);
+		$fields['headline1'] = new headlineField(cjoI18N::translate("label_info"), true);
 
-		$fields['updatedate'] = new readOnlyField('updatedate', $I18N->msg('label_updatedate'), array(), 'label_updatedate');
-		$fields['updatedate']->setFormat('strftime',$I18N->msg('dateformat_sort'));
+		$fields['updatedate'] = new readOnlyField('updatedate', cjoI18N::translate('label_updatedate'), array(), 'label_updatedate');
+		$fields['updatedate']->setFormat('strftime',cjoI18N::translate('dateformat_sort'));
 		$fields['updatedate']->needFullColumn(true);
 
-		$fields['updateuser'] = new readOnlyField('updateuser', $I18N->msg('label_updateuser'), array(), 'label_updateuser');
+		$fields['updateuser'] = new readOnlyField('updateuser', cjoI18N::translate('label_updateuser'), array(), 'label_updateuser');
 		$fields['updateuser']->needFullColumn(true);
 
-		$fields['createdate'] = new readOnlyField('createdate', $I18N->msg('label_createdate'), array(), 'label_createdate');
-		$fields['createdate']->setFormat('strftime',$I18N->msg('dateformat_sort'));
+		$fields['createdate'] = new readOnlyField('createdate', cjoI18N::translate('label_createdate'), array(), 'label_createdate');
+		$fields['createdate']->setFormat('strftime',cjoI18N::translate('dateformat_sort'));
 		$fields['createdate']->needFullColumn(true);
 
-		$fields['createuser'] = new readOnlyField('createuser', $I18N->msg('label_createuser'), array(), 'label_createuser');
+		$fields['createuser'] = new readOnlyField('createuser', cjoI18N::translate('label_createuser'), array(), 'label_createuser');
 		$fields['createuser']->needFullColumn(true);
 	}
 
 	if ($status == -1 || $_POST['status'] == -1) {
 
 		$fields['status'] = new readOnlyField('label_default_crop', null, array('style'=>'margin-left: 200px;'));
-		$fields['status']->setValue($I18N_8->msg('label_default_crop'));
+		$fields['status']->setValue(cjoAddon::translate(8,'label_default_crop'));
 		$fields['status']->needFullColumn(true);
 	}
 
@@ -143,7 +141,7 @@ if ($function == 'edit' || $function == 'add') {
 			$update->setTable(TBL_IMG_CROP);
 			$update->setWhere("id!='".$oid."' AND status = '-1'");
 			$update->setValue("status", '1');
-			$update->Update($I18N->msg('msg_data_saved'));
+			$update->Update(cjoI18N::translate('msg_data_saved'));
 		}
 
 		cjoMedia::resetAllMedia($oid);
@@ -166,35 +164,35 @@ $cols['icon']->setHeadAttributes('class="icon"');
 $cols['icon']->setBodyAttributes('class="icon"');
 $cols['icon']->delOption(OPT_SORT);
 
-$cols['id'] = new resultColumn('id', $I18N->msg("label_id"));
+$cols['id'] = new resultColumn('id', cjoI18N::translate("label_id"));
 $cols['id']->setHeadAttributes('class="icon"');
 $cols['id']->setBodyAttributes('class="icon"');
 
-$cols['name'] = new resultColumn('name', $I18N_8->msg("label_name"));
+$cols['name'] = new resultColumn('name', cjoAddon::translate(8,"label_name"));
 $cols['name']->setBodyAttributes('width="30%"');
 
-$cols['size'] = new resultColumn('size', $I18N_8->msg("label_size"));
+$cols['size'] = new resultColumn('size', cjoAddon::translate(8,"label_size"));
 
-$cols['aspectratio'] = new resultColumn('aspectratio', $I18N_8->msg("label_aspectratio"));
+$cols['aspectratio'] = new resultColumn('aspectratio', cjoAddon::translate(8,"label_aspectratio"));
 $cols['aspectratio']->addCondition('aspectratio', '1', '<img src="img/silk_icons/accept.png" alt="true" />');
 $cols['aspectratio']->addCondition('aspectratio', '0', '&nbsp;');
 $cols['aspectratio']->addOption(OPT_SORT);
 
-$cols['default_crop'] = new resultColumn('default_crop', $I18N_8->msg("label_default"));
+$cols['default_crop'] = new resultColumn('default_crop', cjoAddon::translate(8,"label_default"));
 $cols['default_crop']->addCondition('default_crop', '1', '<img src="img/silk_icons/accept.png" alt="true" />');
 $cols['default_crop']->addCondition('default_crop', '0', '&nbsp;');
 $cols['default_crop']->addOption(OPT_SORT);
 
 // Bearbeiten link
-$img = '<img src="img/silk_icons/page_white_edit.png" title="'.$I18N->msg("button_edit").'" alt="'.$I18N->msg("button_edit").'" />';
-$cols['edit'] = new staticColumn($img, $I18N->msg("label_functions"));
+$img = '<img src="img/silk_icons/page_white_edit.png" title="'.cjoI18N::translate("button_edit").'" alt="'.cjoI18N::translate("button_edit").'" />';
+$cols['edit'] = new staticColumn($img, cjoI18N::translate("label_functions"));
 $cols['edit']->setHeadAttributes('colspan="2"');
 $cols['edit']->setBodyAttributes('width="16"');
 $cols['edit']->setParams(array ('function' => 'edit', 'oid' => '%id%'));
 
 // Condition für Feld STATUS
-$inaktiv = '<img src="img/silk_icons/eye_off.png" title="'.$I18N_8->msg("label_crop_num_do_online").'" alt="'.$I18N_8->msg("label_crop_num_offline").'" />';
-$aktiv   = '<img src="img/silk_icons/eye.png" title="'.$I18N_8->msg("label_crop_num_do_offline").'" alt="'.$I18N_8->msg("label_crop_num_online").'" />';
+$inaktiv = '<img src="img/silk_icons/eye_off.png" title="'.cjoAddon::translate(8,"label_crop_num_do_online").'" alt="'.cjoAddon::translate(8,"label_crop_num_offline").'" />';
+$aktiv   = '<img src="img/silk_icons/eye.png" title="'.cjoAddon::translate(8,"label_crop_num_do_offline").'" alt="'.cjoAddon::translate(8,"label_crop_num_online").'" />';
 
 $cols['status'] = new staticColumn('status', NULL);
 $cols['status']->setBodyAttributes('width="16"');

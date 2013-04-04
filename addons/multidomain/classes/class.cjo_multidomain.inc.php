@@ -33,11 +33,9 @@ class cjoMultidomain {
      */
     public static function getDomain(){
 
-        global $CJO;
-
         $is_redirect = false;
 
-        $clang = $CJO['CUR_CLANG'];
+        $clang = cjoProp::getClang();
         $article_id = cjo_get('article_id','cjo-article-id', 0);
 
         $sql = new cjoSql();
@@ -63,7 +61,7 @@ class cjoMultidomain {
 
         for ($i=0; $i<$sql->getRows(); $i++) {
 
-            $test_domain = preg_match('/^\b'.$sql->getValue('domain').'\b/',
+            $test_domain = preg_match('/\b'.$sql->getValue('domain').'\b/',
                                       $_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'],
                                       $matches);
 
@@ -75,13 +73,13 @@ class cjoMultidomain {
 
                 if (!OOArticle::isValid($root_article)) return;
 
-                $CJO['MULTIDOMAIN_ID']      = $sql->getValue('id');
-                $CJO['SERVER']              = $sql->getValue('domain');
-                $CJO['SERVERNAME']          = $sql->getValue('servername');
-                $CJO['ERROR_EMAIL']         = $sql->getValue('error_email');
-                $CJO['ROOT_ARTICLE_ID']     = $sql->getValue('root_article_id');
-                $CJO['START_ARTICLE_ID']    = !OOarticle::isValid($start_article) ? $root_article->_id : $start_article->_id;
-                $CJO['NOTFOUND_ARTICLE_ID'] = !OOarticle::isValid($notfound_article) ? $root_article->_id : $notfound_article->_id;
+                cjoProp::set('MULTIDOMAIN_ID',      $sql->getValue('id'));
+                cjoProp::set('SERVER',              $sql->getValue('domain'));
+                cjoProp::set('SERVERNAME',          $sql->getValue('servername'));
+                cjoProp::set('ERROR_EMAIL',         $sql->getValue('error_email'));
+                cjoProp::set('ROOT_ARTICLE_ID',     $sql->getValue('root_article_id'));
+                cjoProp::set('START_ARTICLE_ID',    !OOarticle::isValid($start_article) ? $root_article->_id : $start_article->_id);
+                cjoProp::set('NOTFOUND_ARTICLE_ID', !OOarticle::isValid($notfound_article) ? $root_article->_id : $notfound_article->_id);
 
                 $is_redirect = true;
                 break;
@@ -91,28 +89,27 @@ class cjoMultidomain {
 
         if (!$is_redirect) return false;
   
-        $CJO['ARTICLE_ID'] = cjo_request('article_id', 'cjo-article-id', $CJO['START_ARTICLE_ID']);
+        cjoProp::set('ARTICLE_ID', cjo_request('article_id', 'cjo-article-id', cjoProp::get('START_ARTICLE_ID')));
             
-        $article = OOArticle::getArticleById($CJO['ARTICLE_ID'] , $clang);
+        $article = OOArticle::getArticleById(cjoProp::getArticleId() , $clang);
 
-        $test_path = strpos('|'.$article->_path.$CJO['ARTICLE_ID'] .'|', '|'.$CJO['ROOT_ARTICLE_ID'].'|');
+        $test_path = strpos('|'.$article->_path.cjoProp::getArticleId() .'|', '|'.cjoProp::get('ROOT_ARTICLE_ID').'|');
 
         if ($test_path !== false && $test_domain == true) return false;
 
-        $redirect_article = OOArticle::getArticleById($CJO['START_ARTICLE_ID'], $clang);
+        $redirect_article = OOArticle::getArticleById(cjoProp::get('START_ARTICLE_ID'), $clang);
         $url  = $_SERVER['HTTPS'] != '' ? 'https://' : 'http://';
-        $url .= $CJO['SERVER'].substr($_SERVER['PHP_SELF'],0,(strrpos($_SERVER['PHP_SELF'],'/')+1));
-        $url .= $CJO['CONTEJO'] ? '../' : '';
-        $url .= cjoRewrite::parseArticleName($redirect_article->getName()).
+        $url .= cjoProp::get('SERVER').substr($_SERVER['PHP_SELF'],0,(strrpos($_SERVER['PHP_SELF'],'/')+1));
+        $url .= cjoProp::isBackend() ? '../' : '';
+        $url .= cjo_url_friendly_string($redirect_article->getName()).
                                      '.'.
-                                     $CJO['START_ARTICLE_ID'].
+                                     cjoProp::get('START_ARTICLE_ID').
                                      '.'.
                                      $clang.
                                      '.html';
-                                     
-        if (cjo_server('SCRIPT_URI','string') == $url) return false;
-        
+
         header('Location: '.$url);
         exit;
     }
+
 }

@@ -1,0 +1,54 @@
+[%TEMPLATE%]
+
+<div class="settings">
+    <h2 class="no_bg_image">[translate: label_media_for_gallery]</h2>
+    <div class="formular">
+        <label>[translate: label_media_for_gallery]</label>
+		CJO_MEDIALIST_BUTTON[1]
+    </div>
+    <div class="formular">
+        <label>[translate: label_size_format_thumb]</label>
+        [[TBNL_CROP_SELECTION]]
+        <br />
+        <input type="hidden" name="VALUE[8]" value="-" />
+        <input type="checkbox" name="VALUE[8]" value="1"[[MPOOL_DESCRIPTION_CHECKED]] />
+        <label class="right_label">[translate: label_media_description]</label>
+    </div>
+    <div class="formular last">
+        <label>[translate: label_size_format_zoom]</label>
+        [[ZOOM_CROP_SELECTION]]
+        <br />
+        <input type="hidden" name="VALUE[7]" value="off" />
+        IF([[DISPLAY_BRAND_IMG]]){%
+            <input type="checkbox" name="VALUE[7]" value="on" [[ZOOM_BRAND_IMAGE_CHECKED]] />
+            <label class="right_label">[translate: label_show_watermark]</label>
+        %}ENDIF
+    </div>
+</div>
+
+<%MEDIA_LIST%>
+
+[%MEDIA_LIST%]
+
+<div class="settings">
+    <div class="heading">
+        <h2 class="no_bg_image">
+            [[REAL_NUM]]. <span>[[FILE_NAME]]</span>
+        </h2>
+        <div class="up_down">
+            IF([[DISPLAY_UP_LINK]]){%
+				<input type="image" onclick="cjo.moveMediaListItem('cjo_medialist_1_sel','up',[[NUM]]); $('#CJO_FORM input[name=update]').val(1); formSubmit(this); return false;"
+            		   title="[translate: button_move_up]" src="img/silk_icons/move_up_green.png" />
+            %}ENDIF
+            IF([[DISPLAY_DOWN_LINK]]){%
+            	<input type="image" onclick="cjo.moveMediaListItem('cjo_medialist_1_sel','down',[[NUM]]); $('#CJO_FORM input[name=update]').val(1); formSubmit(this); return false;"
+            		   title="[translate: button_move_down]" src="img/silk_icons/move_down_green.png" />
+            %}ENDIF
+        </div>
+    </div>
+    <div class="prev_img">
+        [[THUMBNAIL]]
+        [[ZOOMIMAGE]]
+        <span>[[DESCRIPTION]]</span>
+    </div>
+</div>

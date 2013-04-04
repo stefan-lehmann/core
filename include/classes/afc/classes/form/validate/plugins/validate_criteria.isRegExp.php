@@ -45,7 +45,7 @@ function smarty_validate_criteria_isRegExp($value, $empty, &$params, &$formvars)
     } elseif (isset($empty['field2'])) {
         $_exp = $empty['field2'];   
     } else {
-        trigger_error("SmartyValidate: [isRegExp] parameter 'expression' is missing.");
+        throw new cjoException("SmartyValidate: [isRegExp] parameter 'expression' is missing.");
         return false;
     }
     if (strlen($value) == 0) return $empty;

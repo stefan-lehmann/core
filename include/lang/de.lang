@@ -6,8 +6,8 @@ black = schwarz
 green = grün
 red = rot
 
-dec_point     = ,
-thousands_sep = .
+setlocal_dec_point     = ,
+setlocal_thousands_sep = .
 
 ##./contejo/connectmedia.php
 button_close = Schließen
@@ -132,9 +132,9 @@ msg_article_doesnt_exist = Der Artikel existiert nicht!
 msg_article_still_contains_articles = Der Artikel enthält noch untergeordnete Artikel, die erst gelöscht werden müssen.
 msg_articles_generated = Cache gelöscht, Templates wurden neu generiert.
 msg_check_rights_in_directory = Bitte überprüfen Sie die Rechte im Ordner!
-msg_clang_deleted = Die Sprache wurde gelöscht!
-msg_clang_saved = Die Sprache wurde hinzugefügt!
-msg_clang_updated = Die Sprache wurde aktualisiert!
+msg_langs_deleted = Die Sprache wurde gelöscht!
+msg_langs_added = Die Sprache wurde hinzugefügt!
+msg_langs_updated = Die Sprache wurde aktualisiert!
 msg_content_article_copied = Der Artikel <b>{0}</b> wurde nach "<b>{1}</b>" kopiert.
 msg_content_article_moved = Der Artikel <b>{0}</b> wurde nach "<b>{1}</b>" verschoben.
 msg_content_article_rcopied = Der Artikel <b>{0}</b> wurde mit allen untergeordneten Artikeln nach "<b>{1}</b>" kopiert.
@@ -248,7 +248,7 @@ msg_addon_no_install = Das AddOn <b>{0}</b> konnte <u>nicht</u> installiert werd
 msg_addon_no_reason = Es wurde kein Grund angegeben.
 msg_addon_no_show_menu = Das AddOn <b>{0}</b> kann nicht angezeigt werden!
 msg_addon_no_uninstall = Das AddOn <b>{0}</b> konnte aus folgendem Grund <u>nicht</u> deinstalliert werden:
-msg_addon_uninstall_not_found = Die Deinstallation dieses AddOns ist nicht möglich, da es Systemfunktionen bereitstellt!
+msg_addon_uninstall_sytem_addon = Die Deinstallation dieses AddOns ist nicht möglich, da es Systemfunktionen bereitstellt!
 msg_addon_uninstalled = Das AddOn <b>{0}</b> wurde deinstalliert.
 
 ##./contejo/include/classes/oop/class.ooarticle.inc.php
@@ -645,10 +645,11 @@ label_catgroup_name = Struktur-Name
 label_catgroup_structure = Struktur-Ebenen
 label_catgroup_style = Struktur-Farbe
 label_edit_catgroup = Navigations-Struktur bearbeiten
-msg_cat_group_name_notEmpty = Bitte einen Namen für die Navigations-Struktur vergeben!
+msg_catgroup_name_notEmpty = Bitte einen Namen für die Navigations-Struktur vergeben!
 msg_catgroup_1_not_deleted = Die erste Navigationsstruktur kann <u>nicht</u> gelöscht werden!
 msg_catgroup_deleted = Die Navigations-Struktur wurde gelöscht!
-msg_catgroup_saved = Die Navigations-Struktur wurde hinzugefügt!
+msg_catgroups_added = Die Navigations-Struktur wurde hinzugefügt!
+msg_catgroups_updated = Die Navigations-Struktur wurde aktualisiert!
 msg_catgroup_still_used = Die Navigations-Struktur konnte <u>nicht</u> gelöscht werden, da sie noch verwendet wird:
 msg_catgroup_structure_notEmpty = Bitte die Struktur festlegen!
 msg_catgroup_style_notEmpty = Bitte eine Farbe für die Struktur angeben!
@@ -676,9 +677,9 @@ label_update_type_id =  Login
 label_update_cat_group =  Navigationsstruktur
 label_update_redirect =  Artikel-Weiterleitung
 label_update_admin_only =  Super-Admin-Sperre
-msg_clang_0_not_deleted = Die Standard-Sprache (ID=0) kann <u>nicht</u> gelöscht werden!
 msg_clang_name_notEmpty = Bitte einen Namen für die Sprache eingeben!
-msg_clang_not_deleted = Die Sprache konnte <u>nicht</u> gelöscht werden!
+msg_langs_0_not_deleted = Die Standard-Sprache (ID=0) kann <u>nicht</u> gelöscht werden!
+msg_langs_not_deleted = Die Sprache konnte <u>nicht</u> gelöscht werden!
 msg_iso_not = Bitte einen Ländercode auswählen!
 
 ##./contejo/include/pages/tools/modules.inc.php
@@ -703,7 +704,9 @@ no_template = ohne Template
 
 ##./contejo/include/pages/tools/modules_actions.inc.php
 label_actions = Actions
-msg_action_deleted_from_modul = Die Action-Verknüpfung wurde entfernt.
+label_add_action_to_module = Diese Action verknüpfen
+msg_action_connected = Die Action wurde verknüpft.
+msg_action_deleted_from_modul = Die Action-Verknüpfung wurde entfernt. 
 msg_no_actions_connected_to_module = Keine Actions verknüpft.
 
 ##./contejo/include/pages/tools/modules_layout.inc.php
@@ -735,22 +738,22 @@ label_icon = Icon
 msg_cant_delete_default_template = Das Default-Template kann nicht gelöscht werden!
 msg_cant_delete_template_in_use = Das Template konnte <u>nicht</u> gelöscht werden, da es noch verwendet wird:
 msg_template_deleted = Das Template wurde gelöscht.
-msg_template_updated = Das Template <b>{0}</b> wurde aktualisiert.
+msg_templates_updated = Das Template <b>{0}</b> wurde aktualisiert.
 
 ##./contejo/include/pages/tools/types.inc.php
-label_add_type = Artikeltyp hinzufügen
+label_add_types = Artikeltyp hinzufügen
 label_allow_to_all = Zugang für alle
-label_edit_type = Artikeltyp bearbeiten
+label_edit_types = Artikeltyp bearbeiten
 label_groups = Gruppen
 label_no_password = kein Passwort
-label_type_description = Beschreibung
-label_type_name = Artikeltyp-Name
-msg_article_type_deleted = Der Artikeltyp wurde gelöscht.
-msg_article_type_saved = Der Artikeltyp wurde hinzugefügt.
-msg_article_type_still_used = Der Artikeltyp konnte nicht gelöscht werden, da er bei folgenden Artikeln noch in Verwendung ist:
-msg_article_type_updated = Der Artikeltyp wurde aktualisiert.
-msg_type_description_notEmpty = Bitte eine Login-Beschreibung eingeben!
-msg_type_name_notEmpty = Bitte einen Namen eingeben!
+label_types_description = Beschreibung
+label_types_name = Artikeltyp-Name
+msg_types_added = Der Artikeltyp wurde hinzugefügt.
+msg_types_updated = Der Artikeltyp wurde aktualisiert.
+msg_types_deleted = Der Artikeltyp wurde gelöscht.
+msg_types_still_used = Der Artikeltyp konnte nicht gelöscht werden, da er bei folgenden Artikeln noch in Verwendung ist:
+msg_types_description_notEmpty = Bitte eine Login-Beschreibung eingeben!
+msg_types_name_notEmpty = Bitte einen Namen eingeben!
 
 ##./contejo/include/pages/tools/_tools.inc.php
 title_actions = Actions

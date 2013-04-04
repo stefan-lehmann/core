@@ -45,12 +45,12 @@ $form_elements_in = array();
 $elements_in                = array();
 $elements_in['type'] 		= 'select';
 $elements_in['name'] 		= 'title';
-$elements_in['values']		= ' |'.$I18N_21->msg('shop_mr').'|'.$I18N_21->msg('shop_mrs');
+$elements_in['values']		= ' |'.cjoAddon::translate(21,'shop_mr').'|'.cjoAddon::translate(21,'shop_mrs');
 $elements_in['default']		= isset($address1) ? $address1->getTitle() : '';
 $elements_in['required']	= 1;
 $elements_in['validate']	= 'not_empty';
-$elements_in['error_msg']	= $I18N_21->msg('shop_err_no_title');
-$elements_in['label']		= $I18N_21->msg('shop_title');
+$elements_in['error_msg']	= cjoAddon::translate(21,'shop_err_no_title');
+$elements_in['label']		= cjoAddon::translate(21,'shop_title');
 $elements_in['css']			= 'form_elm_med';
 $form_elements_in[]         = $elements_in;
 
@@ -61,8 +61,8 @@ $elements_in['name'] 		= 'firstname';
 $elements_in['default']		= isset($address1) ? $address1->getFirstname() : '';
 $elements_in['required']	= 1;
 $elements_in['validate']	= 'not_empty';
-$elements_in['error_msg']	= $I18N_21->msg('shop_err_no_firstname');
-$elements_in['label']		= $I18N_21->msg('shop_firstname');
+$elements_in['error_msg']	= cjoAddon::translate(21,'shop_err_no_firstname');
+$elements_in['label']		= cjoAddon::translate(21,'shop_firstname');
 $form_elements_in[]         = $elements_in;
 
 // name input
@@ -72,8 +72,8 @@ $elements_in['name'] 		= 'name';
 $elements_in['default']		= isset($address1) ? $address1->getName() : '';
 $elements_in['required']	= 1;
 $elements_in['validate']	= 'not_empty';
-$elements_in['error_msg']	= $I18N_21->msg('shop_err_no_lastname');
-$elements_in['label']		= $I18N_21->msg('shop_lastname');
+$elements_in['error_msg']	= cjoAddon::translate(21,'shop_err_no_lastname');
+$elements_in['label']		= cjoAddon::translate(21,'shop_lastname');
 $form_elements_in[]         = $elements_in;
 
 // company input
@@ -81,7 +81,7 @@ $elements_in                = array();
 $elements_in['type']        = 'text';
 $elements_in['name']        = 'company';
 $elements_in['default']     = isset($address1) ? $address1->getCompany() : '';
-$elements_in['label']       = $I18N_21->msg('shop_company');
+$elements_in['label']       = cjoAddon::translate(21,'shop_company');
 $form_elements_in[]         = $elements_in;
 
 // dividing element
@@ -97,8 +97,8 @@ $elements_in['name']        = 'street';
 $elements_in['default']     = isset($address1) ? $address1->getStreet() : '';
 $elements_in['required']    = 1;
 $elements_in['validate']    = 'not_empty';
-$elements_in['error_msg']   = $I18N_21->msg('shop_err_no_street');
-$elements_in['label']       = $I18N_21->msg('shop_street');
+$elements_in['error_msg']   = cjoAddon::translate(21,'shop_err_no_street');
+$elements_in['label']       = cjoAddon::translate(21,'shop_street');
 $form_elements_in[]         = $elements_in;
 
 // streetnr input
@@ -108,8 +108,8 @@ $elements_in['name']        = 'street_nr';
 $elements_in['default']     = isset($address1) ? $address1->getStreetNr() : '';
 $elements_in['required']    = 1;
 $elements_in['validate']    = 'not_empty';
-$elements_in['error_msg']   = $I18N_21->msg('shop_err_no_street_nr');
-$elements_in['label']       = $I18N_21->msg('shop_street_nr');
+$elements_in['error_msg']   = cjoAddon::translate(21,'shop_err_no_street_nr');
+$elements_in['label']       = cjoAddon::translate(21,'shop_street_nr');
 $elements_in['css']         = 'form_elm_smll';
 $form_elements_in[]         = $elements_in;
 
@@ -120,8 +120,8 @@ $elements_in['name']        = 'postal_code';
 $elements_in['default']     = isset($address1) ? $address1->getPostalCode() : '';
 $elements_in['required']    = 1;
 $elements_in['validate']    = 'notEmpty|digit_only';
-$elements_in['error_msg']   = $I18N_21->msg('shop_err_no_postal_code').'|'.$I18N_21->msg('shop_err_nums_only');
-$elements_in['label']       = $I18N_21->msg('shop_postal_code');
+$elements_in['error_msg']   = cjoAddon::translate(21,'shop_err_no_postal_code').'|'.cjoAddon::translate(21,'shop_err_nums_only');
+$elements_in['label']       = cjoAddon::translate(21,'shop_postal_code');
 $elements_in['css']         = 'form_elm_smll';
 $form_elements_in[]         = $elements_in;
 
@@ -132,8 +132,8 @@ $elements_in['name']        = 'place';
 $elements_in['default']     = isset($address1) ? $address1->getPlace() : '';
 $elements_in['required']    = 1;
 $elements_in['validate']    = 'not_empty';
-$elements_in['error_msg']   = $I18N_21->msg('shop_err_no_place');
-$elements_in['label']       = $I18N_21->msg('shop_place');
+$elements_in['error_msg']   = cjoAddon::translate(21,'shop_err_no_place');
+$elements_in['label']       = cjoAddon::translate(21,'shop_place');
 $form_elements_in[]         = $elements_in;
 
 // po-box. input
@@ -142,8 +142,8 @@ $elements_in['type']        = 'text';
 $elements_in['name']        = 'po-box';
 $elements_in['default']     = isset($address1) ? $address1->getPoBox() : '';
 $elements_in['validate']    = 'digit_only';
-$elements_in['error_msg']   = $I18N_21->msg('shop_err_nums_only');
-$elements_in['label']       = $I18N_21->msg('shop_po_box');
+$elements_in['error_msg']   = cjoAddon::translate(21,'shop_err_nums_only');
+$elements_in['label']       = cjoAddon::translate(21,'shop_po_box');
 $elements_in['css']         = 'form_elm_smll';
 $form_elements_in[]         = $elements_in;
 
@@ -153,11 +153,11 @@ $elements_in['type']        = 'select';
 $elements_in['name']        = 'country';
 // select only in tbl_21_country_zone defined countries
 $elements_in['values']      = array_diff(cjo_get_country_codes(), cjoShopZone::getCountryNames(-1));
-$elements_in['default']     = isset($address1) ? $address1->getCountry() : strtoupper($CJO['CLANG_ISO'][$CJO['CUR_CLANG']]);
+$elements_in['default']     = isset($address1) ? $address1->getCountry() : strtoupper($CJO['CLANG_ISO'][cjoProp::getClang()]);
 $elements_in['required']    = 1;
 $elements_in['validate']    = 'not_empty';
-$elements_in['error_msg']   = $I18N_21->msg('shop_err_no_customer_country');
-$elements_in['label']       = $I18N_21->msg('shop_customer_country');
+$elements_in['error_msg']   = cjoAddon::translate(21,'shop_err_no_customer_country');
+$elements_in['label']       = cjoAddon::translate(21,'shop_customer_country');
 $elements_in['css']         = 'form_elm_norm';
 $form_elements_in[]         = $elements_in;
 
@@ -175,8 +175,8 @@ $elements_in['name']        = 'birth';
 $elements_in['default']     = isset($personals) ? $personals[0] : '';
 $elements_in['required']    = 1;
 $elements_in['validate']    = 'not_empty|date_dd.mm.yyyy';
-$elements_in['error_msg']   = $I18N_21->msg('shop_err_no_birth_date').'|'.$I18N_21->msg('shop_err_date_format');
-$elements_in['label']       = $I18N_21->msg('shop_birth_date');
+$elements_in['error_msg']   = cjoAddon::translate(21,'shop_err_no_birth_date').'|'.cjoAddon::translate(21,'shop_err_date_format');
+$elements_in['label']       = cjoAddon::translate(21,'shop_birth_date');
 $elements_in['css']         = 'form_elm_med';
 $form_elements_in[]         = $elements_in;
 
@@ -187,7 +187,7 @@ $elements_in['name']        = 'email';
 $elements_in['default']     = isset($personals) ? $personals[1] : '';
 $elements_in['required']    = 1;
 $elements_in['validate']    = 'not_empty|email';
-$elements_in['error_msg']   = $I18N_21->msg('shop_err_no_mail').'|'.$I18N_21->msg('shop_err_mail_format');
+$elements_in['error_msg']   = cjoAddon::translate(21,'shop_err_no_mail').'|'.cjoAddon::translate(21,'shop_err_mail_format');
 $elements_in['label']       = 'E-Mail';
 $form_elements_in[]         = $elements_in;
 
@@ -198,8 +198,8 @@ $elements_in['name'] 		= 'phone_nr';
 $elements_in['default']	    = isset($personals) ? $personals[2] : '';
 $elements_in['required']    = 1;
 $elements_in['validate']	= 'telefon';
-$elements_in['error_msg']	= $I18N_21->msg('shop_err_nums_only');
-$elements_in['label']		= $I18N_21->msg('shop_phone_nr');
+$elements_in['error_msg']	= cjoAddon::translate(21,'shop_err_nums_only');
+$elements_in['label']		= cjoAddon::translate(21,'shop_phone_nr');
 $form_elements_in[]         = $elements_in;
 
 
@@ -218,7 +218,7 @@ if ($CJO['ADDON']['settings'][$mypage]['ADRESS2_ENABLED'] == '1') {
     $elements_in['name'] 		= 'supply_address';
     $elements_in['value']		= 1;
     $elements_in['default']	    = $supply_address;
-    $elements_in['label']		= $I18N_21->msg('shop_different_supply_address');
+    $elements_in['label']		= cjoAddon::translate(21,'shop_different_supply_address');
     $form_elements_in[]         = $elements_in;
 }
 // prepare form elements for output

@@ -23,17 +23,12 @@
  * @filesource
  */
 
-$mypage    = 'opf_lang';
+$addon    = 'opf_lang';
 $oid       = cjo_request('oid', 'int', '');
 $function  = cjo_request('function', 'string');
 
-cjoAssistance::resetAfcVars();
+cjoSubPages::addPage( array('opf_lang', 'title' => cjoAddon::translate(4,'opf_lang')));
 
-$subpages = new cjoSubPages($subpage, $mypage);
-$subpages->addPage( array('opf_lang', 'title' => $I18N_4->msg('opf_lang')));
+require_once cjoSubPages::getPagePath();
 
-require_once $CJO['INCLUDE_PATH'].'/layout/top.php';
-require_once $subpages->getPage();
-require_once $CJO['INCLUDE_PATH'].'/layout/bottom.php';
-
-$CJO['SEL_LANG']->get();
+cjoSelectLang::get();

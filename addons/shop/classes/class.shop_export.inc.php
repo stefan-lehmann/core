@@ -68,7 +68,7 @@ class cjoShopExport {
 
                     case 'birth_date':
                     case 'createdate':
-                    case 'updateuser':      $value = strftime($I18N->msg('dateformat'), (int) $value);
+                    case 'updateuser':      $value = strftime(cjoI18N::translate('dateformat'), (int) $value);
                                             break;
 
                     case 'products':        $value = cjoShopProduct::productsOut($value);

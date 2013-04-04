@@ -29,8 +29,6 @@
   pay_method bank_account was chosen
 ------------------------------------*/
 
-global $CJO, $I18N_21;
-
 // get already saved data
 if (isset($posted['checkout']['pay_data']))
 	$pay_object = new cjoShopBankAccount($posted['checkout']['pay_data']);
@@ -45,7 +43,7 @@ $form_elements_in[]         = $elements_in;
 $elements_in                = array();
 $elements_in['type']		= 'headline';
 $elements_in['name']		= 'bank_account_headline';
-$elements_in['default']		= $I18N_21->msg('shop_insert_paydata');
+$elements_in['default']		= cjoAddon::translate(21,'shop_insert_paydata');
 $elements_in['css']			= 'form_elm_headline';
 $form_elements_in[]         = $elements_in;
 
@@ -53,10 +51,10 @@ $form_elements_in[]         = $elements_in;
 $elements_in                = array();
 $elements_in['type']		= 'text';
 $elements_in['name'] 		= 'account_id';
-$elements_in['label']		= $I18N_21->msg('shop_get_bank_account_id');
+$elements_in['label']		= cjoAddon::translate(21,'shop_get_bank_account_id');
 $elements_in['default']		= isset($pay_object) ? $pay_object->getAccountId() : '';
 $elements_in['validate']	= 'not_empty|numeric';
-$elements_in['error_msg']	= $I18N_21->msg('msg_no_bank_account_number').'|'.$I18N_21->msg('shop_err_nums_only');
+$elements_in['error_msg']	= cjoAddon::translate(21,'msg_no_bank_account_number').'|'.cjoAddon::translate(21,'shop_err_nums_only');
 $elements_in['required']	= 1;
 $form_elements_in[]         = $elements_in;
 
@@ -64,10 +62,10 @@ $form_elements_in[]         = $elements_in;
 $elements_in                = array();
 $elements_in['type']		= 'text';
 $elements_in['name'] 		= 'bank_code';
-$elements_in['label']		= $I18N_21->msg('shop_get_bank_code');
+$elements_in['label']		= cjoAddon::translate(21,'shop_get_bank_code');
 $elements_in['default']		= isset($pay_object) ? $pay_object->getBankCode() : '';
 $elements_in['validate']	= 'not_empty|numeric';
-$elements_in['error_msg']	= $I18N_21->msg('msg_no_bank_code').'|'.$I18N_21->msg('shop_err_nums_only');
+$elements_in['error_msg']	= cjoAddon::translate(21,'msg_no_bank_code').'|'.cjoAddon::translate(21,'shop_err_nums_only');
 $elements_in['required']	= 1;
 $form_elements_in[]         = $elements_in;
 
@@ -75,10 +73,10 @@ $form_elements_in[]         = $elements_in;
 $elements_in                = array();
 $elements_in['type']		= 'text';
 $elements_in['name'] 		= 'bank_name';
-$elements_in['label']		= $I18N_21->msg('shop_get_bank_name');
+$elements_in['label']		= cjoAddon::translate(21,'shop_get_bank_name');
 $elements_in['default']		= isset($pay_object) ? $pay_object->getBankName() : '';
 $elements_in['validate']	= 'notEmpty';
-$elements_in['error_msg']	= $I18N_21->msg('msg_no_bank_name');
+$elements_in['error_msg']	= cjoAddon::translate(21,'msg_no_bank_name');
 $elements_in['required']	= 1;
 $form_elements_in[]         = $elements_in;
 
@@ -92,7 +90,7 @@ $form_elements_in[]         = $elements_in;
 $elements_in                = array();
 $elements_in['type']		= 'headline';
 $elements_in['name']		= 'shop_checkout_bank_account_owner';
-$elements_in['default']		= $I18N_21->msg('shop_bank_account_owner');
+$elements_in['default']		= cjoAddon::translate(21,'shop_bank_account_owner');
 $elements_in['css']			= 'form_elm_headline';
 $form_elements_in[]         = $elements_in;
 
@@ -100,10 +98,10 @@ $form_elements_in[]         = $elements_in;
 $elements_in                = array();
 $elements_in['type']		= 'text';
 $elements_in['name'] 		= 'firstname';
-$elements_in['label']		= $I18N_21->msg('shop_get_bank_owner_firstname');
+$elements_in['label']		= cjoAddon::translate(21,'shop_get_bank_owner_firstname');
 $elements_in['default']		= isset($pay_object) ? $pay_object->getFirstname() : '';
 $elements_in['validate']	= 'notEmpty';
-$elements_in['error_msg']	= $I18N_21->msg('msg_no_bank_owner_name');
+$elements_in['error_msg']	= cjoAddon::translate(21,'msg_no_bank_owner_name');
 $elements_in['required']	= 1;
 $form_elements_in[]         = $elements_in;
 
@@ -111,9 +109,9 @@ $form_elements_in[]         = $elements_in;
 $elements_in                = array();
 $elements_in['type']		= 'text';
 $elements_in['name'] 		= 'name';
-$elements_in['label']		= $I18N_21->msg('shop_get_bank_owner_name');
+$elements_in['label']		= cjoAddon::translate(21,'shop_get_bank_owner_name');
 $elements_in['default']		= isset($pay_object) ? $pay_object->getName() : '';
 $elements_in['validate']	= 'notEmpty';
-$elements_in['error_msg']	= $I18N_21->msg('msg_no_bank_owner_name');
+$elements_in['error_msg']	= cjoAddon::translate(21,'msg_no_bank_owner_name');
 $elements_in['required']	= 1;
 $form_elements_in[]         = $elements_in;

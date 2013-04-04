@@ -25,7 +25,7 @@
 
 // declare or define required vars
 global $CJO;
-$mypage = 'shop';
+$addon = 'shop';
 
 //// update product status if requested
 if ($function == 'delete' && $oid != '') {
@@ -85,37 +85,35 @@ if ($function == 'add' || $function == 'edit') {
 
         $flag = '<img src="img/flags/'.$CJO['CLANG_ISO'][$id].'.png" alt="'.$name.'" />';
 
-        $fields['attribute_'.$name] = new textField('attribute_'.$id, $flag.' '.$I18N_21->msg('shop_attribute'));
+        $fields['attribute_'.$name] = new textField('attribute_'.$id, $flag.' '.cjoAddon::translate(21,'shop_attribute'));
         $fields['attribute_'.$name]->needFullColumn(true);
         $fields['attribute_'.$name]->activateSave(false);
 
-    	if ($id != $CJO['CUR_CLANG']){
+    	if ($id != cjoProp::getClang()){
     		$fields['attribute_'.$name]->addAttribute('readonly', 'readonly');
     		if($function == 'add') unset($fields['attribute_'.$name]);
     	}
     	else {
-            $fields['attribute_'.$name]->addValidator('notEmpty', $I18N->msg("label_attribute", $name), false, false);
+            $fields['attribute_'.$name]->addValidator('notEmpty', cjoI18N::translate("label_attribute", $name), false, false);
     	}
     }
 
     //headline for attribute values
-    $fields['headline1'] = new readOnlyField('headline1', '', array('class' => 'formheadline'));
-    $fields['headline1']->setValue($I18N_21->msg('label_attribute_values'));
-    $fields['headline1']->needFullColumn(true);
+    $fields['headline1'] = new headlineField(cjoAddon::translate(21,'label_attribute_values'));
 
-    $currency_sign = $CJO['ADDON']['settings'][$mypage]['CURRENCY']['DEFAULT_SIGN'];
+    $currency_sign = $CJO['ADDON']['settings'][$addon]['CURRENCY']['DEFAULT_SIGN'];
     
     foreach($temp as $i=>$data) {
 
         $key = (empty($data['id'])) ? 'new' : $i;
-        $name = ($i == 0) ? $I18N_21->msg('label_attribute_value') : '&nbsp;';
+        $name = ($i == 0) ? cjoAddon::translate(21,'label_attribute_value') : '&nbsp;';
         $note = '';
         
         if (!empty($data['id'])) {
     		$note = '<input name="remove_attribute_value" class="cjo_confirm" value="'.($key+1).'"
     						src="img/silk_icons/cross.png" type="image"
-    						alt="'.$I18N->msg("button_delete").'"
-    						title="'.$I18N->msg("button_delete").'" />';
+    						alt="'.cjoI18N::translate("button_delete").'"
+    						title="'.cjoI18N::translate("button_delete").'" />';
         }
         
         $fields['attribute_value_id_'.$key] = new hiddenField('attribute_value_id_'.$key);
@@ -134,11 +132,11 @@ if ($function == 'add' || $function == 'edit') {
 	    $fields['attribute_offset_'.$key]->setNote($currency_sign.' &nbsp;&nbsp; '.$note);
 	    $fields['attribute_offset_'.$key]->activateSave(false);
 
-	    $fields['attribute_offset_'.$key]->addValidator('isPrice', $I18N_21->msg("msg_attribute_offset_no_price"), true, false);
+	    $fields['attribute_offset_'.$key]->addValidator('isPrice', cjoAddon::translate(21,"msg_attribute_offset_no_price"), true, false);
     }
     
     //Add Fields
-    $section = new cjoFormSection('TBL_21_ATTRIBUTES', $I18N_21->msg('label_attribute_setup'), array(), array('25%', '28%', '47%'));
+    $section = new cjoFormSection('TBL_21_ATTRIBUTES', cjoAddon::translate(21,'label_attribute_setup'), array(), array('25%', '28%', '47%'));
     $section->dataset = $dataset;
 
     $section->addFields($fields);
@@ -170,12 +168,12 @@ if ($function == 'add' || $function == 'edit') {
                                                                $posted['attribute_offset_'.$i],
                                                                $posted['attribute_value_prior_'.$i],
                                                                $posted['attribute_value_id_'.$i],
-                                                               $CJO['CUR_CLANG']);
+                                                               cjoProp::getClang());
             }
             else {
 
                 if (!empty($posted['attribute'])) {
-                    cjoShopProductAttributes::updateAttribute($posted['attribute'], $posted['attribute_id'], $CJO['CUR_CLANG']);
+                    cjoShopProductAttributes::updateAttribute($posted['attribute'], $posted['attribute_id'], cjoProp::getClang());
                 }
 
                 if (!cjoMessage::hasErrors()) {
@@ -192,7 +190,7 @@ if ($function == 'add' || $function == 'edit') {
                                                                        $posted['attribute_offset_'.$i],
                                                                        $posted['attribute_value_prior_'.$i],
                                                                        $posted['attribute_value_id_'.$i],
-                                                                       $CJO['CUR_CLANG']);
+                                                                       cjoProp::getClang());
                         if (cjoMessage::hasErrors()) break;
                     }
                 }
@@ -218,11 +216,11 @@ if ($function == 'add' || $function == 'edit') {
         if (!cjoMessage::hasErrors()) {
 
         	if (cjo_post('cjoform_save_button', 'boolean')) {
-                cjoAssistance::redirectBE(array('function' => '', 'oid' => '', 'msg' => 'msg_data_saved'));
+                cjoUrl::redirectBE(array('function' => '', 'oid' => '', 'msg' => 'msg_data_saved'));
         	}
         	elseif (cjo_post('remove_attribute_value', 'boolean') ||
         	        cjo_post('cjoform_update_button', 'boolean')) {
-        		cjoAssistance::redirectBE(array('function' => 'edit', 'oid'=>$oid, 'msg' => 'msg_data_saved'));
+        		cjoUrl::redirectBE(array('function' => 'edit', 'oid'=>$oid, 'msg' => 'msg_data_saved'));
         	}
         }
     }
@@ -242,8 +240,8 @@ if ($function == '') {
     					IF(v.offset <> 0, CONCAT('<span class=\"shop_attributes_list\">',
     											 t.name,
     						   					 ' <span style=\"float: right\">',
-    						   					 REPLACE(v.offset, '.', '".$CJO['ADDON']['settings'][$mypage]['CURRENCY']['DEFAULT_SEPARATOR']."') ,
-    						   					 ' ".$CJO['ADDON']['settings'][$mypage]['CURRENCY']['DEFAULT_SIGN']."',
+    						   					 REPLACE(v.offset, '.', '".$CJO['ADDON']['settings'][$addon]['CURRENCY']['DEFAULT_SEPARATOR']."') ,
+    						   					 ' ".$CJO['ADDON']['settings'][$addon]['CURRENCY']['DEFAULT_SIGN']."',
     						   				     '</span>',
     						   				     '</span>'),
     						   			  CONCAT('<span class=\"shop_attributes_list\">', t.name, '</span>'))
@@ -265,37 +263,37 @@ if ($function == '') {
     		   	  n.status = '1'";
 
     // define list
-    $list = new cjolist($qry, 't.name', 'ASC', 't.name', 40);
-    $list->addGlobalParams(cjo_a22_getDefaultGlobalParams());
+    $list = new cjoList($qry, 't.name', 'ASC', 't.name', 40);
+    $list->addGlobalParams(cjoUrl::getDefaultGlobalParams());
     $list->debug = false;
     $cols['id'] = new resultColumn('id',
-                                   cjoAssistance::createBELink('<img src="img/silk_icons/add.png" alt="'.$I18N_21->msg("shop_add_attribute").'" />',
+                                   cjoUrl::createBELink('<img src="img/silk_icons/add.png" alt="'.cjoAddon::translate(21,"shop_add_attribute").'" />',
     							 		                       array('function' => 'add'), $list->getGlobalParams(),
-                        									 	     'title="'.$I18N_21->msg("shop_add_attribute").'"'));
+                        									 	     'title="'.cjoAddon::translate(21,"shop_add_attribute").'"'));
 
     $cols['id']->setHeadAttributes('class="icon"');
     $cols['id']->setBodyAttributes('class="icon"');
     $cols['id']->delOption(OPT_ALL);
 
-    $cols['attribute'] = new resultColumn('attribute', $I18N_21->msg('shop_attributes'));
+    $cols['attribute'] = new resultColumn('attribute', cjoAddon::translate(21,'shop_attributes'));
     $cols['attribute']->setBodyAttributes('class="large_item" style="width:35%"');
     $cols['attribute']->delOption(OPT_SEARCH);
 
 
-    $cols['attribute_values'] = new resultColumn('attribute_values', $I18N_21->msg('label_attribute_values'));
+    $cols['attribute_values'] = new resultColumn('attribute_values', cjoAddon::translate(21,'label_attribute_values'));
     $cols['attribute_values']->addCondition('attribute_values','', '--');
     $cols['attribute_values']->delOption(OPT_SEARCH);
 
     // update link
-    $img = '<img src="img/silk_icons/page_white_edit.png" title="'.$I18N->msg("button_edit").
-    	   '" alt="'.$I18N->msg("button_edit").'" />';
-    $cols['edit'] = new staticColumn($img, $I18N->msg("label_functions"));
+    $img = '<img src="img/silk_icons/page_white_edit.png" title="'.cjoI18N::translate("button_edit").
+    	   '" alt="'.cjoI18N::translate("button_edit").'" />';
+    $cols['edit'] = new staticColumn($img, cjoI18N::translate("label_functions"));
     $cols['edit']->setBodyAttributes('width="16"');
     $cols['edit']->setHeadAttributes('colspan="2"');
     $cols['edit']->setParams(array('function' => 'edit', 'oid' => '%id%'));
 
     // delete link
-    $img = '<img src="img/silk_icons/bin.png" title="'.$I18N->msg("button_delete").'" alt="'.$I18N->msg("button_delete").'" />';
+    $img = '<img src="img/silk_icons/bin.png" title="'.cjoI18N::translate("button_delete").'" alt="'.cjoI18N::translate("button_delete").'" />';
     $cols['delete'] = new staticColumn($img, NULL);
     $cols['delete']->setBodyAttributes('width="60"');
     $cols['delete']->setBodyAttributes('class="cjo_delete"');

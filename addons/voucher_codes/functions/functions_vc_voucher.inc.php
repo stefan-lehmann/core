@@ -29,7 +29,7 @@ function vc_delete_voucher($code){
 
     $sql = new cjoSql();
     $qry = "DELETE FROM ".TBL_17_VOUCHER." WHERE code='".$code."'";
-    return $sql->statusQuery($qry, $I18N_17->msg("msg_code_deleted"));
+    return $sql->statusQuery($qry, cjoAddon::translate(17,"msg_code_deleted"));
 }
 
 function vc_import_codes(){
@@ -43,7 +43,7 @@ function vc_import_codes(){
     preg_match_all('/^.*$/m', $_POST['codes'], $csv_data);
 
     if (!is_array($csv_data[0])){
-        cjoMessage::addError($I18N_17->msg('msg_err_codes_notEmpty'));
+        cjoMessage::addError(cjoAddon::translate(17,'msg_err_codes_notEmpty'));
         return false;
     }
     
@@ -77,11 +77,11 @@ function vc_import_codes(){
     }
 
     if ($statistic > 0) {
-        cjoMessage::addSuccess($I18N_17->msg("msg_import_done", $statistic, ($total-$statistic)));
+        cjoMessage::addSuccess(cjoAddon::translate(17,"msg_import_done", $statistic, ($total-$statistic)));
         return true;        
     }
     
-    cjoMessage::addError($I18N_17->msg("msg_import_failed"));
+    cjoMessage::addError(cjoAddon::translate(17,"msg_import_failed"));
     return false;
 }
 
@@ -120,7 +120,7 @@ function vc_export_redemptions($event_id, $filename = '	redemption_list') {
 
     global $CJO, $I18N_17, $I18N;
 
-    $mypage = 'voucher_codes';
+    $addon = 'voucher_codes';
     $break = "----------------------------------------------------------------------------------------------------------"."\r\n";
 
     $sql = new cjoSql();
@@ -148,7 +148,7 @@ function vc_export_redemptions($event_id, $filename = '	redemption_list') {
     ob_end_clean();
 
     $filename .= ".txt";
-    header("Content-type: plain/text; charset=".$I18N->msg("htmlcharset"));
+    header("Content-type: plain/text; charset=".cjoI18N::translate("htmlcharset"));
     header("Content-Disposition: attachment; filename=$filename");
     echo $output;
     exit;

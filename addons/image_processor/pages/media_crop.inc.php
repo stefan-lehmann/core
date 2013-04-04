@@ -23,21 +23,23 @@
  * @filesource
  */
 
-$media_obj = OOMedia::getMediaById($oid);
+global $cropbox, $croplist;
+ 
+$media_obj = OOMedia::getMediaById($this->oid);
 $file 	  = $media_obj->getFileName();
 $size 	  = @getimagesize($media_obj->getFullPath());
 $max 	  = 560;
-$default  = imageProcessor_initCropValues($size);
+$default  = cjoImageProcessor::initCropValues($size);
 $ac 	  = '';
 $croplist = '';
 
 $sql = new cjoSql();
-$qry = "SELECT * FROM ".TBL_IMG_CROP." WHERE status != '0' ORDER BY id";
+$qry = "SELECT * FROM ".TBL_IMG_CROP." WHERE status=1 ORDER BY id";
 $sets = $sql->getArray($qry);
 
-if (!is_array($sets)) return false;
+if (empty($sets)) return false;
 
-if ($CJO['USER']->hasMediaPerm()){
+if (cjoProp::getUser()->hasMediaPerm()){
 
 	foreach($sets as $key=>$set){
 			$crop_val = ($media_obj->_crop[$set['id']] != '') ? $media_obj->_crop[$set['id']] : $default[$set['id']];
@@ -68,18 +70,18 @@ if ($CJO['USER']->hasMediaPerm()){
 				'		<strong>W:</strong> <span id="w"></span>'."\r\n".
 				'		<strong>H:</strong> <span id="h"></span>'."\r\n".
 				'	</div>'."\r\n".
-				' 	<button id="crop_reset" title="'.$I18N_8->msg('button_crop_reset').'" class="cjo_form_button">'."\r\n".
-				' 		<img src="img/silk_icons/bin.png" alt="R" title="'.$I18N_8->msg('button_crop_reset').'" />'."\r\n".
+				' 	<button id="crop_reset" title="'.cjoAddon::translate(8,'button_crop_reset').'" class="cjo_form_button">'."\r\n".
+				' 		<img src="img/silk_icons/bin.png" alt="R" title="'.cjoAddon::translate(8,'button_crop_reset').'" />'."\r\n".
 				' 	</button>'."\r\n";
 
 	$cropbox =  '<div id="cropbox" class="jc_coords">'.$cropbox.'</div>';
 
 	$cropbuttons = 	'	<div class="cropbuttons">'."\r\n".
-					' 		<button title="'.$I18N->msg('button_update').'" class="cjo_form_button crop_save small">'."\r\n".
+					' 		<button title="'.cjoI18N::translate('button_update').'" class="cjo_form_button crop_save small">'."\r\n".
 					' 			<img src="img/silk_icons/tick.png" alt="OK" />'."\r\n".
 					' 		</button>'."\r\n".
-					' 		<button title="'.$I18N->msg('button_cancel').'" class="cjo_form_button crop_cancel small">'."\r\n".
-					' 			<img src="img/silk_icons/cancel.png" alt="X" title="'.$I18N->msg('button_cancel').'" />'."\r\n".
+					' 		<button title="'.cjoI18N::translate('button_cancel').'" class="cjo_form_button crop_cancel small">'."\r\n".
+					' 			<img src="img/silk_icons/cancel.png" alt="X" title="'.cjoI18N::translate('button_cancel').'" />'."\r\n".
 					' 		</button>'."\r\n".
 					'	</div>'."\r\n";
 
@@ -95,10 +97,10 @@ foreach ($sets as $key=>$set)
 	if ($set['width'] <= $size[0] && $set['height'] <= $size[1])
 	{
 		if ($media_obj->_crop[$b] == '')
-			$locked = '<img src="img/mini_icons/error.png" title="'.$I18N_8->msg("msg_no_croping_set").'" alt="" /> ';
+			$locked = '<img src="img/mini_icons/error.png" title="'.cjoAddon::translate(8,"msg_no_croping_set").'" alt="" /> ';
 
 		$crop_item = explode('|', $media_obj->_crop[$b]);
-		$img = imageProcessor_getImg($media_obj->getFileName(),
+		$img = cjoImageProcessor::getImg($media_obj->getFileName(),
 									 200,
 									 200,
 									 $resize=null,
@@ -111,16 +113,16 @@ foreach ($sets as $key=>$set)
 									 $crop_item[3],
 									 $crop_item[4]);
 
-		if ($CJO['USER']->hasMediaPerm()){
-			$img = '<img src="'.$img.'" title="'.$I18N_8->msg('label_edit_crop').'" id="crop_img_'.$set['id'].'" alt="" />';
+		if (cjoProp::getUser()->hasMediaPerm()){
+			$img = '<img src="'.$img.'" title="'.cjoAddon::translate(8,'label_edit_crop').'" id="crop_img_'.$set['id'].'" alt="" />';
 		}
 		else{
-			$img = '<img src="'.$img.'" title="'.$I18N->msg("msg_no_permissions").'" alt="" />';
+			$img = '<img src="'.$img.'" title="'.cjoI18N::translate("msg_no_permissions").'" alt="" />';
 			$css = ' locked';
 		}
 	}
 	else {
-		$img = '<p class="warning">'.$I18N_8->msg("msg_no_resize_img_to_small").'</p>';
+		$img = '<p class="warning">'.cjoAddon::translate(8,"msg_no_resize_img_to_small").'</p>';
 		$css = ' locked';
 	}
 
@@ -131,7 +133,7 @@ foreach ($sets as $key=>$set)
 			   	'</div>'."\r\n";
 }
 $croplist = '<h2 id="cropheadline">'."\r\n".
-			'	'.$I18N_8->msg("label_crop_function")."\r\n".
+			'	'.cjoAddon::translate(8,"label_crop_function")."\r\n".
 			'</h2>'."\r\n".
 			'<div id="croplist" class="hide_me">'.$croplist.'&nbsp;</div>';
 
@@ -143,7 +145,7 @@ function cjo_insert_cropping($params) {
 }
 
 ?>
-<script src="<?php echo $CJO['HTDOCS_PATH']; ?>core/js/Jcrop/js/jquery.Jcrop.js" type="text/javascript"></script>
+<script src="<?php echo cjoUrl::backend('js/Jcrop/js/jquery.Jcrop.js') ?>" type="text/javascript"></script>
 
 <script type="text/javascript">
 /* <![CDATA[ */
@@ -196,12 +198,12 @@ function cjo_insert_cropping($params) {
 
 			$(jdialog).dialog({
     			buttons: {
-    				'<?php echo $I18N->msg('label_ok'); ?>': function() {
+    				'<?php echo cjoI18N::translate('label_ok'); ?>': function() {
     					$(this).dialog('close');
     					$('input[name='+cur_crop+']').val('');
     					cjo_toggle_crop($this, 'hide');
     				},
-    				'<?php echo $I18N->msg('label_cancel'); ?>': function() {
+    				'<?php echo cjoI18N::translate('label_cancel'); ?>': function() {
     					$(this).dialog('close');
     				}
     			}

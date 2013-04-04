@@ -27,9 +27,8 @@ $mypage  = 'multidomain';
 $oid       = cjo_request('oid', 'int', '');
 $function  = cjo_request('function', 'string');
 
-$subpages = new cjoSubPages($subpage, $mypage);
-$subpages->addPage( array('multidomain', 'title' => $I18N_15->msg('multidomain')));
+cjoSubPages::addPage( array('multidomain', 'title' => cjoAddon::translate(15,'multidomain')));
 
-require_once $CJO['INCLUDE_PATH'].'/layout/top.php';
-require_once $subpages->getPage();
-require_once $CJO['INCLUDE_PATH'].'/layout/bottom.php';
+//require_once $CJO['INCLUDE_PATH'].'/layout/top.php';
+require_once cjoSubPages::getPagePath();
+//require_once $CJO['INCLUDE_PATH'].'/layout/bottom.php';

@@ -26,7 +26,7 @@
 //	$query = "DELETE FROM ".TBL_ARTICLES_SLICE." WHERE id='".$slice_id."'";
 //	$sql->setQuery($query);
 //	cjo_debug($sql,$query);
-//	$message['accept'][] = $I18N->msg('msg_block_deleted');
+//	$message['accept'][] = cjoI18N::translate('msg_block_deleted');
 //}
 
 // ARTIKEL_EINSTELLUNG AUF ANDERE SPRACHEN MAPPEN

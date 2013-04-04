@@ -35,14 +35,14 @@
  */
 global $CJO;
 global $I18N_21;
-$mypage = 'shop';
+$addon = 'shop';
 
 
 // get available pay methods
-$pay_methods = cjoAssistance::toArray($CJO['ADDON']['settings'][$mypage]['PAY_METHODS']);
+$pay_methods = cjoAssistance::toArray($CJO['ADDON']['settings'][$addon]['PAY_METHODS']);
 
 // get containing folder
-$pay_methods_path = $CJO['ADDON']['settings'][$mypage]['PAY_METHODS_PATH'];
+$pay_methods_path = $CJO['ADDON']['settings'][$addon]['PAY_METHODS_PATH'];
 
 //// check if posted paymethod index-file exists
 //$pay_method_exists = file_exists($pay_methods_path.'/'.$posted['pay_method'].'/index.inc.php');
@@ -83,16 +83,16 @@ foreach($pay_methods as $method) {
 	if ($payment_costs[$method] != 0) {
 	    $extra_costs = ' (+'.cjoShopPrice::toCurrency($payment_costs[$method]).')';
 	}
-	$select_pay_method->addOption($I18N_21->msg('shop_'.$method).$extra_costs, $method);
+	$select_pay_method->addOption(cjoAddon::translate(21,'shop_'.$method).$extra_costs, $method);
 }
 
 $elements_in                = array();
 $elements_in['type']		= 'notice';
 $elements_in['name'] 		= 'pay_method';
 $elements_in['default']		= $select_pay_method->get();
-$elements_in['label']		= $I18N_21->msg('shop_pay_method');
+$elements_in['label']		= cjoAddon::translate(21,'shop_pay_method');
 $elements_in['validate']	= 'not_empty';
-$elements_in['error_msg']	= $I18N_21->msg('shop_no_pay_method');
+$elements_in['error_msg']	= cjoAddon::translate(21,'shop_no_pay_method');
 $form_elements_in[]         = $elements_in;
 
 //// define current pay method if it isn't so yet

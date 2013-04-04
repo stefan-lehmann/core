@@ -35,7 +35,7 @@
 
 abstract class cjoShopPayment {
         
-    protected static $mypage = 'shop';
+    protected static $addon = 'shop';
 
 	/**
 	 * This method is called if pay_data is
@@ -111,7 +111,7 @@ class cjoShopEmptyPayMethod extends cjoShopPayment {
 
 class cjoShopPayMethod {
     
-    protected static $mypage = 'shop';
+    protected static $addon = 'shop';
 
 	/**
 	 * Returns the object belonging to
@@ -134,17 +134,16 @@ class cjoShopPayMethod {
 	 */
 	public static function getPayObject($pay_method, $data = '') {
 
-	    global $CJO;
-
 		// get required files
-		$pay_methods_path = $CJO['ADDON']['settings'][self::$mypage]['PAY_METHODS_PATH'];
-		$class_file = $pay_methods_path.'/'.$pay_method.'/class.shop_'.$pay_method.'.inc.php';
-		$conf_file  = $pay_methods_path.'/'.$pay_method.'/config.inc.php';
+        $pay_methods_path = cjoPath::addon(self::$addon, cjoAddon::getParameter('PAY_METHODS_PATH', self::$addon), $pay_method);
+		$class_file = $pay_methods_path.'/class.shop_'.$pay_method.'.inc.php';
 
 		// include required files
 		if (is_readable($class_file)) include_once $class_file;
-		if (is_readable($conf_file))  include_once $conf_file;
 
+        $lang_id = cjoProp::isBackend() ? cjoProp::get('LANG') : cjoProp::getClangIso(cjoProp::getClang());
+        cjoI18N::init(21, $pay_methods_path, $lang_id);
+cjo_debug(cjoI18N);
 		$class = explode('_', $pay_method);
 		$construct = 'cjoShop';
 
@@ -163,11 +162,9 @@ class cjoShopPayMethod {
 	 */
 	public static function getAllCosts() {
 
-		global $CJO;
-
 		$costs = array();
 
-		foreach(cjoAssistance::toArray($CJO['ADDON']['settings'][self::$mypage]['PAY_COSTS']) as $value) {
+		foreach(cjoAssistance::toArray(cjoAddon::getParameter('PAY_COSTS', self::$addon)) as $value) {
 			$value = explode('=', $value);
 			$costs[$value[0]] = $value[1];
 		}
@@ -183,8 +180,7 @@ class cjoShopPayMethod {
 	 */
 	public function getName($pay_method) {
 
-		global $I18N_21;
-		return $I18N_21->msg('shop_'.$pay_method);
+		return cjoAddon::translate(21,'shop_'.$pay_method);
 	}
 
 } // end class cjoShopPayMethod

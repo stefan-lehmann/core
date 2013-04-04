@@ -1,0 +1,42 @@
+[%TEMPLATE%]
+
+IF(![[COUNT_RESULTS]]){%
+    <div class="textblock no_data">CJO_HTML_VALUE[13]</div>
+%}ENDIF
+
+[[ARTICLE_DEVIDER]]
+
+<%RESULTS%>
+[[PAGINATION]]
+
+
+[%RESULTS%]
+
+[[CJO_ARTICLE_INFOS]]
+
+<div class="floatbox">
+
+    IF([[TEASER_IMG]]){%
+        <div class="float_left imagelist2">
+            [[TEASER_IMG]]
+        </div>
+    %}ENDIF
+
+    <div class="textblock">
+        IF([[HEADLINE]]){%
+            <h3> <a href="[[DETAIL_URL]]" title="[[HEADLINE]]">[[HEADLINE]]</a>
+                IF([[SUB_HEADLINE]]){% <span>[[SUB_HEADLINE]]</span> %}ENDIF
+            </h3>
+        %}ENDIF
+
+        [[TEXT]]
+
+        IF([[DISPLAY_BOX]]){%
+            [[BOX]]
+        %}ENDIF
+    </div>
+</div>
+
+[[ARTICLE_DEVIDER]]
+
+[[ARTICLE_INFOS]]

@@ -35,26 +35,25 @@ $hidden['prev_subpage']->setValue('step3');
 $hidden['lang'] = new hiddenField('lang');
 $hidden['lang']->setValue($lang);
 
-$fields['headline1'] = new readOnlyField('headline1', '', array('class' => 'formheadline'));
-$fields['headline1']->setValue($I18N->msg("label_common_settings"));
+$fields['headline1'] = new headlineField(cjoI18N::translate("label_common_settings"));
 
-$fields['server'] = new textField('SERVER', $I18N->msg("label_server"));
+$fields['server'] = new textField('SERVER', cjoI18N::translate("label_server"));
 $fields['server']->setDefault($CJO['SERVER']);
 
-$fields['servername'] = new textField('SERVERNAME', $I18N->msg("label_servername"));
+$fields['servername'] = new textField('SERVERNAME', cjoI18N::translate("label_servername"));
 $fields['servername']->setDefault($CJO['SERVERNAME']);
 
-$fields['error_email'] = new textField('ERROR_EMAIL', $I18N->msg("label_error_email"));
+$fields['error_email'] = new textField('ERROR_EMAIL', cjoI18N::translate("label_error_email"));
 $fields['error_email']->setDefault($CJO['ERROR_EMAIL']);
-$fields['error_email']->addValidator('isEmail', $I18N->msg("msg_no_vaild_email"));
+$fields['error_email']->addValidator('isEmail', cjoI18N::translate("msg_no_vaild_email"));
 
 $fields['button'] = new buttonField();
-$fields['button']->addButton('cjoform_back_button',$I18N->msg("button_back"), true, 'img/silk_icons/control_play_backwards.png');
-$fields['button']->addButton('cjoform_next_button',$I18N->msg("button_next_step5"), true, 'img/silk_icons/control_play.png');
+$fields['button']->addButton('cjoform_back_button',cjoI18N::translate("button_back"), true, 'img/silk_icons/control_play_backwards.png');
+$fields['button']->addButton('cjoform_next_button',cjoI18N::translate("button_next_step5"), true, 'img/silk_icons/control_play.png');
 $fields['button']->setButtonAttributes('cjoform_next_button', ' style="color: green"');
 
 //Add Fields:
-$section = new cjoFormSection('', $I18N->msg("label_setup_".$subpage."_title"), array ());
+$section = new cjoFormSection('', cjoI18N::translate("label_setup_".$subpage."_title"), array ());
 
 $section->addFields($fields);
 $form->addSection($section);
@@ -71,15 +70,15 @@ if ($form->validate()) {
 
 		if (!cjoGenerate::putFileContents($CJO['FILE_CONFIG_MASTER'], $data)) {
 		    cjoMessage::removeLastError();
-			cjoMessage::addError($I18N->msg("msg_config_master_no_perm", $CJO['FILE_CONFIG_MASTER']));
+			cjoMessage::addError(cjoI18N::translate("msg_config_master_no_perm", $CJO['FILE_CONFIG_MASTER']));
 		}
 	}
 	else {
-	    cjoMessage::addError($I18N->msg("msg_config_master_does_not_exist"));
+	    cjoMessage::addError(cjoI18N::translate("msg_config_master_does_not_exist"));
 	}
 
 	if (!cjoMessage::hasErrors()) {
-	    cjoAssistance::redirectBE(array('subpage' => 'step5', 'lang' => $lang));
+	    cjoUrl::redirectBE(array('subpage' => 'step5', 'lang' => $lang));
 	}
 }
 

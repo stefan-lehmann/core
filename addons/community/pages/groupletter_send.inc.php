@@ -28,9 +28,9 @@ $article_str = '--';
 if ($groupletter->article_id > 0) {
 	$article = OOArticle::getArticleById($groupletter->article_id, $groupletter->clang);
 	if (OOArticle::isValid($article)) {
-		$article_str =  $I18N_10->msg('label_article').': '.$article->getName().' ('.
-						cjoAssistance::createBELink(
-						            $I18N->msg("label_edit"),
+		$article_str =  cjoAddon::translate(10,'label_article').': '.$article->getName().' ('.
+						cjoUrl::createBELink(
+						            cjoI18N::translate("label_edit"),
 									array('article_id' => $article->getId(), 'clang'=> $groupletter->clang),
 									array('page' => 'edit', 'subpage' => 'content',  'ctype' => 0)).
 						')';
@@ -53,12 +53,12 @@ foreach ($CJO['CLANG'] as $clang_id=>$clang_name) {
 }
 
 if (!$groupletter->firstsenddate) {
-	$senddates_str = $I18N_10->msg('msg_gl_not_send');
+	$senddates_str = cjoAddon::translate(10,'msg_gl_not_send');
 }
 else {
-	$senddates_str  = ($groupletter->firstsenddate > 0) ? strftime($I18N->msg("dateformat_sort"), $groupletter->firstsenddate) : '';
+	$senddates_str  = ($groupletter->firstsenddate > 0) ? strftime(cjoI18N::translate("dateformat_sort"), $groupletter->firstsenddate) : '';
 	$senddates_str .= ' -- ';
-	$senddates_str .= ($groupletter->lastsenddate > 0) ? strftime($I18N->msg("dateformat_sort"), $groupletter->lastsenddate) : '';
+	$senddates_str .= ($groupletter->lastsenddate > 0) ? strftime(cjoI18N::translate("dateformat_sort"), $groupletter->lastsenddate) : '';
 }
 
 $sql = new cjoSql();
@@ -70,7 +70,7 @@ $mail_account = $sql->getValue('name');
 
 
 /**
- * Do not delete translate values for i18n collection!
+ * Do not delete translate values for cjoI18N collection!
  * [translate: label_clang]
  * [translate: label_subject]
  * [translate: label_reply_to]
@@ -83,11 +83,11 @@ $mail_account = $sql->getValue('name');
 
 $infos = array(
 	"label_clang" 		=> $icons[$groupletter->clang].' '.$CJO['CLANG'][$groupletter->clang],
-	"label_subject" 	=> '<b>'.$groupletter->subject.'</b> (<a href="#" class="cjo_popup">'.$I18N_10->msg('label_preview').'</a>)',
+	"label_subject" 	=> '<b>'.$groupletter->subject.'</b> (<a href="#" class="cjo_popup">'.cjoAddon::translate(10,'label_preview').'</a>)',
     "label_reply_to" 	=> $mail_account,
-    "label_send_type"	=> $groupletter->article_id > 0 ? $article_str : $I18N_10->msg('label_send_text'),
+    "label_send_type"	=> $groupletter->article_id > 0 ? $article_str : cjoAddon::translate(10,'label_send_text'),
     "label_groups" 		=> $groups_str,
-    "label_processed" 	=> '<span id="gl_open" style="display:inline-block;background:url(img/silk_icons/email.png) no-repeat 5px center;padding:1px 5px 1px 24px;">'.number_format($groupletter->prepared, 0, trim($I18N->msg('dec_point')), trim($I18N->msg('thousands_sep'))).'</span> | '.
+    "label_processed" 	=> '<span id="gl_open" style="display:inline-block;background:url(img/silk_icons/email.png) no-repeat 5px center;padding:1px 5px 1px 24px;">'.number_format($groupletter->prepared, 0, trim(cjoI18N::translate('setlocal_dec_point')), trim(cjoI18N::translate('setlocal_thousands_sep'))).'</span> | '.
                            '<span id="gl_send" style="display:inline-block;background:url(img/silk_icons/tick.png) no-repeat 5px center;padding:1px 5px 1px 24px;">--</span> | '.
                            '<span id="gl_errors" style="display:inline-block;background:url(img/silk_icons/error.png) no-repeat 5px center;padding:1px 5px 1px 24px;">--</span>',
     "label_senddates" 	=> $senddates_str,
@@ -104,42 +104,41 @@ $form->debug = false;
 
 //Fields
 foreach($infos as $key => $val){
-	$fields[$key] = new readOnlyField('testmail', $I18N_10->msg($key), array(), $key);
+	$fields[$key] = new readOnlyField('testmail', cjoAddon::translate(10,$key), array(), $key);
 	$fields[$key]->setValue($val);
 
 }
 
 // Hilfetext  ----------------------------------------------------------------------------------------------------------------------------
 
-$fields['headline4'] = new readOnlyField('headline4', '', array('class' => 'formheadline slide'));
-$fields['headline4']->setValue($I18N_10->msg('label_help'));
+$fields['headline4'] = new headlineField(cjoAddon::translate(10,'label_help'));
 
-$explain = 	$I18N_10->msg("text_explain_cycle1").
-			$I18N_10->msg("text_explain_cycle2").
-			$I18N_10->msg("text_explain_cycle3").
-			$I18N_10->msg("text_explain_cycle4").
-			$I18N_10->msg("text_explain_cycle5").
-			$I18N_10->msg("text_explain_cycle6");
+$explain = 	cjoAddon::translate(10,"text_explain_cycle1").
+			cjoAddon::translate(10,"text_explain_cycle2").
+			cjoAddon::translate(10,"text_explain_cycle3").
+			cjoAddon::translate(10,"text_explain_cycle4").
+			cjoAddon::translate(10,"text_explain_cycle5").
+			cjoAddon::translate(10,"text_explain_cycle6");
 
 $fields['explain'] = new readOnlyField('', '', array('style'=>'display: block; padding:20px;'));
 $fields['explain']->setValue($explain);
 
 $fields['button'] = new buttonField();
-$fields['button']->addButton('cjoform_send_button',$I18N_10->msg("button_send"), true, 'img/silk_icons/email_go.png');
-$fields['button']->addButton('cjoform_stop_button',$I18N_10->msg("button_stop"), true, 'img/silk_icons/time.png');
-$fields['button']->addButton('cjoform_reset_button',$I18N_10->msg("button_reset_prepared"), true, 'img/silk_icons/cancel.png');
+$fields['button']->addButton('cjoform_send_button',cjoAddon::translate(10,"button_send"), true, 'img/silk_icons/email_go.png');
+$fields['button']->addButton('cjoform_stop_button',cjoAddon::translate(10,"button_stop"), true, 'img/silk_icons/time.png');
+$fields['button']->addButton('cjoform_reset_button',cjoAddon::translate(10,"button_reset_prepared"), true, 'img/silk_icons/cancel.png');
 $fields['button']->setButtonAttributes('cjoform_send_button', 'class="green"');
 $fields['button']->setButtonAttributes('cjoform_reset_button', 'class="red cjo_confirm"');
 
 //Add Fields
-$section = new cjoFormSection($CJO['ADDON']['settings'][$mypage], $I18N_10->msg('label_send_groupletter'), array ());
+$section = new cjoFormSection($CJO['ADDON']['settings'][$mypage], cjoAddon::translate(10,'label_send_groupletter'), array ());
 
 $section->addFields($fields);
 $form->addSection($section);
 $form->addFields($hidden);
 $form->show(false);
 
-$popup_url = cjoAssistance::createBEUrl(array('subpage' => 'show', 'clang' => $groupletter->clang, 'popup'=>1, 'oid' => $groupletter->id));
+$popup_url = cjoUrl::createBEUrl(array('subpage' => 'show', 'clang' => $groupletter->clang, 'popup'=>1, 'oid' => $groupletter->id));
 
 cjoAssistance::resetAfcVars();
 
@@ -171,7 +170,7 @@ cjoAssistance::resetAfcVars();
             if (data == 1) {
                 setTimeout(function() { startSend(); }, 5000);
             } else {
-              setTimeout(function() {location.href = '<?php echo cjoAssistance::createBEUrl(array('msg_10' => 'msg_all_send')); ?>'; }, 6000);
+              setTimeout(function() {location.href = '<?php echo cjoUrl::createBEUrl(); ?>'; }, 5000);
             }
         });
     }
@@ -179,9 +178,9 @@ cjoAssistance::resetAfcVars();
     function updateNumbers() {
         $.getJSON('ajax.php', {'function': 'cjoGroupLetter::currentNumbers'},
             function(data) { 
-               // if (data.open == 0 || data.open == "0") {
-               //     location.href = '<?php echo cjoAssistance::createBEUrl(array('msg_10' => 'msg_all_send')); ?>';
-               // }
+                if (data.open == 0 || data.open == "0") {
+                    location.href = '<?php echo cjoUrl::createBEUrl(); ?>';
+                }
                 $('#gl_open').text(data.open);
                 $('#gl_errors').text(data.errors);
                 $('#gl_send').text(data.send); 

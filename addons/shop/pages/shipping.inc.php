@@ -24,9 +24,9 @@
  */
 
 global $CJO;
-$mypage = 'shop';
+$addon = 'shop';
 
-$delivery_method = $CJO['ADDON']['settings'][$mypage]['DELIVERY_METHOD'];
+$delivery_method = $CJO['ADDON']['settings'][$addon]['DELIVERY_METHOD'];
 
 // declare REQUEST-variables (name and type)
 $deliverer_id 			= cjo_request('deliverer_id', 'int');
@@ -39,19 +39,19 @@ $deliverer_zone 		= cjo_request('deliverer_zone', 'string', '', true, 'cjoShopEx
 
 // declare icons
 $arrow 		= '<span></span>';
-$lorry 		= '<img src="img/silk_icons/lorry.png" alt="'.$I18N_21->msg("shop_icon_lorry").'" />';
-$world 		= '<img src="img/silk_icons/world.png" alt="'.$I18N_21->msg("shop_icon_world").'" />';
+$lorry 		= '<img src="img/silk_icons/lorry.png" alt="'.cjoAddon::translate(21,"shop_icon_lorry").'" />';
+$world 		= '<img src="img/silk_icons/world.png" alt="'.cjoAddon::translate(21,"shop_icon_world").'" />';
 
 // navigation links
 $links = '';
 // redirect to deliver page
 if (!empty($deliverer_zone_id)) {
-	$links .= cjoAssistance::createBELink($deliverer,
+	$links .= cjoUrl::createBELink($deliverer,
 	                                      array('function' 		=> '',
 											  	'mode'			=> ''),
 										  array());
 
-	$links .= $arrow.cjoAssistance::createBELink($deliverer_zone,
+	$links .= $arrow.cjoUrl::createBELink($deliverer_zone,
 												 array(	'function' 				=> '',
 													  	'mode'					=> ''),
 												 array());
@@ -85,20 +85,20 @@ if ($function == '') {
 	//create deliver zones settings output
 	$qry = "SELECT * FROM ".TBL_21_COUNTRY_ZONE;
 	$list = new cjoList($qry, 'zone', 'ASC', '', 10);
-	$list->setLabel($I18N_21->msg('shop_country_zone_settings'));
+	$list->setLabel(cjoAddon::translate(21,'shop_country_zone_settings'));
 	$cols = array();
 	// add button
 	$cols['icon'] = new resultColumn(	'label',
-									 	cjoAssistance::createBELink
+									 	cjoUrl::createBELink
 									 	(
-						 			 		'<img src="img/silk_icons/add.png" alt="'.$I18N_21->msg("shop_add_deliver_zone").'" />',
+						 			 		'<img src="img/silk_icons/add.png" alt="'.cjoAddon::translate(21,"shop_add_deliver_zone").'" />',
 									 		array
 									 		(
 									 			'function' 	=> 'add',
 									 	   		'mode' 	  	=> 'zone'
 									 		),
 									 		$list->getGlobalParams(),
-									 		'title="'.$I18N_21->msg("shop_add_deliver_zone").'"'
+									 		'title="'.cjoAddon::translate(21,"shop_add_deliver_zone").'"'
 									 	),
 									 	'sprintf',
 									 	'<img src="img/silk_icons/%s.png" alt="true" />'
@@ -111,10 +111,10 @@ if ($function == '') {
 	$cols['icon']->delOption(OPT_ALL);
 
 	// add columns
-	$cols['zone'] 	   = new resultColumn( 'zone',$I18N_21->msg('shop_deliver_zone'));
+	$cols['zone'] 	   = new resultColumn( 'zone',cjoAddon::translate(21,'shop_deliver_zone'));
 	$cols['zone']->setBodyAttributes('width="150"');
 	$cols['zone']->delOption(OPT_ALL);
-	$cols['countries'] = new resultColumn('countries', $I18N_21->msg('shop_countries'),
+	$cols['countries'] = new resultColumn('countries', cjoAddon::translate(21,'shop_countries'),
 										  'call_user_func',
 	 									   array('cjoAssistance::convertToFlags', array('%s')));
 	$cols['countries']->delOption(OPT_ALL);
@@ -122,15 +122,15 @@ if ($function == '') {
 	// add column if delivery costs depend on order value
 	if ($delivery_method == '0') {
 
-		$cols['costs'] = new resultColumn('id', $I18N_21->msg('shop_delivery_costs'),'call_user_func',
+		$cols['costs'] = new resultColumn('id', cjoAddon::translate(21,'shop_delivery_costs'),'call_user_func',
 									   array('cjoShopDelivery::getZoneDeliveryCosts', array('%s')));
 	    $cols['costs']->setBodyAttributes('width="230"');
 		$cols['costs']->delOption(OPT_ALL);
 	}
 
 	// button edit country zones
-	$img = '<img src="img/silk_icons/page_white_edit.png" title="'.$I18N->msg("button_edit").'" alt="'.$I18N->msg("button_edit").'" />';
-	$cols['edit'] = new staticColumn($img, $I18N->msg("label_functions"));
+	$img = '<img src="img/silk_icons/page_white_edit.png" title="'.cjoI18N::translate("button_edit").'" alt="'.cjoI18N::translate("button_edit").'" />';
+	$cols['edit'] = new staticColumn($img, cjoI18N::translate("label_functions"));
 	$cols['edit']->setHeadAttributes('colspan="2"');
 	$cols['edit']->setBodyAttributes('width="16"');
 
@@ -140,7 +140,7 @@ if ($function == '') {
 										'zone_id' 	=> '%id%'));
 
 	// button delete country zone
-	$img = '<img src="img/silk_icons/bin.png" title="'.$I18N->msg("button_delete").'" alt="'.$I18N_21->msg("button_delete").'" />';
+	$img = '<img src="img/silk_icons/bin.png" title="'.cjoI18N::translate("button_delete").'" alt="'.cjoAddon::translate(21,"button_delete").'" />';
 	$cols['delete'] = new staticColumn($img, NULL);
 	$cols['delete']->setBodyAttributes('width="60"');
 	$cols['delete']->setBodyAttributes('class="cjo_delete"');
@@ -179,20 +179,20 @@ if ($function == '') {
 				dz.deliverer_id=d.id";
 
 	$list = new cjoList($qry, 'deliverer', 'ASC', '', 10);
-	$list->setLabel( $I18N_21->msg('shop_deliverer_settings'));
+	$list->setLabel( cjoAddon::translate(21,'shop_deliverer_settings'));
 	$cols = array();
 	// add button
 	$cols['icon'] = new resultColumn(	'label',
-									 	cjoAssistance::createBELink
+									 	cjoUrl::createBELink
 									 	(
-						 			 		'<img src="img/silk_icons/add.png" alt="'.$I18N_21->msg("shop_add_deliverer").'" />',
+						 			 		'<img src="img/silk_icons/add.png" alt="'.cjoAddon::translate(21,"shop_add_deliverer").'" />',
 									 		array
 									 		(
 									 			'function' 			=> 'edit',
 									 			'mode' 				=> 'deliverer'
 									 		),
 									 		$list->getGlobalParams(),
-									 		'title="'.$I18N_21->msg("shop_add_deliverer").'"'
+									 		'title="'.cjoAddon::translate(21,"shop_add_deliverer").'"'
 									 	),
 									 	'sprintf',
 									 	'<img src="img/silk_icons/%s.png" alt="true" />'
@@ -206,19 +206,19 @@ if ($function == '') {
 	$cols['icon']->delOption(OPT_ALL);
 
 	// add columns
-	$cols['deliverer'] = new resultColumn('deliverer', $I18N_21->msg('shop_deliverer'));
+	$cols['deliverer'] = new resultColumn('deliverer', cjoAddon::translate(21,'shop_deliverer'));
 	$cols['deliverer']->setBodyAttributes('width="150"');
 	$cols['deliverer']->delOption(OPT_ALL);
 	// get all defined delivery zones for this deliverer
-	$cols['zone'] = new resultColumn('deliverer_zone', $I18N_21->msg('shop_deliver_zones'));
-	$cols['packages'] = new resultColumn('deliverer_zone_id', $I18N_21->msg('shop_deliverer_sizes'),
+	$cols['zone'] = new resultColumn('deliverer_zone', cjoAddon::translate(21,'shop_deliver_zones'));
+	$cols['packages'] = new resultColumn('deliverer_zone_id', cjoAddon::translate(21,'shop_deliverer_sizes'),
 										 'call_user_func', array('cjoShopDelivery::getDelivererSizes', array('%s')));
 
 	// button edit deliverer
 	// directs to --> function = edit, mode = deliverer,
 	// file: settings_be_deliverer.inc.php
-	$img = '<img src="img/silk_icons/page_white_edit.png" title="'.$I18N->msg("button_edit").'" alt="'.$I18N->msg("button_edit").'" />';
-	$cols['edit'] = new staticColumn($img, $I18N->msg("label_functions"));
+	$img = '<img src="img/silk_icons/page_white_edit.png" title="'.cjoI18N::translate("button_edit").'" alt="'.cjoI18N::translate("button_edit").'" />';
+	$cols['edit'] = new staticColumn($img, cjoI18N::translate("label_functions"));
 	$cols['edit']->setHeadAttributes('colspan="2"');
 	$cols['edit']->setBodyAttributes('width="16"');
 
@@ -235,7 +235,7 @@ if ($function == '') {
 	// button delete deliverer
 	// directs to --> function = delete, mode = deliverer
 	// file: settings-be_zones.inc.php
-	$img = '<img src="img/silk_icons/bin.png" title="'.$I18N->msg("button_delete").'" alt="'.$I18N->msg("button").'" />';
+	$img = '<img src="img/silk_icons/bin.png" title="'.cjoI18N::translate("button_delete").'" alt="'.cjoI18N::translate("button").'" />';
 	$cols['delete'] = new staticColumn($img, NULL);
 	$cols['delete']->setBodyAttributes('width="60"');
 	$cols['delete']->setBodyAttributes('class="cjo_delete"');

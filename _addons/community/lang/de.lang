@@ -1,0 +1,269 @@
+
+community = Community
+
+##./addons/community/classes/class.cm_imexport.inc.php
+accept_data_imported = Es wurden {0} Datensätze verarbeitet.<br/> ({1} hinzugefügt / {2} aktualisiert / {3} ignoriert)
+accept_data_export = Export läuft, es wurden bislang {0} Datensätze verarbeitet. Bitte haben Sie noch etwas Geduld.
+accept_data_finished = <b>Export abgeschlossen.</b><br/>Es wurden {0} Datensätze verarbeitet.
+err_empty_csv_document = Die CSV-Datei enthält keine Daten!
+err_wrong_delimiter = Fehler beim Trennen der Datensätze, möglicherweise wurde ein falsches Trennzeichen gewählt!
+error_data_imported = Es sind Fehler {0} aufgetreten ({1} beim Hinzufügen / {2} beim Aktualisieren)
+error_data_exported = Beim Export sind ein Fehler aufgetreten, bitte wenden Sie sich an den System-Administrator!
+total_data_imported = <b>{0} Datensätze wurden bearbeitet!</b>
+
+##./addons/community/classes/class.cm_groupletter.inc.php
+err_no_groupselected = Bitte mindestens eine Gruppe auswählen!
+err_no_recipients_selected = Die Gruppen-Auswahl beinhaltet keinen empfangsbereiten Abonnenten!
+msg_all_gl_send = <b>Aktion abgeschlossen</b>, {0} von {1} vorbereiteten Newslettern wurden erfolgreich versendet! {2} Fehler wurden protokolliert.
+msg_err_get_prepared_recipients = Die Abonnenten können nicht gelesen werden!
+msg_err_no_content = Der Newsletter hat keinen Inhalt!<br/>Bitte Zurücksetzen und den Versand erneut vorbereiten!
+msg_gl_send = Der Versand läuft! ({0} von {1} versendet, protokollierte Fehler: {2})
+msg_missed_send = Es wurden {0} Fehler protokolliert und im Error-Log gespeichert.
+msg_no_errors = Es wurden keine Fehler protokolliert!
+msg_pease_wait = Bitte haben Sie noch etwas Geduld bis der Versand vollständig abgeschlossen ist.
+msg_recipients_prepared = Der Versand mit {0} Empfängern wurde vorbereitet.
+
+##./addons/community/classes/class.cm_groups.inc.php
+error_connected_type_ids = Die Gruppe ist mit mindestens einem Artikeltyp verknüpft. (<a href="{0}">jetzt bearbeiten</a>)
+error_groups_deleted = Beim Löschen der Gruppe trat ein Problem auf!
+error_has_children = Die Gruppe enthält noch Untergruppen. Bitte erst diese Löschen!
+label_root = GRUPPEN
+msg_groups_deleted = Die Gruppe wurde gelöscht.<br/> Alle User, die keiner weiteren Gruppe angehören, wurden in die Root-Gruppe verschoben!
+
+##./addons/community/classes/class.cm_template.inc.php
+label_id = Id
+msg_no_activation_key = Die Aktivierung kann nicht abgeschlossen werden, da kein Aktivierungscode übergeben wurde!
+msg_user_not_found = Der Benutzer existiert nicht!
+
+##./addons/community/classes/class.cm_user.inc.php
+label_manage_account_article = Mein Konto
+button_start_bounce = Start Bounce-Management
+accept_status = Der Status des Users wurde geändert.
+accept_user_copy = Der/die User wurde/n kopiert.
+accept_user_deleted = Der/die User wurde/n gelöscht.
+accept_user_move = Der/die User wurde/n verschoben.
+err_user_inserted = Der User {0} konnte nicht erstellt werden:<br/>{1}
+err_user_updated = Der User wurde aktualisiert.
+error_status = Der Status des User konnte nicht geändert werden!
+error_user_copy = Beim Kopieren des/der User trat ein Problem auf!
+error_user_deleted = Beim Löschen des/der User trat ein Problem auf!
+error_user_move = Beim Verschieben des/der User trat ein Problem auf!
+msg_info_mail_send = Eine Benachrichtigung wurde an <b>{0}</b> versendet.
+msg_login_allready_enabled = Für die angegeben E-Mail-Adresse existiert bereits ein Login!
+msg_newsletter_allready_enabled = Für die angegeben E-Mail-Adresse existiert bereits ein Newsletter-Abonement!
+msg_my_account_newsletter_enable = Für die angegeben E-Mail-Adresse existiert ein Login. Nach erfolgreicher Anmeldung können Newsletter-Abonements unter {0} verwaltet werden!
+user_inserted = User-Konto für <b>{0}</b> angelegt.
+user_updated = Aktualisierung für <b>{0}</b> erfolgreich.
+msg_bounce_install_incomplete = Das Bounce-Management konnte nicht automatisch aktiviert werden. Bitte wenden Sie sich an den System-Administrator.
+msg_no_vaild_mail_account = Abruf von Bounce-E-Mails über das gewählte Mailkonto nicht möglich.
+msg_no_imap_open = Bounce-E-Mails können nicht verarbeitet werden, da die PHP-Erweiterung "IMAP" auf Ihrem Server nicht zur Verfügung steht. Bitte wenden Sie sich an Ihren Service Provider.
+
+##./addons/community/config.inc.php
+msg_err_configure_settings =  <b>Die Konfiguration des Community-AddOns ist unvollständig.</b><br/>Um den vollen Funktionsumfang herzustellen, müssen die Einstellungen ergänzt werden. ><u><a href="{0}">Jetzt korrigieren</a></u><
+
+
+##./addons/community/pages/archiv.inc.php
+label_article_id = Artikel-ID
+label_clang = Sprache
+label_delete_archiv_db = Archiv löschen
+label_gl_editor = Redakteur
+label_groups = Gruppen
+label_processed = prep./send
+label_reply_to = Absender
+label_senddates = Versandzeit
+label_status = Status
+label_subject = Betreff
+msg_archiv_deleted = Das gesamte Archiv wurde gelöscht!
+msg_archiv_item_deleted = Der Archiv-Eintrag wurde gelöscht!
+status_incomplete = Versand unvollständig
+status_canceled = Versand abgebrochen
+status_ready = Bereit für den Versand
+status_success = Versand an alle Empfänger erfolgt
+
+##./addons/community/pages/groupletter_form.inc.php
+button_prepare = Versand vorbereiten
+button_save_default = als Standard speichern
+button_send_testmail = Testmail abschicken
+err_empty_subject = Bitte einen Betreff eingeben!
+err_notEmpty_groups = Mindestens eine Gruppe muß zugeordnet werden!
+err_not_empty_email = Bitte die Test-Empfänger-Adresse eingeben!
+err_not_empty_test_firstname = Bitte einen Test-Vornamen eingeben!
+err_not_empty_test_gender = Bitte eine Test-Anrede auswählen!
+err_not_empty_test_name = Bitte einen Test-Namen eingeben!
+label_atonce = Aufteilung
+label_defaultletter = Newsletter-Artikel
+label_defaultletter_offline = Der ausgewählte Newsletter-Artikel ist offline!
+label_email = E-Mail
+label_firstname = Vorname
+label_gender = Anrede
+label_groupletter_template = E-Mail-Template
+label_help = Hilfe
+label_mail_data = Mail-Einstellungen
+label_name = Name
+label_nl_text = Text-Eingabe
+label_php_mailer_account = PHP-Mail-Konto
+label_prepare_groupletter = Newsletter vorbereiten
+label_select_groups = Gruppen-Auswahl
+label_send_html = Artikel (HTML + TXT)
+label_send_testmail = Versand-Test
+label_send_text = Text-Eingabe (TXT)
+label_send_type = Newsletter-Typ
+msg_empty_defaultletter = Bitte verknüpfen Sie einen Standard-Newsletter-Artikel!
+msg_empty_groupletter_template = Bitte wählen Sie ein E-Mail-Template aus!
+msg_isRange_label_atonce = Die Adress-Aufteilung muß eine Zahl zwischen 10 und 500 enthalten!
+msg_no_valid_test_email = Die angegebene E-Mail für den Test-Versand ist nicht valide.
+msg_php_mailer_account = Bitte wählen Sie ein PHP-Mail-Konto aus.
+msg_test_send_success = Eine Testmail wurde an '{0}' versendet.
+note_atonce = Versand aufteilen um Script-Timeouts zu vermeiden
+text_explain_cycle1 = <b> 1.</b>  Newsletter-Artikel in CONTEJO erstellen bzw. den Newsletter-Text in das Eingabefeld einfügen (siehe Hinweise unten) und alle weiteren Einstellungen vornehmen.<br/>
+text_explain_cycle2 = <b> 2.</b>  Abonnenten-Gruppen auswählen, wobei vorhandene Untergruppen eingeschlossen werden. Abonnenten, die mehreren ausgewählten Gruppen angehören, erhalten nur eine Nachricht. <br/>
+text_explain_cycle3 = <b> 3.</b>  Testmail versenden und ggf. Einstellungen anpassen.<br/>
+text_explain_cycle4 = <b> 4.</b>  Wenn Testmail ok, Versand vorbereiten. <br/>
+text_explain_cycle5 = <b> 5.</b>  Der versandfertige Newsletter kann jetzt verschickt werden. Bitte etwas Geduld, bei vielen Empfängern kann es durchaus einige Minuten benötigen. Sollte das Script abbrechen, einfach erneut starten, um den Versand abzuschließen, außerem sollte die Versand-Aufteilung verringert werden!<br/>
+text_explain_cycle6 = <br/><b> Platzhalter:</b><br/> %email% <br/>  %firstname% <br/>  %name% <br/>  %link% <br/>  %m=Sehr geehrter Herr|w=Sehr geehrte Frau% (Beispiel) Zur Steuerung geschlechtsspezifischer Elemente
+
+##./addons/community/pages/groupletter_send.inc.php
+button_reset_prepared = Zurücksetzen
+button_send = Versand starten
+button_stop = unterbrechen
+label_article = Artikel
+label_preview = Inhalt ansehen
+label_send_groupletter = vorbereiteten Versand abschließen
+msg_gl_not_send = Der Versand wurde noch nicht begonnen!
+msg_all_send = Der Versand ist abgeschlossen!
+
+##./addons/community/pages/groups_form.inc.php
+msg_empty_name = Bitte einen Namen eingeben!
+label_select_article_types = Artikeltypen auswählen
+
+##./addons/community/pages/groups_list.inc.php
+label_group_name = Gruppen-Name
+label_article_types = Artikeltypen
+label_user = User
+
+##./addons/community/pages/imexport.inc.php
+button_export = User-Daten exportieren
+button_import = User-Daten importieren
+delete_all = Alle User, Gruppen sowie Archiveinträge löschen
+err_limit_number = Bitte für 'Anzahl Datensätze' eine Zahl eingeben!
+err_limit_start = Bitte für 'Import ab Zeile' eine Zahl eingeben!
+err_notEmpty_lang = Eine Sprache muß ausgewählt werden!
+file_not_found = Importdatei wurde nicht gefunden!
+label_automate_import = Import automatisieren
+label_charset = Codierung der Datei
+label_csv = CSV-Datei
+label_divider = Trennzeichen
+label_file_settings = Datei-Einstellungen
+label_language = Sprache
+label_limit_number = Anzahl Datensätze
+label_ignore_updates = Vorhandene Datensätze ignorieren
+label_limit_start = Import ab Zeile
+label_limit_user_export = User-Export limitieren
+label_all_users = keine Einschränkung
+label_online_users = angemeldet
+label_offline_users = abgemeldet
+label_bounced_users = gebounced und abgemeldet
+label_not_activated_users = nicht aktiviert
+
+msg_all_db_deleted = Die Datenbank wurde zurückgesetzt!
+note_clang = <b>Achtung,</b> wird auf alle Datensätze angewendet!
+note_limit_number = leer=alle Datensätze bis zum Ende der Datei
+section_delete_all = Zurücksetzen
+section_export = User-Export
+section_import = User-Import
+
+##./addons/community/pages/index.inc.php
+import_export = Im-/Export
+subtitle_archiv = Archiv
+subtitle_groupletter = Newsletter
+subtitle_groups = Gruppen
+subtitle_settings = Einstellungen
+subtitle_user = User
+
+##./addons/community/pages/settings.inc.php
+label_activate_user_article = Benutzer-Aktivierung
+label_activation_text = Mail-Vorlage für User-Aktivierung
+label_community_form_articles = Verknüpfte Community-Artikel
+label_edit_php_mailer = PHPMailer bearbeiten
+label_gender_types = Anrede-Typen
+label_lang_setup = Grundeinstellungen
+label_login_form_article = Login-Artikel
+label_logout_article = Logout-Artikel
+label_manage_account = Benutzerdaten ändern
+label_nl_confirm_article = Newsletter-Bestätigung
+label_nl_signin_article = Newsletter abonnieren
+label_nl_signout_article = Newsletter abbestellen
+label_register_user_article = Benutzer-Registrierung
+label_safe_download_article = Download geschützter Medien
+label_security_option = Sicherheitseinstellung
+label_send_password_article = Passwort vergessen
+label_text_templates = Benachrichtigungsvorlagen
+label_update_text = Mail-Vorlage für neues Passwort
+label_verify_registration = Benutzer-Registrierung vor Freischaltung prüfen
+msg_activate_user_article_notEmpty = Bitte geben Sie den Benutzer-Aktivierungs-Artikel an!
+msg_empty_activation_text = Die Mail-Vorlage für User-Aktivierung ist leer!
+msg_empty_gender_types = Bitte eine Anrede-Typen festlegen!
+msg_empty_subject = Bitte einen Default-Betreff eingeben!
+msg_empty_password_text = Die Mail-Vorlage für neues Passwort ist leer!
+msg_login_form_article_notEmpty = Bitte geben Sie den Login-Artikel an!
+msg_logout_article_notEmpty = Bitte geben Sie den Logout-Artikel an!
+msg_manage_account_notEmpty = Bitte geben Sie den 'Benutzerdaten ändern'-Artikel an!
+msg_nl_confirm_article_notEmpty = Bitte geben Sie den Newsletter-Bestätigungs-Artikel an!
+msg_nl_signin_article_notEmpty = Bitte geben Sie den 'Newsletter abonnieren'-Artikel an!
+msg_nl_signout_article_notEmpty = Bitte geben Sie den 'Newsletter abbestellen'-Artikel an!
+msg_register_user_article_notEmpty = Bitte geben Sie den Benutzer-Registrierungs-Artikel an!
+msg_safe_download_article_notEmpty = Bitte geben Sie den 'Download geschützter Medien'-Artikel an!
+msg_send_password_article_notEmpty = Bitte geben Sie den 'Passwort vergessen'-Artikel an!
+note_gender_types = Format: m=Herr|w=Frau|2=Freunde ...
+note_placeholders = Platzhalter:<br/>%title%,<br/>%name%,<br/>%firstname%,<br/>%username%,<br/>%password%
+
+##./addons/community/pages/user_form.inc.php
+err_notEmpty_gender = Bitte eine Anrede auswählen!
+label_birthdate = Geburtsdatum
+label_company_department = Abteilung
+label_company_fax = Fax
+label_company_name = Firmenname
+label_company_phone = Telefon 2
+label_company_plz = PLZ 2
+label_company_street = Straße 2
+label_company_town = Ort 2
+label_contact_personal = Persönliche Daten
+label_contact_company = Kontaktdaten 2
+label_contact_private = Kontaktdaten 1
+label_email2 = E-Mail (alternativ)
+label_mobile = Mobilnummer
+label_new_password = Neues Passwort
+label_newsletter = Newsletter
+label_newsletter_active = abonniert
+label_phone = Telefon
+label_plz = PLZ
+label_status_disabled = abgemeldet
+label_street = Straße
+label_town = Ort
+label_user_typ = User-Typ
+label_user_typ_abo = Newsletter-Abonnement
+label_user_typ_password = Zugangsberechtigt
+label_user_typ_password_create = Zugangsberechtigung erteilen
+label_username = Benutzername
+msg_email_in_use = Die E-Mail-Adresse wird bereits verwendet!
+msg_empty_email = Bitte eine E-Mail-Adresse eingeben!
+msg_empty_firstname = Bitte den Vornamen eingeben!
+msg_empty_username = Bitte einen Benutzernamen vergeben!
+msg_no_valid_email = Die E-Mail-Adresse fehlt oder ist nicht valide!
+msg_username_in_use = Der Benutzername wird bereits verwendet!
+note_new_password = (inkl. Versand einer automatischen Mail an den Benutzer)
+
+##./addons/community/pages/user_list.inc.php
+label_copy_users = User kopieren
+label_not_activated = User hat sich noch nicht aktiviert
+label_delete_users = User entfernen
+label_email_to = E-Mail an...
+label_login = Login
+label_login_active = Login aktiv
+label_move_users = User verschieben
+label_newsletter_list = Abo
+msg_confirm_copy = Wirklich alle markierten User in die ausgewählte Gruppe kopieren?
+msg_confirm_delete = Wirklich alle markierten User aus der ausgewählten Gruppe entfernen?
+msg_confirm_delete_user = Den Benutzer wirklich aus dieser Gruppe entfernen?
+msg_confirm_move = Wirklich alle markierten User in die ausgewählte Gruppe verschieben?
+msg_no_data_in_root = Es sind derzeit {0} User im System. Bitte wählen Sie eine Gruppe.

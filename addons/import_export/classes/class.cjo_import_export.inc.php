@@ -25,6 +25,8 @@
 
 class cjoImportExport {
 
+    private static $addon = 'import_export';
+
     function __construct(){
         return false;
     }
@@ -40,10 +42,8 @@ class cjoImportExport {
      */
     public static function importSqlFile($filename, $replace_cjo = false) {
 
-    	global $CJO, $I18N_3;
-
     	if ($filename == '' || !file_exists($filename)) {
-    		cjoMessage::addError($I18N_3->msg('err_no_import_file_chosen_or_wrong_version'));
+    		cjoMessage::addError(cjoAddon::translate(3,'err_no_import_file_chosen_or_wrong_version'));
     		return false;
     	}
     	
@@ -53,44 +53,44 @@ class cjoImportExport {
   
     	// Versionsstempel prüfen
     	// ## CONTEJO Database Dump Version x.x
-    	$cjo_version = strpos($conts, "## CONTEJO Database Dump Version ".$CJO['VERSION']);
+    	$cjo_version = strpos($conts, "## CONTEJO Database Dump Version ".cjoProp::get('VERSION'));
 
     	if ($cjo_version === false) {
-    		cjoMessage::addError($I18N_3->msg("err_no_valid_import_file")."<br/>
-    							 <b>## CONTEJO Database Dump Version ".$CJO['VERSION']."</b>");
+    		cjoMessage::addError(cjoAddon::translate(3,"err_no_valid_import_file")."<br/>
+    							 <b>## CONTEJO Database Dump Version ".cjoProp::get('VERSION')."</b>");
     		return false;
     	}
     	else {
     		// Versionsstempel entfernen
-    		$conts = trim(preg_replace("/## CONTEJO Database Dump Version ".$CJO['VERSION'].".*$/", "", $conts));
+    		$conts = trim(preg_replace("/## CONTEJO Database Dump Version ".cjoProp::get('VERSION').".*$/", "", $conts));
     	}
 
     	// Prefix prüfen
     	// ## Prefix cjo_
-    	$cjo_prefix = strpos($conts, "## Prefix ". $CJO['TABLE_PREFIX']);
+    	$cjo_prefix = strpos($conts, "## Prefix ". cjoProp::getTablePrefix());
         
-    	$conts = str_replace("%CUR_DATABASE%", $CJO['DB'][$add->DBID]['NAME'], $conts);
+    	$conts = str_replace("%CUR_DATABASE%", cjoProp::get('DB|'.$add->DBID.'|NAME'), $conts);
     	
     	if ($replace_cjo) {
     		$conts = trim(str_replace("## Prefix cjo_", "", $conts));
-    		$conts = str_replace("TABLE cjo_","TABLE ".$CJO['TABLE_PREFIX'],$conts);
-    		$conts = str_replace("INTO cjo_","INTO ".$CJO['TABLE_PREFIX'],$conts);
-    		$conts = str_replace("EXISTS cjo_","EXISTS ".$CJO['TABLE_PREFIX'],$conts);
+    		$conts = str_replace("TABLE cjo_","TABLE ".cjoProp::getTablePrefix(),$conts);
+    		$conts = str_replace("INTO cjo_","INTO ".cjoProp::getTablePrefix(),$conts);
+    		$conts = str_replace("EXISTS cjo_","EXISTS ".cjoProp::getTablePrefix(),$conts);
     	}
     	elseif ($cjo_prefix === false) {
-    		cjoMessage::addError($I18N_3->msg("err_no_valid_import_file").".
-    							 [## Prefix ". $CJO['TABLE_PREFIX'] ."] does not
+    		cjoMessage::addError(cjoAddon::translate(3,"err_no_valid_import_file").".
+    							 [## Prefix ". cjoProp::getTablePrefix() ."] does not
     							 match config in master.inc.php");
     		return false;
     	}
     	else {
     		// Prefix entfernen
-    		$conts = trim(str_replace("## Prefix ". $CJO['TABLE_PREFIX'], "", $conts));
+    		$conts = trim(str_replace("## Prefix ". cjoProp::getTablePrefix(), "", $conts));
     	}
 
     	// Ordner /generated komplett leeren
-    	cjoAssistance::deleteDir($CJO['FOLDER_GENERATED_ARTICLES'],false);
-    	cjoAssistance::deleteDir($CJO['FOLDER_GENERATED_TEMPLATES'],false);
+    	cjoAssistance::deleteDir(cjoPath::generated('articles'),false);
+    	cjoAssistance::deleteDir(cjoPath::generated('templates'),false);
 
     	// Datei aufteilen
     	$lines = explode("\n", $conts);
@@ -106,17 +106,19 @@ class cjoImportExport {
     	}
     	if (cjoMessage::hasErrors()) return false;
     	
-    	cjoMessage::addSuccess($I18N_3->msg("msg_database_imported").". ".
-    	                       $I18N_3->msg("msg_entry_count", count($lines)));
+    	cjoMessage::addSuccess(cjoAddon::translate(3,"msg_database_imported").". ".
+    	                       cjoAddon::translate(3,"msg_entry_count", count($lines)));
 
     	// CLANG Array aktualisieren
-    	unset ($CJO['CLANG']);
+    	cjoProp::remove('CLANG');
+        $lang = array();
     	$sql = new cjoSql();
     	$sql->setQuery("SELECT * FROM ".TBL_CLANGS);
     	for ($i = 0; $i < $sql->getRows(); $i++) {
-    		$CJO['CLANG'][$sql->getValue("id")] = $sql->getValue("name");
+    		$lang[$sql->getValue("id")] = $sql->getValue("name");
     		$sql->next();
     	}
+        cjoProp::set('CLANG',$lang);
 
     	// prüfen, ob eine user tabelle angelegt wurde
     	$result = $sql->getArray('SHOW TABLES');
@@ -173,10 +175,8 @@ class cjoImportExport {
      */
     public static function importTarFile($filename) {
 
-    	global $CJO, $I18N_3;
-
     	if ($filename == '') {
-    		cjoMessage::addError($I18N_3->msg("err_no_import_file_chosen"));
+    		cjoMessage::addError(cjoAddon::translate(3,"err_no_import_file_chosen"));
     		return false;
     	}
 
@@ -184,7 +184,7 @@ class cjoImportExport {
 //    	if (file_exists($CJO['MEDIAFOLDER'])) {
 //    		@unlink ($CJO['MEDIAFOLDER'].'_old');
 //    		if (!rename($CJO['MEDIAFOLDER'], $CJO['MEDIAFOLDER'].'_old')) {
-//    			cjoMessage::addError($I18N_3->msg("err_import_failed_mediafolder_not_deletable",$CJO['MEDIAFOLDER']));
+//    			cjoMessage::addError(cjoAddon::translate(3,"err_import_failed_mediafolder_not_deletable",$CJO['MEDIAFOLDER']));
 //    			return false;
 //    		}
 //    	}
@@ -193,14 +193,14 @@ class cjoImportExport {
     	$tar->openTAR($filename);
     	if (!$tar->extractTar()) {
 
-    		$message_temp = $I18N_3->msg("err_while_extracting")."<br/>";
+    		$message_temp = cjoAddon::translate(3,"err_while_extracting")."<br/>";
 
     		if (count($tar->message) > 0) {
-    			$message_temp .= $I18N_3->msg("err_create_dirs_manually")."<br/>";
+    			$message_temp .= cjoAddon::translate(3,"err_create_dirs_manually")."<br/>";
     			reset($tar->message);
 
     			for ($fol = 0; $fol < count($tar->message); $fol++) {
-    				$message_temp .= cjoAssistance::absPath(str_replace("'", "", key($tar->message)))."<br/>";
+    				$message_temp .= cjoFile::absPath(str_replace("'", "", key($tar->message)))."<br/>";
     				next($tar->message);
     			}
     		}
@@ -208,7 +208,7 @@ class cjoImportExport {
     		return false;
     	}
 
-    	cjoMessage::addSuccess($I18N_3->msg("msg_file_imported")."<br/>");
+    	cjoMessage::addSuccess(cjoAddon::translate(3,"msg_file_imported")."<br/>");
     	return true;
     }
 
@@ -217,23 +217,21 @@ class cjoImportExport {
      * @return string SQL Dump der Datenbank
      */
     public static function generateSqlExport($export_tables=false) {
-
-    	global $CJO, $I18N, $I18N_3;
     	
         $dump = '';
                 
         $sql  = new cjoSql();
         $cont = new cjoSql();
 
-    	$header  = "## CONTEJO Database Dump Version ".$CJO['VERSION']." [.".$CJO['RELEASE']."]\r\n";
-    	$header .= "## Prefix ". $CJO['TABLE_PREFIX'] ."\r\n\r\n";
+    	$header  = "## CONTEJO Database Dump Version ".cjoProp::get('VERSION')." [.".cjoProp::get('RELEASE')."]\r\n";
+    	$header .= "## Prefix ". cjoProp::getTablePrefix() ."\r\n\r\n";
     
         $exec_place_holder = '[___'.md5($header).'___]';
 
-        $header .= "## User           ". $CJO['USER']->getValue("name") ."[".$CJO['USER']->getValue("login")."]\r\n";    	
+        $header .= "## User           ". cjoProp::getUser()->getValue("name") ."[".cjoProp::getUser()->getValue("login")."]\r\n";    	
         $header .= "## Origin-DB      ". cjo_server('REMOTE_ADDR','string') ."\r\n";    	
         $header .= "## Server         ". cjo_server('SERVER_NAME','string') ."\r\n";    
-        $header .= "## Date           ". strftime($I18N->msg('dateformat_sort')) ."\r\n";        
+        $header .= "## Date           ". strftime(cjoI18N::translate('dateformat_sort')) ."\r\n";        
         $header .= "## Execution-Time ". $exec_place_holder."\r\n\r\n";
     	$header .= "## TABLES INCLUDED\r\n";    
         
@@ -246,7 +244,7 @@ class cjoImportExport {
         foreach($export_tables as $key=>$export_table) {
             if (!in_array($export_table,$tables_in_db)) {
                 unset($export_tables[$key]);
-                cjoMessage::addWarning($I18N_3->msg('err_table_not_found', $export_table));
+                cjoMessage::addWarning(cjoAddon::translate(3,'err_table_not_found', $export_table));
                 $header .= "## [ERR] ".$export_table ."\r\n";                    
             }
             else {
@@ -322,7 +320,7 @@ class cjoImportExport {
     	// Versionsstempel hinzufügen
     	$dump = str_replace("\r", "", $dump);
 
-    	$header = str_replace($exec_place_holder, (intval((cjoTime::getCurrentTime() - $CJO['SCRIPT_START_TIME']) * 1000) / 1000).' sec', $header);
+    	$header = str_replace($exec_place_holder, (intval((cjoTime::getCurrentTime() - cjoProp::get('SCRIPT_START_TIME')) * 1000) / 1000).' sec', $header);
 
     	return $header . $dump;
     }
@@ -338,11 +336,9 @@ class cjoImportExport {
      */
     public static function generateTarExport($folders, $filename, $ext = '.tar.gz') {
 
-    	global $CJO;
-
     	$tar = new tar;
     	foreach ($folders as $key => $item) {
-    		cjoImportExport::addFolderToTar($tar, $CJO['INCLUDE_PATH']."/../../", $key);
+    		cjoImportExport::addFolderToTar($tar, cjoPath::frontend(), $key);
     	}
 
     	$content = $tar->toTarOutput($filename.$ext, true);
@@ -385,7 +381,7 @@ class cjoImportExport {
      public static function readFolder($dir) {
 
         if (!is_dir($dir)) {
-            trigger_error('Folder "'.$dir.'" is not available or not a directory');
+            throw new cjoException('Folder "'.$dir.'" is not available or not a directory');
             return false;
         }
         $hdl = opendir($dir);
@@ -457,8 +453,7 @@ class cjoImportExport {
     }
 
     public static function getImportDir() {
-        global $mypage, $CJO;
-        return $CJO['ADDON']['settings'][$mypage]['folder'];
+        return cjoPath::addonAssets(self::$addon);
     }
 
     public static function readImportFolder($fileprefix) {

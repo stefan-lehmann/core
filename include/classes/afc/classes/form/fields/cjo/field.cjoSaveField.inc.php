@@ -37,9 +37,9 @@ class cjoSaveField extends saveField {
 		$this->cancelButtonName = 'cjoform_cancel_button';
 		$this->deleteButtonName = 'cjoform_delete_button';
 
-		$this->addButton($this->updateButtonName, $I18N->msg('button_update'), true, 'img/silk_icons/tick.png');
-		$this->addButton($this->cancelButtonName, $I18N->msg('button_cancel'), true, 'img/silk_icons/cancel.png');
-		$this->addButton($this->deleteButtonName, $I18N->msg('button_delete'), false, 'img/silk_icons/bin.png');
+		$this->addButton($this->updateButtonName, cjoI18N::translate('button_update'), true, 'img/silk_icons/tick.png');
+		$this->addButton($this->cancelButtonName, cjoI18N::translate('button_cancel'), true, 'img/silk_icons/cancel.png');
+		$this->addButton($this->deleteButtonName, cjoI18N::translate('button_delete'), false, 'img/silk_icons/bin.png');
 
 		$this->saveField($attributes);
 		$this->needFullColumn(true);

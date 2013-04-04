@@ -25,7 +25,7 @@
 
 class cjoCommentsConfig {
 
-    static $mypage = 'comments';
+    static $addon = 'comments';
       
     public static function copyConfig($params) {
     
@@ -60,7 +60,7 @@ class cjoCommentsConfig {
             $sql->next();
         }
     
-        if ($error != '') return $I18N_7->msg("err_config_db_copy", $error);
+        if ($error != '') return cjoAddon::translate(7,"err_config_db_copy", $error);
     }
     
     public static function deleteConfig($id, $clang=false) {
@@ -76,7 +76,7 @@ class cjoCommentsConfig {
         $ref_id = $sql->getValue('reference_article_id');
         
         if ($clang == 0 || $ref_id == -1) {
-            cjoMessage::addError($I18N_7->msg("msg_cant_delete_default_setting"));
+            cjoMessage::addError(cjoAddon::translate(7,"msg_cant_delete_default_setting"));
             return false;
         }
     

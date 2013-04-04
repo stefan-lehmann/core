@@ -28,23 +28,31 @@ $oid       = cjo_request('oid', 'int', '');
 $function  = cjo_request('function', 'string');
 $group_id  = cjo_request('group_id', 'int', 0);
 
-$subpages = new cjoSubPages($subpage, $mypage);
-$subpages->addPage( array('user', 'title' => $I18N_10->msg('subtitle_user'), 'query_str' => 'page=community&subpage=user&clang='.$clang.'&group_id='.$group_id));
-$subpages->addPage( array('groups', 'title' => $I18N_10->msg('subtitle_groups'), 'query_str' => 'page=community&subpage=groups&clang='.$clang.'&group_id='.$group_id));
-$subpages->addPage( array('groupletter', 'title' => $I18N_10->msg('subtitle_groupletter')));
-$subpages->addPage( array('archiv', 'title' => $I18N_10->msg('subtitle_archiv')));
-$subpages->addPage( array('imexport', 'title' => $I18N_10->msg('import_export')));
-$subpages->addPage( array('settings', 'title' => $I18N_10->msg('subtitle_settings')));
 
-if ($CJO['LOGIN_ENABLED'])
-    $subpages->addPage( array('types',
-						'rights' => array('specials[types]'),
-						'query_str' => 'page=tools&subpage=types'));
+cjoSubPages::addPages(array(
+                        array('user', 
+                              'title' => cjoAddon::translate(10,'subtitle_user'), 
+                              'params' => array('page'=>'community', 'subpage' => 'user','group_id'=>$group_id)),
+                        array('groups', 
+                              'title' => cjoAddon::translate(10,'subtitle_groups'), 
+                              'params' => array('page'=>'community', 'subpage' => 'groups','group_id'=>$group_id)),
+                        array('groupletter', 
+                              'title' => cjoAddon::translate(10,'subtitle_groupletter')),
+                        array('archiv', 
+                              'title' => cjoAddon::translate(10,'subtitle_archiv')),
+                        array('imexport', 
+                              'title' => cjoAddon::translate(10,'import_export')),
+                        array('settings', 
+                              'title' => cjoAddon::translate(10,'subtitle_settings'))
+                      ));
 
-require_once $CJO['INCLUDE_PATH'].'/layout/top.php';
-require_once $subpages->getPage();
-require_once $CJO['INCLUDE_PATH'].'/layout/bottom.php';
+if (cjoProp::get('LOGIN_ENABLED'))  
+cjoSubPages::addPage(array('types', 
+                           'rights' => array('specials[types]'), 
+                           'params' => array('page'=>'tools', 'subpage' => 'types')));
+
+require_once cjoSubPages::getPagePath();
 
 if ($subpage == 'show') return false;
 
-$CJO['SEL_LANG']->get();
+cjoSelectLang::get();

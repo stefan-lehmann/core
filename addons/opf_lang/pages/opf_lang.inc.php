@@ -24,20 +24,8 @@
  */
 
 // AUTOMATISCHES UPDATEN DER RELPACE-VARIABLEN
-if ($function == $I18N_4->msg('label_update_vars')) {
+if ($function == cjoAddon::translate(4,'label_update_vars')) {
     cjoOpfLang::updateLangVars(TBL_OPF_LANG);
-    $function = '';
-}
-
-// LÖSCHEN
-if ($function == 'delete') {
-
-	$sql = new cjoSql();
-	$qry = "SELECT * FROM ".TBL_OPF_LANG." WHERE id='".$oid."'";
-	$sql->setQuery($qry);
-    $qry = "DELETE FROM ".TBL_OPF_LANG." WHERE replacename='".$sql->getValue('replacename')."'";
-    $sql->flush();
-    $sql->statusQuery($qry,$I18N_4->msg("values_deleted"));
     $function = '';
 }
 
@@ -47,109 +35,70 @@ if ($function == "add" || $function == "edit" ) {
     //Form
     $form = new cjoForm();
     $form->setEditMode(false);
-    //$form->debug = true;
+    $form->onIsValid('cjoOpfLang::updateSettingsByForm');
 
     //Fields
     if ($function == 'edit') {
-	    $fields['replace'] = new readOnlyField('replacename', $I18N_4->msg('label_var'));
+	    $fields['replace'] = new readOnlyField('replacename', cjoAddon::translate(4,'label_var'));
     }
     else {
-	    $fields['replace'] = new textField('replacename', $I18N_4->msg('label_var'), $readonly);
-	    $fields['replace']->addValidator('notEmpty', $I18N_4->msg('err_var'), false, false);
-
+	    $fields['replace'] = new textField('replacename', cjoAddon::translate(4,'label_var'), $readonly);
+	    $fields['replace']->addValidator('notEmpty', cjoAddon::translate(4,'err_var'), false, false);
+        $fields['replace']->activateSave(false);
     }
-    $fields['name'] = new textAreaField('name', $I18N_4->msg('label_name'), array('rows' => 5));
-    $fields['name']->addValidator('notEmpty', $I18N_4->msg('err_name'), false, false);
+    $fields['name'] = new textAreaField('name', cjoAddon::translate(4,'label_name'), array('rows' => 5));
+    $fields['name']->addValidator('notEmpty', cjoAddon::translate(4,'err_name'), false, false);
+    $fields['name']->activateSave($function == 'edit');
 
-	if ($function == 'add') {
-		$oid = '';
-	    $fields['replace']->activateSave(false);
-        $fields['name']->activateSave(false);
-	}
+	if ($function == 'add') $oid = '';
 
     //Add Fields:
-    $section = new cjoFormSection(TBL_OPF_LANG, $I18N_4->msg($function."_replacement"), array ('id' => $oid));
+    $section = new cjoFormSection(TBL_OPF_LANG, cjoAddon::translate(4,$function."_replacement"), array ('id' => $oid));
     $section->addFields($fields);
     $form->addSection($section);
     $form->addFields($hidden);
     $form->show();
-
-    if ($form->validate()) {
-        
-        if ($function == "add") {
-
-            $replacename = cjo_post('replacename','string');
-            $name = cjo_post('name','string');
-
-            $sql = new cjoSql();
-            $sql->setQuery("SELECT * FROM ".TBL_OPF_LANG." WHERE replacename= BINARY '".trim($replacename)."'");
-
-            if ($sql->getRows() > 0) {
-                cjoMessage::addError($I18N_4->msg("values_already_exists"));
-            }
-            else {
-                foreach ($CJO['CLANG'] as $key=>$val) {
-                    $insert = new cjoSql();
-                    $insert->setTable(TBL_OPF_LANG);
-                    $insert->setValue("name", trim($name));
-                    $insert->setValue("replacename",'[translate: '.trim($replacename).']');
-                    $insert->setValue("clang",$key);
-                    $insert->insert();
-                }
-                cjoMessage::addSuccess($I18N_4->msg("values_saved"));
-            }
-        }
-    }
 }
 
 //LIST Ausgabe
-$sql = "SELECT *, REPLACE(replacename, '[', '&#91;') AS replacename FROM ".TBL_OPF_LANG." WHERE clang=".$clang;
+$sql = "SELECT *, REPLACE(replacename, '[', '&#91;') AS replacename FROM ".TBL_OPF_LANG." WHERE clang=".cjoProp::getClang();
 $list = new cjolist($sql, 'status DESC, replacename', 'ASC', 'clang', 40);
 
-$add_button = cjoAssistance::createBELink(
-						    '<img src="img/silk_icons/add.png" alt="'.$I18N->msg("button_add").'" />',
+$add_button = cjoUrl::createBELink(
+						    '<img src="img/silk_icons/add.png" alt="'.cjoI18N::translate("button_add").'" />',
 							array('function' => 'add', 'clang' => $clang),
 							$list->getGlobalParams(),
-							'title="'.$I18N->msg("button_add").'"');
+							'title="'.cjoI18N::translate("button_add").'"');
 
 $cols['id'] = new resultColumn('id', $add_button);
 $cols['id']->setHeadAttributes('class="icon"');
 $cols['id']->setBodyAttributes('class="icon"');
 $cols['id']->delOption(OPT_ALL);
 
-$cols['replace'] = new resultColumn('replacename', $I18N_4->msg('label_var'));
+$cols['replace'] = new resultColumn('replacename', cjoAddon::translate(4,'label_var'));
 $cols['replace']->setBodyAttributes('width="30%"');
 
-$cols['name'] = new resultColumn('name', $I18N_4->msg('label_name'));
+$cols['name'] = new resultColumn('name', cjoAddon::translate(4,'label_name'));
 
-$cols['status'] = new resultColumn('status', $I18N_4->msg('label_used'));
+$cols['status'] = new resultColumn('status', cjoAddon::translate(4,'label_used'));
 $cols['status']->addCondition('status', '1', '<img src="img/silk_icons/accept.png" alt="true" />');
 $cols['status']->addCondition('status', '0', '&nbsp;');
 $cols['status']->setOptions(OPT_SORT);
 
-// Bearbeiten link
-$img = '<img src="img/silk_icons/page_white_edit.png" title="'.$I18N->msg("button_edit").'" alt="'.$I18N->msg("button_edit").'" />';
-$cols['edit'] = new staticColumn($img, $I18N->msg("label_functions"));
-$cols['edit']->setBodyAttributes('width="16"');
-$cols['edit']->setParams(array ('function' => 'edit', 'clang' => $clang, 'oid' => '%id%'));
 
+$cols['edit'] = new editColumn();
 
-if ($CJO['USER']->hasPerm('advancedMode[]')) {
-    $cols['edit']->setHeadAttributes('colspan="2"');
-
-    $img = '<img src="img/silk_icons/bin.png" title="'.$I18N->msg("button_delete").'" alt="'.$I18N->msg("button_delete").'" />';
-    $cols['delete'] = new staticColumn($img, NULL);
-	$cols['delete']->setBodyAttributes('width="60"');
-	$cols['delete']->setBodyAttributes('class="cjo_delete"');
-    $cols['delete']->setParams(array ('function' => 'delete', 'oid' => '%id%'));
+if (cjoProp::getUser()->hasPerm('advancedMode[]')) {
+    $cols['edit']->setHeadAttributes('colspan', 2);
+    $cols['delete'] = new deleteColumn(array('function' => 'cjoOpfLang::deleteReplacement', 'id' => '%id%'));
 }
 
 //Spalten zur Anzeige hinzufügen
 $list->addColumns($cols);
 
-$functions  = '<p style="text-align:center">'."\n".
-              '		<input type="submit" name="function" value="'.$I18N_4->msg('label_update_vars').'" />'."\n".
-              '</p>'."\n";
+$functions  = '<p style="text-align:center">'."\r\n".
+              '		<input type="submit" name="function" value="'.cjoAddon::translate(4,'label_update_vars').'" />'."\r\n".
+              '</p>'."\r\n";
 
 $list->setVar(LIST_VAR_INSIDE_FOOT, $functions);
 

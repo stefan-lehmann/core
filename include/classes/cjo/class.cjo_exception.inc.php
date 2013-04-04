@@ -24,9 +24,10 @@
  */
 
 class cjoException extends Exception {
-    public function __construct($message, $code = E_USER_ERROR , $previous = null) {
         
-        if (version_compare(PHP_VERSION, '5.3.0') >= 0) {
+    public function __construct($message, $code = E_USER_ERROR , $previous = null) {
+        echo '<pre style="font-size:13px!important">';
+        if (version_compare(PHP_VERSION, '5.3.1') >= 0) {
              parent:: __construct($message, $code, $previous);
         } else {
              parent:: __construct($message, $code);

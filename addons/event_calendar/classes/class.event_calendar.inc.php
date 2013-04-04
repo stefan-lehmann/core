@@ -25,27 +25,56 @@
 
 class cjoEventCalendar {
 
-    protected static $mypage = 'event_calendar';
+    private static $addon = 'event_calendar';
     
     public static function generateEventList($tmplfile='') {
     
         global $CJO, $results_lenght;
     
-        if ($CJO['CONTEJO']) return false;
+        if (cjoProp::isBackend()) return false;
     
         if (!is_readable($tmplfile)) {
-             $tmplfile =  $CJO['ADDON_CONFIG_PATH'].'/'.self::$mypage.'/list.default.'.$CJO['TMPL_FILE_TYPE'];
+             $tmplfile =  $CJO['ADDON_CONFIG_PATH'].'/'.self::$addon.'/list.default.'.liveEdit::getTmplExtension();
         }
     
-        $enabled_fields = $CJO['ADDON']['settings'][self::$mypage]['enabled_fields'];
-        $filter_data    = static::readFilterData();  
-
-        list($qry_where, $qry_order) = static::prepareSqlParams($filter_data);
+        $enabled_fields = $CJO['ADDON']['settings'][self::$addon]['enabled_fields'];
     
-        $sql = new cjoSql();
-        $qry = "SELECT * FROM ".TBL_16_EVENTS." WHERE ".$qry_where." ".$qry_order;
+        $filter_data = self::readFilterData();  
+          
+        $qry = array();
+    
+        $qry['WHERE'][] = "status = '1'";
+        $qry['WHERE'][] = "clang = '".cjoProp::getClang()."'";
+    
+        if (cjoAssistance::inMultival('online_from_to', $enabled_fields)) {
+        	$qry['WHERE'][] = "online_from < '".time()."' AND online_to > '".time()."'";
+        }
+        else {
+            $qry['WHERE'][] = "(start_date >= '".($filter_data['datefrom']-86400)."' OR ".
+                          	  "(end_date  >= '".$filter_data['datefrom']."'))";
+            if ($filter_data['dateto']) {
+                $qry['WHERE'][] = "start_date <= '".$filter_data['dateto']."'";
+            }
+        }
+    
+        $columns = cjoSql::getFieldnames(TBL_16_EVENTS);
+    
+        foreach (cjoAssistance::toArray($filter_data['select']) as $key=>$val) {
+            if ($key == "" || $val == "" || !in_array($key, $columns)) continue;
+        	$qry['WHERE'][] = $key." LIKE '%".$val."%'";
+        }
+    
+        $qry['ORDER'] = " ORDER BY ".$filter_data['order_by']." ".$filter_data['order_dir'];
+    
+        $sql->flush();
+        $qry = "SELECT * FROM
+                    ".TBL_16_EVENTS."
+                WHERE
+                	".implode(" AND \r\n", $qry['WHERE'])."
+                    ".$qry['ORDER'];
+    
         $results = $sql->getArray($qry);
-
+    
         // URSPRÜNGLICHE LÄNGE DES RESULTS-ARRAY
         $results_lenght = count($results);
     
@@ -55,7 +84,7 @@ class cjoEventCalendar {
     
             $set['pagination']['xpage'] 	 	 = !cjo_request('xpage', 'bool') ? 0 : cjo_request('xpage', 'int');
             $set['pagination']['xpage_query'] 	 = array('xpage' => $set['pagination']['xpage']);
-            $set['pagination']['elm_per_page']   = $CJO['ADDON']['settings'][self::$mypage]['elements_per_page'];
+            $set['pagination']['elm_per_page']   = $CJO['ADDON']['settings'][self::$addon]['elements_per_page'];
             $set['pagination']['links_per_page'] = 5;
             $set['pagination']['start'] 		 = $set['pagination']['xpage'] * $set['pagination']['elm_per_page'];
             $set['pagination']['end'] 			 = $set['pagination']['elm_per_page'];
@@ -93,11 +122,11 @@ class cjoEventCalendar {
     
                         case 'start_date':
                         case 'end_date':
-                            $list[$key][$num] = strftime($CJO['ADDON']['settings'][self::$mypage]['date_output_format'], $val);
+                            $list[$key][$num] = strftime($CJO['ADDON']['settings'][self::$addon]['date_output_format'], $val);
                             break;
     
                         case 'file':
-                            $list['thumbnail'][$num] = OOMedia::toThumbnail($val, '', array ('crop_num'=>$CJO['ADDON']['settings'][self::$mypage]['list_crop_num']));
+                            $list['thumbnail'][$num] = OOMedia::toThumbnail($val, '', array ('crop_num'=>$CJO['ADDON']['settings'][self::$addon]['list_crop_num']));
                             break;
     
                         case 'article_id':
@@ -112,12 +141,12 @@ class cjoEventCalendar {
     
                         case 'attribute':
     
-                            $list['attribute_title'.$i][$num] = $CJO['ADDON']['settings'][$mypage]['attribute_title'.$i];
+                            $list['attribute_title'.$i][$num] = $CJO['ADDON']['settings'][$addon]['attribute_title'.$i];
     
-                            switch ($CJO['ADDON']['settings'][self::$mypage]['attribute_typ'.$i]) {
+                            switch ($CJO['ADDON']['settings'][self::$addon]['attribute_typ'.$i]) {
     
                                 case "select":
-                                    $attribute_values = preg_replace('/\r\n|\r/', "\n", $CJO['ADDON']['settings'][self::$mypage]['attribute_values'.$i]);
+                                    $attribute_values = preg_replace('/\r\n|\r/', "\n", $CJO['ADDON']['settings'][self::$addon]['attribute_values'.$i]);
                                     $attribute_values = cjo_to_array($attribute_values, "\n");
                                     $list['attribute'.$i][$num] = $val;
                                     $attribute_key = array_search($val,$attribute_values);
@@ -130,11 +159,11 @@ class cjoEventCalendar {
                                     break;
     
                                 case "datepicker":
-                                    $list['attribute'.$i][$num] = strftime($CJO['ADDON']['settings'][self::$mypage]['attribute_date_format'.$i], $val);
+                                    $list['attribute'.$i][$num] = strftime($CJO['ADDON']['settings'][self::$addon]['attribute_date_format'.$i], $val);
                                     break;
     
                                 case "media":
-                                    $list['media'.$i][$num] = OOMedia::toThumbnail($val, '', array ($CJO['ADDON']['settings'][self::$mypage]['attribute_crop_num'.$i]));
+                                    $list['media'.$i][$num] = OOMedia::toThumbnail($val, '', array ($CJO['ADDON']['settings'][self::$addon]['attribute_crop_num'.$i]));
                                     break;
     
                                 case "article":
@@ -154,11 +183,11 @@ class cjoEventCalendar {
             $html_tpl->fillTemplateArray('RESULTS', $list);
         }
         else {
-            $no_data_text = $CJO['ADDON']['settings'][self::$mypage]['no_data_text'];
+            $no_data_text = $CJO['ADDON']['settings'][self::$addon]['no_data_text'];
         }
     
         $html_tpl->fillTemplate('TEMPLATE', array(
-                                'FILTER'				=> static::generateEventFilter($filter_data),
+                                'FILTER'				=> cjoEventCalendar::generateEventFilter($filter_data),
                                 'NO_DATA'				=> $no_data_text,
                                 'PAGINATION' 			=> $pagination
                                 ));
@@ -170,12 +199,12 @@ class cjoEventCalendar {
     
         global $CJO, $article_id;
     
-        $html_tpl = new cjoHtmlTemplate($CJO['ADDON_CONFIG_PATH'].'/'.self::$mypage.'/filter.default.'.$CJO['TMPL_FILE_TYPE'], false);
+        $html_tpl = new cjoHtmlTemplate($CJO['ADDON_CONFIG_PATH'].'/'.self::$addon.'/filter.default.'.liveEdit::getTmplExtension(), false);
     
         $form_selects      = array();
         $search_key_sel    = new cjoSelect();
-        $has_search_fields = (bool) $CJO['ADDON']['settings'][self::$mypage]['search_fields'];        
-        $has_select_fields = (bool) $CJO['ADDON']['settings'][self::$mypage]['select_fields'];        
+        $has_search_fields = (bool) $CJO['ADDON']['settings'][self::$addon]['search_fields'];        
+        $has_select_fields = (bool) $CJO['ADDON']['settings'][self::$addon]['select_fields'];        
 
         if (!$has_search_fields && !$has_select_fields) return false;
         
@@ -187,12 +216,12 @@ class cjoEventCalendar {
             $search_key_sel->addOption("","");
             $search_key_sel->setSelected($filter_data['search_key']);
         
-            foreach(cjoAssistance::toArray($CJO['ADDON']['settings'][self::$mypage]['search_fields']) as $field) {
+            foreach(cjoAssistance::toArray($CJO['ADDON']['settings'][self::$addon]['search_fields']) as $field) {
         
                 preg_match('/\d+$/', $field, $i);
                 $i = $i[0];
                 if ($i >= 1 && $i <= 10) {
-                    $search_key_sel->addOption($CJO['ADDON']['settings'][self::$mypage]['attribute_title'.$i], $field);
+                    $search_key_sel->addOption($CJO['ADDON']['settings'][self::$addon]['attribute_title'.$i], $field);
                 } else {
                     $search_key_sel->addOption('[translate_16:'.$field.']',$field);
                 }
@@ -201,13 +230,13 @@ class cjoEventCalendar {
     
         if ($has_select_fields) {
         
-            foreach (cjoAssistance::toArray($CJO['ADDON']['settings'][self::$mypage]['select_fields']) as $key=>$field) {
+            foreach (cjoAssistance::toArray($CJO['ADDON']['settings'][self::$addon]['select_fields']) as $key=>$field) {
         
                     preg_match('/\d+$/', $field, $i);
                     $i = $i[0];
         
                     if ($i >= 1 && $i <= 10) {
-                        $form_selects['element_label'][] = $CJO['ADDON']['settings'][self::$mypage]['attribute_title'.$i];
+                        $form_selects['element_label'][] = $CJO['ADDON']['settings'][self::$addon]['attribute_title'.$i];
                     } else {
                         $form_selects['element_label'][]  = $field;
                     }
@@ -230,22 +259,22 @@ class cjoEventCalendar {
             $html_tpl->fillTemplateArray('FORM_SELECTS', $form_selects);
         }
             
-        $strftime_format = $CJO['ADDON']['settings'][self::$mypage]['date_input_format'];
-        $dateto_available = cjoAssistance::inMultival('dateto', $CJO['ADDON']['settings'][self::$mypage]['enabled_fields']);
+        $strftime_format = $CJO['ADDON']['settings'][self::$addon]['date_input_format'];
+        $dateto_available = cjoAssistance::inMultival('dateto', $CJO['ADDON']['settings'][self::$addon]['enabled_fields']);
     
         $html_tpl->fillTemplate('TEMPLATE', array(
-                                    'URL'					 => cjoRewrite::getUrl($article_id),
-                        			'DATE_INPUT_ENABLED'     => $CJO['ADDON']['settings'][self::$mypage]['date_input_enabled'],
+                                    'URL'					 => cjoUrl::getUrl($article_id),
+                        			'DATE_INPUT_ENABLED'     => $CJO['ADDON']['settings'][self::$addon]['date_input_enabled'],
                         	        'DATEFROM'               => @strftime($strftime_format, $filter_data['datefrom']),
-                                    'DATETO_AVAILABLE'       => !empty($CJO['ADDON']['settings'][self::$mypage]['search_fields']),
+                                    'DATETO_AVAILABLE'       => !empty($CJO['ADDON']['settings'][self::$addon]['search_fields']),
                         	        'DATETO'                 => (!empty($filter_data['dateto'])
                                                                     ? @strftime($strftime_format, $filter_data['dateto'])
                                                                     : ''),
-                                    'SEARCH_AVAILABLE'       => !empty($CJO['ADDON']['settings'][self::$mypage]['search_fields']),
+                                    'SEARCH_AVAILABLE'       => !empty($CJO['ADDON']['settings'][self::$addon]['search_fields']),
                                     'SEARCH'			     => $filter_data['search'],
                         	        'SEARCH_KEY_OUT'         => $search_key_sel->get(),
                                     'COOKIE_ENABLED_CHECKED' => cjoAssistance::setChecked($filter_data['save_cookie'], array(1)),
-                        		    'COOKIE_ENABLED'         => $CJO['ADDON']['settings'][self::$mypage]['cookie_enabled'],
+                        		    'COOKIE_ENABLED'         => $CJO['ADDON']['settings'][self::$addon]['cookie_enabled'],
                         			'FORM_LEGEND_TEXT'       => '[translate_16: form_legend_text]',
                         	        'DATEFROM_TEXT'          => '[translate_16: datefrom_text]',
                         			'DATETO_TEXT'            => '[translate_16: dateto_text]',
@@ -259,29 +288,29 @@ class cjoEventCalendar {
     
     }    
    
-    protected static function readFilterData() {
+    private static function readFilterData() {
     
         global $CJO;    
-
-        if (cjo_post(self::$mypage, 'bool')) {
+        
+        if (cjo_post(self::$addon, 'bool')) {
             //Session schreiben    
-            $filter_data = cjo_post(self::$mypage, 'array', array());
+            $filter_data = cjo_post(self::$addon, 'array', array());
     
-            if (!empty($CJO['ADDON']['settings'][self::$mypage]['cookie_enabled']) &&
+            if (!empty($CJO['ADDON']['settings'][self::$addon]['cookie_enabled']) &&
                 $filter_data['save_cookie']) {
-                self::writeCookie(self::$mypage, $filter_data, (86400*7));
+                self::writeCookie(self::$addon, $filter_data, (86400*7));
             } else {
-                self::writeCookie(self::$mypage,'', -86400); // Cookie Save löschen
+                self::writeCookie(self::$addon,'', -86400); // Cookie Save löschen
             }
         }
-        elseif (!empty($CJO['ADDON']['settings'][self::$mypage]['cookie_enabled'])) {
+        elseif (!empty($CJO['ADDON']['settings'][self::$addon]['cookie_enabled'])) {
             
-            $temp = self::readCookie(self::$mypage);
+            $temp = self::readCookie(self::$addon);
             if (!empty($temp)) $filter_data = $temp;
         }
     
         if (empty($filter_data)) {
-            $filter_data = cjo_session(self::$mypage, 'array', array());
+            $filter_data = cjo_session(self::$addon, 'array', array());
         }
     
         $today = getdate();
@@ -307,15 +336,13 @@ class cjoEventCalendar {
     
         $filter_data = self::mergeFilterData($filter_data);
     
-        cjo_set_session(self::$mypage, $filter_data);
-        
-        $filter_data['status'] = 1;
+        cjo_set_session(self::$addon, $filter_data);
     
         return $filter_data;
     }    
     
     
-    protected static function mergeFilterData($filter_data) {
+    private static function mergeFilterData($filter_data) {
     
         global $CJO;
     
@@ -330,7 +357,7 @@ class cjoEventCalendar {
                                   ? cjoAssistance::cleanInput($val)
                                   : strtotime(cjoAssistance::cleanInput($val));
             }
-            if (cjoAssistance::inMultival($key, $CJO['ADDON']['settings'][self::$mypage]['select_fields'])) {
+            if (cjoAssistance::inMultival($key, $CJO['ADDON']['settings'][self::$addon]['select_fields'])) {
                 $filter_data['select'][$key] = cjoAssistance::cleanInput($val);
             }
         }
@@ -345,46 +372,13 @@ class cjoEventCalendar {
     }
     
     
-    protected static function readCookie($cookie) {
+    private static function readCookie($cookie) {
          $array = get_magic_quotes_gpc() ? unserialize(stripslashes($_COOKIE[$cookie])) : unserialize($_COOKIE[$cookie]);
          return cjoAssistance::cleanInput($array);
     }
     
-    protected static function writeCookie($cookie, $array, $duration = 86400) {
+    private static function writeCookie($cookie, $array, $duration = 86400) {
          setcookie($cookie, serialize($array), time()+$duration);
-    }
-    
-    protected static function prepareSqlParams($filter_data) {
-        
-        global $CJO;
-        
-        $enabled_fields = $CJO['ADDON']['settings'][self::$mypage]['enabled_fields'];
-        $output = array('WHERE' => array(), 'ORDER' => '');
-    
-        $output['WHERE'][] = "status = '".$filter_data['status']."'";
-        $output['WHERE'][] = "clang = '".$CJO['CUR_CLANG']."'";
-    
-        if (cjoAssistance::inMultival('online_from_to', $enabled_fields)) {
-            $output['WHERE'][] = "online_from < '".time()."' AND online_to > '".time()."'";
-        }
-        else {
-            $output['WHERE'][] = "(start_date >= '".($filter_data['datefrom']-86400)."' OR ".
-                              "(end_date  >= '".$filter_data['datefrom']."'))";
-            if ($filter_data['dateto']) {
-                $output['WHERE'][] = "start_date <= '".$filter_data['dateto']."'";
-            }
-        }
-    
-        $columns = cjoSql::getFieldnames(TBL_16_EVENTS);
-    
-        foreach (cjoAssistance::toArray($filter_data['select']) as $key=>$val) {
-            if ($key == "" || $val == "" || !in_array($key, $columns)) continue;
-            $output['WHERE'][] = $key." LIKE '%".$val."%'";
-        }
-    
-        $output['ORDER'] = " ORDER BY ".$filter_data['order_by']." ".$filter_data['order_dir'];
-        
-        return array(implode(" AND \r\n", $output['WHERE']), $output['ORDER']);
     }
     
     public static function replaceVars($params) {
@@ -409,7 +403,7 @@ class cjoEventCalendar {
         $sql->setQuery("SELECT status FROM ".TBL_16_EVENTS." WHERE id='".$id."' AND clang='".$clang."'");
     
         if ($sql->getRows() == 0) {
-            cjoMessage::addError($I18N_16->msg("msg_no_such_event"));
+            cjoMessage::addError(cjoAddon::translate(16,"msg_no_such_event"));
         	return  false;
         }
         
@@ -417,7 +411,7 @@ class cjoEventCalendar {
         
         if ($mode == 'delete') {
             $qry = 'DELETE FROM '.TBL_16_EVENTS.' WHERE id='.$id;
-            return $sql->statusQuery($qry, $I18N_16->msg("msg_event_deleted"));
+            return $sql->statusQuery($qry, cjoAddon::translate(16,"msg_event_deleted"));
     	}
     
     	$new_val = ($sql->getValue('status') == 1) ? 0 : 1;
@@ -426,38 +420,98 @@ class cjoEventCalendar {
     	$update->setTable(TBL_16_EVENTS);
     	$update->setWhere("id='".$id."' AND clang='".$clang."'");
     	$update->setValue('status', $new_val);
-    	$state = $update->update($I18N_16->msg('msg_event_status_updated'));
-        
-        cjoExtension::registerExtensionPoint('EVENT_CALENDAR_UPDATE_EVENT', array ('id' => $id));
-        return $state;
+    	return $update->update(cjoAddon::translate(16,'msg_event_status_updated'));
     }
     
     public static function copyConfig($params) {
 
     	global $CJO, $I18N;
 
-    	$file = $CJO['ADDON_CONFIG_PATH'].'/'.self::$mypage.'/0.clang.inc.php';
-    	$dest = $CJO['ADDON_CONFIG_PATH'].'/'.self::$mypage.'/'.$params['id'].'.clang.inc.php';
+    	$file = $CJO['ADDON_CONFIG_PATH'].'/'.self::$addon.'/0.clang.inc.php';
+    	$dest = $CJO['ADDON_CONFIG_PATH'].'/'.self::$addon.'/'.$params['id'].'.clang.inc.php';
 
     	if (file_exists($file)) {
     		if (!copy($file, $dest)) {
-    			cjoMessage::addError($I18N->msg("err_config_file_copy", $dest));
+    			cjoMessage::addError(cjoI18N::translate("err_config_file_copy", $dest));
     		}
     		else {
-    		   @chmod($dest, $CJO['FILEPERM']);
+    		   @chmod($dest, cjoProp::getFilePerm());
     		}
     	}
     }
-    
-    public static function prepareDataset($params) {
-        $params = $params['subject'];
 
-        $start_time = cjoAssistance::correctTimestampOnDay($params['start_date'],$params['start_time']);
-        $end_time   = cjoAssistance::correctTimestampOnDay($params['end_date'],$params['end_time']);
+    public static function initAddon() {
 
-        $params['start_time'] = $params['start_time'] + $params['start_time']-$start_time;
-        $params['end_time'] = $params['end_time'] + $params['end_time']-$end_time;
+        cjoAddon::setParameter('CLANG_CONF', cjoPath::addonAssets(self::$addon,cjoProp::getClang().'.clang.config'), self::$addon);
+        cjoAddon::readParameterFile(self::$addon,cjoPath::addonAssets(self::$addon,cjoProp::getClang().'.clang'));
+
+        $enabled_types      = array(
+                                   array (cjoAddon::translate(16,'label_times'), 'times'),
+                                   array (cjoAddon::translate(16,'label_end_date'), 'end_date'),
+                                   array (cjoAddon::translate(16,'label_event_article'), 'article'),
+                                   array (cjoAddon::translate(16,'label_event_file'), 'file'),
+                                   array (cjoAddon::translate(16,'label_short_description'), 'short_description'),
+                                   array (cjoAddon::translate(16,'label_description'), 'description'),
+                                   array (cjoAddon::translate(16,'label_keywords'), 'keywords'),
+                                   array (cjoAddon::translate(16,'label_online_from_to'), 'online_from_to')
+                                   );
+                                   
+        $list_types          = array(
+                                   array (cjoAddon::translate(16,'label_attribute_text'), 'text'),
+                                   array (cjoAddon::translate(16,'label_attribute_textarea'), 'textarea'),
+                                   array (cjoAddon::translate(16,'label_attribute_wymeditor'), 'wymeditor'),
+                                   array (cjoAddon::translate(16,'label_attribute_datepicker'), 'datepicker'),
+                                   array (cjoAddon::translate(16,'label_attribute_time'), 'time'),
+                                   array (cjoAddon::translate(16,'label_attribute_media'), 'media'),
+                                   array (cjoAddon::translate(16,'label_attribute_article'), 'article'),
+                                   array (cjoAddon::translate(16,'label_attribute_select'), 'select')
+                                   );
+                                   
+        $date_input_formats  = array(
+                                   array (cjoAddon::translate(16,'label_example').' 20.01.2010', '%d.%m.%Y'),
+                                   array (cjoAddon::translate(16,'label_example').' 01-20-2010', '%m-%d-%Y')
+                                   );                 
+                               
+        $date_output_formats = array(
+                                   array (cjoAddon::translate(16,'label_example').' Mittwoch 20. Januar 2010', '%A %d. %B %Y'),
+                                   array (cjoAddon::translate(16,'label_example').' Mittwoch 20.01.2010', '%A %d.%m.%Y'),
+                                   array (cjoAddon::translate(16,'label_example').' Mi 20. Januar 2010', '%a %d. %B %Y'),
+                                   array (cjoAddon::translate(16,'label_example').' Mi 20. Jan. 2010', '%a %d. %b. %Y'),
+                                   array (cjoAddon::translate(16,'label_example').' Mi 20. Jan.', '%a %d. %b.'),
+                                   array (cjoAddon::translate(16,'label_example').' Mi 20.01.2010', '%a %d.%m.%Y'),
+                                   array (cjoAddon::translate(16,'label_example').' Mi 20.01.10', '%a %d.%m.%y'),
+                                   array (cjoAddon::translate(16,'label_example').' Mi 20.01.', '%a %d.%m.'),
+                                   array (cjoAddon::translate(16,'label_example').' 20. Januar 2010', '%d. %B. %Y'),
+                                   array (cjoAddon::translate(16,'label_example').' 20. Jan. 2010', '%d. %b. %Y'),
+                                   array (cjoAddon::translate(16,'label_example').' 20.01.2010', '%d.%m.%Y'),
+                                   array (cjoAddon::translate(16,'label_example').' 20.01.10', '%d.%m.%y'),
+                                   array (cjoAddon::translate(16,'label_example').' January, 20 2010', '%B, %d %Y'),
+                                   array (cjoAddon::translate(16,'label_example').' Jan, 20 2010', '%b, %d %Y'),
+                                   array (cjoAddon::translate(16,'label_example').' Wensday 01-20-2010', '%A %m-%d-%Y'),
+                                   array (cjoAddon::translate(16,'label_example').' We 01-20-2010', '%a %m-%d-%Y'),
+                                   array (cjoAddon::translate(16,'label_example').' 01-20-10', '%m-%d-%y'),
+                                   array (cjoAddon::translate(16,'label_example').' 01-20-2010', '%m-%d-%Y'),
+                                   array (cjoAddon::translate(16,'label_example').' 01-20-10', '%m-%d-%y'),
+                                   array (cjoAddon::translate(16,'label_example').' 01/20/2010', '%m-%d-%Y'),
+                                   array (cjoAddon::translate(16,'label_example').' 01/20/10', '%m-%d-%y')
+                                   );    
+
+        $available_search_fields = array (
+                                   array (cjoAddon::translate(16,'label_title'), 'title'),
+                                   array (cjoAddon::translate(16,'label_short_description'), 'short_description')
+                                   );   
         
-        return $params;
+        if (cjoAssistance::inMultival('description', cjoAddon::getParameter('enabled_fields', self::$addon)))
+            $available_search_fields[] = array (cjoAddon::translate(16,'label_description'), 'description');
+        
+        if (cjoAssistance::inMultival('keywords', cjoAddon::getParameter('enabled_fields', self::$addon)))
+            $available_search_fields[] = array (cjoAddon::translate(16,'label_keywords'), 'keywords');
+
+        cjoAddon::setParameter('enabled_types', $enabled_types, self::$addon);
+        cjoAddon::setParameter('list_types', $list_types, self::$addon);
+        cjoAddon::setParameter('date_input_formats', $date_input_formats, self::$addon);
+        cjoAddon::setParameter('date_output_formats', $date_output_formats, self::$addon);
+        cjoAddon::setParameter('available_search_fields', $available_search_fields, self::$addon);
+
     }
 }

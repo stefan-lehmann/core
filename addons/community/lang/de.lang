@@ -130,7 +130,6 @@ label_article = Artikel
 label_preview = Inhalt ansehen
 label_send_groupletter = vorbereiteten Versand abschließen
 msg_gl_not_send = Der Versand wurde noch nicht begonnen!
-msg_all_send = Der Versand ist abgeschlossen!
 
 ##./addons/community/pages/groups_form.inc.php
 msg_empty_name = Bitte einen Namen eingeben!

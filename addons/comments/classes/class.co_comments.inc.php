@@ -25,7 +25,7 @@
 
 class cjoComments {
 
-    static $mypage = 'comments';
+    static $addon = 'comments';
       
     public static function changeCommentStatus($id){
     
@@ -35,12 +35,12 @@ class cjoComments {
         $sql->setQuery("SELECT status FROM ".TBL_COMMENTS." WHERE id='".$id."' LIMIT 2");
 
         if ($sql->getRows() == 0) {
-            cjoMessage::addError($I18N_7->msg('msg_comment_not_found'));
+            cjoMessage::addError(cjoAddon::translate(7,'msg_comment_not_found'));
             return false;
         }
         
         if ($sql->getRows() == 2) {
-            cjoMessage::addError($I18N_7->msg('msg_comment_not_unique'));
+            cjoMessage::addError(cjoAddon::translate(7,'msg_comment_not_unique'));
             return false;
         }        
 
@@ -51,7 +51,7 @@ class cjoComments {
         $update->setTable(TBL_COMMENTS);
         $update->setWhere("id='".$id."'");
         $update->setValue("status",$new_status);
-        return $update->Update($I18N_7->msg("status_updated"));
+        return $update->Update(cjoAddon::translate(7,"status_updated"));
     }  
     
     public static function deleteComment($id) {
@@ -61,20 +61,18 @@ class cjoComments {
         $sql = new cjoSql();
         $sql->setTable(TBL_COMMENTS);
         $sql->setWhere('id='.$id);
-        return $sql->Delete($I18N_7->msg("msg_comment_deleted"));
+        return $sql->Delete(cjoAddon::translate(7,"msg_comment_deleted"));
     }
     
-    public static function getComments($article_id = false, $strict = true){
+    public static function getComments($article_id = false){
     
         global $CJO;
     
         if ($article_id === false) $article_id = $CJO['ARTICLE_ID'];
-        
         $article = OOArticle::getArticleById($article_id);
-        if ($strict && (!OOArticle::isValid($article) || !$article->getComments())) return false;
-        
-        $article_title = OOArticle::isValid($article) ? '[translate: comments_for] &quot;'.$article->getName().'&quot;' : '';
 
+        if (!OOArticle::isValid($article) || !$article->getComments()) return false;
+    
         $results_lenght = 0;
         
         // Config aus DB holen
@@ -84,7 +82,7 @@ class cjoComments {
                 "WHERE " .
                 "  (reference_article_id='".$article_id."' OR" .
                 "	reference_article_id='-1') AND" .
-                " 	clang='".$CJO['CUR_CLANG']."' " .
+                " 	clang='".cjoProp::getClang()."' " .
                 "ORDER BY reference_article_id DESC";
         $conf = array_shift($sql->getArray($qry));
 
@@ -92,7 +90,7 @@ class cjoComments {
     
         $form_article = new cjoArticle();
         $form_article->setArticleID($conf['form_article_id']);
-        $form_article->setCLang($CJO['CUR_CLANG']);
+        $form_article->setCLang(cjoProp::getClang());
         $form = $form_article->getArticle(-1);
 
         $list = self::formatComments($conf, $article_id, $results_lenght);
@@ -112,7 +110,7 @@ class cjoComments {
     
             // FUNKTION FÜR KOMMENTARHEADLINE (show/hide oder ...' zu Artikel XY')
             if($conf['list_typ'] == 'visible'){
-                $headline = '<h3 class="comments_headline">'.$headline.' '.$article_title.'</h3>';
+                $headline = '<h3 class="comments_headline">'.$headline.' [translate: comments_for] &quot;'.$article->getName().'&quot;</h3>';
             }
             else{
                 $comments_hide = ' style="display:none;"';
@@ -136,8 +134,8 @@ class cjoComments {
         global $CJO;
     
         // Ausgabe nur im Frontend
-        if ($CJO['CONTEJO']) return false;
-
+        if (cjoProp::isBackend()) return false;
+    
         if($conf['filter_comments_by'] != ''){
     
             $filter_comments_by = "";
@@ -159,16 +157,16 @@ class cjoComments {
                 WHERE
                     ".$filter_comments_by."
                     status = '1' AND
-                    clang = '".$CJO['CUR_CLANG']."'
+                    clang = '".cjoProp::getClang()."'
                 ORDER BY
                     id ".$conf['order_comments'];
     
         $results = $sql->getArray($qry);
-
+    
         // URSPRÜNGLICHE LÄNGE DES RESULTS-ARRAY
         $results_lenght = count($results);
     
-        $html_tpl = new cjoHtmlTemplate($CJO['ADDON']['settings'][self::$mypage]['html_template']);
+        $html_tpl = new cjoHtmlTemplate($CJO['ADDON']['settings'][self::$addon]['html_template']);
     
         if(is_array($results)){
     
@@ -258,7 +256,7 @@ class cjoComments {
         
         global $CJO;
     
-        $mypage = 'comments';
+        $addon = 'comments';
         $is_spam = false;
     
         $blacklist = explode("\n", $conf['blacklist_0']);
@@ -283,7 +281,7 @@ class cjoComments {
                 break;
             }
         }
-        require_once $CJO['ADDON']['settings'][self::$mypage]['b8'] ;
+        require_once $CJO['ADDON']['settings'][self::$addon]['b8'] ;
     
         $sql = new cjoSql();
         

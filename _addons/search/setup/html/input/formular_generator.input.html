@@ -1,0 +1,183 @@
+[%TEMPLATE%]
+
+<div class="settings">
+    <h2 class="no_bg_image">[translate: include_script_template]</h2>
+
+    <div class="formular last">
+        <label>[translate: template_selection]</label>
+        [[TEMPLATE_SELECTION]]
+    </div>
+</div>
+
+<div class="settings">
+    <h2 class="no_bg_image">[translate: form_settings]</h2>
+
+    <div class="formular">
+        <label>[translate: form_title]</label>
+        <input type="text" class="inp75" name="VALUE[8]" id="form_title" value="CJO_VALUE[8]" />
+        <input type="checkbox" name="VALUE[8]" value="" id="is_login"
+        	style=" vertical-align: text-bottom;"[[SHOW_IS_FORM_CHECKED]] />
+		<label class="right_label">[translate: form_is_login]</label>
+
+        <input type="hidden" name="VALUE[19]" value="0" />
+        <input type="checkbox" name="VALUE[19]" value="1" id="show_title"
+            style=" vertical-align: text-bottom;"[[SHOW_LEGEND_CHECKED]] />
+        <label class="right_label">[translate: show_form_title]</label>
+    </div>
+
+    <div class="formular">
+	    <label>[translate: form_fields]</label>
+	    <textarea name="VALUE[11]" id="VALUE[11]" rows="30" cols="10"
+				  class="inp75 float_left" wrap="off">[[FORM_FIELDS]]</textarea>
+		<a href="#" id="syntax_examples" title="[translate: syntax_examples]">
+			<img src="img/silk_icons/help.png" alt="?"  />
+		</a>
+    </div>
+
+    <div class="formular">
+        <label>[translate: required_fields_label]</label>
+        <input type="text" class="inp75" name="VALUE[12]" value="CJO_VALUE[12]" />
+    </div>
+
+    <div class="formular">
+        <label>[translate: submit_button_title]</label>
+        <input type="text" class="inp75" name="VALUE[7]" value="CJO_VALUE[7]" />
+    </div>
+
+    <div class="formular">
+        <label>[translate: message_after_submit]</label>
+        CJO_WYMEDITOR[id=6 height=80]
+    </div>
+
+    <div class="formular last">
+        <input type="hidden" name="VALUE[5]" value="0" />
+        <input id="with_email" type="checkbox" name="VALUE[5]" value="1"
+            style=" vertical-align: text-bottom;"[[WITH_EMAIL_CHECKED]] />
+        <label class="right_label">[translate: enable_mail_function]</label>
+    </div>
+</div>
+
+<div class="settings with_email">
+    <h2 class="no_bg_image">[translate: email_configuration]</h2>
+
+    <div class="formular floatbox">
+        <label>[translate: select_phpmail_account]</label>
+        [[ACCOUNT_SELECTION]]
+    </div>
+
+    <div class="formular">
+        <label>[translate: email_subject]</label>
+        <input type="text" class="inp75" name="VALUE[4]" value="CJO_VALUE[4]" />
+    </div>
+
+    <div class="formular">
+        <label>[translate: email_recipient]</label>
+        <input type="text" class="inp75" name="VALUE[1]" value="CJO_VALUE[1]" id="recipient_email" />
+		<span class="note">[translate: separate_by_comma]</span>
+    </div>
+
+    <div class="formular last">
+        <input type="hidden" name="VALUE[10]" value="0" />
+        <input type="checkbox" name="VALUE[10]" value="1" id="to_sender"
+            style=" vertical-align: text-bottom;" [[SENDCOPY_CHECKED]] />
+        <label class="right_label">[translate: send_mail_to_sender]</label>
+
+        <label>[translate: message_to_sender]</label>
+        <textarea name="VALUE[18]" class="inp75" id="sender_message" style="margin-top: 1em; height:200px;">CJO_VALUE[18]</textarea>
+		<br/>
+        <label>[translate: attachments_to_sender]</label>
+        CJO_MEDIALIST_BUTTON[1]
+    </div>
+
+</div>
+
+
+<script type="text/javascript">
+ //<![CDATA[
+
+    $(function() {
+
+		var form_title = $('#form_title');
+		var is_login = $('#is_login');
+		var show_title = $('#show_title');
+		var to_sender = $('#to_sender');
+		var recipient_email = $('#recipient_email');
+		var sender_message = $('#sender_message');
+		var syntax_examples = $('#syntax_examples');
+
+        $('h2:not(.no_bg_image)').each(function (i) {
+
+            var input  = $(this).next('div').find('input[type=text]').val();
+            var textarea  = $(this).next('div').find('textarea').val();
+            var select = $(this).next('div').find('select').length;
+
+            if(!input && !textarea && select < 1)
+                $(this).next('div').addClass('hide_me');
+        });
+
+		if(!$('#with_email').is(':checked')){
+            $('.with_email').hide();
+        }
+
+        $('#with_email').click(function(){
+            $('.with_email').toggle();
+        });
+
+		if (is_login.is(':checked')) {
+			form_title
+				.val('LOGIN')
+				.attr('readonly','readonly')
+				.addClass('readonly');
+			show_title
+				.removeAttr('checked')
+				.attr('disabled','disabled');
+		}
+
+		is_login.click(function(){
+			if (is_login.is(':checked')) {
+				form_title
+					.val('LOGIN')
+					.attr('readonly','readonly')
+					.addClass('readonly');
+				show_title
+					.removeAttr('checked')
+					.attr('disabled','disabled');
+			} else {
+				form_title
+					.removeAttr('readonly')
+					.removeClass('readonly');
+				show_title
+					.removeAttr('disabled');
+			}
+		})
+
+		if (!to_sender.is(':checked')) {
+			sender_message
+				.attr('readonly','readonly')
+				.addClass('readonly');
+		}
+
+		to_sender.click(function(){
+			if ($(this).is(':checked')) {
+				sender_message
+					.removeAttr('readonly')
+					.removeClass('readonly');
+
+				if (recipient_email.val().length > 0 && confirm('[translate: disable_recipient_email]')){
+					recipient_email.val('');
+				}
+			} else {
+				sender_message
+					.attr('readonly','readonly')
+					.addClass('readonly');
+			}
+		})
+
+		syntax_examples.click(function() {
+			cjo.openPopUp('', 'http://contejo.com/formular_generator/syntax_examples/', 300, 800, 'content');
+			return false;
+		});
+    });
+
+ //]]>
+</script>

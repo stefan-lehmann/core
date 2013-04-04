@@ -45,9 +45,9 @@ class maxElementsBar extends cjoListToolbar {
 
 		global $I18N;
 
-		return '<label for="stepping">'.$I18N->msg('label_number').':</label> '.
+		return '<label for="stepping">'.cjoI18N::translate('label_number').':</label> '.
                '<input type="text" id="stepping" name="stepping" value="'.$this->cjolist->getStepping().'" '.
-               '        style="width: 28px" maxlength="3" title="'.$I18N->msg('label_entries_per_page').'"/> '.
-               '<input type="submit" value="'.$I18N->msg('button_show').'" title="'.$I18N->msg('button_show').'"/>'."\r\n";
+               '        style="width: 28px" maxlength="3" title="'.cjoI18N::translate('label_entries_per_page').'"/> '.
+               '<input type="submit" value="'.cjoI18N::translate('button_show').'" title="'.cjoI18N::translate('button_show').'"/>'."\r\n";
 	}
 }

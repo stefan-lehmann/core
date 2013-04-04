@@ -25,7 +25,7 @@
 
 class cjoCommentsTemplate {
 
-    static $mypage = 'comments';
+    static $addon = 'comments';
       
     public static function addComment($form_name,$article_id=false,$clang=false) {
     
@@ -34,7 +34,7 @@ class cjoCommentsTemplate {
         $return = array();
         
         if ($article_id === false) $article_id = $CJO['ARTICLE_ID'];
-        if ($clang === false)      $clang = $CJO['CUR_CLANG'];        
+        if ($clang === false)      $clang = cjoProp::getClang();        
 
         // Config aus DB holen
         $sql = new cjoSql();
@@ -93,7 +93,7 @@ class cjoCommentsTemplate {
                 $insert->setValue("city",$posted['city']);
                 $insert->setValue("country",$posted['country']);
                 $insert->setValue("created",time());
-                $insert->setValue("clang",$CJO['CUR_CLANG']);
+                $insert->setValue("clang",cjoProp::getClang());
                 $insert->setValue("md5_message", $posted['md5_message']);
                 $insert->setValue("md5_ip",$posted['md5_ip']);
                 $insert->Insert();

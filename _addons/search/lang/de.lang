@@ -1,0 +1,30 @@
+
+search = Suche
+
+##./addons/search/classes/class.cjo_search.inc.php
+msg_article_index_added = Volltext-Suchindex für Artikel-Daten aktiviert
+msg_article_index_removed = Volltext-Suchindex für Artikel-Daten entfernt
+msg_article_slice_index_added = Volltext-Suchindex für Blöcke aktiviert
+msg_article_slice_index_removed = Volltext-Suchindex für Blöcke entfernt
+
+##./addons/search/config.inc.php
+msg_err_configure_settings =  <b>Die Konfiguration des Suche-AddOns ist unvollständig.</b><br/>Um den vollen Funktionsumfang herzustellen, müssen die Einstellungen ergänzt werden. ><u><a href="{0}">Jetzt korrigieren</a></u><
+
+##./addons/search/pages/index.inc.php
+subtitle_settings = Einstellungen
+
+##./addons/search/pages/settings.inc.php
+button_create_default = Suchformular-Artikel generieren
+label_article_search_index = Such-Index <br/>(Artikel-Einstellungen)
+label_exclude_articles = Nicht Suchen in
+label_search_article = Suchformular-Artikel
+label_search_settings = Einstellungen
+label_slice_search_index = Such-Index <br/>(Inhaltsblöcke)
+msg_article_search_index_notEmpty = Mindestens eine Artikel-Einstellung auswählen, in der gesucht werden soll!
+msg_include_module_notEmpty =  Mindestens ein Modul auswählen, in dem gesucht werden soll!
+msg_search_article_notEmpty =  Artikel mit dem Suchformular auswählen!
+msg_slice_search_index_notEmpty = Mindestens ein CJO_VALUE auswählen, in dem gesucht werden soll!
+note_article_values = Ausgewählte Artikel-Einstellungen werden bei der Suche berücksichtigt.
+note_exclude_articles = Ausgewählte Artikel sind von der Suche ausgenommen.
+note_include_module = Blöcke mit ausgewählten Modulen werden bei der Suche berücksichtigt.
+note_search_values = Ausgewählte Felder werden bei der Suche berücksichtigt.

@@ -26,24 +26,24 @@
 require_once dirname(__FILE__).'/config.inc.php';
 require_once dirname(__FILE__).'/classes/class.shop_extension.inc.php';
 
-$mypage = 'shop';
+$addon = 'shop';
 
-$install = new cjoInstall($mypage);
+$install = new cjoInstall($addon);
 if ($install->installResource()) {
 
-    $dir = $CJO['ADDON_CONFIG_PATH'].'/'.$mypage.'/theme';
-	if (!file_exists($dir)) { mkdir($dir, $CJO['FILEPERM']); }
+    $dir = $CJO['ADDON_CONFIG_PATH'].'/'.$addon.'/theme';
+	if (!file_exists($dir)) { mkdir($dir, cjoProp::getFilePerm()); }
 
-    cjoAssistance::copyDir($CJO['ADDON_PATH'].'/'.$mypage.'/themes/default',$dir);
+    cjoFile::copyDir($CJO['ADDON_PATH'].'/'.$addon.'/themes/default',$dir);
     
-    $dir = $CJO['ADDON_CONFIG_PATH'].'/'.$mypage.'/img';
-    if (!file_exists($dir)) { mkdir($dir, $CJO['FILEPERM']); }
+    $dir = $CJO['ADDON_CONFIG_PATH'].'/'.$addon.'/img';
+    if (!file_exists($dir)) { mkdir($dir, cjoProp::getDirPerm()); }
 
-    cjoAssistance::copyDir($CJO['ADDON_PATH'].'/'.$mypage.'/setup/img',$dir);    
+    cjoFile::copyDir($CJO['ADDON_PATH'].'/'.$addon.'/setup/img',$dir);    
 
     foreach($CJO['CLANG'] as $clang_id => $name) {
         if ($clang_id == 0) continue;
     	cjoShopExtension::copyConfig(array('id'=>$clang_id));
     }
-    if (!cjoMessage::hasErrors()) $CJO['ADDON']['install'][$mypage] = 1;
+    if (!cjoMessage::hasErrors()) cjoAddon::setProperty('install', true, $addon);
 }

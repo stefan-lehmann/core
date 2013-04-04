@@ -49,7 +49,7 @@ class popupButtonField extends readOnlyTextField {
 	}
 
 	public function getInputFields() {
-		return parent :: get();
+		return parent::get();
 	}
 
 	public function getInsertValue() {

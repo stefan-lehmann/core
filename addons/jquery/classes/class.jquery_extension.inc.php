@@ -25,41 +25,39 @@
 
 class cjojQueryExtension {
 
-    private static $mypage  = "jquery";
+    private static $addon  = "jquery";
     private static $jq_path = "/jquery/jquery/";
 
     public static function insertjQuery($params) {
 
-        global $CJO;
-
     	$content = $params['subject'];
-    	$path    = $CJO['ADDON_CONFIG_PATH'].self::$jq_path;
-    	$suffix  = !empty($CJO['ADDON']['settings'][self::$mypage]['GZIP']) ? '.gz' : '';
+    	$path    = cjoUrl::addonAssets(self::$addon, cjoAddon::getParameter('INCLUDE_PATH', self::$addon).'/');
+    	$suffix  = cjoAddon::getParameter('GZIP', self::$addon) ? '.gz' : '';
 
     	if (strpos($content, '<html') === false) return $content;
 
-    	$jquery = str_replace('.'.$CJO['ADDON_PATH'],
-    						  $CJO['ADDON_CONFIG_PATH'],
-    						  $CJO['ADDON']['settings'][self::$mypage]['VERSION']);
+    	$jquery = str_replace(cjoUrl::addon(self::$addon,cjoAddon::getParameter('INCLUDE_PATH', self::$addon).'/'), 
+                            cjoUrl::addonAssets(self::$addon,cjoAddon::getParameter('INCLUDE_PATH', self::$addon).'/'),
+                            cjoAddon::getParameter('VERSION', self::$addon));
 
     	$js = "\r\n".'<script type="text/javascript">/* <![CDATA[ */ '.
-    	      'var ARTICLE_ID = "'.$CJO['ARTICLE_ID'].'"; '.
-              'var CLANG = ["'.$CJO['CUR_CLANG'].'", "'.$CJO['CLANG_ISO'][$CJO['CUR_CLANG']].'", "'.$CJO['CLANG'][$CJO['CUR_CLANG']].'"]; '. 	
-              'var MEDIAFOLDER = "'.$CJO['MEDIAFOLDER'].'"; '.
-              'var FRONTPAGE_PATH = "'.$CJO['FRONTPAGE_PATH'].'" ; '.
-              'var JQUERY_ADDON_PATH = "'.$CJO['ADDON']['settings'][self::$mypage]['JQ_INCL'].'";'.
+    	      'var ARTICLE_ID = "'.cjoProp::getArticleId().'"; '.
+              'var CLANG = ["'.cjoProp::getClang().'", "'.cjoProp::getClangIso().'", "'.cjoProp::getClangName().'"]; '. 	
+              'var MEDIAFOLDER = "'.cjoUrl::media().'"; '.
+              'var FRONTPAGE_PATH = "'.cjoUrl::frontend().'" ; '.
+              'var JQUERY_ADDON_PATH = "'.cjoPath::addonAssets($addon, 'jquery').'";'.
               ' /* ]]> */</script>';
 
     	$css = '';
     	    
-	    if ($CJO['ADDON']['settings'][self::$mypage]['JS_FILES']) {
-	        $filename = $path.$CJO['ADDON']['settings'][self::$mypage]['COMBINED_NAME'].'.js';
+	    if (cjoAddon::getParameter('JS_FILES', self::$addon)) {
+	        $filename = $path.cjoAddon::getParameter('COMBINED_NAME', self::$addon).'.js';
     	    if (!file_exists($filename)) cjojQuery::combineJsFiles();
     	    $js .= "\r\n".'<script type="text/javascript" src="'.$filename.$suffix.'"></script>';
 	    }
 	    
-	    if ($CJO['ADDON']['settings'][self::$mypage]['CSS_FILES']) {
-	        $filename = $path.$CJO['ADDON']['settings'][self::$mypage]['COMBINED_NAME'].'.css';  
+	    if ($CJO['ADDON']['settings'][self::$addon]['CSS_FILES']) {
+            $filename = $path.cjoAddon::getParameter('COMBINED_NAME', self::$addon).'.css';
     	    if (!file_exists($filename)) cjojQuery::combineCssFiles();
     	    $css = "\r\n".'<link type="text/css" rel="stylesheet" href="'.$filename.$suffix.'" />';
 	    }
@@ -70,6 +68,6 @@ class cjojQueryExtension {
     }
 }
 
-if ($CJO['CONTEJO']) return false;
+if (cjoProp::isBackend()) return false;
 
 cjoExtension::registerExtension('OUTPUT_FILTER', 'cjojQueryExtension::insertjQuery');

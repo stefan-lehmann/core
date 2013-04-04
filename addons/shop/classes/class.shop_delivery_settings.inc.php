@@ -32,7 +32,7 @@
 
 class cjoShopDeliverySettings {
         
-    protected static $mypage = 'shop';
+    protected static $addon = 'shop';
 
 	/**
 	 * This method will be called by the
@@ -80,12 +80,12 @@ class cjoShopDeliverySettings {
 		}
 
 		if (empty($deliverer)) {
-			cjoMessage::addError($I18N_21->msg('err_shop_no_deliverer'));
+			cjoMessage::addError(cjoAddon::translate(21,'err_shop_no_deliverer'));
 			return false;
 		}
 
 		if (empty($deliverer_zone)) {
-			cjoMessage::addError($I18N_21->msg('err_shop_no_zone'));
+			cjoMessage::addError(cjoAddon::translate(21,'err_shop_no_zone'));
 			return false;
 		}
 
@@ -153,7 +153,7 @@ class cjoShopDeliverySettings {
 		$results = $sql->getArray($qry);
 
 		if (!empty($results)) {
-			cjoMessage::addError($I18N_21->msg('shop_deliverer_zone_exists'));
+			cjoMessage::addError(cjoAddon::translate(21,'shop_deliverer_zone_exists'));
 			return false;
 		}
 
@@ -193,7 +193,7 @@ class cjoShopDeliverySettings {
 	private static function updateDelivererAndZone($deliverer, &$deliverer_id, &$zone_id, &$deliverer_zone_id, $zone) {
 
 		global $I18N;
-		$err_msg = $I18N->msg('err_data_not_saved');
+		$err_msg = cjoI18N::translate('err_data_not_saved');
 
 		// if a new deliverer shall be added
 		if ($deliverer_id == '' && $zone_id != '') {
@@ -289,7 +289,7 @@ class cjoShopDeliverySettings {
 	private static function rewriteDelivererDetails($deliverer_zone_id, $to_save, $deliverer_id, $tax) {
 
 		global $I18N,$I18N_21;
-		$err_msg = $I18N->msg('err_data_not_saved');
+		$err_msg = cjoI18N::translate('err_data_not_saved');
 
 		// delete old entries
 		$delete = new cjoSql();
@@ -348,7 +348,7 @@ class cjoShopDeliverySettings {
 
 		global $CJO;
 
-		$delivery_method = $CJO['ADDON']['settings'][self::$mypage]['DELIVERY_METHOD'];
+		$delivery_method = $CJO['ADDON']['settings'][self::$addon]['DELIVERY_METHOD'];
 		$redirect_params = array('function' => 'edit', 'mode' => 'zone');
 
 		$requested = $_REQUEST;
@@ -406,7 +406,7 @@ class cjoShopDeliverySettings {
 		}
 
 		if ($sql->getError() != '') {
-			cjoMessage::addError($I18N->msg('err_data_not_saved'));
+			cjoMessage::addError(cjoI18N::translate('err_data_not_saved'));
 			return false;
 		}
 
@@ -442,7 +442,7 @@ class cjoShopDeliverySettings {
 		$delete->Delete();
 
 		if ($delete->getError() != '') {
-			cjoMessage::addError($I18N->msg('err_data_not_saved'));
+			cjoMessage::addError(cjoI18N::translate('err_data_not_saved'));
 			return false;
 		}
 
@@ -458,7 +458,7 @@ class cjoShopDeliverySettings {
 			$insert->insert();
 
 			if ($insert->getError() != '') {
-				cjoMessage::addError($I18N->msg('err_data_not_saved'));
+				cjoMessage::addError(cjoI18N::translate('err_data_not_saved'));
 				return false;
 			}
 		}

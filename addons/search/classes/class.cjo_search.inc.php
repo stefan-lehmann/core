@@ -156,8 +156,8 @@ class cjoSearch {
                     a.status = '1' AND
                     a.online_from < '".time()."' AND
                     a.online_to > '".time()."' AND
-                    a.clang = '".$CJO['CUR_CLANG']."' AND
-                    s.clang = '".$CJO['CUR_CLANG']."'
+                    a.clang = '".cjoProp::getClang()."' AND
+                    s.clang = '".cjoProp::getClang()."'
                 GROUP BY a.id
                 HAVING relevance > ".$this->relevance."
                 ORDER BY relevance DESC
@@ -305,9 +305,9 @@ class cjoSearch {
             }
             $this->html .= ($this->html != '') ? '<div class="absatz"></div>'."\r\n" : '';
             $this->html .= '<div class="textblock">'."\r\n";
-            $this->html .= '	<h3>'.$count.'. <a href="'.cjoRewrite::getUrl($this->results[$key]['id'],$CJO['CUR_CLANG']).'">'.$this->results[$key]['name'].'</a></h3>'."\r\n";
+            $this->html .= '	<h3>'.$count.'. <a href="'.cjoUrl::getUrl($this->results[$key]['id'],cjoProp::getClang()).'">'.$this->results[$key]['name'].'</a></h3>'."\r\n";
             $this->html .= '	<p>'.$this->results[$key]['highlightedtext'].'</p>'."\r\n";
-            $this->html .= '	<p><a href="'.cjoRewrite::getUrl($this->results[$key]['id'],$CJO['CUR_CLANG']).'" class="more cjo_search">'.cjoRewrite::getUrl($this->results[$key]['id'],$CJO['CUR_CLANG']).'</a></p>'."\r\n";
+            $this->html .= '	<p><a href="'.cjoUrl::getUrl($this->results[$key]['id'],cjoProp::getClang()).'" class="more cjo_search">'.cjoUrl::getUrl($this->results[$key]['id'],cjoProp::getClang()).'</a></p>'."\r\n";
             $this->html .= '</div>'."\r\n";
 
         }
@@ -333,25 +333,23 @@ class cjoSearch {
     	if (!empty($slice_values)){
         	$sql = new cjoSql;
         	$qry = "ALTER TABLE ".TBL_ARTICLES_SLICE." ADD FULLTEXT search (".implode(',',$slice_values).")";
-        	$sql->statusQuery($qry, $I18N_13->msg("msg_article_slice_index_added"));
+        	$sql->statusQuery($qry, cjoAddon::translate(13,"msg_article_slice_index_added"));
     	}
     	if (!empty($article_values)){
         	$sql->flush();
         	$qry = "ALTER TABLE ".TBL_ARTICLES." ADD FULLTEXT search (".implode(',',$article_values).")";
-        	$sql->statusQuery($qry, $I18N_13->msg("msg_article_index_added"));
+        	$sql->statusQuery($qry, cjoAddon::translate(13,"msg_article_index_added"));
     	}
     }
 
     static function removeFulltextIndex() {
 
-    	global $CJO, $I18N_13;
-
     	$sql = new cjoSql();
     	$sql->statusQuery("ALTER IGNORE TABLE ".TBL_ARTICLES_SLICE." DROP INDEX `search`",
-    	                   $I18N_13->msg("msg_article_slice_index_removed"));
+    	                   cjoAddon::translate(13,"msg_article_slice_index_removed"));
     	$sql->flush();
     	$sql->statusQuery("ALTER IGNORE  TABLE ".TBL_ARTICLES." DROP INDEX `search`",
-    	                   $I18N_13->msg("msg_article_index_removed"));
+    	                   cjoAddon::translate(13,"msg_article_index_removed"));
     }
 
     static function replaceVars($params) {
@@ -367,9 +365,9 @@ class cjoSearch {
     		strpos($content,'[[SE_SEARCH_FORM]]') !== false) {
 
     		$article = new cjoArticle($search_form);
-            $article->setClang($CJO['CUR_CLANG']);
+            $article->setClang(cjoProp::getClang());
     		$form = preg_replace('/(?<=action\=\")[^"]*?(?=\"|#)/',
-    							 cjoRewrite::getUrl($search_form),
+    							 cjoUrl::getUrl($search_form),
     							 $article->getArticle() );
 
     	}

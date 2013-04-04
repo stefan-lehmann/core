@@ -23,18 +23,14 @@
  * @filesource
  */
 
-error_reporting(E_ALL & ~E_STRICT & ~E_NOTICE);
+error_reporting(E_ALL ^ E_NOTICE);
 // ----- caching start für output filter
 
 ob_start();
 
-$CJO                = array();
-$CJO['HTDOCS_PATH'] = '../';
-$CJO['CONTEJO']     = true;
-$cur_page           = array();
+$CJO = array('HTDOCS_PATH' => '../', 'CONTEJO' => true);
 $message = array();
 
-require_once "./include/functions/function.cjo_mquotes.inc.php";
 require_once 'include/master.inc.php';
 
 
@@ -88,22 +84,14 @@ if ((int)$_SERVER['CONTENT_LENGTH'] > $multiplier*(int)$POST_MAX_SIZE && $POST_M
 	exit(0);
 }
 
-// Settings
-$save_path = $CJO['UPLOADFOLDER'];				// The path were we will save the file (getcwd() may not be reliable and should be tested in your environment)
-
-if (!is_dir($save_path)) {
-    mkdir($save_path);
-    @chmod($save_path,$CJO['FILEPERM']);
-}
-
-if (!is_writable($save_path)) {
-	HandleError("Upload directory (".$save_path.") does not exists or is not writeable.");
+if (!is_writable(cjoPath::uploads())) {
+	HandleError("Upload directory (".cjoPath::uploads().") does not exists or is not writeable.");
 	exit(0);
 }
 
 $upload_name = "Filedata";
-$max_file_size_in_bytes = 1048576 * $CJO['UPLOAD_LIMIT']; // Convert in Bytes
-$extension_whitelist = 	$CJO['UPLOAD_EXTENSIONS']; // Allowed file extensions
+$max_file_size_in_bytes = 1048576 * cjoProp::get('UPLOAD_LIMIT'); // Convert in Bytes
+$extension_whitelist = 	cjoProp::get('UPLOAD_EXTENSIONS'); // Allowed file extensions
 $valid_chars_regex = '.A-Z0-9_ !@#$%^&()+={}\[\]\',~`-';				// Characters allowed in the file name (in a Regular Expression format)
 
 // Other variables
@@ -154,7 +142,7 @@ if (strlen($file_name) == 0 || strlen($file_name) > $MAX_FILENAME_LENGTH) {
 
 
 // Validate that we won't over-write an existing file
-if (file_exists($save_path.'/'.$file_name)) {
+if (file_exists(cjoPath::uploads($file_name))) {
 	HandleError("The file already exists on the server");
 	exit(0);
 }
@@ -192,7 +180,7 @@ if (!$is_valid_extension) {
  Depending on your server OS and needs you may need to set the Security Permissions on the file after it has
  been saved.
  */
-if (!@move_uploaded_file($_FILES[$upload_name]["tmp_name"], $save_path.'/'.$file_name)) {
+if (!@move_uploaded_file($_FILES[$upload_name]["tmp_name"], cjoPath::uploads($file_name))) {
 	HandleError("File could not be saved.");
 	exit(0);
 }

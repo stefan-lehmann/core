@@ -43,11 +43,9 @@ class cjoOutput {
      */
     public static function getDownloadsFromMedialist($medialist, $varname = 'DOWNLOADS') {
 
-        global $CJO, $I18N;
-
         $downloads  = array();
-        $article_id = $CJO['ARTICLE_ID'];
-        $clang      = $CJO['CUR_CLANG'];
+        $article_id = cjoProp::getArticleId();
+        $clang      = cjoProp::getClang();
         $securese   = false;
         $varname    = strtoupper($varname);
 
@@ -75,7 +73,7 @@ class cjoOutput {
             $downloads['title'][$i]           = ($media_obj->getTitle() == '' || $media_obj->getTitle() == '[translate: label_no_title]')
                                                ? $media_obj->getFileName() : $media_obj->getTitle();
             $downloads['description'][$i]     = $media_obj->getDescription($clang, false);
-            $downloads['updatedate'][$i]      = $media_obj->getUpdateDate($CJO['setlocal']['short_date']);
+            $downloads['updatedate'][$i]      = $media_obj->getUpdateDate(cjoI18N::translate('setlocal_short_date'));
             $downloads['copyright'][$i]       = $media_obj->getCopyright();
             $downloads['filesize'][$i]        = $media_obj->_getFormattedSize();
             $downloads['download_path'][$i]   = $media_obj->getFullPath();
@@ -83,7 +81,7 @@ class cjoOutput {
             $downloads['extension'][$i]       = $media_obj->_getExtension();
             
             $downloads['has_copyright'][$i]   = !empty($media_obj->_copyright);      
-            $downloads['has_description'][$i] = $downloads['description'][$i] != '' && $downloads['description'][$i] !=  $I18N->msg('label_no_media_description');
+            $downloads['has_description'][$i] = $downloads['description'][$i] != '' && $downloads['description'][$i] !=  cjoI18N::translate('label_no_media_description');
 
             $i++;
         }
@@ -272,12 +270,10 @@ class cjoOutput {
      */
     public static function prettifyOutput($content) {
 
-        global $CJO;
-
         list($content, $textareas) = self::textareasToPlaceholders($content);
         list($content, $scripts)   = self::scriptTagsToPlaceholders($content);
 
-        $content = stripslashes($content);
+        //$content = stripslashes($content);
 
         $content = preg_replace_callback('/(?<=href\=")\S+(?=\"|\')/i',
                                          create_function(
@@ -293,14 +289,12 @@ class cjoOutput {
         $content = self::placeholdersToTextareas($content, $textareas);
         $content = self::placeholdersToScriptTags($content, $scripts);
 
-        $content = str_replace('CJO_MEDIAFOLDER', $CJO['MEDIAFOLDER'], $content);
+        $content = str_replace('CJO_MEDIAFOLDER', cjoUrl::media(), $content);
         $content = str_replace('/./','/', $content);
         return $content;
     }
 
     public static function textareasToPlaceholders($content) {
-
-        global $CJO;
 
         preg_match_all('/(<textarea[^>]*>)(.*?)(<\/textarea>)/is', $content, $textareas, PREG_SET_ORDER);
 
@@ -318,8 +312,6 @@ class cjoOutput {
 
     public static function placeholdersToTextareas($content, $textareas) {
 
-        global $CJO;
-
         if (empty($textareas)) return $content;
 
         foreach($textareas as $key => $textarea) {
@@ -334,8 +326,6 @@ class cjoOutput {
     }
 
     public static function scriptTagsToPlaceholders($content) {
-
-        global $CJO;
 
         preg_match_all('/(<script[^>]*>)(.*?)(<\/script>)/is', $content, $scripts, PREG_SET_ORDER);
 
@@ -352,8 +342,6 @@ class cjoOutput {
     }
 
     public static function placeholdersToScriptTags($content, $scripts) {
-
-        global $CJO;
 
         if (empty($scripts)) return $content;
 
@@ -378,10 +366,8 @@ class cjoOutput {
      */
     public static function replaceLinks($content, $clang = false) {
 
-        global $CJO;
-
         if ($clang === false) {
-            $clang = $CJO['CUR_CLANG'];
+            $clang = cjoProp::getClang();
         }
         $urls = array();
 
@@ -399,7 +385,7 @@ class cjoOutput {
                 $clang = empty($match[4]) && $match[4] != 0 ? $clang : $match[4];
                 $query = !empty($match[5]) ? $match[5] : '';
                 $hash  = !empty($match[7]) && $match[7] != '#' ? $match[7] : '';
-                $urls[$key] = cjoRewrite::getUrl($article_id, $clang, $query, $hash);
+                $urls[$key] = cjoUrl::getUrl($article_id, $clang, $query, $hash);
             }
             $content = preg_replace('!'.preg_quote($match[0]).'!', $urls[$key], $content, 1);
         }

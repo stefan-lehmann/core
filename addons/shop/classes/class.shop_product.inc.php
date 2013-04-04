@@ -36,7 +36,7 @@
 
 class cjoShopProduct {
         
-    protected static $mypage = 'shop';
+    protected static $addon = 'shop';
 
 	private $product_id;
 	private $slice_id;
@@ -160,7 +160,7 @@ class cjoShopProduct {
 		$max_name   = 25;
 		$max_attr   = 0;
 		$sum        = 0;
-		$currency   = $CJO['ADDON']['settings'][self::$mypage]['CURRENCY']['CURR_SIGN'];
+		$currency   = $CJO['ADDON']['settings'][self::$addon]['CURRENCY']['CURR_SIGN'];
 		$divider    = "\r\n\r\n".' -- '."\r\n\r\n";
 
 		// get max product name length and
@@ -184,15 +184,15 @@ class cjoShopProduct {
 			$temp = $product->getAmount()." x ";
 			$spaces = self::addWhiteSpaces(strlen($temp));
 			$return[$key] .= $temp.$product->getName()."  ";
-			$return[$key] .= strtoupper($I18N_21->msg("shop_final_amount_price")).': ';
+			$return[$key] .= strtoupper(cjoAddon::translate(21,"shop_final_amount_price")).': ';
 			$return[$key] .= $product->getFullPrice()."\r\n";
 
 			if (!empty($product->product_id)) {
-			    $return[$key] .= $spaces.$I18N_21->msg("shop_product_id").': '.$product->getProductId()."\r\n";
+			    $return[$key] .= $spaces.cjoAddon::translate(21,"shop_product_id").': '.$product->getProductId()."\r\n";
 			}
 
             $return[$key] .= "\r\n".$spaces;
-            $return[$key] .= $I18N_21->msg("shop_final_price").': '.$product->getFormattedProductValue('final_price');
+            $return[$key] .= cjoAddon::translate(21,"shop_final_price").': '.$product->getFormattedProductValue('final_price');
 
 		    if (!empty($product->attribute)) {
                 $return[$key] .= "\r\n".$spaces;
@@ -200,13 +200,13 @@ class cjoShopProduct {
 		    }
 
 			$return[$key] .= "\r\n".$spaces;
-			$return[$key] .= $I18N_21->msg("shop_incl_taxes").': ';
+			$return[$key] .= cjoAddon::translate(21,"shop_incl_taxes").': ';
 			$return[$key] .= $product->getFormattedProductValue('taxes', '%');
 			$return[$key] .= ' ('. $product->getFormattedProductValue('total_taxes').')';
 
 			if ($product->price->getValue('discount') != 0) {
     			$return[$key] .= "\r\n".$spaces;
-    			$return[$key] .= $I18N_21->msg("shop_incl_discount").': ';
+    			$return[$key] .= cjoAddon::translate(21,"shop_incl_discount").': ';
     			$return[$key] .= $product->getFormattedProductValue('discount', '%');
     			$return[$key] .= ' ('. $product->getFormattedProductValue('total_discount').')';
 			}
@@ -267,13 +267,13 @@ class cjoShopProduct {
 		$order_value = str_replace('.',$products[0]->getSeparator(), $order_value);
 		  
 		$table = array(
-		              array('<th class="center" style="width:40px;text-align:center">'.$I18N_21->msg("shop_amount").'</th>'."\r\n"),
-				      array('<th style="width:30px">'.$I18N_21->msg("shop_product_id_short").'</th>'."\r\n"),
-				      array('<th>'.$I18N_21->msg("shop_name").'</th>'."\r\n"),
-                      array('<th class="right">'.$I18N_21->msg("shop_netto_price").'</th>'."\r\n"),
-                      array('<th class="right">'.$I18N_21->msg("shop_discount").'</th>'."\r\n"),
-                      array('<th class="right">'.$I18N_21->msg("shop_tax").'</th>'."\r\n"),
-                      array('<th class="right">'.$I18N_21->msg("shop_final_amount_price").' ('.$I18N_21->msg("shop_brutto").')</th>'."\r\n"));
+		              array('<th class="center" style="width:40px;text-align:center">'.cjoAddon::translate(21,"shop_amount").'</th>'."\r\n"),
+				      array('<th style="width:30px">'.cjoAddon::translate(21,"shop_product_id_short").'</th>'."\r\n"),
+				      array('<th>'.cjoAddon::translate(21,"shop_name").'</th>'."\r\n"),
+                      array('<th class="right">'.cjoAddon::translate(21,"shop_netto_price").'</th>'."\r\n"),
+                      array('<th class="right">'.cjoAddon::translate(21,"shop_discount").'</th>'."\r\n"),
+                      array('<th class="right">'.cjoAddon::translate(21,"shop_tax").'</th>'."\r\n"),
+                      array('<th class="right">'.cjoAddon::translate(21,"shop_final_amount_price").' ('.cjoAddon::translate(21,"shop_brutto").')</th>'."\r\n"));
 
         $i = 1;
 		foreach($products as $product) {
@@ -312,18 +312,18 @@ class cjoShopProduct {
         }
 
 		$html .= '<tr>
-				   		<td colspan="'.$rowspan.'" class="right shop_order_value"><b>'.$I18N_21->msg("shop_order_value").' ('.$I18N_21->msg("shop_brutto").')</b></td>
+				   		<td colspan="'.$rowspan.'" class="right shop_order_value"><b>'.cjoAddon::translate(21,"shop_order_value").' ('.cjoAddon::translate(21,"shop_brutto").')</b></td>
 				   		<td class="right shop_order_value" style="width:60px"><b>'.cjoShopPrice::toCurrency($order_value).'</b></td></tr>';        
 	   if ($pay_costs > 0) {           
         $html .= '<tr>
-				   		<td colspan="'.$rowspan.'" class="right shop_pay_costs"><b>'.$I18N_21->msg("shop_pay_costs").' ('.$I18N_21->msg("shop_brutto").')</b></td>
+				   		<td colspan="'.$rowspan.'" class="right shop_pay_costs"><b>'.cjoAddon::translate(21,"shop_pay_costs").' ('.cjoAddon::translate(21,"shop_brutto").')</b></td>
 				   		<td class="right shop_pay_costs" style="width:60px"><b>'.cjoShopPrice::toCurrency($pay_costs).'</b></td></tr>';
         }                  
         $html .= '<tr>
-                        <td colspan="'.$rowspan.'" class="right shop_delivery_costs"><b>'.$I18N_21->msg('shop_delivery_costs').' ('.$I18N_21->msg('shop_brutto').')</b></td>
+                        <td colspan="'.$rowspan.'" class="right shop_delivery_costs"><b>'.cjoAddon::translate(21,'shop_delivery_costs').' ('.cjoAddon::translate(21,'shop_brutto').')</b></td>
 				   		<td class="right shop_delivery_costs" style="width:60px"><b>'.cjoShopPrice::toCurrency($delivery_costs).'</b></td>
 				   </tr><tr>
-				   		<td colspan="'.$rowspan.'" class="right shop_total_price"><b>'.$I18N_21->msg('shop_total_price').' ('.$I18N_21->msg('shop_brutto').')</b></td>
+				   		<td colspan="'.$rowspan.'" class="right shop_total_price"><b>'.cjoAddon::translate(21,'shop_total_price').' ('.cjoAddon::translate(21,'shop_brutto').')</b></td>
 				   		<td class="right shop_total_price" style="width:60px"><b>'.cjoShopPrice::toCurrency($total_price).'</b></td>
 				   </tr>
                    </tbody>
@@ -374,7 +374,7 @@ class cjoShopProduct {
 		// build list for rtf
 		$return = '';
 		foreach($taxes as $key => $value) {
-		 	$return .= $I18N_21->msg('shop_tax'). '('.cjoShopPrice::formatNumber($key, '%').' = '.cjoShopPrice::toCurrency($value).'\par';
+		 	$return .= cjoAddon::translate(21,'shop_tax'). '('.cjoShopPrice::formatNumber($key, '%').' = '.cjoShopPrice::toCurrency($value).'\par';
 		}
 		return $return;
 	}

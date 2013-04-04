@@ -53,7 +53,7 @@ class cjoFormField {
         $this->needFullColumn(false);
         $this->activateSave(true);
         $this->setValueSeparator("|");
-        $this->setDefault(false);
+        $this->setDefault(NULL);
         $this->enableBorderTop();
         $this->setFormat();
     }
@@ -129,7 +129,7 @@ class cjoFormField {
      * @access public
      */
     public function setValueSeparator($value_separator) {
-        cjo_valid_type($value_separator, 'string', __FILE__, __LINE__);
+        cjoProp::isValidType($value_separator, 'string', __FILE__, __LINE__);
 
         $this->value_separator = $value_separator;
     }
@@ -141,7 +141,7 @@ class cjoFormField {
      * @param $activate_save boolean true/false Speicherfunktion aktiviert/deaktiviert
      */
     public function activateSave($activateSave) {
-        cjo_valid_type($activateSave, array (
+        cjoProp::isValidType($activateSave, array (
             'boolean'
         ), __FILE__, __LINE__);
 
@@ -157,7 +157,7 @@ class cjoFormField {
         if (is_array($value)) {
 
             if (!empty ($value)) {
-                $value = implode($this->value_separator, $value);
+                $value = $this->value_separator.implode($this->value_separator, $value).$this->value_separator;
             } else {
                 $value = '';
             }
@@ -187,24 +187,37 @@ class cjoFormField {
             $name = str_replace ("]", '', $this->getName()); 
             $name = explode("[",$name); 
             
-            if (cjo_post('cjo_form_name','string') == $form->getName())
-                $dataset = $_POST;
-
-            $temp = $dataset[array_shift($name)];
-            if (!empty($name)) {
-            foreach($name as $key)
-                if (!isset($temp[$key])) {
-                    $temp = ''; 
-                    break;
-                }
-                if ($key != '') 
-                $temp = $temp[$key];
-            }
+            $key = array_shift($name);
+            $temp = $dataset[$key];
             
+            if (cjo_post('cjo_form_name','string') == $form->getName()) {
+  
+                if (isset($_POST[$key])) {
+                    if (empty($name) && !is_array($temp) && is_array($_POST[$key])) {
+                        $temp = implode('|',$_POST[$key]);
+                    }
+                    else {
+                        $temp = $_POST[$key];
+                    }
+                }
+            }
+
+            if (!empty($name)) {
+                foreach($name as $key) {
+                    if (!isset($temp[$key])) {
+                        $temp = ''; 
+                        break;
+                    }
+                    $temp = $temp[$key];
+                }
+            }
+
 	        if (cjo_post('cjo_form_name','string') == $form->getName() && empty($this->attributes['disabled'])) {
 		        if ($this->getName() && !empty($temp)) {
 		            return $this->stripslashes($temp);
 		        }
+                $value = $temp;
+            
 	        }
 	        else {
 		        if ($value == '' && $this->value != '') {
@@ -214,15 +227,14 @@ class cjoFormField {
 		            $value = $temp;
 		        }
 		        if($value == '' && $this->getDefault()){
-		             $value = $this->getDefault();
+		             $value = $this->getDefault(); 
 		        }
-	        }
+	        } 
     	}
     	else {
     		$value = $this->value;
     	}
-    	
-                
+    	  
         return $value = ($this->format_type != '' && $format === true) ? cjoFormatter :: format($value, $this->format_type, $this->format) : $value;
     }
 
@@ -468,45 +480,5 @@ class cjoFormField {
     }
 }
 
-// Field Klassen einbinden
-
-// 3rd Party Klassen
-require_once $CJO['INCLUDE_PATH'].'/classes/afc/classes/form/validate/SmartyValidate.class.php';
-require_once $CJO['INCLUDE_PATH'].'/classes/afc/classes/form/validate/internals/core.assemble_plugin_filepath.php';
-require_once $CJO['INCLUDE_PATH'].'/classes/afc/classes/form/validate/plugins/function.validate.php';
-
-// Validierung
-require_once $CJO['INCLUDE_PATH'].'/classes/afc/classes/form/class.cjo_validator.inc.php';
-require_once $CJO['INCLUDE_PATH'].'/classes/afc/classes/form/validate/cjo_ValidateEngine.inc.class.php';
-
-// Field-Basis-Klassen
-require_once $CJO['INCLUDE_PATH'].'/classes/afc/classes/form/class.cjo_formMultiValueField.inc.php';
-
-// Allgemeine Field-Klassen
-require_once $CJO['INCLUDE_PATH'].'/classes/afc/classes/form/fields/field.textField.inc.php';
-require_once $CJO['INCLUDE_PATH'].'/classes/afc/classes/form/fields/field.textAreaField.inc.php';
-require_once $CJO['INCLUDE_PATH'].'/classes/afc/classes/form/fields/field.selectField.inc.php';
-require_once $CJO['INCLUDE_PATH'].'/classes/afc/classes/form/fields/field.buttonField.inc.php';
-require_once $CJO['INCLUDE_PATH'].'/classes/afc/classes/form/fields/field.saveField.inc.php';
-require_once $CJO['INCLUDE_PATH'].'/classes/afc/classes/form/fields/field.hiddenField.inc.php';
-require_once $CJO['INCLUDE_PATH'].'/classes/afc/classes/form/fields/field.readOnlyField.inc.php';
-require_once $CJO['INCLUDE_PATH'].'/classes/afc/classes/form/fields/field.readOnlyTextField.inc.php';
-require_once $CJO['INCLUDE_PATH'].'/classes/afc/classes/form/fields/field.foreignField.inc.php';
-require_once $CJO['INCLUDE_PATH'].'/classes/afc/classes/form/fields/field.popupButtonField.inc.php';
-require_once $CJO['INCLUDE_PATH'].'/classes/afc/classes/form/fields/field.checkboxField.inc.php';
-require_once $CJO['INCLUDE_PATH'].'/classes/afc/classes/form/fields/field.radioField.inc.php';
-require_once $CJO['INCLUDE_PATH'].'/classes/afc/classes/form/fields/field.fieldsetField.inc.php';
-require_once $CJO['INCLUDE_PATH'].'/classes/afc/classes/form/fields/field.passwordField.inc.php';
-require_once $CJO['INCLUDE_PATH'].'/classes/afc/classes/form/fields/field.colorpickerField.inc.php';
-require_once $CJO['INCLUDE_PATH'].'/classes/afc/classes/form/fields/field.datepickerField.inc.php';
-require_once $CJO['INCLUDE_PATH'].'/classes/afc/classes/form/fields/field.simpleButtonField.inc.php';
-require_once $CJO['INCLUDE_PATH'].'/classes/afc/classes/form/fields/field.codeField.inc.php';
-
-// CONTEJO Field-Klassen
-require_once $CJO['INCLUDE_PATH'].'/classes/afc/classes/form/fields/cjo/field.cjoSaveField.inc.php';
-require_once $CJO['INCLUDE_PATH'].'/classes/afc/classes/form/fields/cjo/field.cjoLinkButtonField.inc.php';
-require_once $CJO['INCLUDE_PATH'].'/classes/afc/classes/form/fields/cjo/field.cjoMediaButtonField.inc.php';
-require_once $CJO['INCLUDE_PATH'].'/classes/afc/classes/form/fields/cjo/field.cjoMediaListField.inc.php';
-require_once $CJO['INCLUDE_PATH'].'/classes/afc/classes/form/fields/cjo/field.cjoWYMeditorField.inc.php';
-require_once $CJO['INCLUDE_PATH'].'/classes/afc/classes/form/fields/cjo/field.cjoMediaCategoryButtonField.inc.php';
-
+require_once cjoPath::inc('classes/afc/classes/form/validate/internals/core.assemble_plugin_filepath.php');
+require_once cjoPath::inc('classes/afc/classes/form/validate/plugins/function.validate.php');

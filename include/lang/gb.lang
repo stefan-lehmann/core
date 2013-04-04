@@ -6,8 +6,8 @@ black = black
 green = green
 red = red
 
-dec_point     = .
-thousands_sep = ,
+setlocal_dec_point     = .
+setlocal_thousands_sep = ,
 
 ##.//contejo/connectmedia.php 
 button_close = Close 
@@ -134,9 +134,9 @@ msg_article_doesnt_exist = Article does not exist!
 msg_article_still_contains_articles = Article contains slave articles that need to be deleted first. 
 msg_articles_generated = Cache deleted, Templates newly generated! 
 msg_check_rights_in_directory = Please check permissions in the directory! 
-msg_clang_deleted = Language deleted successfully. 
-msg_clang_saved = Language added successfully. 
-msg_clang_updated = Language updated successfully. 
+msg_langs_deleted = Language deleted successfully. 
+msg_langs_added = Language added successfully. 
+msg_langs_updated = Language updated successfully. 
 msg_content_article_copied = Article <b>{0}</b> copied to "<b>{1}</b>".
 msg_content_article_moved = Article <b>{0}</b> moved to "<b>{1}</b>".
 msg_content_article_rcopied = Article <b>{0}</b> moved recursively to "<b>{1}</b>".
@@ -247,7 +247,7 @@ msg_addon_no_install = AddOn <b>{0}</b> could not be installed due to the follow
 msg_addon_no_reason = No reason given. 
 msg_addon_no_show_menu = AddOn <b>{0}</b> could not be shown. 
 msg_addon_no_uninstall = AddOn <b>{0}</b> could not be uninstalled due to the following reasons: 
-msg_addon_uninstall_not_found = Uninstalling this AddOn is not possible! 
+msg_addon_uninstall_sytem_addon = Uninstalling this AddOn is not possible! 
 msg_addon_uninstalled = AddOn <b>{0}</b> uninstalled. 
 
 ##.//contejo/include/classes/oop/class.ooarticle.inc.php 
@@ -644,10 +644,11 @@ label_catgroup_name = Group name
 label_catgroup_structure = Group level 
 label_catgroup_style = Group color 
 label_edit_catgroup = Edit category group 
-msg_cat_group_name_notEmpty = Please enter a name for the navigation structure! 
+msg_catgroup_name_notEmpty = Please enter a name for the navigation structure! 
 msg_catgroup_1_not_deleted = The category group 1 cannot be deleted! 
 msg_catgroup_deleted = Category group deleted successfully. 
-msg_catgroup_saved = Category group added successfully. 
+msg_catgroup_added = Category group added successfully. 
+msg_catgroup_updated = Category group updated successfully. 
 msg_catgroup_still_used = Category group couldnot be deleted. It is still in use at: 
 msg_catgroup_structure_notEmpty = Please define the structure of this group! 
 msg_catgroup_style_notEmpty = Please enter a color for this group! (format: #CCCCCC)! 
@@ -702,6 +703,8 @@ no_template = withtout Template
 
 ##.//contejo/include/pages/tools/modules_actions.inc.php 
 label_actions = Actions 
+label_add_action_to_module = Connect this action
+msg_action_connected = The connection has been established.
 msg_action_deleted_from_modul = The link to the action can be deleted. 
 msg_no_actions_connected_to_module =  No actions linked.
 
@@ -734,7 +737,7 @@ label_icon = Icon
 msg_cant_delete_default_template = Default Template cannot be deleted! 
 msg_cant_delete_template_in_use = Template could not be deleted, it is still in use: 
 msg_template_deleted = Template deleted successfully. 
-msg_template_updated = Template updated successfully. 
+msg_templates_updated = Template updated successfully. 
 
 ##.//contejo/include/pages/tools/types.inc.php 
 label_add_type = Add article type 
@@ -742,14 +745,14 @@ label_allow_to_all = no protection
 label_edit_type = Edit article type 
 label_groups = Groups
 label_no_password =  no password
-label_type_description = Description
-label_type_name = Name of article type 
-msg_article_type_deleted = Article type deleted successfully. 
-msg_article_type_saved = Article type added successfully. 
-msg_article_type_still_used = Article type could not be deleted. It is used with the following articles: 
-msg_article_type_updated = Article type updated successfully. 
-msg_type_description_notEmpty = Please enter a login description! 
-msg_type_name_notEmpty = Please enter a name! 
+label_types_description = Description
+label_types_name = Name of article type 
+msg_types_deleted = Article type deleted successfully. 
+msg_types_added = Article type added successfully. 
+msg_types_still_used = Article type could not be deleted. It is used with the following articles: 
+msg_types_updated = Article type updated successfully. 
+msg_types_description_notEmpty = Please enter a login description! 
+msg_types_name_notEmpty = Please enter a name! 
 
 ##.//contejo/include/pages/tools/_tools.inc.php 
 title_actions = Actions

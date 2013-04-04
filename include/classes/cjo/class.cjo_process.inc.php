@@ -33,18 +33,18 @@
  */
 
 class cjoProcess {
+    
+     static private $initialized = false;  
                                             
-     public static function start() {
-                         
-        global $CJO;        
+     public static function init() {
+         
+        if (self::$initialized) return false;
 
-        cjoExtension::registerExtensionPoint('CJO_PROCESS_STARTS'); 
-           
-        new cjoMessage();
-        
+        cjoExtension::registerExtensionPoint('CJO_PROCESS_STARTING'); 
+        self::cjoMagicQuotes();
         self::unregisterGlobals();
-        
-        if ($CJO['SETUP'] && !$CJO['CONTEJO']) {
+
+        if (cjoProp::isSetup() && !cjoProp::isBackend()) {
             header('Location: core/index.php');
             exit();
         } 
@@ -54,23 +54,24 @@ class cjoProcess {
         }
         
         if (cjo_get('cjo_anchor', 'bool')) {
-            cjoAssistance::redirectAchor();
+            cjoUrl::redirectAchor();
         }
 
         self::getAdjustPath();  
         self::setFavicon();
-        self::getCurrentArticleId();
-        
-        require_once $CJO['INCLUDE_PATH'].'/classes/var/class.cjo_vars.inc.php';
-        
-        foreach($CJO['VARIABLES'] as $key => $value) {
-            require_once $CJO['INCLUDE_PATH']."/classes/var/class.". strtolower(str_replace('cjoVar', 'cjo_var_', $value)).".inc.php";
-            $CJO['VARIABLES'][$key] = new $value;
-        }
-        
-        cjoExtension::registerExtension('OUTPUT_FILTER','i18n::searchAndTranslate');    
-        cjoExtension::registerExtensionPoint('CJO_PROCESS_STARTED'); 
+        self::setCurrentClangId();
+        self::setCurrentArticleId();
 
+        $temp = array();
+        foreach(cjoProp::get('VARIABLES') as $key => $value) {
+            $temp[$key] = new $value;
+        }
+        cjoProp::set('VARIABLES',$temp);
+        
+        cjoExtension::registerExtension('OUTPUT_FILTER','cjoI18N::searchAndTranslate');    
+        cjoExtension::registerExtensionPoint('CJO_PROCESS_STARTED'); 
+        
+        self::$initialized = true;
     }      
                                   
     private static function unregisterGlobals() {
@@ -90,48 +91,43 @@ class cjoProcess {
             }
     }      
     
-    public static function getCurrentClangId() {
-        global $CJO;  
-        $CJO['CUR_CLANG'] = cjo_request('clang', 'cjo-clang-id', $CJO['START_CLANG_ID']);
+    public static function setCurrentClangId() {
+        cjoProp::set('CUR_CLANG', cjo_request('clang', 'cjo-clang-id', cjoProp::get('START_CLANG_ID')));
     }
     
-    private static function getCurrentArticleId() {
-        
-        global $CJO;  
-        
-        if ($CJO['CONTEJO']) {
-            $CJO['ARTICLE_ID'] = cjo_request('article_id', 'cjo-article-id');
+    private static function setCurrentArticleId() {
+
+        if (cjoProp::isBackend()) {
+            cjoProp::set('ARTICLE_ID', cjo_request('article_id', 'cjo-article-id'));
             return;
         }  
-           
+                   
         if (!cjo_request('article_id', 'bool')) {
             
             cjoExtension::registerExtensionPoint('GET_ARTICLE_ID');   
-            if (empty($CJO['ARTICLE_ID'])) {
-                $CJO['ARTICLE_ID'] = $CJO['START_ARTICLE_ID'];
+            if (cjoProp::getArticleId()) {
+                cjoProp::set('ARTICLE_ID', cjoProp::get('START_ARTICLE_ID'));
             }   
             else {
                 return;
             }
         }
         else {
-            $CJO['ARTICLE_ID'] = cjo_request('article_id','cjo-article-id', $CJO['NOTFOUND_ARTICLE_ID']);
+            cjoProp::set('ARTICLE_ID', cjo_request('article_id','cjo-article-id', cjoProp::get('NOTFOUND_ARTICLE_ID')));
         } 
         
         if (!cjo_request('article_id','cjo-article-id') || 
-            !$CJO['CLANG'][cjo_request('clang','cjo-clang-id', -1)]) {
-            cjoAssistance::redirectFE($CJO['ARTICLE_ID'], cjo_request('clang','cjo-clang-id', false));
+            !cjoProp::getClangName(cjo_request('clang','cjo-clang-id', false))) {
+            cjoUrl::redirectFE(cjoProp::getArticleId(), cjo_request('clang','cjo-clang-id', false));
         }
     }       
                        
     public static function getAdjustPath() {
-    
-        global $CJO;
         
         $adjust_path = '';
         
-        if ($CJO['CONTEJO']) {
-            $CJO['ADJUST_PATH'] = $adjust_path;
+        if (cjoProp::isBackend()) {
+            cjoProp::set('ADJUST_PATH', $adjust_path);
             return;
         } 
     
@@ -142,22 +138,23 @@ class cjoProcess {
         
         $script_path = $script_info['dirname'];
         $uri_path    = (empty($uri_info['extension']) || substr($request_uri,-1) == '/') 
-                     ? cjo_server('REQUEST_URI','string') 
+                     ? $_SERVER['REQUEST_URI'] 
                      : $uri_info['dirname'];
          
         $script_path = preg_replace('/\/$/','',$script_path);
-        $uri_path    = preg_replace('/\/(\?.*)?$/','',$uri_path);
+        $uri_path = preg_replace('/\/$/','',$uri_path);
          
         if (!empty($script_path) && strpos($uri_path, $script_path) === false) {
-            $CJO['ADJUST_PATH'] = $adjust_path;
+            cjoProp::set('ADJUST_PATH', $adjust_path);
             return;
         }
         
-        $CJO['VIRTUAL_PATH'] = str_replace($script_path,'',$uri_path);
-        $offset  = count(cjoAssistance::toArray($CJO['VIRTUAL_PATH'],'/'));
+        cjoProp::set('VIRTUAL_PATH', str_replace($script_path,'',$uri_path));
+        
+        $offset  = count(cjoAssistance::toArray(cjoProp::get('VIRTUAL_PATH'),'/'));
     
         if ($offset < 1) {
-            $CJO['ADJUST_PATH'] = $adjust_path;
+            cjoProp::set('ADJUST_PATH', $adjust_path);
             return;
         } 
         
@@ -165,32 +162,66 @@ class cjoProcess {
             $adjust_path .= '../';
         }
 
-        $CJO['ADJUST_PATH'] = $adjust_path;
+        cjoProp::set('ADJUST_PATH', $adjust_path);
     }
                               
     private static function setFavicon(){
-        global $CJO;
-        if (!$CJO['CONTEJO'] || !cjoAssistance::isLocalhost()) {
-            $CJO['FAVICON'] = 'favicon.ico';
+
+        if (!cjoProp::isBackend() &&
+            cjo_server('HTTP_HOST','string') == 'localhost' &&
+            !in_array(cjo_server('HTTP_HOST','string'), cjoProp::get('LOCALHOST'))) {
+            cjoProp::set('FAVICON', 'favicon.ico');
             return;
         }
-        $CJO['FAVICON'] = 'favicon_local.ico';
+        cjoProp::set('FAVICON', 'favicon_local.ico');
         return;
     }      
-
-    public static function setIndividualUploadFolder() {
-
-        global $CJO;
-        
-        if (!$CJO['CONTEJO'] || empty($CJO['USER']) || !is_object($CJO['USER'])) return false;
-        
-        $login = cjoRewrite::parseArticleName($CJO['USER']->getValue('login'));
-        $CJO['UPLOADFOLDER'] .= '/'.$login;
     
-        if (!is_dir($CJO['UPLOADFOLDER'])) {
-            mkdir($CJO['UPLOADFOLDER']);
-            @chmod($CJO['UPLOADFOLDER'],$CJO['FILEPERM']);
-        }
-    }              
+    private static function cjoMagicQuotes() {
+        
+        global $_GET, $_POST, $_REQUEST;
+  
+        if ((function_exists("get_magic_quotes_gpc") && !get_magic_quotes_gpc()) ||
+            (ini_get('magic_quotes_sybase') == '' &&
+            (strtolower(ini_get('magic_quotes_sybase')) == "off"))){
             
+        
+            if (is_array($_GET)){
+                self::addSlashesOnArray($_GET);
+                foreach($_GET as $Akey => $AVal){
+                    $$Akey = $AVal;
+                }
+            }
+        
+            if (is_array($_POST)){
+                self::addSlashesOnArray($_POST);
+                foreach($_POST as $Akey => $AVal){
+                    $$Akey = $AVal;
+                }
+            }
+        
+            if (is_array($_REQUEST)){
+                self::addSlashesOnArray($_REQUEST);
+                    foreach($_REQUEST as $Akey => $AVal){
+                    $$Akey = $AVal;
+                }
+            }
+        }            
+    }    
+    
+    
+    private static function addSlashesOnArray(&$theArray) {
+    
+        if (is_array($theArray)){
+            foreach($theArray as $Akey => $AVal){
+                if (is_array($AVal)){
+                    self::addSlashesOnArray($AVal);
+                }
+                else{
+                    $theArray[$Akey] = addslashes($AVal);
+                }
+            }
+            reset($theArray);
+        }
+    }  
 }

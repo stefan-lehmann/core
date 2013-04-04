@@ -51,7 +51,7 @@ class cjoFieldContainer {
      */
     public function addField(& $field, & $section) {
         if (!cjoFormField :: isValid($field)) {
-            trigger_error('cjoForm: Unexpected type "' . gettype($field) . '" for $field! Expecting "cjoformfield"-object.', E_USER_ERROR);
+            throw new cjoException('cjoForm: Unexpected type "' . gettype($field) . '" for $field! Expecting "cjoformfield"-object.', E_USER_ERROR);
         }
         $field->cjosection = & $section;
         $this->fields[] = & $field;

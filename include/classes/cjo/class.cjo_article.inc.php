@@ -50,8 +50,6 @@ class cjoArticle {
     public $debug;
 
     function __construct($article_id = null, $clang = null) {
-
-        global $CJO;
         
         $this->article_id  = 0;
         $this->template_id = 0;
@@ -65,7 +63,7 @@ class cjoArticle {
         $this->debug       = false;
         $this->sql         = new cjoSql();
         
-        $this->setCLang(($clang !== null ? $clang : $CJO['CUR_CLANG']));
+        $this->setCLang(($clang !== null ? $clang : cjoProp::getClang()));
 
         cjoExtension::registerExtensionPoint('ARTICLE_INIT', 
                                              array('article'    => &$this,
@@ -87,9 +85,7 @@ class cjoArticle {
 
     public function setCLang($clang){
 
-        global $CJO;
-
-        if ($CJO['CLANG'][$clang] == "") $clang = $CJO['CUR_CLANG'];
+        if (!cjoProp::getClangName($clang)) $clang = cjoProp::getClang();
         $this->clang = $clang;
         $this->content = '';
     }
@@ -99,8 +95,6 @@ class cjoArticle {
     }
 
     public function setArticleId($article_id) {
-
-        global $CJO;
 
         $article_id = (int) $article_id ;
         $this->article_id = (int) $article_id;
@@ -149,6 +143,7 @@ class cjoArticle {
     public function setTemplateId($template_id, $change_mode=false) {
 
         global $CJO;
+
         if (!$template_id || $this->template_id == $template_id) {
             $CJO['ART'][$this->getArticleId()]['set_template_id'][$this->getClang()] = '';
             return true;
@@ -183,12 +178,10 @@ class cjoArticle {
     }
     
     private function escapeContejoVars(&$content) {
-        global $CJO;
         $content = str_replace(array('CJO_ARTICLE', 'CJO_TEMPLATE'), array('CJO__ARTICLE', 'CJO__TEMPLATE'), $content);
     }
     
     private function unescapeContejoVars(&$content) {
-        global $CJO;
         $content = str_replace(array('CJO__ARTICLE', 'CJO__TEMPLATE'), array('CJO_ARTICLE', 'CJO_TEMPLATE'), $content);
     }
 
@@ -197,7 +190,6 @@ class cjoArticle {
     }
 
     public function hasValue($value) {
-
         global $CJO;
         $value = $this->correctValue($value);
         return (!$this->viasql) ? isset($CJO['ART'][$this->article_id][$value][$this->clang]) : $this->sql->hasValue($value);
@@ -216,26 +208,24 @@ class cjoArticle {
     
     public function getSlicesOfArticle($return_array = true) {
         
-        global $CJO;
         if ($return_array) return $this->slices;
         return serialize($this->slices);
     }
     
     public function countSlicesOfArticle() {
         
-        global $CJO;
-
         $this->slices = array();
+        $ctypes = cjoProp::get('CTYPE');
         
         $sql = new cjoSql();
         $qry = "SELECT ctype, COUNT( ctype ) as slices 
                 FROM ".TBL_ARTICLES_SLICE." 
                 WHERE article_id=".$this->article_id." AND clang='".$this->clang."'
-                GROUP BY ctype, clang LIMIT ".count($CJO['CTYPE']);
+                GROUP BY ctype, clang LIMIT ".count($ctypes);
         $count_results = $sql->getArray($qry);
 
         foreach($count_results as $count_result) {
-            if (!isset($CJO['CTYPE'][$count_result['ctype']]) || !$CJO['CTYPE'][$count_result['ctype']]) continue;
+            if (!isset($ctypes[$count_result['ctype']]) || !$ctypes[$count_result['ctype']]) continue;
             $this->slices[$count_result['ctype']] = $count_result['slices'];
         }
     }
@@ -259,8 +249,6 @@ class cjoArticle {
 
     public function getArticle($curctype = -1, $empty_content_lang = -1) {
 
-        global $CJO, $I18N;
-
         if ($this->content != "") {
 
             if (!$this->eval) {
@@ -274,7 +262,7 @@ class cjoArticle {
         if ($curctype != -1 &&
             !cjoTemplate::hasCtype($this->getTemplateId(), $curctype)) {
 
-            echo '<!-- CTYPE "'.$CJO['CTYPE'][$curctype].'" (ID='.$curctype.') is not '.
+            echo '<!-- CTYPE "'.cjoProp::getCtype($curctype).'" (ID='.$curctype.') is not '.
                  'available in this TEMPLATE (ID='.$this->getTemplateId().') -->'."\r\n";
             return;
         }
@@ -298,7 +286,7 @@ class cjoArticle {
         ob_end_clean();
 
 
-        if (!$CJO['CONTEJO'] &&
+        if (!cjoProp::isBackend() &&
             empty($content) &&
             $this->article_id != 0 &&
             $empty_content_lang != -1 &&
@@ -306,8 +294,8 @@ class cjoArticle {
             {
             $msg = '<div class="cjo_no_content warning">[translate: WARNING CONTENT ONLY IN DEFAULT LANG]</div>'."\r\n";
 
-            $temp_clang = $CJO['CUR_CLANG'];
-            $CJO['CUR_CLANG'] = $empty_content_lang;
+            $temp_clang = cjoProp::getClang();
+            cjoProp::set('CUR_CLANG', $empty_content_lang);
             $this->setCLang($empty_content_lang);
             $this->setArticleId($this->article_id);
             $content = trim($this->getArticle($curctype));
@@ -315,7 +303,7 @@ class cjoArticle {
             if (!empty($content)) {
                 $content = $msg.$content;
             }
-            $CJO['CUR_CLANG'] = $temp_clang;
+            cjoProp::set('CUR_CLANG', $temp_clang);
             $this->setCLang($temp_clang);
         }
 
@@ -329,37 +317,35 @@ class cjoArticle {
 
     public function getArticleTemplate() {
 
-        global $CJO;
-
         if (empty($this->article_id)) {
             
-            $article = OOArticle::getArticleById($CJO['START_ARTICLE_ID'], $this->clang);
+            $article = OOArticle::getArticleById(cjoProp::get('START_ARTICLE_ID'), $this->clang);
 
             if (OOArticle::isValid($article)) {
-                cjoAssistance::redirectFE($CJO['START_ARTICLE_ID'], $this->clang);
+                cjoUrl::redirectFE(cjoProp::get('START_ARTICLE_ID'), $this->clang);
             }
         }
 
-        if ($this->article_id != $CJO['NOTFOUND_ARTICLE_ID'] &&
+        if ($this->article_id != cjoProp::get('NOTFOUND_ARTICLE_ID') &&
             !OOArticle::isOnline($this->article_id)) {
 
-            $article = OOArticle::getArticleById($CJO['NOTFOUND_ARTICLE_ID'], $this->clang);
+            $article = OOArticle::getArticleById(cjoProp::get('NOTFOUND_ARTICLE_ID'), $this->clang);
 
             cjoExtension::registerExtensionPoint('ARTICLE_OFFLINE', array('article' => &$this), true);
 
             if (OOArticle::isValid($article)) {
-                cjoAssistance::redirectFE($CJO['NOTFOUND_ARTICLE_ID'], $this->clang);
+                cjoUrl::redirectFE(cjoProp::get('NOTFOUND_ARTICLE_ID'), $this->clang);
             }
             else {
-                cjoAssistance::redirect($CJO['BACKEND_PATH']);
+                cjoUrl::redirect(cjoProp::get('BACKEND_PATH'));
             }
         }
 
         if ($this->hasRedirect()) {
             if (preg_match('/\D+/', $this->redirect)) {
-                cjoAssistance::redirect($this->redirect);
+                cjoUrl::redirect($this->redirect);
             }
-            cjoAssistance::redirectFE($this->redirect, $this->clang);
+            cjoUrl::redirectFE($this->redirect, $this->clang);
        }
 
         // ----- start: template caching
@@ -388,11 +374,9 @@ class cjoArticle {
     }
 
     private function editSlice($re, $curr_re_id) {
-
-        global $CJO, $I18N;
                 
         $slice_content = '<form enctype="multipart/form-data" action="index.php#slice'.$re['conts'][$curr_re_id].'" '."\r\n".
-                         '     method="post" accept-charset="'.$I18N->msg("htmlcharset").'" id="CJO_FORM">'."\r\n".
+                         '     method="post" accept-charset="'.cjoI18N::translate("htmlcharset").'" id="CJO_FORM">'."\r\n".
                          '  <input type="hidden" name="article_id" value="'.$this->article_id.'" />'."\r\n".
                          '  <input type="hidden" name="page" value="edit" />'."\r\n".
                          '  <input type="hidden" name="subpage" value="content" />'."\r\n".
@@ -427,11 +411,9 @@ class cjoArticle {
     }
 
     private function getSliceHead($re, $curr_re_id) {
-
-        global $CJO, $I18N;
         
-        $title = $CJO['USER']->hasPerm('advancedMode[]') 
-               ? ' title="'.$I18N->msg('label_slice_id', $re['conts'][$curr_re_id]).'"' 
+        $title = cjoProp::getUser()->hasPerm('advancedMode[]') 
+               ? ' title="'.cjoI18N::translate('label_slice_id', $re['conts'][$curr_re_id]).'"' 
                : '';
         
         $slice_head = $this->getAddModulSel($curr_re_id)."\r\n".
@@ -444,11 +426,11 @@ class cjoArticle {
                        '    </div>'."\r\n".
                        '</div>'."\r\n";
 
-        if ($CJO['USER']->hasModulPerm($re['modul_id'][$curr_re_id])) {
+        if (cjoProp::getUser()->hasModulPerm($re['modul_id'][$curr_re_id])) {
             $slice_head = sprintf($slice_head, '', $this->getSliceButtons($re['conts'][$curr_re_id]));
         }
         else {
-            $slice_head = sprintf($slice_head, ' no_rights', $I18N->msg('msg_no_editing_rights'));
+            $slice_head = sprintf($slice_head, ' no_rights', cjoI18N::translate('msg_no_editing_rights'));
         }
 
         return cjoExtension::registerExtensionPoint('SLICE_HEAD_BUILD', array('article_id' => $this->article_id,
@@ -461,14 +443,11 @@ class cjoArticle {
 
     private function getGeneratedArticle(){
 
-        global $CJO, $I18N;
-
         if (empty($this->article_id)) return false;
 
-        $filename = $CJO['FOLDER_GENERATED_ARTICLES']."/". $this->article_id.".".$this->clang.".".$this->getTemplateId().".content";
+        $filename = cjoPath::generated('articles', $this->article_id.'.'.$this->clang.'.'.$this->getTemplateId().'.content');
 
         if (!file_exists($filename)) {
-            require_once $CJO['INCLUDE_PATH']."/classes/cjo/class.cjo_generate.inc.php";
             cjoGenerate::generateArticle($this->article_id, true, $this->clang, $this->getTemplateId());
         }
         if (file_exists($filename)) {
@@ -477,9 +456,7 @@ class cjoArticle {
         }
     }
 
-    private function getParsedArticle(){
-
-        global $CJO, $I18N;
+    private function getParsedArticle() {
 
         $slice_limit = '';
         if ($this->mode != "edit" && $this->slice_id) {
@@ -662,7 +639,7 @@ class cjoArticle {
                         $sql->setQuery($qry);
 
                         if ($sql->getRows() == 1) {
-                            cjoAssistance::redirectBE(array('article_id' => $this->article_id,
+                            cjoUrl::redirectBE(array('article_id' => $this->article_id,
                                                             'mode' => 'edit',
                                                             'slice_id'=> $re['conts'][$curr_re_id],
                                                             'function'=> 'edit',
@@ -677,7 +654,7 @@ class cjoArticle {
 
                     if ($this->function=="edit" &&
                         $this->slice_id == $re['conts'][$curr_re_id] &&
-                        $CJO['USER']->hasModulPerm($re['modul_id'][$curr_re_id])) {
+                        cjoProp::getUser()->hasModulPerm($re['modul_id'][$curr_re_id])) {
                         $pre_html = '<div class="cjo_slice input clearfix">';
                         $slice_content .= $this->editSlice($re, $curr_re_id);
                     }
@@ -710,9 +687,9 @@ class cjoArticle {
                                                    'CJO_MEDIAFOLDER',
                                                    'CJO_FRONTPAGE_PATH');
                     
-                            $replace = array ($CJO['HTDOCS_PATH'],
-                                              $CJO['MEDIAFOLDER'],
-                                              $CJO['FRONTPAGE_PATH']);
+                            $replace = array (cjoProp::get('HTDOCS_PATH'),
+                                              cjoProp::get('MEDIAFOLDER'),
+                                              cjoProp::get('FRONTPAGE_PATH'));
                                               
                             $content = str_replace($search, $replace, $content);                              
                         }
@@ -790,9 +767,7 @@ class cjoArticle {
         }
     }
     
-    private function getAddModulSel($slice_id){
-
-        global $CJO, $I18N;
+    private function getAddModulSel($slice_id) {
 
         if (!is_object($this->modul_sel)) {
 
@@ -801,7 +776,7 @@ class cjoArticle {
             $this->modul_sel->setSize(1);
             $this->modul_sel->setStyle('class="cjo_add_module"');
             $this->modul_sel->setSelectExtra('onchange="this.form.submit();"');
-            $this->modul_sel->addOption('--------------------  '.$I18N->msg("add_block").'  --------------------','');     
+            $this->modul_sel->addOption('--------------------  '.cjoI18N::translate("add_block").'  --------------------','');     
             
             $sql = new cjoSql();
             $qry = "SELECT name, id, templates, ctypes
@@ -816,9 +791,9 @@ class cjoArticle {
             
             foreach ($sql->getArray($qry) as $module) {
 
-                if (!$CJO['USER']->isAdmin() && $CJO['USER']->hasPerm("editContentOnly[]")) continue;
+                if (!cjoProp::getUser()->isAdmin() && cjoProp::getUser()->hasPerm("editContentOnly[]")) continue;
 
-                if ($CJO['USER']->hasModulPerm($module['id'])) {
+                if (cjoProp::getUser()->hasModulPerm($module['id'])) {
                     $this->modul_sel->addOption($module['name'],$module['id']);
                 }
             }
@@ -844,50 +819,48 @@ class cjoArticle {
 
     private function getSliceButtons($slice_id) {
 
-        global $CJO, $I18N;
-
         $slice_buttons = new buttonField();
 
         if ($this->slice_id == $slice_id &&
         $this->function == 'edit') {
 
-            $slice_buttons->addButton('slice_cancel_button', $I18N->msg('button_cancel'), true, 'img/silk_icons/cancel.png');
+            $slice_buttons->addButton('slice_cancel_button', cjoI18N::translate('button_cancel'), true, 'img/silk_icons/cancel.png');
             $slice_buttons->setButtonAttributes('slice_cancel_button',
                                                 'class="cjo_button_cancel"
                                                 id="cjo_button_cancel-'.$slice_id.'"');
 
-            $slice_buttons->addButton('slice_update_button', $I18N->msg('button_update'), true, 'img/silk_icons/tick.png');
+            $slice_buttons->addButton('slice_update_button', cjoI18N::translate('button_update'), true, 'img/silk_icons/tick.png');
             $slice_buttons->setButtonAttributes('slice_update_button',
                                                 'class="cjo_button_update"
                                                 id="cjo_button_update-'.$slice_id.'"');
 
-            $slice_buttons->addButton('slice_save_button', $I18N->msg('button_save'), true, 'img/silk_icons/disk.png');
+            $slice_buttons->addButton('slice_save_button', cjoI18N::translate('button_save'), true, 'img/silk_icons/disk.png');
             $slice_buttons->setButtonAttributes('slice_save_button',
                                                 'class="cjo_button_save"
                                                 id="cjo_button_save-'.$slice_id.'"');
         }
         else {
-            $slice_buttons->addButton('slice_edit_button', $I18N->msg('button_edit'), true, 'img/silk_icons/page_white_edit.png');
+            $slice_buttons->addButton('slice_edit_button', cjoI18N::translate('button_edit'), true, 'img/silk_icons/page_white_edit.png');
             $slice_buttons->setButtonAttributes('slice_edit_button',
                                                 'class="cjo_button_edit"
                                                 id="cjo_button_edit-'.$slice_id.'"');
         }
 
-        if ($CJO['USER']->isAdmin() || !$CJO['USER']->hasPerm("editContentOnly[]")) {
-            $slice_buttons->addButton('slice_delete_button', $I18N->msg('button_delete'), true, 'img/silk_icons/bin.png');
+        if (cjoProp::getUser()->isAdmin() || !cjoProp::getUser()->hasPerm("editContentOnly[]")) {
+            $slice_buttons->addButton('slice_delete_button', cjoI18N::translate('button_delete'), true, 'img/silk_icons/bin.png');
             $slice_buttons->setButtonAttributes('slice_delete_button',
                                                 'class="cjo_button_delete"
                                                 id="cjo_button_delete-'.$slice_id.'"');
         }
 
-        if ($CJO['USER']->isAdmin() || $CJO['USER']->hasPerm("moveSlice[]")) {
+        if (cjoProp::getUser()->isAdmin() || cjoProp::getUser()->hasPerm("moveSlice[]")) {
 
-            $slice_buttons->addButton('slice_move_up_button', $I18N->msg('button_move_up'), true, 'img/silk_icons/move_up_green.png');
+            $slice_buttons->addButton('slice_move_up_button', cjoI18N::translate('button_move_up'), true, 'img/silk_icons/move_up_green.png');
             $slice_buttons->setButtonAttributes('slice_move_up_button',
                                                 'class="cjo_button_move_up small"
                                                 id="cjo_button_move_up-'.$slice_id.'"');;
 
-            $slice_buttons->addButton('slice_move_down_button', $I18N->msg('button_move_down'), true, 'img/silk_icons/move_down_green.png');
+            $slice_buttons->addButton('slice_move_down_button', cjoI18N::translate('button_move_down'), true, 'img/silk_icons/move_down_green.png');
             $slice_buttons->setButtonAttributes('slice_move_down_button',
                                                 'class="cjo_button_move_down small"
                                                 id="cjo_button_move_down-'.$slice_id.'"');
@@ -897,8 +870,6 @@ class cjoArticle {
     }
     
     public static function createCtypeMultiLink($article_id, $ctype) {
-        
-        global $CJO, $I18N;
         
         $article = OOArticle::getArticleById($article_id);
         
@@ -912,26 +883,26 @@ class cjoArticle {
 
         foreach($ctypes as $ctype_id) {
             
-            if (!$CJO['USER']->hasCtypePerm($ctype_id)) continue;
+            if (!cjoProp::getUser()->hasCtypePerm($ctype_id)) continue;
 
-            $link_text = $CJO['CTYPE'][$ctype_id];
+            $link_text = cjoProp::get('CTYPE|'.$ctype_id);
             $slices = ($article->_slices[$ctype_id]) ? ' <i>('.$article->_slices[$ctype_id].')</i>' : '';
             
             $class = $output == '' ? ' class="first"' : '';
            
             $output .= sprintf('<li%s>%s</li>',
                                $class,
-                               cjoAssistance::createBELink($link_text.$slices, 
-                                                           array('subpage'=>'content','article_id'=>$article_id,'clang'=>$CJO['CUR_CLANG'],'ctype'=>$ctype_id), 
+                               cjoUrl::createBELink($link_text.$slices, 
+                                                           array('subpage'=>'content','article_id'=>$article_id,'clang'=>cjoProp::getClang(),'ctype'=>$ctype_id), 
                                                            array(), 
-                                                           'title="'.$I18N->msg('label_edit_article_content', $CJO['CTYPE'][$ctype_id]).'"')
+                                                           'title="'.cjoI18N::translate('label_edit_article_content', cjoProp::get('CTYPE|'.$ctype_id)).'"')
                                );
         } 
         
-        $link = cjoAssistance::createBELink($I18N->msg('title_content'), 
-                                            array('subpage'=>'content','article_id'=>$article_id,'clang'=>$CJO['CUR_CLANG'],'ctype'=>$ctype), 
+        $link = cjoUrl::createBELink(cjoI18N::translate('title_content'), 
+                                            array('subpage'=>'content','article_id'=>$article_id,'clang'=>cjoProp::getClang(),'ctype'=>$ctype), 
                                             array(), 
-                                            'title="'.$I18N->msg('title_content').'"  class="cjo_multi_link_opener"');
+                                            'title="'.cjoI18N::translate('title_content').'"  class="cjo_multi_link_opener"');
         
         return  "\r\n\t\t".'<div class="cjo_multi_link cjo_ctype_content">'.
                 "\r\n\t\t".$link.
@@ -970,26 +941,24 @@ class cjoArticle {
 
     private function replaceObjectVars(&$sql, $content) {
 
-        global $CJO;
-
         $tmp = '';
         $slice_id = $sql->getValue("sl.id");
         $this->escapeContejoVars($content);
         
-        foreach ($CJO['VARIABLES'] as $var) {
+        foreach (cjoProp::get('VARIABLES') as $var) {
 
             if ($this->mode == 'edit') {
 
                 if (($this->function == 'add' && $slice_id == '0') ||
                     ($this->function == 'edit' && $slice_id == $this->slice_id)) {
 
-                    if (isset($CJO['ACTION']['SAVE']) && $CJO['ACTION']['SAVE'] === false) {
+                    if (!cjoProp::get('ACTION|SAVE',true)) {
                         // Wenn der aktuelle Slice nicht gespeichert werden soll
                         // (via Action wurde das Nicht-Speichern-Flag gesetzt)
                         // Dann die Werte manuell aus dem Post übernehmen
                         // und anschließend die Werte wieder zurücksetzen,
                         // damit die nächsten Slices wieder die Werte aus der DB verwenden
-                        $var->setACValues($sql, $CJO['ACTION']);
+                        $var->setACValues($sql, cjoProp::get('ACTION'));
                         $tmp = $var->getBEInput($sql, $content);
                         $sql->flushValues();
                     }
@@ -1019,46 +988,46 @@ class cjoArticle {
 
     private function replaceCommonVars($content, $article_id = false) {
 
-        global $CJO;
-
         static $user_id = null;
         static $user_login = null;
 
         // UserId gibts nur im Backend
         if ($user_id === null) {
 
-            if (is_object($CJO['USER'])) {
-                $user_id = $CJO['LOGIN']->getValue('user_id');
-                $user_login = $CJO['LOGIN']->getValue('login');
+            if (cjoProp::getUser()) {
+                $user_id = cjoProp::getUser()->getValue('user_id');
+                $user_login = cjoProp::getUser()->getValue('login');
             }
             else {
                 $user_id = '';
                 $user_login = '';
             }
         }
+        
         $path = cjoAssistance::toArray($this->getValue('path').$this->article_id.'|');
            
         $search = array('GLOBALS[\'CJO_ARTICLE_ID\']'    => 'GLOBALS[\'CJ_O_ARTICLE_ID\']',
                         'GLOBALS[\'CJO_CLANG_ID\']'      => 'GLOBALS[\'CJ_O_CLANG_ID\']',
-                        'GLOBALS[\'CJ_O_ARTICLE_ID\']'   => 'GLOBALS[\'CJO_ARTICLE_ID\']',
-                        'GLOBALS[\'CJ_O_CLANG_ID\']'     => 'GLOBALS[\'CJO_CLANG_ID\']',
                         'CJO_ARTICLE_ID'                 =>  $this->article_id,
                         'CJO_TEMPLATE_ID'                =>  $this->getTemplateId(),
                         'CJO_ARTICLE_PARENT_ID'          =>  $this->parent_id,
                         'CJO_PARENT_ID'                  =>  $this->parent_id,
                         'CJO_ARTICLE_ROOT_ID'            =>  array_shift($path),
+                        'CJO_ARTICLE_PATH'               =>  $this->getValue('path').$this->article_id.'|',
                         'CJO_ARTICLE_AUTHOR'             =>  $this->getValue('author'),
                         'CJO_ARTICLE_NAME'               =>  $this->getValue('name'),
                         'CJO_ARTICLE_TITLE'              =>  $this->getValue('title'),
                         'CJO_ARTICLE_DESCRIPTION'        =>  $this->getValue('description'),
                         'CJO_ARTICLE_KEYWORDS'           =>  $this->getValue('keywords'),
-                        'CJO_ARTICLE_URL'                =>  cjoRewrite::getUrl($this->article_id, $this->clang),
+                        'CJO_ARTICLE_URL'                =>  cjoUrl::getUrl($this->article_id, $this->clang),
                         'CJO_ARTICLE_ONLINE_FROM'        =>  $this->getValue('online_from'),
                         'CJO_ARTICLE_ONLINE_TO'          =>  $this->getValue('online_to'),
                         'CJO_ARTICLE_CREATEUSER'         =>  $this->getValue('createuser'),
                         'CJO_ARTICLE_UPDATEUSER'         =>  $this->getValue('updateuser'),
                         'CJO_ARTICLE_CREATEDATE'         =>  $this->getValue('createdate'),
-                        'CJO_ARTICLE_UPDATEDATE'         =>  $this->getValue('updatedate'));
+                        'CJO_ARTICLE_UPDATEDATE'         =>  $this->getValue('updatedate'),
+                        'GLOBALS[\'CJ_O_ARTICLE_ID\']'   => 'GLOBALS[\'CJO_ARTICLE_ID\']',
+                        'GLOBALS[\'CJ_O_CLANG_ID\']'     => 'GLOBALS[\'CJO_CLANG_ID\']');
 
         foreach($search as $key => $replace) {
            $content = preg_replace('/(?<!\[\[)'.preg_quote($key).'(?!\]\])/', $replace, $content); 
@@ -1079,31 +1048,29 @@ class cjoArticle {
      */
     public static function addArticle($article){
 
-        global $CJO, $I18N;
-
         if (!is_array($article)) {
             return false;
         }
 
-        if (!$CJO['CONTEJO'] ||
-            $CJO['USER']->hasPerm('editContentOnly[]') ||
-            !$CJO['USER']->hasPerm('publishArticle[]') ||
-            !$CJO['USER']->hasCatPermWrite($article['re_id'])) {
-            cjoMessage::addError($I18N->msg("msg_no_permissions"));
+        if (!cjoProp::isBackend() ||
+            cjoProp::getUser()->hasPerm('editContentOnly[]') ||
+            !cjoProp::getUser()->hasPerm('publishArticle[]') ||
+            !cjoProp::getUser()->hasCatPermWrite($article['re_id'])) {
+            cjoMessage::addError(cjoI18N::translate("msg_no_permissions"));
             return false;
         }
 
-        if (!$CJO['USER']->hasOnlineFromToPerm() ||
+        if (!cjoProp::getUser()->hasOnlineFromToPerm() ||
             !$article['online_from']) {
             $article['online_from'] = time();
         }
 
-        if (!$CJO['USER']->hasOnlineFromToPerm() ||
+        if (!cjoProp::getUser()->hasOnlineFromToPerm() ||
             !$article['online_to']) {
             $article['online_to']   = mktime(0, 0, 0, 1, 1, 2020);
         }
 
-        if (!$CJO['USER']->hasLoginPerm()) {
+        if (!cjoProp::getUser()->hasLoginPerm()) {
             $article['type_id'] = "1";
         }
 
@@ -1115,7 +1082,7 @@ class cjoArticle {
         
         $article['id'] = false;
         $state = true;
-        foreach (array_keys($CJO['CLANG']) as $clang_id){
+        foreach (array_keys(cjoProp::get('CLANG')) as $clang_id){
 
             $insert = new cjoSql();
             $insert->setTable(TBL_ARTICLES);
@@ -1160,57 +1127,53 @@ class cjoArticle {
                                                        "type_id" => $article['type_id'],
                                                        "online_from" => $article['online_from'],
                                                        "online_to" => $article['online_to'],
-                                                       "user" => $CJO['USER']->getValue("name")));
+                                                       "user" => cjoProp::getUser()->getValue("name")));
         }
 
-        if ($state) cjoMessage::addSuccess($I18N->msg('msg_article_width_name_inserted', $article['name']));
+        if ($state) cjoMessage::addSuccess(cjoI18N::translate('msg_article_width_name_inserted', $article['name']));
 
         return $article['id'];
     }
 
     public static function updatePrio($id, $newprio=1000000000000, $clang=false){
 
-        global $CJO, $I18N;
-
-        if ($clang === false) {
-            $temp = $CJO['CUR_CLANG'];
-            $CJO['CUR_CLANG'] = $clang;
+        if ($clang !== false) {
+            $temp = cjoProp::getClang();
+            cjoProp::set('CUR_CLANG',$clang);
         }
         
         cjoExtension::registerExtension('PRIOR_UPDATED', 'cjoArticle::regenerateUpdatePrio');
         cjoAssistance::updatePrio(TBL_ARTICLES, $id, $newprio, $col = 'id', 're_id');
         
-        if ($clang === false) {
-            $CJO['CUR_CLANG'] = $temp;
+        if ($clang !== false) {
+            cjoProp::set('CUR_CLANG',$temp);
         }
     }
 
     public static function regenerateUpdatePrio($params) {
-        global $CJO;
+
         cjoGenerate::deleteGeneratedArticle($params['id']);
         cjoGenerate::deleteGeneratedArticle($params['re_id'],true);
     }
 
     public static function updateArticleParams($article_id, $mode, $clang) {
 
-        global $CJO, $I18N;
-
         switch($mode) {
             case 'status':
                 $action['row'] = 'status';
-                $action['msg'] = $I18N->msg('msg_status_updated');
+                $action['msg'] = cjoI18N::translate('msg_status_updated');
                 break;
             case 'navi_item':
                 $action['row'] = 'navi_item';
-                $action['msg'] = $I18N->msg('msg_navi_item_updated');
+                $action['msg'] = cjoI18N::translate('msg_navi_item_updated');
                 break;
             case 'teaser':
                 $action['row'] = 'teaser';
-                $action['msg'] = $I18N->msg('msg_teaser_updated');
+                $action['msg'] = cjoI18N::translate('msg_teaser_updated');
                 break;
             case 'comments':
                 $action['row'] = 'comments';
-                $action['msg'] = $I18N->msg('msg_comments_updated');
+                $action['msg'] = cjoI18N::translate('msg_comments_updated');
                 break;
             case 'delete':
                 $action['del']  = true;
@@ -1252,7 +1215,7 @@ class cjoArticle {
                 }
             }
             else {
-                cjoMessage::addError($I18N->msg("msg_no_such_article"));
+                cjoMessage::addError(cjoI18N::translate("msg_no_such_article"));
             }
         }
         return false;

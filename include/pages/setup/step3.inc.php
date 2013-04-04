@@ -30,18 +30,18 @@ $icons['perm'] = 'tick';
 $icons['addons'] = 'tick';
 
 if (version_compare($CJO['PHP_VERSION'], phpversion(), ">")){
-	cjoMessage::addError($I18N->msg("msg_setup_step3_err_php", $CJO['PHP_VERSION']));
+	cjoMessage::addError(cjoI18N::translate("msg_setup_step3_err_php", $CJO['PHP_VERSION']));
 	$icons['php'] = 'exclamation';
 }
 
 $gd_info = gd_info();
 
 if ($gd_info["GD Version"] === false){
-	cjoMessage::addError($I18N->msg("msg_setup_step3_err_gd", $gd_info["GD Version"]));
+	cjoMessage::addError(cjoI18N::translate("msg_setup_step3_err_gd", $gd_info["GD Version"]));
 	$icons['gd'] = 'exclamation';
 }
 
-cjoAssistance::copyDir($CJO['INSTALL_PATH'].'/structure', $CJO['HTDOCS_PATH']);
+cjoFile::copyDir($CJO['INSTALL_PATH'].'/structure', $CJO['HTDOCS_PATH']);
     
 if (cjoMessage::hasErrors()){
     $icons['copy'] = 'exclamation';
@@ -66,7 +66,7 @@ $writeable = array ($CJO['ADDON_PATH'],
 $errors = '';
 foreach ($writeable as $item) {
 
-    if ($item != '' && !cjoAssistance::isWritable($item)) {
+    if ($item != '' && !cjoFile::isWritable($item)) {
         cjoMessage::removeLastError();
         $errors .= "<br/>".$item;
         continue;
@@ -74,7 +74,7 @@ foreach ($writeable as $item) {
 }
 
 if ($errors != '') {
-    cjoMessage::addError($I18N->msg("msg_setup_step3_err_perm",$errors));
+    cjoMessage::addError(cjoI18N::translate("msg_setup_step3_err_perm",$errors));
     $icons['perm'] = 'exclamation';
 }
 
@@ -90,12 +90,11 @@ $hidden['prev_subpage']->setValue('step2');
 $hidden['lang'] = new hiddenField('lang');
 $hidden['lang']->setValue($lang);
 
-$fields['headline1'] = new readOnlyField('headline1', '', array('class' => 'formheadline'));
-$fields['headline1']->setValue($I18N->msg("label_php_version"));
+$fields['headline1'] = new headlineField(cjoI18N::translate("label_php_version"));
 
 $fields['info'] = new readOnlyField('info', '', array('style'=>'margin-left: 200px;'));
 $fields['info']->setContainer('div');
-$fields['info']->setValue($I18N->msg("msg_setup_step3_info",
+$fields['info']->setValue(cjoI18N::translate("msg_setup_step3_info",
     					  			 '<img src="img/silk_icons/'.$icons['php'].'.png" alt="OK" />',
 									 phpversion(),
 									 '<img src="img/silk_icons/'.$icons['gd'].'.png" alt="OK" />',
@@ -105,25 +104,25 @@ $fields['info']->setValue($I18N->msg("msg_setup_step3_info",
 
 $fields['test_again'] = new readOnlyField('test_again', '', array('style'=>'margin-left: 200px;'));
 $fields['test_again']->setContainer('div');
-$fields['test_again']->setValue('<input type="button" value="'.$I18N->msg("label_test_again").'" onclick="window.location.reload()" />');
+$fields['test_again']->setValue('<input type="button" value="'.cjoI18N::translate("label_test_again").'" onclick="window.location.reload()" />');
 
 
 $fields['button'] = new buttonField();
-$fields['button']->addButton('cjoform_back_button',$I18N->msg("button_back"), true, 'img/silk_icons/control_play_backwards.png');
-$fields['button']->addButton('cjoform_next_button',$I18N->msg("button_next_step4"), true, 'img/silk_icons/control_play.png');
+$fields['button']->addButton('cjoform_back_button',cjoI18N::translate("button_back"), true, 'img/silk_icons/control_play_backwards.png');
+$fields['button']->addButton('cjoform_next_button',cjoI18N::translate("button_next_step4"), true, 'img/silk_icons/control_play.png');
 $fields['button']->setButtonAttributes('cjoform_next_button', ' style="color: green"');
 
 if (cjoMessage::hasErrors()){
 	$fields['button']->setButtonAttributes('cjoform_next_button', ' disabled="disabled"');
 }
 //Add Fields:
-$section = new cjoFormSection('', $I18N->msg("label_setup_".$subpage."_title"), array ());
+$section = new cjoFormSection('', cjoI18N::translate("label_setup_".$subpage."_title"), array ());
 
 $section->addFields($fields);
 $form->addSection($section);
 $form->addFields($hidden);
 
 if ($form->validate()) {
-    cjoAssistance::redirectBE(array('subpage' => 'step4', 'lang' => $lang));
+    cjoUrl::redirectBE(array('subpage' => 'step4', 'lang' => $lang));
 }
 $form->show(false);

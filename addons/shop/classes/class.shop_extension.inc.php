@@ -26,7 +26,7 @@
 
 class cjoShopExtension {
     
-    protected static $mypage = 'shop';
+    protected static $addon = 'shop';
 
     public static function copyConfig($params) {
 
@@ -35,24 +35,24 @@ class cjoShopExtension {
     	if (empty($params['id']) || cjoMessage::hasErrors()) return false;
 
     	$new_clang = $params['id'];
-        $files     = array( array($CJO['ADDON_CONFIG_PATH'].'/'.self::$mypage.'/0.clang.inc.php',
-        	                      $CJO['ADDON_CONFIG_PATH'].'/'.self::$mypage.'/'.$params['id'].'.clang.inc.php'),
-        	                array($CJO['ADDON_CONFIG_PATH'].'/'.self::$mypage.'/0.business_terms.txt',
-        	                      $CJO['ADDON_CONFIG_PATH'].'/'.self::$mypage.'/'.$params['id'].'.business_terms.txt'),
-                            array($CJO['ADDON_CONFIG_PATH'].'/'.self::$mypage.'/0.confirm_mail.html',
-                                  $CJO['ADDON_CONFIG_PATH'].'/'.self::$mypage.'/'.$params['id'].'.confirm_mail.html'),
-                            array($CJO['ADDON_CONFIG_PATH'].'/'.self::$mypage.'/0.send_mail.html',
-                                  $CJO['ADDON_CONFIG_PATH'].'/'.self::$mypage.'/'.$params['id'].'.send_mail.html')                                          	                      
+        $files     = array( array($CJO['ADDON_CONFIG_PATH'].'/'.self::$addon.'/0.clang.inc.php',
+        	                      $CJO['ADDON_CONFIG_PATH'].'/'.self::$addon.'/'.$params['id'].'.clang.inc.php'),
+        	                array($CJO['ADDON_CONFIG_PATH'].'/'.self::$addon.'/0.business_terms.txt',
+        	                      $CJO['ADDON_CONFIG_PATH'].'/'.self::$addon.'/'.$params['id'].'.business_terms.txt'),
+                            array($CJO['ADDON_CONFIG_PATH'].'/'.self::$addon.'/0.confirm_mail.html',
+                                  $CJO['ADDON_CONFIG_PATH'].'/'.self::$addon.'/'.$params['id'].'.confirm_mail.html'),
+                            array($CJO['ADDON_CONFIG_PATH'].'/'.self::$addon.'/0.send_mail.html',
+                                  $CJO['ADDON_CONFIG_PATH'].'/'.self::$addon.'/'.$params['id'].'.send_mail.html')                                          	                      
         	               );
 
     	foreach ($files as $file) {
 
         	if (!file_exists($file[0]) ||
         	    !copy($file[0], $file[1])) {
-    			cjoMessage::addError($I18N->msg("err_config_file_copy", $file[1]));
+    			cjoMessage::addError(cjoI18N::translate("err_config_file_copy", $file[1]));
     		}
     		else {
-    		    @chmod($file[1], $CJO['FILEPERM']);
+    		    @chmod($file[1], cjoProp::getFilePerm());
     		}
     	}
     }
@@ -87,7 +87,7 @@ class cjoShopExtension {
         }
 
         if (!cjoMessage::hasErrors()) {
-            cjoMessage::addSuccess($I18N_21->msg("msg_shop_attributes_copied"));
+            cjoMessage::addSuccess(cjoAddon::translate(21,"msg_shop_attributes_copied"));
         }
     }
 
@@ -98,13 +98,13 @@ class cjoShopExtension {
     	$content = $params['subject'];
         $css = '';
 
-    	$css_file = $CJO['ADDON']['settings'][self::$mypage]['CSS']['FRONTEND'];
+    	$css_file = $CJO['ADDON']['settings'][self::$addon]['CSS']['FRONTEND'];
 
     	if (file_exists($css_file)) {
     	    $css .= "\r\n".'<link type="text/css" href="'.$css_file.'" rel="stylesheet" />';
     	}
 
-    	$css_file = $CJO['ADDON']['settings'][self::$mypage]['CSS']['FRONTEND_IE'];
+    	$css_file = $CJO['ADDON']['settings'][self::$addon]['CSS']['FRONTEND_IE'];
 
     	if (file_exists($css_file)) {
     	    $css .= "\r\n".'<!--[if lte IE 8]>'."\r\n".
@@ -116,13 +116,13 @@ class cjoShopExtension {
     	$content = preg_replace('/<\/head>/i', $css."\r\n".'</head>', $content, 1);
 
     	if (strpos($content,'[[SHOP_BASKET]]') !== false &&
-    	    $CJO['ARTICLE_ID'] == $CJO['ADDON']['settings'][self::$mypage]['BASKET_ARTICLE_ID']) {
+    	    $CJO['ARTICLE_ID'] == $CJO['ADDON']['settings'][self::$addon]['BASKET_ARTICLE_ID']) {
     		$content = str_replace('[[SHOP_BASKET]]', cjoShopBasket::out(), $content);
 		}
 
         if (strpos($content,'[[SHOP_CHECKOUT]]') !== false &&
-    	    $CJO['ARTICLE_ID'] == $CJO['ADDON']['settings'][self::$mypage]['CHECKOUT_ARTICLE_ID']) {
-        	include_once $CJO['ADDON_PATH']."/".self::$mypage."/include/checkout.inc.php";
+    	    $CJO['ARTICLE_ID'] == $CJO['ADDON']['settings'][self::$addon]['CHECKOUT_ARTICLE_ID']) {
+        	include_once $CJO['ADDON_PATH']."/".self::$addon."/include/checkout.inc.php";
     		$content = str_replace('[[SHOP_CHECKOUT]]', $checkout, $content);
 		}
 
@@ -133,9 +133,9 @@ class cjoShopExtension {
         if (strpos($content,'[[SHOP_NAV]]') !== false) {
 
             $articles             = array();
-            $articles['delivery'] = $CJO['ADDON']['settings'][self::$mypage]['DELIVERY_ARTICLE_ID'];
-            $articles['basket']   = $CJO['ADDON']['settings'][self::$mypage]['BASKET_ARTICLE_ID'];
-            $articles['checkout'] = $CJO['ADDON']['settings'][self::$mypage]['CHECKOUT_ARTICLE_ID'];
+            $articles['delivery'] = $CJO['ADDON']['settings'][self::$addon]['DELIVERY_ARTICLE_ID'];
+            $articles['basket']   = $CJO['ADDON']['settings'][self::$addon]['BASKET_ARTICLE_ID'];
+            $articles['checkout'] = $CJO['ADDON']['settings'][self::$addon]['CHECKOUT_ARTICLE_ID'];
 
             foreach($articles as $key=>$article) {
                 $article = OOArticle::getArticleById($article);
@@ -143,7 +143,7 @@ class cjoShopExtension {
                 $articles[$key] = $article->toLink();
             }
 
-            $html_tpl_content = @file_get_contents($CJO['ADDON']['settings'][self::$mypage]['HTML_TEMPLATE']['SHOP_NAV']);
+            $html_tpl_content = @file_get_contents($CJO['ADDON']['settings'][self::$addon]['HTML_TEMPLATE']['SHOP_NAV']);
 	        $html_tpl = new cjoHtmlTemplate($html_tpl_content);
             // fill template with values
             $html_tpl->fillTemplate('TEMPLATE', array('DELIVERY_LINK' => $articles['delivery'],
@@ -212,11 +212,78 @@ class cjoShopExtension {
     public static function maskPipe($string){    	
     	return self::maskString('|', '&#124', $string);
     }
+    
+    public static function initAddon() {        
+        
+        cjoAddon::setParameter('CLANG_CONF', cjoPath::addonAssets(self::$addon,cjoProp::getClang().'.clang.config'), self::$addon);
+        cjoAddon::readParameterFile(self::$addon, cjoPath::addonAssets(self::$addon,cjoProp::getClang().'.clang'));
+        
+        cjoAddon::setParameter('BUSINESS_TERMS', cjoPath::addonAssets(self::$addon, cjoProp::getClang().'.business_terms.txt'), self::$addon);
+
+        // get currency codes
+        preg_match_all('/(?<=^|\|)([^\|]*)=([^\|]*)(?=\||$)/', 
+                       cjoAddon::getParameter('CURRENCY_NAMES',self::$addon),
+                       $currencies,
+                       PREG_SET_ORDER);
+                       
+         // get default currency
+        $default_currency_code =  $currencies[0][1];
+        
+        // select a new currency if different from default
+        if (!cjoProp::isBackend()) {
+            $currency_name_code = cjo_post('currency_select', 'string', cjo_session($addon.'_currency', 'string', $default_currency_code));
+            cjo_set_session($addon.'_currency', $currency_name_code);
+        } else {
+            $currency_name_code = $default_currency_code;
+        }
+        
+        foreach($currencies as $currency_name) {
+            if (in_array($currency_name_code, $currency_name))
+                $currency_name = $currency_name[2];
+        }
+        // get currency sign
+        preg_match('/(?<=\|'.$currency_name_code.'\=|^'.$currency_name_code.'\=).*?(?=\||$)/',
+                   cjoAddon::getParameter('CURRENCY_SIGNS',self::$addon), $sign);
+        
+        // get default currency sign
+        preg_match('/(?<=\|'.$default_currency_code.'\=|^'.$default_currency_code.'\=).*?(?=\||$)/',
+                   cjoAddon::getParameter('CURRENCY_SIGNS',self::$addon), $default_sign);
+        
+        // get exchange ratio
+        preg_match('/(?<=\|'.$currency_name_code.'\=|^'.$currency_name_code.'\=).*?(?=\||$)/',
+                   cjoAddon::getParameter('EXCHANGE_RATIO',self::$addon), $exchange_ratio);
+        
+        // get separator
+        preg_match('/(?<=\|'.$currency_name_code.'\=|^'.$currency_name_code.'\=).*?(?=\||$)/',
+                   cjoAddon::getParameter('PRICE_SEPARATORS',self::$addon), $separator);
+        
+        // get default separator
+        preg_match('/(?<=\|'.$default_currency_code.'\=|^'.$default_currency_code.'\=).*?(?=\||$)/',
+                   cjoAddon::getParameter('PRICE_SEPARATORS',self::$addon), $default_separator);
+
+
+        cjoAddon::setParameter('CURRENCY', 
+                               array('CURR_CODE'         => $currency_name_code,
+                                     'CURR_NAME'         => $currency_name,
+                                     'CURR_SIGN'         => $sign[0],
+                                     'CURR_RATIO'        => $exchange_ratio[0],
+                                     'CURR_SEPARATOR'    => $separator[0],
+                                     'DEFAULT_SIGN'      => $default_sign[0],
+                                     'DEFAULT_SEPARATOR' => $default_separator[0]), 
+                               self::$addon);
+
+        cjoAddon::setParameter('HTML_TEMPLATE', 
+                               array('BASKET'           => cjoPath::addonAssets(self::$addon, 'theme/basket.'.liveEdit::getTmplExtension()),
+                                     'CHECKOUT'         => cjoPath::addonAssets(self::$addon, 'theme/checkout.'.liveEdit::getTmplExtension()),
+                                     'PRODUCT_TABLE'    => cjoPath::addonAssets(self::$addon, 'theme/product_table.'.liveEdit::getTmplExtension()),
+                                     'BASKET_INFO'      => cjoPath::addonAssets(self::$addon, 'theme/basket_info.'.liveEdit::getTmplExtension()),
+                                     'SHOP_NAV'         => cjoPath::addonAssets(self::$addon, 'theme/shop_nav.'.liveEdit::getTmplExtension()),
+                                     'CURRENCY_SELECT'  => cjoPath::addonAssets(self::$addon, 'theme/currency_select.'.liveEdit::getTmplExtension())), 
+                               self::$addon);
+
+
+        if (cjo_post('shop_goto_basket', 'bool')) {
+            cjoUrl::redirectFE(cjoAddon::getParameter('BASKET_ARTICLE_ID',self::$addon));
+        }
+    }
 }
-
-cjoExtension::registerExtension('CLANG_ADDED', 'cjoShopExtension::copyConfig');
-cjoExtension::registerExtension('CLANG_ADDED', 'cjoShopExtension::copyAttributes');
-
-if ($CJO['CONTEJO']) return false;
-
-cjoExtension::registerExtension('OUTPUT_FILTER', 'cjoShopExtension::replaceVars');

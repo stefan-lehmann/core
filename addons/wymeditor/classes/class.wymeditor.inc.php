@@ -23,8 +23,8 @@
  * @filesource
  */
 
-global $CJO;
-$CJO['WYM']['counter']=0;
+
+cjoAddon::setProperty('settings|COUNTER', 0, $addon);
 
 class WYMeditor {
 
@@ -85,9 +85,7 @@ class WYMeditor {
     
     public function render($print = true) {
 
-        global $CJO;
-
-        $this->lang = $CJO['LANG'];
+        $this->lang = cjoProp::get('LANG');
 
             $output = '';
             $output .= "\r\n".'<script type="text/javascript">'."\r\n";
@@ -130,7 +128,7 @@ class WYMeditor {
             $output .= "\r\n".'					 + " \'http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\'>"';
             $output .= "\r\n".'					 + "<html dir=\'"+WYMeditor.DIRECTION+"\'>"';
             $output .= "\r\n".'					 + "<h"+"ead>"';
-            $output .= "\r\n".'					 + "<l"+"ink rel=\'stylesheet\' type=\'text/css\' media=\'screen\' href=\''.$CJO['INCLUDE_PATH'].'/../css/contejo.css\' />"';
+            $output .= "\r\n".'					 + "<l"+"ink rel=\'stylesheet\' type=\'text/css\' media=\'screen\' href=\''.cjoUrl::backend('css/contejo.css').'\' />"';
             $output .= "\r\n".'					 + "<l"+"ink rel=\'stylesheet\' type=\'text/css\' media=\'screen\' href=\'"+WYMeditor.CSS_PATH+"\' />"';
             $output .= "\r\n".'					 + "<title>"+ WYMeditor.DIALOG_TITLE+"</title>"';
             $output .= "\r\n".'					 + "<s"+"cript type=\'text/javas"+"cript\' src=\'"+WYMeditor.JQUERY_PATH+"\'></s"+"cript>"';
@@ -235,7 +233,7 @@ class WYMeditor {
             $output .= "\r\n".'						var title = jbody.find(\'#wym_select_link option:selected\').text();';
             $output .= "\r\n".'						var language = jbody.find(\'#wym_select_clang option:selected\').text();';
 
-            $output .= "\r\n".'						if (clang != "'.$CJO['CUR_CLANG'].'") {';
+            $output .= "\r\n".'						if (clang != "'.cjoProp::getClang().'") {';
             $output .= "\r\n".'						    link += "."+clang; ';
             $output .= "\r\n".'						    title += " ("+language+")"; ';
             $output .= "\r\n".'						}';
@@ -271,7 +269,7 @@ class WYMeditor {
         					  	  class="'.substr($this->wymeditorSelector,1).'_'.$this->id.'"
         					  	  style="width:100%;display:none!important">'.$this->content.'</textarea>';
         
-        $CJO['WYM']['counter']++;
+        cjoAddon::setProperty('settings|COUNTER', cjoAddon::getProperty('settings|COUNTER', $addon)+1, $addon);
         
         cjoExtension::registerExtension('OUTPUT_FILTER', 'WYMeditor::insertScripts');
 
@@ -283,7 +281,6 @@ class WYMeditor {
     }
 
     public static function insertScripts($params) {
-    	global $CJO;
     	
         $output  = "\r\n".'<script type="text/javascript" src="'.self::$WYMPath.'jquery.wymeditor.js"></script>';
         $output .= "\r\n".'<script type="text/javascript" src="'.self::$WYMPath.'plugins/hovertools/jquery.wymeditor.hovertools.js"></script>';
@@ -296,45 +293,43 @@ class WYMeditor {
     
     private function getLinkInput() {
 
-        global $CJO, $I18N;
-
-    	if (!is_object($CJO['SEL_ARTICLE'])){
+    	if (!is_object(cjoSelectArticle::$sel_article)){
 
     		new cjoSelectArticle;
 
     		if ($obj_articles = OOArticle::getRootArticles()) {
     			$article_ids = array();
-    		    $CJO['SEL_ARTICLE']->addOption($I18N->msg('root'), 0, 0, '', 'root');
+    		    cjoSelectArticle::$sel_article->addOption(cjoI18N::translate('root'), 0, 0, '', 'root');
     		    foreach($obj_articles as $obj_article) {
-    		        cjoLinkButtonField :: addCatOptions($CJO['SEL_ARTICLE'], $obj_article, $article_ids, "", "&nbsp;");
+    		        cjoLinkButtonField :: addCatOptions(cjoSelectArticle::$sel_article, $obj_article, $article_ids, "", "&nbsp;");
     		    }
     		}
     	}
     	else {
-    		$CJO['SEL_ARTICLE']->resetDisabled();
-    		$CJO['SEL_ARTICLE']->resetSelected();
-    		$CJO['SEL_ARTICLE']->resetSelectedPath();
+    		cjoSelectArticle::$sel_article->resetDisabled();
+    		cjoSelectArticle::$sel_article->resetSelected();
+    		cjoSelectArticle::$sel_article->resetSelectedPath();
     	}
 
-    	$CJO['SEL_ARTICLE']->setId('wym_select_link');
-    	$CJO['SEL_ARTICLE']->setName('wym_select_link');
-    	$CJO['SEL_ARTICLE']->setLabel($I18N->msg('label_int_link'));
-    	$CJO['SEL_ARTICLE']->setStyle('width: 230px;');
-    	$CJO['SEL_ARTICLE']->setSize(1);
-    	$CJO['SEL_ARTICLE']->setDisabled(0);
+    	cjoSelectArticle::$sel_article->setId('wym_select_link');
+    	cjoSelectArticle::$sel_article->setName('wym_select_link');
+    	cjoSelectArticle::$sel_article->setLabel(cjoI18N::translate('label_int_link'));
+    	cjoSelectArticle::$sel_article->setStyle('width: 230px;');
+    	cjoSelectArticle::$sel_article->setSize(1);
+    	cjoSelectArticle::$sel_article->setDisabled(0);
 
     	$clang_sel = new cjoSelect();
     	$clang_sel->setId('wym_select_clang');
     	$clang_sel->setName('wym_select_clang');
         $clang_sel->setSize(1);
 
-    	foreach($CJO['CLANG'] as $key => $val) {
-    	    $clang_sel->addOption($val,$key);
+    	foreach(cjoProp::getClangs() as $clang_id) {
+    	    $clang_sel->addOption(cjoProp::getClangName($clang_id),cjoProp::getClang($clang_id));
     	}
-    	$clang_sel->setSelected($CJO['CUR_CLANG']);
+    	$clang_sel->setSelected(cjoProp::getClang());
 
         $output  = '<div class=\'row row_select_link\'>"';
-        $output .= "\r\n".'				+ "'.str_replace(array('"',"\n","\r"),array("'"," "," "),$CJO['SEL_ARTICLE']->_get()).'" ';
+        $output .= "\r\n".'				+ "'.str_replace(array('"',"\n","\r"),array("'"," "," "),cjoSelectArticle::$sel_article->_get()).'" ';
         $output .= "\r\n".'				+ "&nbsp; '.str_replace(array('"',"\n","\r"),array("'"," "," "),$clang_sel->get()).'"';
         $output .= "\r\n".'				+ " <input class=\'wym_choose\' type=\'button\'"';
         $output .= "\r\n".'				+ " value=\'{Choose}\' />"';

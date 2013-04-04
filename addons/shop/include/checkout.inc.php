@@ -51,13 +51,13 @@ $basket_id = $CJO['ADDON']['settings'][$mypage]['BASKET_ARTICLE_ID'];
 
 // is there anything in the basket
 if (empty($full_basket)) {
-	cjoAssistance::redirectFE($basket_id);
+	cjoUrl::redirectFE($basket_id);
 }
 else {
 	$session_id = session_id();
 	$md5 = md5($session_id);
 	// has this user anything in basket
-	if ($md5 != $full_basket) cjoAssistance::redirectFE($basket_id);
+	if ($md5 != $full_basket) cjoUrl::redirectFE($basket_id);
 }
 
 // check if basket is still filled
@@ -66,7 +66,7 @@ $qry = "SELECT COUNT(session_id) as amount FROM ".TBL_21_BASKET." WHERE session_
 $sql->setQuery($qry);
 
 // if basket is empty redirect to basket page
-if (0 == $sql->getValue('amount', 0)) cjoAssistance::redirectFE($basket_id);
+if (0 == $sql->getValue('amount', 0)) cjoUrl::redirectFE($basket_id);
 
 // set supply address if posted
 if (isset($posted['supply_address'])) $supply_address = $posted['supply_address'];
@@ -97,7 +97,7 @@ if ($is_valid === true || !empty($posted['submit']['previous'])) {
     				case 'previous'	: 	$page = $pages[--$page_id];
     									break;
     				case 'send'		: 	cjoShopCheckout::saveOrder($posted);
-    				                    cjoAssistance::redirectFE($success_page_id);
+    				                    cjoUrl::redirectFE($success_page_id);
     									break;
     				case 'address2' :   if ($supply_address) $page = 'address2';
     									break;
@@ -136,7 +136,7 @@ $html = new cjoHtmlTemplate($tmpl);
 
 // set hidden fields and navigation values
 $html->fillTemplate('TEMPLATE', array(
-		                              'HEADLINE'				=>		$I18N_21->msg('shop_checkout_'.$page),
+		                              'HEADLINE'				=>		cjoAddon::translate(21,'shop_checkout_'.$page),
 									  'ADDRESS1'				=>		$posted['checkout']['address1'],
 									  'ADDRESS2'				=>		$posted['checkout']['address2'],
 									  'PERSONALS'				=>		$posted['checkout']['personals'],
@@ -190,11 +190,11 @@ $html->fillTemplateArray('FORM_ELEMENTS', $form_elements_out);
 $checkout = $html->get(false);
 /*
 * all yet possible combinations for 'shop_checkout_'.$page (see line 138)
-* this lets i18n.php php find all texts that need to be
+* this lets cjoI18N.php php find all texts that need to be
 * translated
 *
-* $I18N_21->msg('shop_checkout_address1');
-* $I18N_21->msg('shop_checkout_address2');
-* $I18N_21->msg('shop_checkout_pay_data');
-* $I18N_21->msg('shop_checkout_confirm');
+* cjoAddon::translate(21,'shop_checkout_address1');
+* cjoAddon::translate(21,'shop_checkout_address2');
+* cjoAddon::translate(21,'shop_checkout_pay_data');
+* cjoAddon::translate(21,'shop_checkout_confirm');
 */

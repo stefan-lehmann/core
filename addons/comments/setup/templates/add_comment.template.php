@@ -25,9 +25,9 @@
 
 global $CJO;
 
-if ($CJO['CONTEJO']) return false;
+if (cjoProp::isBackend()) return false;
 
-if (OOAddon::isAvailable('comments')) {
+if (cjoAddon::isAvailable('comments')) {
     
     if (!function_exists('cjo_performPostAction')) {
         function cjo_performPostAction(&$obj) {
@@ -35,5 +35,5 @@ if (OOAddon::isAvailable('comments')) {
         }
     } 
 } else {
-    $this->addError($I18N_7->msg('msg_err_configure_settings', $CJO['BACKEND_PATH']));
+    $this->addError(cjoAddon::translate(7,'msg_err_configure_settings', $CJO['BACKEND_PATH']));
 }

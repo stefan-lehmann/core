@@ -22,7 +22,7 @@
  *  details.
  * @filesource
  */
-
+return false;
 cjoExtension::registerExtension('CJO_LIST_MEDIA_LIST_CELLS', 'cjoFormateCells');
 
 $sql = "SELECT
@@ -30,7 +30,7 @@ $sql = "SELECT
 			filename AS checkbox,
 			filename AS thumb,
 			filename AS link,
-			IF(title!='',title, '".$I18N->msg('label_no_title')."') AS title
+			IF(title!='',title, '".cjoI18N::translate('label_no_title')."') AS title
 		FROM
 			".TBL_FILES."
 		WHERE
@@ -44,10 +44,10 @@ $list->setAttributes('id="media_list"');
 
 $add_button = '';
 if ($media_perm['w']) {
-	$add_button = cjoAssistance::createBELink('<img src="img/silk_icons/add.png" title="'.$I18N->msg("button_add").'" alt="'.$I18N->msg("button_add").'" />',
+	$add_button = cjoUrl::createBELink('<img src="img/silk_icons/add.png" title="'.cjoI18N::translate("button_add").'" alt="'.cjoI18N::translate("button_add").'" />',
                                               array('subpage' => 'addmedia', 'media_category'=> $media_category),
                                               $list->getGlobalParams(),
-                                              'title="'.$I18N->msg("button_add").'"');
+                                              'title="'.cjoI18N::translate("button_add").'"');
 }
 
 $cols['checkbox'] = new resultColumn('checkbox', $add_button, 'sprintf',
@@ -58,25 +58,25 @@ $cols['checkbox']->setHeadAttributes('class="icon"');
 $cols['checkbox']->setBodyAttributes('class="icon"');
 $cols['checkbox']->delOption(OPT_ALL);
 
-$cols['thumb'] = new resultColumn('thumb', $I18N->msg('label_thumb'), 'call_user_func', array('OOMedia::toThumbnail',array('%s')));
+$cols['thumb'] = new resultColumn('thumb', cjoI18N::translate('label_thumb'), 'call_user_func', array('OOMedia::toThumbnail',array('%s')));
 $cols['thumb']->setHeadAttributes('width="80"');
 $cols['thumb']->setBodyAttributes('class="preview" width="80" height="70" style="text-align:center!important;"');
 $cols['thumb']->setParams(array ('filename' => '%thumb%'));
 $cols['thumb']->delOption(OPT_ALL);
 
-$cols['filename'] = new resultColumn('filename', null, 'sprintf', '<span title="'.$I18N->msg('label_filename').'"><img src="img/mini_icons/page_white.png" alt="" />%s</span>');
+$cols['filename'] = new resultColumn('filename', null, 'sprintf', '<span title="'.cjoI18N::translate('label_filename').'"><img src="img/mini_icons/page_white.png" alt="" />%s</span>');
 $cols['filename']->setOptions(OPT_ALL);
 
 $cols['filetype'] = new resultColumn('filetype', null);
 $cols['filetype']->setOptions(OPT_ALL);
 
-$cols['filesize'] = new resultColumn('filesize', null, 'sprintf', '<span title="'.$I18N->msg('label_filesize').'"><img src="img/mini_icons/drive.png" alt="" />%s</span>');
+$cols['filesize'] = new resultColumn('filesize', null, 'sprintf', '<span title="'.cjoI18N::translate('label_filesize').'"><img src="img/mini_icons/drive.png" alt="" />%s</span>');
 $cols['filesize']->setOptions(OPT_SORT);
 
-$cols['createdate'] = new resultColumn('createdate', null, 'strftime', '<span title="'.$I18N->msg('label_createdate').'" style="clear:left;"><img src="img/mini_icons/time.png" alt="" />'.$I18N->msg("datetimeformat").'</span>');
+$cols['createdate'] = new resultColumn('createdate', null, 'strftime', '<span title="'.cjoI18N::translate('label_createdate').'" style="clear:left;"><img src="img/mini_icons/time.png" alt="" />'.cjoI18N::translate("datetimeformat").'</span>');
 $cols['createdate']->setOptions(OPT_SORT);
 
-$cols['createuser'] = new resultColumn('createuser', null, 'sprintf', '<span title="'.$I18N->msg('label_createuser').'"><img src="img/mini_icons/user.png" alt="" />%s</span>');
+$cols['createuser'] = new resultColumn('createuser', null, 'sprintf', '<span title="'.cjoI18N::translate('label_createuser').'"><img src="img/mini_icons/user.png" alt="" />%s</span>');
 $cols['createuser']->setOptions(OPT_ALL);
 
 $cols['updatedate'] = new resultColumn('updatedate', null);
@@ -85,54 +85,54 @@ $cols['updatedate']->setOptions(OPT_SORT);
 $cols['updateuser'] = new resultColumn('updateuser', null);
 $cols['updateuser']->setOptions(OPT_ALL);
 
-$cols['copyright'] = new resultColumn('copyright', null, 'sprintf', '<span title="'.$I18N->msg('label_copyright').'"><img src="img/mini_icons/copyright.png" alt="" />%s</span>');
+$cols['copyright'] = new resultColumn('copyright', null, 'sprintf', '<span title="'.cjoI18N::translate('label_copyright').'"><img src="img/mini_icons/copyright.png" alt="" />%s</span>');
 $cols['copyright']->setOptions(OPT_ALL);
 
 $cols['description'] = new resultColumn('description', null, 'call_user_func', array('cjoMedia::splitDescription',array('%s','flags')));
 $cols['description']->delOption(OPT_SORT);
 
-$cols['title'] = new resultColumn('title', $I18N->msg('label_title'), 'truncate',array( 'length' => 60, 'etc' => '...', 'break_words' => false));
+$cols['title'] = new resultColumn('title', cjoI18N::translate('label_title'), 'truncate',array( 'length' => 60, 'etc' => '...', 'break_words' => false));
 $cols['title']->setBodyAttributes('class="large_item'.(!$media_perm['w'] ? ' locked' : '').'"');
 $cols['title']->setParams(array ('page' => 'media', 'subpage' => 'details','media_category' => $media_category, 'oid' => '%file_id%'));
 $cols['title']->setOptions(OPT_SEARCH);
 
-$cols['delete'] = new staticColumn('', $I18N->msg('label_functions'));
+$cols['delete'] = new staticColumn('', cjoI18N::translate('label_functions'));
 $cols['delete']->setBodyAttributes('width="60"');
 
 if ($media_perm['w']) {
-    $cond['delete'] = '<img src="img/silk_icons/bin.png" title="'.$I18N->msg("label_delete_media").'" alt="'.$I18N->msg("label_delete_media").'" />';
-    $cols['delete'] = new staticColumn($cond['delete'], $I18N->msg('label_functions'));
+    $cond['delete'] = '<img src="img/silk_icons/bin.png" title="'.cjoI18N::translate("label_delete_media").'" alt="'.cjoI18N::translate("label_delete_media").'" />';
+    $cols['delete'] = new staticColumn($cond['delete'], cjoI18N::translate('label_functions'));
     $cols['delete']->setBodyAttributes('width="60"');
     $cols['delete']->setBodyAttributes('class="cjo_delete"');
 
-    if ($list->hasRows()) {
+    if ($list->numRows() != 0) {
 
-    	$CJO['SEL_MEDIA']->setName("target_location");
-    	$CJO['SEL_MEDIA']->setStyle("width:250px;clear:none;");
-
-    	$buttons = new popupButtonField('', '', '', '');
-    	$buttons->addButton( $I18N->msg('button_move'), false, 'img/silk_icons/page_white_go.png', 'id="move_media" class="cjo_float_l" style="padding:2px; display: block;"');
-    	$buttons->addButton( $I18N->msg('button_delete'), false, 'img/silk_icons/bin.png', 'id="delete_media" class="cjo_float_l" style="padding:2px; margin-left: 10px; display: block;"');
+    	cjoSelectMediaCat::$sel_media->setName("target_location");
+    	cjoSelectMediaCat::$sel_media->setStyle("width:250px;clear:none;");
 
     	$buttons = new popupButtonField('', '', '', '');
-    	$buttons->addButton($I18N->msg('label_run_process'), false, 'img/silk_icons/tick.png', 'id="ajax_update_button"');
+    	$buttons->addButton( cjoI18N::translate('button_move'), false, 'img/silk_icons/page_white_go.png', 'id="move_media" class="cjo_float_l" style="padding:2px; display: block;"');
+    	$buttons->addButton( cjoI18N::translate('button_delete'), false, 'img/silk_icons/bin.png', 'id="delete_media" class="cjo_float_l" style="padding:2px; margin-left: 10px; display: block;"');
+
+    	$buttons = new popupButtonField('', '', '', '');
+    	$buttons->addButton(cjoI18N::translate('label_run_process'), false, 'img/silk_icons/tick.png', 'id="ajax_update_button"');
 
         $update_sel = new cjoSelect();
         $update_sel->setName('update_selection');
         $update_sel->setSize(1);
         $update_sel->setStyle('class="cjo_float_l" disabled="disabled"');
-        $update_sel->addOption($I18N->msg('label_update_selection'), 0);
+        $update_sel->addOption(cjoI18N::translate('label_update_selection'), 0);
         $update_sel->setSelected(0);
-        $update_sel->addOption($I18N->msg('button_move'), 1);
-        $update_sel->addOption($I18N->msg('button_delete'), 2);
+        $update_sel->addOption(cjoI18N::translate('button_move'), 1);
+        $update_sel->addOption(cjoI18N::translate('button_delete'), 2);
 
     	$toolbar_ext = '<tr class="toolbar_ext">'."\r\n".
     				 '	<td class="icon">'.
-    				 '  	<input type="checkbox" class="hidden_container check_all" title="'.$I18N->msg('label_select_deselect_all').'" />'.
+    				 '  	<input type="checkbox" class="hidden_container check_all" title="'.cjoI18N::translate('label_select_deselect_all').'" />'.
     				 '	</td>'.
     				 '	<td colspan="'.(count($cols)-2).'">'.
     				 '		<div class="hidden_container">'.$update_sel->get().
-    				 '		<span class="cjo_float_l cjo_media_path hide_me">'.$CJO['SEL_MEDIA']->get(false).'</span>'.
+    				 '		<span class="cjo_float_l cjo_media_path hide_me">'.cjoSelectMediaCat::$sel_media->get(false).'</span>'.
     				 '		<span class="cjo_float_l hide_me">'.$buttons->getButtons().'</span>'.
     	             '		</div>'.
     				 '	</td>'.
@@ -146,7 +146,7 @@ if ($media_perm['w']) {
 $list->addColumns($cols);
 
 if (!cjo_request('search_key','boolean')) {
-	$list->setVar(LIST_VAR_NO_DATA, $I18N->msg('msg_media_in_this_category'));
+	$list->setVar(LIST_VAR_NO_DATA, cjoI18N::translate('msg_media_in_this_category'));
 }
 
 $list->show();
@@ -310,8 +310,8 @@ function cjoFormateCells($cell){
 			if (!selected) selected = $('#update_selection :selected').val() *1;
 
 			var messages 	= [];
-			 	messages[1] = '<?php echo $I18N->msg('msg_confirm_rmove_media') ?>';
-			 	messages[2] = '<?php echo $I18N->msg('msg_confirm_rdelete_media') ?>';
+			 	messages[1] = '<?php echo cjoI18N::translate('msg_confirm_rmove_media') ?>';
+			 	messages[2] = '<?php echo cjoI18N::translate('msg_confirm_rdelete_media') ?>';
 
 			if (cb.length < 1) return false;
 
@@ -366,11 +366,11 @@ function cjoFormateCells($cell){
 
 			$(jdialog).dialog({
     			buttons: {
-    				'<?php echo $I18N->msg('label_ok'); ?>': function() {
+    				'<?php echo cjoI18N::translate('label_ok'); ?>': function() {
     					$(this).dialog('close');
     					confirm_action();
     				},
-    				'<?php echo $I18N->msg('label_cancel'); ?>': function() {
+    				'<?php echo cjoI18N::translate('label_cancel'); ?>': function() {
     					$(this).dialog('close');
     				}
     			}

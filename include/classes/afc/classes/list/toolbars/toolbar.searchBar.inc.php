@@ -56,10 +56,10 @@ class searchBar extends cjoListToolbar {
         $this->addGlobalParams(array ('search_key' => $search_key, 'search_column' => $search_column));
 
         $s = '';
-        $s .= '<label for="search_key">'.$I18N->msg('label_search').'</label>'."\n";
-        $s .= '          <input type="text" value="'.$search_key.'" id="search_key" title="'.$I18N->msg('label_search_key').'" style="width: 100px" name="search_key" />'."\n";
-        $s .= '          <label for="search_column">'.$I18N->msg('label_in').'</label>'."\n";
-        $s .= '          <select id="search_column" name="search_column"  style="width: 100px" title="'.$I18N->msg('label_search_column').'">'."\n";
+        $s .= '<label for="search_key">'.cjoI18N::translate('label_search').'</label>'."\n";
+        $s .= '          <input type="text" value="'.$search_key.'" id="search_key" title="'.cjoI18N::translate('label_search_key').'" style="width: 100px" name="search_key" />'."\n";
+        $s .= '          <label for="search_column">'.cjoI18N::translate('label_in').'</label>'."\n";
+        $s .= '          <select id="search_column" name="search_column"  style="width: 100px" title="'.cjoI18N::translate('label_search_column').'">'."\n";
 
         // Suchspalten anzeigen
         for ($i = 0; $i < $this->cjolist->numColumns(); $i ++) {
@@ -76,7 +76,7 @@ class searchBar extends cjoListToolbar {
                     $selected = ' selected="selected"';
                 }
 
-                $label = ($column->label === NULL) ? $I18N->msg('label_'.$column->name) : $column->label;
+                $label = ($column->label === NULL) ? cjoI18N::translate('label_'.$column->name) : $column->label;
 
                 $s .= sprintf('            <option value="%s"%s>%s</option>'."\n", $column->name, $selected, $label);
             }
@@ -84,11 +84,11 @@ class searchBar extends cjoListToolbar {
 
         $s .= '          </select>'."\n";
         $s .= '          <input type="hidden" value="0" name="next" />'."\n";                
-        $s .= '          <input type="checkbox" value="exact" title="'.$I18N->msg('label_exact_search_mode').'" name="search_mode"'.$search_mode_checked.' />'."\n";
-        $s .= '          <input type="submit" value="'.$I18N->msg('label_search').'" title="'.$I18N->msg('label_start_search').'" name="search_button" />'."\n";
+        $s .= '          <input type="checkbox" value="exact" title="'.cjoI18N::translate('label_exact_search_mode').'" name="search_mode"'.$search_mode_checked.' />'."\n";
+        $s .= '          <input type="submit" value="'.cjoI18N::translate('label_search').'" title="'.cjoI18N::translate('label_start_search').'" name="search_button" />'."\n";
 
         if ($search_key != '') {
-            $s .= '       <input type="submit" value="'.$I18N->msg('label_remove_search').'" name="search_cancel" />'."\n";
+            $s .= '       <input type="submit" value="'.cjoI18N::translate('label_remove_search').'" name="search_cancel" />'."\n";
         }
         return $s;
     }

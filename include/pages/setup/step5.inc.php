@@ -50,38 +50,35 @@ $hidden['prev_subpage']->setValue('step4');
 $hidden['lang'] = new hiddenField('lang');
 $hidden['lang']->setValue($lang);
 
-$fields['headline1'] = new readOnlyField('headline1', '', array('class' => 'formheadline'));
-$fields['headline1']->setValue($I18N->msg("label_table_prefix"));
+$fields['headline1'] = new headlineField(cjoI18N::translate("label_table_prefix"));
 
-$fields['table_prefix'] = new textField('TABLE_PREFIX', $I18N->msg("label_table_prefix"));
-$fields['table_prefix']->addValidator('notEmpty', $I18N->msg("msg_table_prefix_notEmpty"));
+$fields['table_prefix'] = new textField('TABLE_PREFIX', cjoI18N::translate("label_table_prefix"));
+$fields['table_prefix']->addValidator('notEmpty', cjoI18N::translate("msg_table_prefix_notEmpty"));
 
-$fields['headline2'] = new readOnlyField('headline2', '', array('class' => 'formheadline'));
-$fields['headline2']->setValue($I18N->msg("label_mysql_db"));
+$fields['headline2'] = new headlineField(cjoI18N::translate("label_mysql_db"));
 
-$fields['host'] = new textField('DB_1_HOST', $I18N->msg("label_db_host"));
-$fields['name'] = new textField('DB_1_NAME', $I18N->msg("label_db_name"));
-$fields['login'] = new textField('DB_1_LOGIN', $I18N->msg("label_db_login"));
-$fields['psw'] = new textField('DB_1_PSW', $I18N->msg("label_db_psw"));
+$fields['host'] = new textField('DB_1_HOST', cjoI18N::translate("label_db_host"));
+$fields['name'] = new textField('DB_1_NAME', cjoI18N::translate("label_db_name"));
+$fields['login'] = new textField('DB_1_LOGIN', cjoI18N::translate("label_db_login"));
+$fields['psw'] = new textField('DB_1_PSW', cjoI18N::translate("label_db_psw"));
 
 
-$fields['headline3'] = new readOnlyField('headline3', '', array('class' => 'formheadline slide'));
-$fields['headline3']->setValue($I18N->msg("label_mysql_db_local"));
+$fields['headline3'] = new headlineField(cjoI18N::translate("label_mysql_db_local"), true);
 
-$fields['localhost'] = new textField('LOCALHOST', $I18N->msg("label_db_localhost_name"));
-$fields['host_local'] = new textField('DB_LOCAL_HOST', $I18N->msg("label_db_host"));
-$fields['name_local'] = new textField('DB_LOCAL_NAME', $I18N->msg("label_db_name"));
-$fields['login_local'] = new textField('DB_LOCAL_LOGIN', $I18N->msg("label_db_login"));
-$fields['psw_local'] = new textField('DB_LOCAL_PSW', $I18N->msg("label_db_psw"));
+$fields['localhost'] = new textField('LOCALHOST', cjoI18N::translate("label_db_localhost_name"));
+$fields['host_local'] = new textField('DB_LOCAL_HOST', cjoI18N::translate("label_db_host"));
+$fields['name_local'] = new textField('DB_LOCAL_NAME', cjoI18N::translate("label_db_name"));
+$fields['login_local'] = new textField('DB_LOCAL_LOGIN', cjoI18N::translate("label_db_login"));
+$fields['psw_local'] = new textField('DB_LOCAL_PSW', cjoI18N::translate("label_db_psw"));
 
 
 $fields['button'] = new buttonField();
-$fields['button']->addButton('cjoform_back_button',$I18N->msg("button_back"), true, 'img/silk_icons/control_play_backwards.png');
-$fields['button']->addButton('cjoform_next_button',$I18N->msg("button_next_step6"), true, 'img/silk_icons/control_play.png');
+$fields['button']->addButton('cjoform_back_button',cjoI18N::translate("button_back"), true, 'img/silk_icons/control_play_backwards.png');
+$fields['button']->addButton('cjoform_next_button',cjoI18N::translate("button_next_step6"), true, 'img/silk_icons/control_play.png');
 $fields['button']->setButtonAttributes('cjoform_next_button', ' style="color: green"');
 
 //Add Fields:
-$section = new cjoFormSection($dataset, $I18N->msg("label_setup_".$subpage."_title"));
+$section = new cjoFormSection($dataset, cjoI18N::translate("label_setup_".$subpage."_title"));
 
 $section->addFields($fields);
 $form->addSection($section);
@@ -138,15 +135,15 @@ if ($form->validate()) {
     		$data = preg_replace('/^(\$CJO\[\'DB\'\]\[\'LOCAL\'\]\[\'NAME\'\]\s*=\s*)(".*")(.*?)$/imx', '$1"'.$databases['local']['name'].'"$3', $data);
 
     		if (!cjoGenerate::putFileContents($CJO['FILE_CONFIG_DB'], $data)){
-    			cjoMessage::addError($I18N->msg("msg_config_db_no_perm"));
+    			cjoMessage::addError(cjoI18N::translate("msg_config_db_no_perm"));
     		}
     	}
     	else {
-    	    cjoMessage::addError($I18N->msg("msg_config_db_does_not_exist"));
+    	    cjoMessage::addError(cjoI18N::translate("msg_config_db_does_not_exist"));
     	}
     
     	if (!cjoMessage::hasErrors()){
-    	    cjoAssistance::redirectBE(array('subpage' => 'step6', 'lang' => $lang));
+    	    cjoUrl::redirectBE(array('subpage' => 'step6', 'lang' => $lang));
     	}
 	}
 }

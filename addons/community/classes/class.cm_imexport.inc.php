@@ -23,7 +23,7 @@
  * @filesource
  */
 
-if (!$CJO['CONTEJO']) return false;
+if (!cjoProp::isBackend()) return false;
 
 class cjoCommunityImportExport {
 
@@ -57,10 +57,8 @@ class cjoCommunityImportExport {
             
             if (!empty($_FILES['userfile']['tmp_name'])) {
                 move_uploaded_file($_FILES['userfile']['tmp_name'], $settings['import_file']);
-                @chmod($settings['import_file'], $CJO['FILEPERM']);
+                @chmod($settings['import_file'], cjoProp::getFilePerm());
             }
-
-            if ($settings['ignore_updates']) self::createUserTempTable();
         }
         elseif(cjo_session($settings['mode'],'bool')) {
            $settings = cjo_session($settings['mode'],'array',$settings);
@@ -68,12 +66,10 @@ class cjoCommunityImportExport {
         else {   
             return false;
         }   
-        if (!cjoAssistance::isReadable($settings['import_file'])) {
+        if (!cjoFile::isReadable($settings['import_file'])) {
            self::resetSession($settings['mode']);
            return false; 
         }
-        
-        $table = !$settings['ignore_updates'] ? TBL_COMMUNITY_USER : TBL_COMMUNITY_USER.'_temp';
 
         $data = file_get_contents($settings['import_file']);
         
@@ -87,7 +83,7 @@ class cjoCommunityImportExport {
 
         // leere Datei
         if (!is_array($csv_data[0])){
-            cjoMessage::addError($I18N_10->msg('err_empty_csv_document'));
+            cjoMessage::addError(cjoAddon::translate(10,'err_empty_csv_document'));
             return false;
         }
         else {
@@ -103,7 +99,7 @@ class cjoCommunityImportExport {
 
         // Falsches Trennzeichen
         if (!preg_match('/'.$settings['divider'].'(?=([^"]*"[^"]*")*(?![^"]*"))/', $csv_data[0], $temp)){
-            cjoMessage::addError($I18N_10->msg('err_wrong_delimiter'));
+            cjoMessage::addError(cjoAddon::translate(10,'err_wrong_delimiter'));
             return false;
         }
         $sql = new cjoSql();
@@ -132,14 +128,9 @@ class cjoCommunityImportExport {
             }
              
             $sql->flush();
-
-            $qry = "SELECT id FROM ".$table." WHERE email = '".$curr['email']."' LIMIT 1";
+            $qry = "SELECT id FROM ".TBL_COMMUNITY_USER." WHERE email LIKE '".$curr['email']."' LIMIT 1";
             $sql->setQuery($qry);
 
-            if ($settings['ignore_updates']) {
-                self::removeUserFromTempTable($curr['email']);
-            }    
-            
             if ($sql->getRows() > 0) {
                 
                 $curr['id'] =  $sql->getValue('id');
@@ -173,7 +164,7 @@ class cjoCommunityImportExport {
                 $curr['newsletter']  = $curr['newsletter'] == '' ? 1 : $curr['newsletter'];
                 $curr['login_tries'] = 0;
                 $curr['lasttrydate'] = 0;
-                $curr['createuser']  = $CJO['USER']->getValue("name").' (Import)';
+                $curr['createuser']  = cjoProp::getUser()->getValue("name").' (Import)';
             }
             
             if (isset($curr['email2'])) {
@@ -187,7 +178,7 @@ class cjoCommunityImportExport {
             
             $curr['clang']           = $settings['clang'];
             $curr['groups']          = $settings['groups'];
-            $curr['updateuser']      = $CJO['USER']->getValue("name").' (Import)';
+            $curr['updateuser']      = cjoProp::getUser()->getValue("name").' (Import)';
              
             if (cjoCommunityUser::updateUser($curr, $curr['status'], $sql->getRows())) {
                 cjoMessage::removeLastSuccess();
@@ -214,14 +205,14 @@ class cjoCommunityImportExport {
         cjoMessage::flushAllMessages();
 
         if ($settings['total']['success'] > 0) {
-            cjoMessage::addSuccess($I18N_10->msg('accept_data_imported',
+            cjoMessage::addSuccess(cjoAddon::translate(10,'accept_data_imported',
             ($settings['total']['success']+$settings['total']['error']),
             $settings['inserted']['success'],
             $settings['updated']['success'],
             $settings['ignored']));
         }
         if ($settings['total']['error'] > 0) {
-            cjoMessage::addError($I18N_10->msg('error_data_imported',
+            cjoMessage::addError(cjoAddon::translate(10,'error_data_imported',
             ($settings['total']['error']),
             $settings['inserted']['error'],
             $settings['updated']['error']));
@@ -256,23 +247,6 @@ class cjoCommunityImportExport {
     	} 
     	
         return true;	
-    }
-
-    private static function createUserTempTable() {
-        $sql = new cjoSql();
-        $sql->setDirectQuery("DROP TABLE IF EXISTS ".TBL_COMMUNITY_USER."_temp");
-        $sql->setDirectQuery("CREATE TABLE ".TBL_COMMUNITY_USER."_temp (`id` int( 11 ), `email` varchar( 100 ) ) ENGINE = MYISAM DEFAULT CHARSET = utf8 COLLATE = utf8_unicode_ci");
-        $sql->setDirectQuery("INSERT IGNORE INTO ".TBL_COMMUNITY_USER."_temp SELECT `id`, `email` FROM ".TBL_COMMUNITY_USER." ORDER BY email");
-    }
-    
-    private static function dropUserTempTable() {
-        $sql = new cjoSql();
-        $sql->setDirectQuery("DROP TABLE IF EXISTS ".TBL_COMMUNITY_USER."_temp");
-    }  
-    
-    private static function removeUserFromTempTable($id) {
-        $sql = new cjoSql();
-        $sql->setQuery("DELETE FROM ".TBL_COMMUNITY_USER."_temp WHERE email='".$id."'");
     }
 
     public static function export($separator = ";", $limit=1000) {
@@ -328,14 +302,14 @@ class cjoCommunityImportExport {
             if (cjo_get('finished','string') == $settings['export_file']) {
                 ob_end_clean();
                 $date_string = date("Y").'-'.date("m").'-'.date("d");
-                $filename = "community_user_".$date_string."___".$CJO['CLANG'][$CJO['CUR_CLANG']].".csv";
-                header("Content-type: plain/text; charset=".$I18N->msg("htmlcharset"));
+                $filename = "community_user_".$date_string."___".$CJO['CLANG'][cjoProp::getClang()].".csv";
+                header("Content-type: plain/text; charset=".cjoI18N::translate("htmlcharset"));
                 header("Content-Disposition: attachment; filename=$filename");
                 echo $output;
                 exit();
             }
             else {
-                cjoMessage::addError($I18N_10->msg('error_data_exported'));
+                cjoMessage::addError(cjoAddon::translate(10,'error_data_exported'));
                 return false;
             }
         }
@@ -363,7 +337,7 @@ class cjoCommunityImportExport {
             	    LEFT JOIN ".TBL_COMMUNITY_USER." us
             	    ON ug.user_id=us.id
             		WHERE 
-            			us.clang='".$CJO['CUR_CLANG']."' AND 
+            			us.clang='".cjoProp::getClang()."' AND 
             			us.id > '".$settings['last_id']."' 
                         ".$limit_where."
             			AND (".implode(' OR ',$group_where).")
@@ -391,11 +365,11 @@ class cjoCommunityImportExport {
             self::printRestartScript($settings);
             
             cjoMessage::flushAllMessages();
-            cjoMessage::addSuccess($I18N_10->msg('accept_data_export',$settings['count']));
+            cjoMessage::addSuccess(cjoAddon::translate(10,'accept_data_export',$settings['count']));
         }
         else {
             
-            cjoMessage::addSuccess($I18N_10->msg('accept_data_finished',$settings['count']));
+            cjoMessage::addSuccess(cjoAddon::translate(10,'accept_data_finished',$settings['count']));
             $settings['finished'] = $settings['export_file'];
             self::printRestartScript($settings);
         }
@@ -439,7 +413,7 @@ class cjoCommunityImportExport {
         }
         
         cjo_set_session($settings['mode'], $settings);
-        $url = cjoAssistance::createBEUrl($params);
+        $url = cjoUrl::createBEUrl($params);
         echo '<script type="text/javascript">/* <![CDATA[ */ $(function(){ cm_automateScript($(\'form[name="'.$settings['form_name'].'"]\'),\''.$url.'\'); }); /* ]]> */</script>';
     }
     

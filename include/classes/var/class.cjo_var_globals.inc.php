@@ -79,14 +79,12 @@ class cjoVarGlobals extends cjoVars {
 
     public function getBEOutput(& $sql, $content) {
 
-        global $CJO;
-
         // Modulabhängige Globale Variablen ersetzen
         $content = preg_replace('/(?<!\[\[)CJO_MODULE_ID(?!\]\])/',   $this->getValue($sql, 'modultyp_id'), $content);
         $content = preg_replace('/(?<!\[\[)CJO_SLICE_ID(?!\]\])/',    $this->getValue($sql, 'id'), $content);
         $content = preg_replace('/(?<!\[\[)CJO_CTYPE_ID(?!\]\])/',    $this->getValue($sql, 'ctype'), $content);
         $content = preg_replace('/(?<!\[\[)CJO_RE_SLICE_ID(?!\]\])/', $this->getValue($sql, 're_article_slice_id'), $content);
-        $content = preg_replace('/(?<!\[\[)CJO_IS_CONTEJO(?!\]\])/',  $CJO['CONTEJO'], $content);
+        $content = preg_replace('/(?<!\[\[)CJO_IS_CONTEJO(?!\]\])/',  cjoProp::isBackend(), $content);
 
         return $content;
     }

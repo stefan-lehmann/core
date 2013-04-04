@@ -1,0 +1,74 @@
+[%BASKET%]
+
+IF([[DATASETS]]){%
+	<a name="shop_basket" class="hidden_anchor"></a>
+	 <div class="shop_rounded_corners">
+     	<div class="rounded_corners_t"><div></div></div>
+ 		<div class="rounded_corners_c">
+  			<div class="rounded_corners_b"></div>
+				<h1>[translate_21: shop_order]</h1>
+				<table class="shop_basket_out">
+				<thead>
+    				<tr>
+        				<th class="amount_head">[translate_21: shop_amount]</th>
+        				<th></th>
+        				<th>[translate_21: basket_out_product_name]</th>
+        				<th class="total_name_head">[translate_21: shop_final_amount_price]</th>
+    				</tr>
+				</thead>
+		        <tbody>
+			        <%PRODUCTS%>
+    			    <tr class="total">
+        				<td colspan="2" rowspan="2"><%TAX_LIST%></td>
+        				<td class="order_value_name">[translate_21: shop_order_value]</td>
+        				<td class="order_value price_col">[[ORDER_VALUE]]</td>
+    			    </tr>
+    			    <tr>
+        				<td class="delivery_costs_name">[translate_21: shop_delivery_costs]<br/>([[DELIVERY_COUNTRY]])</td>
+        				<td class="delivery_costs price_col">[[DELIVERY_COSTS]]</td>
+    			    </tr>
+                    IF([[PAYMENT_COSTS]]){%
+    			    <tr>
+    			        <td colspan="2"></td>
+        				<td class="delivery_costs_name">[translate_21: shop_payment_costs]</td>
+        				<td class="delivery_costs price_col">[[PAYMENT_COSTS]]</td>
+    			    </tr>
+                    %}ENDIF
+    			    <tr>
+    			        <td colspan="2"></td>
+        				<td class="total_name total_color">[translate_21: shop_total_price]</td>
+        				<td class="total_price total_color price_col">[[TOTAL_ORDER_VALUE]]</td>
+    			    </tr>
+			    </tbody>
+			    </table>
+	 	</div>
+	</div>
+%}ENDIF
+
+
+
+
+[%PRODUCTS%]
+
+<tr class="[[TR_CLASS]] [[TR_SUBCLASS]]">
+    <td class="amount">[[AMOUNT]]</td>
+    <td class="thumbnail">[[THUMBNAIL]]</td>
+    <td class="product_name">
+        <b>[[PRODUCT_NAME]]</b>
+        <span class="description">
+            IF([[PRODUCT_ID]]){%
+            	<span>[translate_21: shop_product_id_short] [[PRODUCT_ID]]</span>
+            %}ENDIF
+    		<span>[[ATTRIBUTE]]</span>
+    		<span>[translate_21: shop_final_price]: [[FINAL_PRICE]]</span>
+    		<span>[[DISCOUNT]]</span>
+    		<span>[[TAXES]]</span>
+    		IF([[AVAILABLE_AMOUNT]]){% <span class="unavailable_amount">[[AVAILABLE_AMOUNT]]</span> %}ENDIF
+    	  </span>
+    </td>
+    <td class="total_price price_col">[[FINAL_AMOUNT_PRICE]]</td>
+</tr>
+
+[%TAX_LIST%]
+
+<span class="product_table_tax_rate ">[[TAX_RATE]] [[TAXES]]</span>

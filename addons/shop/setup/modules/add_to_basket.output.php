@@ -22,7 +22,7 @@
 
 global $CJO;
 
-if (OOAddon::isActivated('shop')) {
+if (cjoAddon::isActivated('shop')) {
 
     $set               = array();
     $set['mypage']     = 'shop';
@@ -138,11 +138,11 @@ if (OOAddon::isActivated('shop')) {
 
     cjoModulTemplate::getModul();
 
-    if ($CJO['CONTEJO']) {
+    if (cjoProp::isBackend()) {
         cjo_insertCss(false, $CJO['ADDON']['settings']['shop']['CSS']['BACKEND']);
     }
 
-} elseif ($CJO['CONTEJO']) {
-    echo $I18N->msg('msg_addon_not_activated', 'Shop');
+} elseif (cjoProp::isBackend()) {
+    echo cjoI18N::translate('msg_addon_not_activated', 'Shop');
 }
 ?>

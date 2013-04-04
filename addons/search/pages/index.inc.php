@@ -28,9 +28,7 @@ $oid       = cjo_request('oid', 'int', '');
 $function  = cjo_request('function', 'string');
 $mode      = cjo_request('mode', 'string');
 
-$subpages = new cjoSubPages($subpage, $mypage);
-$subpages->addPage(array('settings', 'title' => $I18N_13->msg('subtitle_settings')));
 
-require_once $CJO['INCLUDE_PATH'].'/layout/top.php';
-require_once $subpages->getPage();
-require_once $CJO['INCLUDE_PATH'].'/layout/bottom.php';
+cjoSubPages::addPage(array('settings', 'title' => cjoAddon::translate(13,'subtitle_settings')));
+
+require_once cjoSubPages::getPagePath();

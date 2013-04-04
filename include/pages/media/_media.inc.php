@@ -23,65 +23,25 @@
  * @filesource
  */
 
-if ($subpage == 'details' && 
-    (!cjo_request('oid', 'bool') && !cjo_request('filename', 'bool'))) {
-	$subpage = 'media';
-}
+cjoSubPages::addPage( array('categories',
+        					'title' => cjoI18N::translate("title_media_categories"),
+        					'rights' => array('media[categories]'),
+        					'params' => array('page'=>'media', 'subpage'=>'categories', 'media_category'=>cjoMedia::getCategoryId()),
+                            'important' => true));
 
-$mypage            = $cur_page['page'];
-$oid               = cjo_request('oid', 'int');
-$function          = cjo_request('function', 'string');
-$mode              = cjo_request('mode', 'string');
-$filename          = cjo_request('filename', 'string');
-$media_category    = cjo_request('media_category', 'cjo-mediacategory-id', 0);
+cjoSubPages::addPage( array('media',
+                            'params' => array('page'=>'media', 'subpage'=>'media', 'media_category'=>cjoMedia::getCategoryId()),
+					        'important' => true));
 
-$media_perm        = array();
-$media_perm['r']   = $CJO['USER']->hasMediaPerm('this');
-$media_perm['w']   = $CJO['USER']->hasMediaPerm('this') && !$CJO['USER']->hasPerm('editContentOnly[]');
 
-if (empty($oid) &&
-	!empty($filename) &&
-	file_exists($CJO['MEDIAFOLDER'].'/'.$filename)){
-		$media_obj = OOMedia::getMediaByName($filename);
-		cjoAssistance::redirectBE(array('subpage'=>'details', 'oid'=> $media_obj->getId(),
-		                                'media_category'=>$media_obj->getCategoryId(),
-		                                'filename' => ''));
-}
-
-if ($subpage == '' || $subpage == 'media' ||
-	$subpage == 'details' || $subpage == 'categories') {
-    new cjoSelectMediaCat();
-    $CJO['SEL_MEDIA']->get(true);
-}
-
-$subpages = new cjoSubPages($subpage, $mypage);
-$subpages->addPage( array('categories',
-					'title' => $I18N->msg("title_media_categories"),
-					'rights' => array('media[categories]'),
-					'query_str' => 'page=media&subpage=categories&media_category='.$media_category,
-                    'important' => true));
-
-if (!$oid && !$filename) {
-    $subpages->addPage( array('media',
-						'query_str' => 'page=media&subpage=media&media_category='.$media_category,
-						'important' => true));
-}
-else {
-    $subpages->addPage( array('details',
-						'title' => $I18N->msg("title_media"),
-						'query_str' => 'page=media&subpage=details&media_category='.$media_category,
-						'important' => true));
-}
-
-$subpages->addPage(array('addmedia',
+cjoSubPages::addPage(array('addmedia',
 					'rights' => array('media[addmedia]'),
-					'query_str' => 'page=media&subpage=addmedia&media_category='.$media_category,
-                    'important' => true));
+                    'params' => array('page'=>'media', 'subpage'=>'addmedia', 'media_category'=>cjoMedia::getCategoryId()),
+                    'important' => true));           
 
-require_once $subpages->getPage();
 
 /**
- * Do not delete translate values for i18n collection!
+ * Do not delete translate values for cjoI18N collection!
  * [translate: title_categories]
  * [translate: title_media]
  * [translate: title_details]

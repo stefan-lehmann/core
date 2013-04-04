@@ -27,15 +27,15 @@
 if ($function == 'delete') {
 	$sql = new cjoSql();
 	$sql->statusQuery("DELETE FROM ".TBL_20_MAIL_ARCHIV." WHERE id='".$oid."'",
-	                  $I18N_20->msg('msg_archiv_item_deleted'));
+	                  cjoAddon::translate(20,'msg_archiv_item_deleted'));
     unset($function);
     unset($oid);
 }
 
-if (cjo_post('dbdelete', 'bool') && $CJO['USER']->isAdmin()) {
+if (cjo_post('dbdelete', 'bool') && cjoProp::getUser()->isAdmin()) {
 	$sql = new cjoSql();
 	$sql->statusQuery("TRUNCATE TABLE ".TBL_20_MAIL_ARCHIV,
-	                  $I18N_20->msg('msg_archiv_deleted'));
+	                  cjoAddon::translate(20,'msg_archiv_deleted'));
     unset($function);
 }
 
@@ -46,35 +46,34 @@ if ($oid) {
     $form->setEditMode($oid != '');
     $form->debug = false;
 
-    $fields['send_date'] = new readOnlyField('send_date', $I18N_20->msg('label_send_date'));
-    $fields['send_date']->setFormat('strftime',$I18N->msg('dateformat_sort'));
+    $fields['send_date'] = new readOnlyField('send_date', cjoAddon::translate(20,'label_send_date'));
+    $fields['send_date']->setFormat('strftime',cjoI18N::translate('dateformat_sort'));
 
-    $fields['sender'] = new readOnlyField('sender', $I18N_20->msg('label_sender'));
-    $fields['to'] = new readOnlyField('to', $I18N_20->msg('label_to'));
-    $fields['cc'] = new readOnlyField('cc', $I18N_20->msg('label_cc'));
-    $fields['bcc'] = new readOnlyField('bcc', $I18N_20->msg('label_bcc'));
-    $fields['subject'] = new readOnlyField('subject', $I18N_20->msg('label_subject'), array('style'=> 'width: 720px'));
-    $fields['message'] = new textAreaField('message', $I18N_20->msg('label_message'), array('readonly'=>'readonly',
+    $fields['sender'] = new readOnlyField('sender', cjoAddon::translate(20,'label_sender'));
+    $fields['to'] = new readOnlyField('to', cjoAddon::translate(20,'label_to'));
+    $fields['cc'] = new readOnlyField('cc', cjoAddon::translate(20,'label_cc'));
+    $fields['bcc'] = new readOnlyField('bcc', cjoAddon::translate(20,'label_bcc'));
+    $fields['subject'] = new readOnlyField('subject', cjoAddon::translate(20,'label_subject'), array('style'=> 'width: 720px'));
+    $fields['message'] = new textAreaField('message', cjoAddon::translate(20,'label_message'), array('readonly'=>'readonly',
     																						'rows'=>20,
     																						'cols'=> 10,
     																						'style'=> 'width: 720px'));
 
-    $fields['headline1'] = new readOnlyField('headline1', '', array('class' => 'formheadline slide'));
-    $fields['headline1']->setValue($I18N_20->msg("label_info"));
+    $fields['headline1'] = new headlineField(cjoAddon::translate(20,"label_info"), true);
 
-    $fields['error'] = new readOnlyField('error', $I18N_20->msg('label_phpmailer_error'));
-    $fields['article_id'] = new readOnlyField('article_id', $I18N_20->msg('label_article_id'));
-    $fields['clang'] = new readOnlyField('clang', $I18N_20->msg('label_clang_id'));
-    $fields['remote_addr'] = new readOnlyField('remote_addr', $I18N_20->msg('label_remote_addr'));
-    $fields['user_agent'] = new readOnlyField('user_agent', $I18N_20->msg('label_user_agent'));
-    $fields['request'] = new readOnlyField('request', $I18N_20->msg('label_request'));
+    $fields['error'] = new readOnlyField('error', cjoAddon::translate(20,'label_phpmailer_error'));
+    $fields['article_id'] = new readOnlyField('article_id', cjoAddon::translate(20,'label_article_id'));
+    $fields['clang'] = new readOnlyField('clang', cjoAddon::translate(20,'label_clang_id'));
+    $fields['remote_addr'] = new readOnlyField('remote_addr', cjoAddon::translate(20,'label_remote_addr'));
+    $fields['user_agent'] = new readOnlyField('user_agent', cjoAddon::translate(20,'label_user_agent'));
+    $fields['request'] = new readOnlyField('request', cjoAddon::translate(20,'label_request'));
 
     $fields['button'] = new buttonField();
-    $fields['button']->addButton('cjoform_cancel_button', $I18N->msg('button_cancel'), true, 'img/silk_icons/cancel.png');
+    $fields['button']->addButton('cjoform_cancel_button', cjoI18N::translate('button_cancel'), true, 'img/silk_icons/cancel.png');
     $fields['button']->needFullColumn(true);
 
     //Add Fields
-    $section = new cjoFormSection(TBL_20_MAIL_ARCHIV, $I18N_20->msg("label_message_datails"), array ('id' => $oid));
+    $section = new cjoFormSection(TBL_20_MAIL_ARCHIV, cjoAddon::translate(20,"label_message_datails"), array ('id' => $oid));
 
     $section->addFields($fields);
     $form->addSection($section);
@@ -89,30 +88,30 @@ else {
     $list = new cjolist($qry, 'send_date', 'desc', 'subject', 50);
     //$list->debug = true;
     
-    $cols['id'] = new resultColumn('id', $I18N->msg('label_id'));
+    $cols['id'] = new resultColumn('id', cjoI18N::translate('label_id'));
     $cols['id']->setHeadAttributes('class="icon"');
     $cols['id']->setBodyAttributes('class="icon cjo_id"');
 
 
-    $cols['subject'] = new resultColumn('subject', $I18N_20->msg('label_subject'), 'truncate', array( 'length' => 30, 'etc' => '...', 'break_words' => false));
+    $cols['subject'] = new resultColumn('subject', cjoAddon::translate(20,'label_subject'), 'truncate', array( 'length' => 30, 'etc' => '...', 'break_words' => false));
     $cols['subject']->setParams(array ('function' => 'message', 'oid'=> '%id%' ,'msg'=> false));
     $cols['subject']->setBodyAttributes('width="20%"');
 
-    $cols['message'] = new resultColumn('message', $I18N_20->msg('label_message'), 'truncate', array( 'length' => 150, 'etc' => '...', 'break_words' => false));
+    $cols['message'] = new resultColumn('message', cjoAddon::translate(20,'label_message'), 'truncate', array( 'length' => 150, 'etc' => '...', 'break_words' => false));
 
 
-    $cols['sender'] = new resultColumn('sender', $I18N_20->msg('label_sender'));
-    $cols['to'] = new resultColumn('to', $I18N_20->msg('label_to'));
+    $cols['sender'] = new resultColumn('sender', cjoAddon::translate(20,'label_sender'));
+    $cols['to'] = new resultColumn('to', cjoAddon::translate(20,'label_to'));
 
-    $cols['send_date'] = new resultColumn('send_date', $I18N_20->msg('label_send_date'), 'strftime', $I18N->msg('dateformat_sort'));
+    $cols['send_date'] = new resultColumn('send_date', cjoAddon::translate(20,'label_send_date'), 'strftime', cjoI18N::translate('dateformat_sort'));
     $cols['send_date']->delOption(OPT_SEARCH);
 
-    $img = '<img src="img/silk_icons/page_white_edit.png" title="'.$I18N->msg("button_edit").'" alt="'.$I18N->msg("button_edit").'" />';
-    $cols['edit'] = new staticColumn($img, $I18N->msg("label_functions"));
+    $img = '<img src="img/silk_icons/page_white_edit.png" title="'.cjoI18N::translate("button_edit").'" alt="'.cjoI18N::translate("button_edit").'" />';
+    $cols['edit'] = new staticColumn($img, cjoI18N::translate("label_functions"));
     $cols['edit']->setBodyAttributes('width="16"');
     $cols['edit']->setParams(array ('function' => 'edit', 'oid' => '%id%'));
 
-    $img = '<img src="img/silk_icons/bin.png" title="'.$I18N->msg("button_delete").'" alt="'.$I18N->msg("button_delete").'" />';
+    $img = '<img src="img/silk_icons/bin.png" title="'.cjoI18N::translate("button_delete").'" alt="'.cjoI18N::translate("button_delete").'" />';
     $cols['delete'] = new staticColumn($img, NULL);
     $cols['delete']->setBodyAttributes('width="60"');
     $cols['delete']->setBodyAttributes('class="cjo_delete"');
@@ -120,20 +119,20 @@ else {
 
     $list->addColumns($cols);
 
-    if ($list->hasRows()) {
+    if ($list->numRows() != 0) {
 
     	$buttons = new popupButtonField('', '', '', '');
-    	$buttons->addButton( $I18N_20->msg('label_delete_archiv_db'), false, 'img/silk_icons/bin.png', 'name="dbdelete" value="1" class="cjo_confirm" style="padding:2px;"');
+    	$buttons->addButton( cjoAddon::translate(20,'label_delete_archiv_db'), false, 'img/silk_icons/bin.png', 'name="dbdelete" value="1" class="cjo_confirm" style="padding:2px;"');
 
     	$functions = '<p style="text-align:center">'.$buttons->getButtons().'</p>'."\r\n";
 
-        if ($CJO['USER']->isAdmin()) $list->setVar(LIST_VAR_INSIDE_FOOT, $functions);
+        if (cjoProp::getUser()->isAdmin()) $list->setVar(LIST_VAR_INSIDE_FOOT, $functions);
     }
 
     $list->show();
 }
 
-$popup_url = cjoAssistance::createBEUrl(array('subpage'=>'show', 'popup'=>1));
+$popup_url = cjoUrl::createBEUrl(array('subpage'=>'show', 'popup'=>1));
 
 ?>
 <script type="text/javascript">

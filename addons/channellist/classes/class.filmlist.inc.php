@@ -23,7 +23,7 @@
 
 class cjoFilmList {
 
-    private static $mypage = 'channellist';
+    private static $addon = 'channellist';
     private static $current = array();    
     private static $packages = array();      
     private static $article_id = 231;  
@@ -121,8 +121,8 @@ class cjoFilmList {
                 $unique[$result['id']]          = true;
                 $items[$counter]                = $result;     
                 $items[$counter]['id']          = $result['id'];                               
-                $items[$counter]['parsed_name'] = cjoRewrite::parseArticleName($result['title']);  
-                $items[$counter]['url']         = './'. $items[$counter]['parsed_name'].'.'.self::$article_id.'.'.$CJO['CUR_CLANG'].'.html';         
+                $items[$counter]['parsed_name'] = cjo_url_friendly_string($result['title']);  
+                $items[$counter]['url']         = './'. $items[$counter]['parsed_name'].'.'.self::$article_id.'.'.cjoProp::getClang().'.html';         
                 $items[$counter]['poster']      = $CJO['MEDIAFOLDER'].'/mam/cover/'.$result['poster'];
                 $items[$counter]['trailer']     = glob($CJO['MEDIAFOLDER'].'/mam/trailer/'.$items[$counter]['parsed_name'].'.*');    
                 
@@ -190,8 +190,8 @@ class cjoFilmList {
                 $items[$counter]['id']          = $slice->getId();
                 $items[$counter]['title']       = trim($slice->getValue(2));  
                 $items[$counter]['subtitle']    = $slice->getValue(3) ? ' <span>'.$slice->getValue(3).'</span>'  : '';             
-                $items[$counter]['parsed_name'] = cjoRewrite::parseArticleName(trim($slice->getValue(2)));  
-                $items[$counter]['url']         = './'. $items[$counter]['parsed_name'].'.'.$parent->getId().'.'.$CJO['CUR_CLANG'].'.html';         
+                $items[$counter]['parsed_name'] = cjo_url_friendly_string(trim($slice->getValue(2)));  
+                $items[$counter]['url']         = './'. $items[$counter]['parsed_name'].'.'.$parent->getId().'.'.cjoProp::getClang().'.html';         
                 $items[$counter]['poster']      = OOMedia::toThumbnail($slice->getFile(1), false, array('width'=>129,'height'=>194,'get_src'=>true,'crop_auto'=>true));
                 $items[$counter]['trailer']              = array($slice->getFile(2));            
                 $items[$counter]['is_package']           = false;
@@ -337,7 +337,7 @@ class cjoFilmList {
     private static function getChannelListItemStyle(&$item, $type='sprite_small') {
         global $CJO;
         return sprintf('background-image:url(%s);background-position:%s',
-                       $CJO['MEDIAFOLDER'].'/'.$CJO['ADDON']['settings'][self::$mypage][$item['type'].'_'.$type],
+                       $CJO['MEDIAFOLDER'].'/'.$CJO['ADDON']['settings'][self::$addon][$item['type'].'_'.$type],
                        self::getPosition($item['id']));
     }
     
@@ -453,7 +453,7 @@ class cjoFilmList {
             if ($sql->getRows() != 1) return false;
             
             self::$current                = $results[0];                              
-            self::$current['parsed_name'] = cjoRewrite::parseArticleName($results[0]['title']);        
+            self::$current['parsed_name'] = cjo_url_friendly_string($results[0]['title']);        
             self::$current['trailer']     = glob($CJO['MEDIAFOLDER'].'/mam/trailer/'.self::$current['parsed_name'].'.*');
             self::$current['poster']      = $CJO['MEDIAFOLDER'].'/mam/cover/'.$results[0]['poster'];  
 
@@ -467,7 +467,7 @@ class cjoFilmList {
             self::$current['id']          = $slice->getId();
             self::$current['title']       = trim($slice->getValue(2));  
             self::$current['subtitle']    = $slice->getValue(3) ? ' <span>'.$slice->getValue(3).'</span>'  : '';             
-            self::$current['parsed_name'] = cjoRewrite::parseArticleName(trim($slice->getValue(2)));  
+            self::$current['parsed_name'] = cjo_url_friendly_string(trim($slice->getValue(2)));  
             self::$current['poster']      = OOMedia::toThumbnail($slice->getFile(1), false, array('width'=>129,'height'=>194,'get_src'=>true,'crop_auto'=>true));
             self::$current['trailer']              = array($slice->getFile(2));            
             self::$current['is_package']           = false;
@@ -509,7 +509,7 @@ class cjoFilmList {
     	$content = $params['subject'];
     	$replace = array();
 
-    	if (!$CJO['CONTEJO'] && strpos($content,'VF_FILMLIST[') !== false) {
+    	if (!cjoProp::isBackend() && strpos($content,'VF_FILMLIST[') !== false) {
     	    
             $replace['VF_HAS_FILMLIST[]'] = '';
             

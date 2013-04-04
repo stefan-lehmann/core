@@ -72,8 +72,3 @@ class cjoListToolbar extends cjoListComponent {
     }
 }
 
-// Toolbar Klassen einbinden
-require_once $CJO['INCLUDE_PATH'].'/classes/afc/classes/list/toolbars/toolbar.searchBar.inc.php';
-require_once $CJO['INCLUDE_PATH'].'/classes/afc/classes/list/toolbars/toolbar.browseBar.inc.php';
-require_once $CJO['INCLUDE_PATH'].'/classes/afc/classes/list/toolbars/toolbar.statusBar.inc.php';
-require_once $CJO['INCLUDE_PATH'].'/classes/afc/classes/list/toolbars/toolbar.maxElementsBar.inc.php';

@@ -1,0 +1,86 @@
+comments = Kommentare
+
+
+##./addons/comments/classes/class.co_comments.inc.php 
+msg_comment_deleted = Der Kommentar wurde gelöscht. 
+msg_comment_not_found = Der Kommentar wurde nicht gefunden!  
+msg_comment_not_unique = Der Kommentar existiert mehrfach! 
+status_updated = Der Status des Eintrages wurde geändert. 
+
+##./addons/comments/classes/class.co_config.inc.php 
+err_config_db_copy = Bei Kopieren der Konfiguration ist ein fehler aufgetreten: <br/>{0}
+msg_cant_delete_default_setting = Das ist die 'default' Kommentar-Einstellung und kann nicht gelöscht werden! 
+msg_err_configure_settings =  <b>Die Konfiguration des Kommentar-AddOns ist unvollständig.</b><br/>Um den vollen Funktionsumfang herzustellen, müssen die Einstellungen ergänzt werden. ><u><a href="{0}">Jetzt korrigieren</a></u><
+
+
+##./addons/comments/pages/comments.inc.php 
+label_article_id = Art.ID 
+label_author = Autor 
+label_city = Ort 
+label_created = Datum 
+label_edit = Eintrag bearbeiten/beantworten 
+label_email = eMail 
+label_message = Kommentar 
+label_reply = Antworten 
+label_status = Status 
+label_url = URL 
+miss_author = Bitte einen Autor angeben! 
+miss_message = Bitte eine Nachricht angeben! 
+miss_status = Bitte den Status festlegen! 
+status_offline = Eintrag online stellen 
+status_online = Eintrag offline stellen 
+
+##./addons/comments/pages/index.inc.php 
+subtitle_comments_list = Übersicht 
+subtitle_manage_tokens = Bayes-SpamFilter 
+subtitle_settings = Einstellungen 
+
+##./addons/comments/pages/manage_tokens.inc.php 
+label_to_ham = Begriff in HAM umwandeln 
+label_to_spam = Begriff in SPAM umwandeln 
+label_token = Begriffe 
+msg_token_made_ham = Begriff '{0}' gilt jetzt als HAM. 
+msg_token_made_spam = Begriff '{0}' gilt jetzt als SPAM. 
+msg_token_unlearned = Begriff '{0}' wurde entfernt. 
+
+##./addons/comments/pages/settings.inc.php 
+add_config = Konfiguration hinzufügen
+edit_config = Konfiguration bearbeiten  
+label_allow_html_tags = HTML-Tags erlauben 
+label_b8_autolearn = Selbstlern-Funktion aktiv 
+label_b8_spam_border = Spam-Level (0-1) 
+label_blacklist_0 = Blacklist 
+label_comments_input = Kommentar-Eingabe 
+label_comments_output = Kommentar-Ausgabe 
+label_comments_spam_filter = Spam-Filter 
+label_date_format = Datumsformat für Ausgabe 
+label_default_setting = Default 
+label_default_setting_text = <br/>Gilt für alle kommentierbaren Artikel für die keine<br/>separaten Einstellungen erstellt wurden! 
+label_disable_comment_function = Kommentar-Funktion aktiv 
+label_filter_comments_by = Filterung 
+label_form_article_name = Formular-Artikel 
+label_list_typ = Listenyp für Kommentare 
+label_list_typ_guestbook = Gästebuch 
+label_list_typ_hidden = Kommentar-Liste zum einblenden 
+label_list_typ_visible = Kommentar-Liste (standard) 
+label_new_online_global = Status neuer Einträge 
+label_no_entries = Hinweis wenn keine Einträge vorhanden<br/>(nur wenn Gästebuch) 
+label_order_comments = Sortierung (nach Datum) 
+label_oversize_length = Überlängen trenen ab<br>(0 = unendlich) 
+label_oversize_replace = Trennzeichen für Überlängen 
+label_reference_article_name = Referenz-Artikel 
+label_short_comments = Lange Kommentare in Kurzform (+mehr-Link) 
+label_short_comments_length = Zeichenzahl der Kurzform 
+miss_b8_spam_border = Spam-Level muß zwischen 0 und 1 liegen (z.B. 0.7) 
+miss_date_format = Bitten eine Datumsformat für die Ausgabe auswählen! 
+miss_form_article_name = Formular-Artikel auswählen! 
+miss_order_comments = Ausgabereihenfolge auswählen! 
+miss_oversize_replace = Trennzeichen für Überlängen auswählen! 
+miss_reference_article_name = Referenz-Artikel zur Anwendung der aktuellen Einstellung muss gewählt werden! 
+new_offline_global = offline 
+new_online_global = online 
+note_filter_comments_by = Ausgabe aller Kommentare die diese/n Begriff/e enthalten.<br/>Mehrere Begriffe durch Komma trennen.<br/><br/>Falls leer Filterung über Artikel-ID. 
+order_comments_asc = aufsteigend (A->Z) 
+order_comments_desc = absteigend (Z->A) 
+space = Leerzeichen 
+trennstrich = Trennstrich (+Leerzeichen) 

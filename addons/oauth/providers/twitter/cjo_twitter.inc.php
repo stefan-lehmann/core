@@ -55,7 +55,7 @@ class cjoTwitter extends cjoOAuthProvider {
             'provider'  => $this->name,
             'id'        => $me->id,
             'username'  => $me->screen_name,
-            'name'      => empty($m->name) ? $me->screen_name : $m->name,
+            'name'      => $m->name,
             'link'      => 'https://twitter.com/'.$me->screen_name,
             'image'     => str_replace('_normal.','_bigger.', $me->profile_image_url)
         );

@@ -25,11 +25,11 @@
 
 class cjoExtendMeta {
     
-    static $mypage = 'extend_meta';
+    static $addon = 'extend_meta';
     
     private static function getFields() {
         global $CJO;
-        return $CJO['ADDON']['settings'][self::$mypage]['FIELDS'];
+        return $CJO['ADDON']['settings'][self::$addon]['FIELDS'];
     }
     
     public static function addFormFields($params) {
@@ -69,21 +69,11 @@ class cjoExtendMeta {
                 else {
                     $params['fields'][$name] =  new $fields['field'][$key]($name, $fields['label'][$key]);
                 }
-
-                if ($fields['field'][$key] == 'selectField') {
-                    $params['fields'][$name]->setMultiple(false); 
-                    $params['fields'][$name]->addAttribute('size', '1'); 
-                    $params['fields'][$name]->addOption('', '');  
-                    
-                    foreach(cjoAssistance::toArray($fields['options'][$key], '|||') as $value) {
-                        $params['fields'][$name]->addOption($value, $value);  
-                    }
-                }
                 
                 $params['fields'][$name]->ActivateSave(false) ;
                 
                 if (!empty($fields['empty'][$key])) {            
-                    $params['fields'][$name]->addValidator('notEmptyOrNull', $fields['message'][$key]);
+                    $params['fields'][$name]->addValidator('notEmpty', $fields['message'][$key], true);
                 }
                 
                 if (!empty($fields['validator'][$key])) {
@@ -104,7 +94,7 @@ class cjoExtendMeta {
             
         $fields = self::getFields();
         $article_id = $CJO['ARTICLE_ID'];
-        $clang = $CJO['CUR_CLANG']; 
+        $clang = cjoProp::getClang(); 
         
         $sql = new cjoSql();
         $sql->setTable(TBL_30_EXTEND_META);

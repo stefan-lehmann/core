@@ -30,13 +30,18 @@ class readOnlyField extends cjoFormField {
     public $activateSave;
     public $tags;
 
-    public function readOnlyField($name, $label, $attributes = array (), $id = '') {
+    public function readOnlyField($name, $label=NULL, $attributes = array (), $id = '') {
         $this->cjoFormField($name, $label, $attributes, $id);
         $this->format = '';
         $this->format_type = '';
         // default werden Werte nicht gespeichert
         $this->activateSave(false);
         $this->setContainer();
+    }
+
+    public function setValue($value) {
+        $this->value = $value;
+        $this->setDefault($value);
     }
 
     public function setContainer($tags='span') {
@@ -48,11 +53,9 @@ class readOnlyField extends cjoFormField {
     }
 
     public function get() {
-        global $I18N;
 
         $multiple_note = '';
-
-        $value = $this->getValue();
+        $value = $this->getDefault() !== NULL ? $this->getDefault() : $this->getValue();
         if ($value == '') $value = $this->value;
 
         return sprintf('<%s id="%s"%s>%s</%s>%s' . $multiple_note, $this->getContainer(), $this->getId(), $this->getAttributes(), $value, $this->getContainer(), $this->getNote());

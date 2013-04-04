@@ -23,66 +23,53 @@
  * @filesource
  */
 
-$dataset = array();
-if (!cjo_post('cjoform_update_button','bool')) {
-    foreach(cjoAssistance::toArray($CJO['ADDON']['settings'][$mypage]) as $key=>$val) {
-    	if ($key == 'PLUGINS') $val = explode('|',$val);
-    	$dataset[$key] = $val;
-    }
-} else {
-    $dataset = $_POST;
-}
 
-$versions = cjoAssistance::parseDir($CJO['ADDON']['settings'][$mypage]['JQ_SRC'],
+$versions = cjoAssistance::parseDir(cjoUrl::addon($addon, 'jquery'),
             						array(), true, 1, 1,
             						'/^jquery[a-z0-9_\-\.].*(?=.js$)/i', '', '');
 
-$plugins = cjoAssistance::parseDir($CJO['ADDON']['settings'][$mypage]['JQ_SRC'],
+$plugins = cjoAssistance::parseDir(cjoUrl::addon($addon, 'jquery'),
 						           array(), false);
+
 
 //Form
 $form = new cjoForm();
 $form->setEditMode(false);
+$form->onIsValid('cjojQuery::copyjQueryFiles');
 
-$fields['VERSION'] = new selectField('VERSION', $I18N_11->msg('label_jquery_version'));
+$fields['VERSION'] = new selectField('VERSION', cjoAddon::translate(11,'label_jquery_version'));
 $fields['VERSION']->addAttribute('size', count($versions));
-$fields['VERSION']->addValidator('notEmpty', $I18N_11->msg("err_empty_version"));
+$fields['VERSION']->addValidator('notEmpty', cjoAddon::translate(11,"err_empty_version"));
 
 foreach(cjoAssistance::toArray($versions) as $name=>$version) {
 	$fields['VERSION']->addOption($name, $version);
 }
 
-$fields['PLUGINS'] = new selectField('PLUGINS', $I18N_11->msg('label_plugins'));
+$fields['PLUGINS'] = new selectField('PLUGINS', cjoAddon::translate(11,'label_plugins'));
 $fields['PLUGINS']->addAttribute('size', count($plugins));
 $fields['PLUGINS']->setMultiple(true);
-$fields['PLUGINS']->setHelp($I18N_11->msg("note_plugins", $CJO['ADDON']['settings'][$mypage]['JQ_INCL']));
-
-	$fields['PLUGINS']->addOption('jQuery-Plugins', '');
-	$fields['PLUGINS']->disableOption('jQuery-Plugins');
+$fields['PLUGINS']->setHelp(cjoAddon::translate(11,"note_plugins", cjoPath::addonAssets($addon, 'jquery')));
+$fields['PLUGINS']->addOption('jQuery-Plugins', '');
+$fields['PLUGINS']->disableOption('jQuery-Plugins');
 
 foreach(cjoAssistance::toArray($plugins) as $name=>$plugin) {
 	$fields['PLUGINS']->addOption($name, $plugin);
 }
 
 $fields['GZIP'] = new checkboxField('GZIP', '&nbsp;');
-$fields['GZIP']->setUncheckedValue();
-$fields['GZIP']->addBox($I18N_11->msg('label_use_gzip'), '1');
+$fields['GZIP']->setUncheckedValue(0);
+$fields['GZIP']->addBox(cjoAddon::translate(11,'label_use_gzip'), '1');
 
 $fields['buttons'] = new buttonField();
-$fields['buttons']->addButton('cjoform_update_button',$I18N->msg("button_update"), true, 'img/silk_icons/tick.png');
+$fields['buttons']->addButton('cjoform_update_button',cjoI18N::translate("button_update"), true, 'img/silk_icons/tick.png');
 
 
 //Add Fields
-$section = new cjoFormSection($dataset, $I18N_11->msg("label_font_settings"), array());
+$section = new cjoFormSection($addon, cjoAddon::translate(11,"label_font_settings"), array());
 
 $section->addFields($fields);
 $form->addSection($section);
 $form->addFields($hidden);
-
-if ($form->validate()) {
-
-    cjojQuery::copyjQueryFiles();
-    
-}
-
 $form->show(false);
+
+

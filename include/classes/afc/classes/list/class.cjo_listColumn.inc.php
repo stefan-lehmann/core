@@ -46,12 +46,14 @@ class cjoListColumn extends cjoListComponent {
     // Tags
     public $head_attributes;
     public $body_attributes;
+    public $condition_attributes;
 
     public function cjoListColumn($label = '', $options = OPT_ALL) {
         $this->params = array ();
         $this->conditions = array ();
-        $this->head_attributes = '';
-        $this->body_attributes = '';
+        $this->head_attributes = array();
+        $this->body_attributes = array();
+        $this->condition_attributes = array();
         $this->setOptions($options);
         $this->setLabel($label);
     }
@@ -163,47 +165,92 @@ class cjoListColumn extends cjoListComponent {
         if (empty ($row) || empty ($array)) {
             return $result;
         }
-
-        foreach ($array as $_name => $_value) {
-            // %VAR_NAME%
-            // Wert beginnt und endet mit '%'
-            if (substr($_value, 0, 1) == '%' && substr($_value, -1) == '%') {
-                // Name der Variablen herausschneiden
-                $var = substr($_value, 1, strlen($_value) - 2);
-
-                // Name in der aktuellen Zeile suchen
-                if (array_key_exists($var, $row)) {
-                    // Und ersetzen
-                    $result[$_name] = $row[$var];
-                    continue;
-                }
+        foreach($array as $key=>$val) {
+            $result[$key] = $val;
+            foreach ($row as $row_key => $row_val) {
+                if (strpos($val,'%'.$row_key.'%') !== false) {
+                    $result[$key] = str_replace('%'.$row_key.'%', $row_val, $val);
+                }   
             }
-            $result[$_name] = $_value;
+            
         }
         return $result;
     }
 
-    public function setHeadAttributes($attributes) {
-        if ($attributes != '' && !startsWith($attributes, ' ')) {
-            $attributes = ' ' . $attributes;
+    public function setHeadAttributes($attribute, $value=NULL) {
+        
+        if ($value === NULL) list($attribute,$value) = $this->splitAtributeString($attribute);
+        
+        if (is_array($attribute)) {
+            foreach($attribute as $key=>$attr) {
+                $this->head_attributes[$attribute[$key]] = $value[$key];
+            }
         }
-        $this->head_attributes .= $attributes;
+        else {
+            $this->head_attributes[$attribute] = $value;
+        }
     }
 
     public function getHeadAttributes() {
-        return $this->head_attributes;
+        return $this->prepareAtributeString($this->head_attributes);
     }
 
-    public function setBodyAttributes($attributes) {
-        if ($attributes != '' && !startsWith($attributes, ' ')) {
-            $attributes = ' ' . $attributes;
+    public function setBodyAttributes($attribute, $value=NULL) {
+        
+        if ($value === NULL) list($attribute,$value) = $this->splitAtributeString($attribute);
+        
+        if (is_array($attribute)) {
+            foreach($attribute as $key=>$attr) {
+                $this->body_attributes[$attribute[$key]] = $value[$key];
+            }
         }
-        $this->body_attributes .= $attributes;
+        else {
+            $this->body_attributes[$attribute] = $value;
+        }
     }
 
     public function getBodyAttributes() {
-        return $this->body_attributes;
+        return $this->prepareAtributeString($this->body_attributes);
     }
+    
+    public function setConditionAttributes($attribute, $value=NULL) {
+        
+        if ($value === NULL) list($attribute,$value) = $this->splitAtributeString($attribute);
+        
+        if (is_array($attribute)) {
+            foreach($attribute as $key=>$attr) {
+                $this->condition_attributes[$attribute[$key]] = $value[$key];
+            }
+        }
+        else {
+            $this->condition_attributes[$attribute] = $value;
+        }
+    }
+
+    public function getConditionAttributes() {
+        return $this->prepareAtributeString($this->condition_attributes);
+    }
+    
+    private function splitAtributeString($attribute) {
+        preg_match_all ("/(^|\s)([a-z\-]+)\s*=\s*\"?([^\"]+)/i", $attribute, $matches, PREG_SET_ORDER); 
+        
+        $result = array(array(),array());
+        foreach($matches as $match) {
+            $result[0][] = $match[2];
+            $result[1][] = $match[3];
+        }
+        return $result;
+    }
+    
+    private function prepareAtributeString($attributes) {
+        
+        $result = array();
+        foreach($attributes as $key=>$attribute) {
+            $result[] =  $key.'="'.$attribute.'"';
+        }
+        return ' '.implode(' ', $result);
+    }    
+    
 
     /**
      * Formatiert die Werte der aktuellen Spalte.
@@ -248,7 +295,7 @@ class cjoListColumn extends cjoListComponent {
                 if (is_array($condition[3])) {
                   if ($this->format_type != '')
                     // Text mit den Parametern $condition[3] verlinken
-                    return $this->link($out, $this->parseArray($condition[3], $row), $condition[4]);
+                    return $this->link($out, $this->parseArray($condition[3], $row), $condition[4].' '.$this->getConditionAttributes());
                 } else {
                     // Plain-Text
                     return $out;
@@ -258,8 +305,3 @@ class cjoListColumn extends cjoListComponent {
         return '';
     }
 }
-
-// Column Klassen einbinden
-require_once $CJO['INCLUDE_PATH'].'/classes/afc/classes/list/columns/column.resultColumn.inc.php';
-require_once $CJO['INCLUDE_PATH'].'/classes/afc/classes/list/columns/column.staticColumn.inc.php';
-require_once $CJO['INCLUDE_PATH'].'/classes/afc/classes/list/columns/column.countColumn.inc.php';

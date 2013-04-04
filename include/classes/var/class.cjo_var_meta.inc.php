@@ -37,10 +37,8 @@ class cjoVarMeta extends cjoVars {
 
     public function getTemplate($content, $article_id = false, $template_id = false) {
 
-        global $CJO;
-
-        if (empty($article_id)) $article_id = $CJO['ARTICLE_ID'];
-        if (empty($article_id)) $article_id = cjo_request('article_id', 'cjo-article-id', $CJO['START_ARTICLE_ID']);
+        if (empty($article_id)) $article_id = cjoProp::getArticleId();
+        if (empty($article_id)) $article_id = cjo_request('article_id', 'cjo-article-id', cjoProp::get('START_ARTICLE_ID'));
 
         $this->getMeta($content, $article_id);
 
@@ -173,7 +171,6 @@ class cjoVarMeta extends cjoVars {
 
     private function getMeta($content, $article_id){
 
-        global $CJO;
         $var = 'CJO_META';
         $meta = array();
 
@@ -197,8 +194,8 @@ class cjoVarMeta extends cjoVars {
 
         $meta['author'] = $article->getAuthor();
 
-    	if ($article_id != $CJO['START_ARTICLE_ID'])
-        	$tree[] = $CJO['START_ARTICLE_ID'];
+    	if ($article_id != cjoProp::get('START_ARTICLE_ID'))
+        	$tree[] = cjoProp::get('START_ARTICLE_ID');
 
                 
         foreach ($tree as $cat_id) {

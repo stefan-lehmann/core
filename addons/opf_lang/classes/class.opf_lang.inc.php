@@ -25,9 +25,7 @@
 
 class cjoOpfLang {
 
-    public static function translate($content)
-    {
-    	global $CJO;
+    public static function translate($content) {
 
     	if (is_array($content) &&
     	    isset($content['subject']))
@@ -39,7 +37,7 @@ class cjoOpfLang {
     	if (!preg_match('/\[translate\:([\d|\w|\s].*?)\]/', $content)) return $content;
 
     	$sql = new cjoSql();
-    	$qry = "SELECT replacename, name FROM ".TBL_OPF_LANG." WHERE clang='".$CJO['CUR_CLANG']."'";
+    	$qry = "SELECT replacename, name FROM ".TBL_OPF_LANG." WHERE clang='".cjoProp::getClang()."'";
     	$result = $sql->getArray($qry);
 
     	foreach($result as $value) {
@@ -54,8 +52,7 @@ class cjoOpfLang {
 
 
     public static function addClang($params) {
-
-    	global $CJO;
+        
     	$new_id = $params['id'];
 
     	$results = array();
@@ -183,7 +180,7 @@ class cjoOpfLang {
             $update = new cjoSql();
             $insert = new cjoSql();
 
-            if (strpos($I18N->msg($name), '[translate:') === false) continue;
+            if (strpos(cjoI18N::translate($name), '[translate:') === false) continue;
 
             if (empty($old_replace_names[$replacename])) {
 
@@ -226,8 +223,7 @@ class cjoOpfLang {
 
     public static function getDir($dir, &$content) {
 
-        global $CJO;
-        $tmpl_file_type = $CJO['TMPL_FILE_TYPE'];
+        $tmpl_file_type = liveEdit::getTmplExtension();
         if(substr($dir, -1) == '/') $dir = substr($dir, 0, -1);
         while($filenames = glob($dir . '/*')) {
             $dir .= '/*';
@@ -238,5 +234,42 @@ class cjoOpfLang {
                 }
             }
         }
+    }
+    
+    public static function updateSettingsByForm($param){
+
+        if (cjo_request('function', 'string') != 'add') return true;
+
+        $form = &$param['form'];
+        $replacename = cjo_post('replacename','string');
+        $name = cjo_post('name','string');
+
+        $sql = new cjoSql();
+        $sql->setQuery("SELECT * FROM ".TBL_OPF_LANG." WHERE replacename LIKE '".'[translate: '.trim($replacename).']'."'");
+
+        if ($sql->getRows() > 0) {
+            cjoMessage::addError(cjoAddon::translate(4,"values_already_exists"));
+            return false;
+        }
+        foreach (cjoProp::getClangs() as $clang_id) {
+            $insert = new cjoSql();
+            $insert->setTable(TBL_OPF_LANG);
+            $insert->setValue("name", trim($name));
+            $insert->setValue("replacename",'[translate: '.trim($replacename).']');
+            $insert->setValue("clang",$clang_id);
+            $insert->insert();
+        }
+        cjoMessage::addSuccess(cjoAddon::translate(4,"values_saved"));
+        
+        return true;
+    }
+
+    public static function deleteReplacement($id) {
+        $sql = new cjoSql();
+        $qry = "SELECT * FROM ".TBL_OPF_LANG." WHERE id='".$id."'";
+        $sql->setQuery($qry);
+        $sql->flush();
+        $qry = "DELETE FROM ".TBL_OPF_LANG." WHERE replacename='".$sql->getValue('replacename')."'";
+        return $sql->statusQuery($qry,cjoAddon::translate(4,"values_deleted"));
     }
 }

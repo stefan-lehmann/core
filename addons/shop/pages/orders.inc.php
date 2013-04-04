@@ -24,7 +24,7 @@
  */
 
 global $CJO;
-$mypage = 'shop';
+$addon = 'shop';
 
 if (cjo_post('cjoform_export_button', 'bool')) {
     cjoShopExport::exportOrders();
@@ -36,12 +36,12 @@ if( $function == 'delete' && $oid != '') {
 	$delete->setWhere('id='.$oid);
 	$delete->Delete();
 
-	cjoAssistance::redirectBE( array( 'function' => '' ) );
+	cjoUrl::redirectBE( array( 'function' => '' ) );
 }
 
 
 if ($function == "edit" ) {
-	$settings = $CJO['ADDON']['settings'][$mypage];
+	$settings = $CJO['ADDON']['settings'][$addon];
 	$pay_methods_path = $settings['PAY_METHODS_PATH'];
 
 	// create table for product output
@@ -62,20 +62,20 @@ if ($function == "edit" ) {
 	$class_file  = $pay_methods_path.'/'.$pay_method.'/class.shop_'.$pay_method.'.inc.php';
 
 	// status of the order
-    $fields['state'] = new selectField('state', $I18N_21->msg('shop_state'), array('style'=>'width:230px;display:block!important'));
+    $fields['state'] = new selectField('state', cjoAddon::translate(21,'shop_state'), array('style'=>'width:230px;display:block!important'));
 	$fields['state']->addAttribute('size', '1');
-    $fields['state']->addOption($I18N_21->msg("shop_order_status_canceled"), -1);
-    $fields['state']->addOption($I18N_21->msg("shop_order_status_added"), 1);
-    $fields['state']->addOption($I18N_21->msg("shop_order_status_under_progress"), 2);
-    $fields['state']->addOption($I18N_21->msg("shop_order_status_send"), 3);
-    $fields['state']->addOption($I18N_21->msg("shop_order_status_finished"), 4);
+    $fields['state']->addOption(cjoAddon::translate(21,"shop_order_status_canceled"), -1);
+    $fields['state']->addOption(cjoAddon::translate(21,"shop_order_status_added"), 1);
+    $fields['state']->addOption(cjoAddon::translate(21,"shop_order_status_under_progress"), 2);
+    $fields['state']->addOption(cjoAddon::translate(21,"shop_order_status_send"), 3);
+    $fields['state']->addOption(cjoAddon::translate(21,"shop_order_status_finished"), 4);
 
     $temp = $dataset['state'] == 3
     	  ? array('style' => 'width: auto;')
     	  : array('style' => 'width: auto;', 'disabled' => 'disabled');
 
 	$fields['notification'] = new checkboxField('notification', '', $temp);
-	$fields['notification']->addBox($I18N_21->msg("label_send_notification"), '1');
+	$fields['notification']->addBox(cjoAddon::translate(21,"label_send_notification"), '1');
 	$fields['notification']->activateSave(false);
 
 	// create object belonging to pay_method
@@ -98,57 +98,57 @@ if ($function == "edit" ) {
     $form->setEditMode(false);
 
     // set form fields and fill it
-    $fields['id'] = new readOnlyField('id', $I18N_21->msg('shop_order_id'), array('class' =>'large_item'));
+    $fields['id'] = new readOnlyField('id', cjoAddon::translate(21,'shop_order_id'), array('class' =>'large_item'));
 
-    $fields['customer'] = new readOnlyField('customer', $I18N_21->msg('shop_full_name'), array('class' =>'large_item'));
+    $fields['customer'] = new readOnlyField('customer', cjoAddon::translate(21,'shop_full_name'), array('class' =>'large_item'));
 
-    $fields['createdate'] = new readOnlyField('createdate', $I18N_21->msg('shop_order_date'));
-    $fields['createdate']->setFormat('strftime',$I18N->msg('datetimeformat'));
+    $fields['createdate'] = new readOnlyField('createdate', cjoAddon::translate(21,'shop_order_date'));
+    $fields['createdate']->setFormat('strftime',cjoI18N::translate('datetimeformat'));
 
-    $fields['address1'] = new readOnlyField('address1', $I18N_21->msg('shop_main_address'),
+    $fields['address1'] = new readOnlyField('address1', cjoAddon::translate(21,'shop_main_address'),
                                             array('class' => 'cjo_with_border cjo_float_l',
                                                   'style' => 'width:220px;white-space:pre'));
 
-    $fields['phone_nr'] = new readOnlyField('phone_nr', $I18N_21->msg('shop_phone_nr'));
+    $fields['phone_nr'] = new readOnlyField('phone_nr', cjoAddon::translate(21,'shop_phone_nr'));
 
-    $fields['email'] = new readOnlyField('email', $I18N_21->msg('shop_email'));
-    $fields['email']->setFormat('sprintf', '<a href="mailto:%1$s?subject='.$I18N_21->msg('shop_email_subject_order', $CJO['SERVERNAME'], $oid).'">%1$s</a>');
+    $fields['email'] = new readOnlyField('email', cjoAddon::translate(21,'shop_email'));
+    $fields['email']->setFormat('sprintf', '<a href="mailto:%1$s?subject='.cjoAddon::translate(21,'shop_email_subject_order', $CJO['SERVERNAME'], $oid).'">%1$s</a>');
 
-    $fields['delivery_method'] 	= new readOnlyField('delivery_method', $I18N_21->msg('shop_deliverer'));
+    $fields['delivery_method'] 	= new readOnlyField('delivery_method', cjoAddon::translate(21,'shop_deliverer'));
 
-    $fields['address2'] = new readOnlyField('address2',  $I18N_21->msg('shop_supply_address'),
+    $fields['address2'] = new readOnlyField('address2',  cjoAddon::translate(21,'shop_supply_address'),
                                             array('class' => 'cjo_with_border cjo_float_l',
                                                   'style' => 'width:220px;white-space:pre'));
 
 
-    $fields['pay_method'] = new readOnlyField('pay_method', $I18N_21->msg('shop_pay_method'));
+    $fields['pay_method'] = new readOnlyField('pay_method', cjoAddon::translate(21,'shop_pay_method'));
 
     if(!empty($pay_object))
-    	$fields['pay_data'] = new readOnlyField('pay_data', $I18N_21->msg('shop_pay_data'),
+    	$fields['pay_data'] = new readOnlyField('pay_data', cjoAddon::translate(21,'shop_pay_data'),
                                             array('class' => 'cjo_with_border cjo_float_l',
                                                   'style' => 'width:220px;white-space:pre'));
 
-	$fields['birth_date'] = new readOnlyField('birth_date', $I18N_21->msg('shop_birth_date'));
-    $fields['birth_date']->setFormat('strftime',$I18N->msg('dateformat'));
+	$fields['birth_date'] = new readOnlyField('birth_date', cjoAddon::translate(21,'shop_birth_date'));
+    $fields['birth_date']->setFormat('strftime',cjoI18N::translate('dateformat'));
 
 
 
-    $fields['products'] = new readOnlyField('products', $I18N_21->msg('shop_ordered_products'));
+    $fields['products'] = new readOnlyField('products', cjoAddon::translate(21,'shop_ordered_products'));
     $fields['products']->needFullColumn(true);
 
-    $fields['comment'] = new textAreaField('comment', $I18N_21->msg('shop_order_comment'),
+    $fields['comment'] = new textAreaField('comment', cjoAddon::translate(21,'shop_order_comment'),
                                            array('class' => 'cjo_float_l',
                                            		 'style' => 'width:704px;white-space:pre',
                                                  'rows' => '6'));
     $fields['comment']->needFullColumn(true);
 
 
-    $fields['updatedate'] = new readOnlyField('updatedate', $I18N->msg('label_updatedate'));
-    $fields['updatedate']->setFormat('strftime',$I18N->msg('datetimeformat'));
-    $fields['updateuser'] = new readOnlyField('updateuser', $I18N->msg('label_updateuser'));
+    $fields['updatedate'] = new readOnlyField('updatedate', cjoI18N::translate('label_updatedate'));
+    $fields['updatedate']->setFormat('strftime',cjoI18N::translate('datetimeformat'));
+    $fields['updateuser'] = new readOnlyField('updateuser', cjoI18N::translate('label_updateuser'));
 
     // add fields and data
-    $section = new cjoFormSection(TBL_21_ORDERS, $I18N_21->msg('shop_edit_orders'), array ('id' => $oid), array('50%','50%'));
+    $section = new cjoFormSection(TBL_21_ORDERS, cjoAddon::translate(21,'shop_edit_orders'), array ('id' => $oid), array('50%','50%'));
     $section->dataset = $dataset;
     $section->addFields($fields);
     $form->addSection($section);
@@ -167,7 +167,7 @@ if ($function == "edit" ) {
             cjoShopMail::sendMail('ORDER_SEND_SUBJECT', $oid);
         }
 
-       cjoAssistance::redirectBE(array('function' => ''));
+       cjoUrl::redirectBE(array('function' => ''));
     }
 
 } // end if function = edit
@@ -183,57 +183,57 @@ if ($function == '') {
 				.TBL_21_ORDERS;
 
 	$list = new cjoList($qry, 'id', 'DESC', '', 60);
-    $list->addGlobalParams(cjo_a22_getDefaultGlobalParams());
+    $list->addGlobalParams(cjoUrl::getDefaultGlobalParams());
 	//$list-> debug = 1;
 
-	$cols['id'] = new resultColumn('id', $I18N_21->msg('shop_order_id_short'));
+	$cols['id'] = new resultColumn('id', cjoAddon::translate(21,'shop_order_id_short'));
 	$cols['id']->setHeadAttributes('class="icon"');
 	$cols['id']->setBodyAttributes('class="icon"');
 
 
-	$cols['firstname'] = new resultColumn('firstname', $I18N_21->msg('shop_firstname'));
-	$cols['name'] = new resultColumn('name', $I18N_21->msg('shop_lastname'));
+	$cols['firstname'] = new resultColumn('firstname', cjoAddon::translate(21,'shop_firstname'));
+	$cols['name'] = new resultColumn('name', cjoAddon::translate(21,'shop_lastname'));
 
-	$cols['address1'] = new resultColumn('address1', $I18N_21->msg('shop_checkout_address1'), 'call_user_func',
+	$cols['address1'] = new resultColumn('address1', cjoAddon::translate(21,'shop_checkout_address1'), 'call_user_func',
 												             array('cjoShopAddress::addressOut',array('%s', 22)));
 	$cols['address1']->setBodyAttributes('style="overflow: hidden"');
 	$cols['address1']->delOption(OPT_ALL);
 
-	$cols['email'] = new resultColumn('email', $I18N_21->msg('shop_email'),'sprintf',
-												   '<a href="mailto:%1$s?subject='.$I18N_21->msg('shop_email_subject_order', $CJO['SERVERNAME']).'"
-												   title="%1$s"><img src="img/silk_icons/email.png" alt="'.$I18N_21->msg("shop_email").'" /></a>');
+	$cols['email'] = new resultColumn('email', cjoAddon::translate(21,'shop_email'),'sprintf',
+												   '<a href="mailto:%1$s?subject='.cjoAddon::translate(21,'shop_email_subject_order', $CJO['SERVERNAME']).'"
+												   title="%1$s"><img src="img/silk_icons/email.png" alt="'.cjoAddon::translate(21,"shop_email").'" /></a>');
 	$cols['email']->setHeadAttributes('class="icon"');
 	$cols['email']->setBodyAttributes('class="icon"');
 	$cols['email']->delOption(OPT_SORT);
 
-	$cols['total_price'] = new resultColumn('total_price',  $I18N_21->msg('shop_total_price'), 'call_user_func',
+	$cols['total_price'] = new resultColumn('total_price',  cjoAddon::translate(21,'shop_total_price'), 'call_user_func',
 												                          array('cjoShopPrice::toCurrency',array('%s')));
     $cols['total_price']->setBodyAttributes('style="text-align: right; font-weight: bold;"');
 
-	$cols['createdate'] = new resultColumn('createdate', $I18N_21->msg('shop_order_date'),'strftime', $I18N->msg('datetimeformat'));
+	$cols['createdate'] = new resultColumn('createdate', cjoAddon::translate(21,'shop_order_date'),'strftime', cjoI18N::translate('datetimeformat'));
 	$cols['createdate']->setBodyAttributes('style="text-align: right;"');
 
-	$cols['state'] = new resultColumn('state', $I18N_21->msg("shop_state"));
+	$cols['state'] = new resultColumn('state', cjoAddon::translate(21,"shop_state"));
 	// add conditions and icons to state column
-	$cols['state']->addCondition('state', -1, '<img src="img/silk_icons/cancel.png" alt="true" title="'.$I18N_21->msg("shop_order_status_canceled").'" />');
-	$cols['state']->addCondition('state', 1, '<img src="img/silk_icons/add.png" alt="true" title="'.$I18N_21->msg("shop_order_status_added").'" />');
-	$cols['state']->addCondition('state', 2, '<img src="img/silk_icons/time.png" alt="true" title="'.$I18N_21->msg("shop_order_status_under_progress").'" />');
-	$cols['state']->addCondition('state', 3, '<img src="img/silk_icons/lorry.png" alt="true" title="'.$I18N_21->msg("shop_order_status_send").'" />');
-	$cols['state']->addCondition('state', 4, '<img src="img/silk_icons/accept.png" alt="true" title="'.$I18N_21->msg("shop_order_status_finished").'" />');
+	$cols['state']->addCondition('state', -1, '<img src="img/silk_icons/cancel.png" alt="true" title="'.cjoAddon::translate(21,"shop_order_status_canceled").'" />');
+	$cols['state']->addCondition('state', 1, '<img src="img/silk_icons/add.png" alt="true" title="'.cjoAddon::translate(21,"shop_order_status_added").'" />');
+	$cols['state']->addCondition('state', 2, '<img src="img/silk_icons/time.png" alt="true" title="'.cjoAddon::translate(21,"shop_order_status_under_progress").'" />');
+	$cols['state']->addCondition('state', 3, '<img src="img/silk_icons/lorry.png" alt="true" title="'.cjoAddon::translate(21,"shop_order_status_send").'" />');
+	$cols['state']->addCondition('state', 4, '<img src="img/silk_icons/accept.png" alt="true" title="'.cjoAddon::translate(21,"shop_order_status_finished").'" />');
 	$cols['state']->setHeadAttributes('class="icon"');
 	$cols['state']->setBodyAttributes('class="icon"');
 	$cols['state']->addOption(OPT_SORT);
 
 
 	// update link
-	$img = '<img src="img/silk_icons/page_white_edit.png" title="'.$I18N->msg("button_edit").'" alt="'.$I18N->msg("button_edit").'" />';
-	$cols['edit'] = new staticColumn($img, $I18N->msg("label_functions"));
+	$img = '<img src="img/silk_icons/page_white_edit.png" title="'.cjoI18N::translate("button_edit").'" alt="'.cjoI18N::translate("button_edit").'" />';
+	$cols['edit'] = new staticColumn($img, cjoI18N::translate("label_functions"));
 	$cols['edit']->setBodyAttributes('width="16"');
 	$cols['edit']->setHeadAttributes('colspan="2"');
 	$cols['edit']->setParams(array ('function' => 'edit', 'oid' => '%id%'));
 
 	// delete link
-	$img = '<img src="img/silk_icons/bin.png" title="'.$I18N->msg("button_delete").'" alt="'.$I18N->msg("button_delete").'" />';
+	$img = '<img src="img/silk_icons/bin.png" title="'.cjoI18N::translate("button_delete").'" alt="'.cjoI18N::translate("button_delete").'" />';
     $cols['delete'] = new staticColumn($img, NULL);
     $cols['delete']->setBodyAttributes('width="60"');
     $cols['delete']->setBodyAttributes('class="cjo_delete"');
@@ -243,7 +243,7 @@ if ($function == '') {
 	$list->addColumns($cols);
 
         $functions  = '<p style="text-align:center">'."\r\n".
-                      '		<input type="submit" name="cjoform_export_button" value="'.$I18N_21->msg('label_cjoform_export_button').'" />'."\r\n".
+                      '		<input type="submit" name="cjoform_export_button" value="'.cjoAddon::translate(21,'label_cjoform_export_button').'" />'."\r\n".
                       '</p>'."\r\n";
 
     $list->setVar(LIST_VAR_INSIDE_FOOT, $functions);

@@ -23,7 +23,7 @@
  * @filesource
  */
 
-if (!$CJO['CONTEJO']) return false;
+if (!cjoProp::isBackend()) return false;
 
 /**
  * cjoSelectArticle class
@@ -42,6 +42,12 @@ class cjoSelectArticle extends cjoSelect {
      * @var string
      */
     private $cache_file;
+    
+    /**
+     * global cjoSelectArticle var
+     * @var object
+     */
+    public static $sel_article;
 
     /**
      * Constructor.
@@ -49,35 +55,32 @@ class cjoSelectArticle extends cjoSelect {
      */
     function __construct($article_id = false, $clang = false) {
 
-        global $CJO, $I18N;
-
-        if (!$CJO['CONTEJO'] || !$CJO['USER']) return false;
+        if (!cjoProp::isBackend() || !cjoProp::getUser()) return false;
+        if ($clang === false) $clang = cjoProp::getClang();
 
         parent :: __construct();
 
-        if ($article_id === false) $article_id = 0;
-        if ($clang === false) $clang = $CJO['CUR_CLANG'];
+        if ($article_id === false) $article_id = cjoProp::getArticleId();
 
-        $this->cache_file = $CJO['FOLDER_GENERATED_ARTICLES']."/".
-                            $CJO['USER']->getValue('user_id').".".$clang.".aspath";
+        $this->cache_file = cjoPath::generated('articles', cjoProp::getUser()->getValue('user_id').'.'.$clang.'.aspath');
 
         $article = OOArticle::getArticleById($article_id, $clang);
         $selected_path = (OOArticle::isValid($article)) ? $article->_path : $article_id;
 
         if (version_compare(PHP_VERSION, '5.3.0') >= 0 &&
             $this->readChachedSelArticle($clang)) {
-            $CJO['SEL_ARTICLE']->resetSelected();
-            $CJO['SEL_ARTICLE']->resetSelectedPath();
-            $CJO['SEL_ARTICLE']->resetDisabled();
-            $CJO['SEL_ARTICLE']->setSelected($article_id);
-            $CJO['SEL_ARTICLE']->setSelectedPath($selected_path);
+            self::$sel_article->resetSelected();
+            self::$sel_article->resetSelectedPath();
+            self::$sel_article->resetDisabled();
+            self::$sel_article->setSelected($article_id);
+            self::$sel_article->setSelectedPath($selected_path);
             return  true;
         }
 
         $this->setName("custom_select");
         $this->setStyle('class="custom_select"');
         $this->setStyle("width: 928px");
-        $this->showRoot($I18N->msg('label_article_root'), 'root');
+        $this->showRoot(cjoI18N::translate('label_article_root'), 'root');
         $this->setSize(1);
         $this->setSelected($article_id);
         $this->setSelectedPath($selected_path);
@@ -92,7 +95,7 @@ class cjoSelectArticle extends cjoSelect {
           ORDER BY prior, id";
 
         if ($this->addSqlOptions($query, false)) {
-            $CJO['SEL_ARTICLE'] = $this;
+            self::$sel_article = $this;
             $this->writeCachedSelArticle();
         }
     }
@@ -104,8 +107,6 @@ class cjoSelectArticle extends cjoSelect {
      * @return booelan|string on success returns true, if a sql error occurs the error message is returned
      */
     public function addSqlOptions($query, $sqldebug = false) {
-
-        global $CJO;
 
         $sql = new cjoSql();
         $result = $sql->getArray($query, PDO::FETCH_NUM);
@@ -125,7 +126,7 @@ class cjoSelectArticle extends cjoSelect {
             $article = OOArticle::getArticleById($value[1]);                
             if (!OOArticle::isValid($article))  continue;
                 
-            if ($CJO['USER']->hasCatPermWrite($value[1],true)) {
+            if (cjoProp::getUser()->hasCatPermWrite($value[1],true)) {
                 if ($article->isLocked()) {
                     $value[4] .= '_by_user';
                 }
@@ -133,7 +134,7 @@ class cjoSelectArticle extends cjoSelect {
                     $value[4] .= '_admin';
                 }
             }     
-            elseif ($CJO['USER']->hasCatPermRead($value[1])) {
+            elseif (cjoProp::getUser()->hasCatPermRead($value[1])) {
                 
                 if ($article->isLocked()) {
                     $value[4] .= '_by_user';
@@ -146,7 +147,7 @@ class cjoSelectArticle extends cjoSelect {
                 }
             }
             else {
-                if ($CJO['USER']->hasCatPermWrite($value[1])) {
+                if (cjoProp::getUser()->hasCatPermWrite($value[1])) {
                     $value[4] = 'file_admin';
                 }
                 else {
@@ -177,12 +178,10 @@ class cjoSelectArticle extends cjoSelect {
      */
     private function readChachedSelArticle() {
 
-        global $CJO;
-
         if (!file_exists($this->cache_file) || filemtime($this->cache_file) < (time()-600)) return false;
         include($this->cache_file);
-        if (!is_object($CJO['SEL_ARTICLE']) || empty($CJO['SEL_ARTICLE'])) return false;
-       return true;
+        if (!is_object(self::$sel_article) || empty(self::$sel_article)) return false;
+        return true;
     }
 
     /**
@@ -194,11 +193,10 @@ class cjoSelectArticle extends cjoSelect {
         global $CJO;
 
         $new_content = '<?php'."\r\n".
-                       'global $CJO;'."\r\n".
-                       '$CJO[\'SEL_ARTICLE\'] = unserialize(stripslashes(\''.addslashes(serialize($CJO['SEL_ARTICLE'])).'\'));'."\r\n".
+                       'self::$sel_article = unserialize(stripslashes(\''.addslashes(serialize(self::$sel_article)).'\'));'."\r\n".
                        '?>';
 
-        if (cjoAssistance::isWritable($CJO['FOLDER_GENERATED_ARTICLES'])) {
+        if (cjoFile::isWritable(cjoPath::generated('articles'))) {
             cjoGenerate::putFileContents($this->cache_file, $new_content);
         }
     }
@@ -208,26 +206,23 @@ class cjoSelectArticle extends cjoSelect {
      * @return void
      */
     public static function deleteCachedSelArticle() {
-        global $CJO;
-        foreach(cjoAssistance::toArray(glob($CJO['FOLDER_GENERATED_ARTICLES']."/*.aspath")) as $file) {
+        foreach(cjoAssistance::toArray(glob(cjoPath::generated('articles').'*.aspath')) as $file) {
             unlink($file);
         }
     }
 
     /**
-     * Writes the generated $CJO['SEL_ARTICLE'] object.
+     * Writes the generated self::$sel_article object.
      * @param boolean $render
      * @return void|string
      */
     public function get($render=false) {
 
-        global $CJO;
+        $subpage = cjoProp::getSubpage();
+        $clang   = cjoProp::getClang();
+        $ctype   = cjoProp::getCtype();
 
-        $subpage = cjo_request('subpage', 'string');
-        $clang   = cjo_request('clang', 'cjo-clang-id');
-        $ctype   = cjo_request('ctype', 'cjo-ctype-id');
-
-        $s  = $CJO['SEL_ARTICLE']->_get();
+        $s  = self::$sel_article->_get();
 
         if ($this->getSelectId() == 'custom_select') {
 
@@ -270,4 +265,13 @@ class cjoSelectArticle extends cjoSelect {
     public function _get() {
         return parent::get();
     }
+    
+    public static function init() {
+        self::$sel_article = new cjoSelectArticle();
+    }
+    
+    public static function getOutput($render=false) {
+        return self::$sel_article->get($render);
+    }
+    
 }

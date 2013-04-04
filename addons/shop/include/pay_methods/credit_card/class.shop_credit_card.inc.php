@@ -109,23 +109,22 @@ class cjoShopCreditCard extends cjoShopPayment {
 	 * @access public
 	 */
 	public function out() {
-		global $I18N_21, $CJO;
-		$mypage = 'shop';
-		$exchange_ratio = $CJO['ADDON']['settings'][$mypage]['CURRENCY']['CURR_RATIO'];
+	    
+        $exchange_ratio = cjoAddon::getParameter('CURRENCY|CURR_RATIO', self::$addon);
 
 		$string  = $this->firstname." ".$this->name."\r\n";
-		$string .= $I18N_21->msg('shop_credit_card_id').": ".$this->card_id."\r\n";
-		$string .= $I18N_21->msg('shop_credit_card_CVS').": ".$this->cvs."\r\n";
-		$string .= $I18N_21->msg('shop_credit_card_provider').": "
+		$string .= cjoAddon::translate(21,'shop_credit_card_id').": ".$this->card_id."\r\n";
+		$string .= cjoAddon::translate(21,'shop_credit_card_CVS').": ".$this->cvs."\r\n";
+		$string .= cjoAddon::translate(21,'shop_credit_card_provider').": "
 		           .$this->card_provider."\r\n";
 
-		$string .= $I18N_21->msg('shop_credit_card_expiration_date').": "
+		$string .= cjoAddon::translate(21,'shop_credit_card_expiration_date').": "
 		           .$this->expiration_date."\r\n";
 
 		// display costs in backend if there are some
-		if($CJO['CONTEJO'] && !empty($this->costs)) {
+		if(cjoProp::isBackend() && !empty($this->costs)) {
 			$this->costs = round($exchange_ratio * $this->costs, 2);
-			$string .= $I18N_21->msg('shop_credit_card_costs').": "
+			$string .= cjoAddon::translate(21,'shop_credit_card_costs').": "
 		           	   .cjoShopPrice::toCurrency($this->costs)."\r\n";
 		}
 

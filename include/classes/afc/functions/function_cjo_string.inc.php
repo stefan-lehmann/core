@@ -90,7 +90,7 @@ if (!function_exists('PMA_splitSqlFile')) {
     function PMA_splitSqlFile(& $ret, $sql, $release) {
         global $CJO;
 
-        $sql = str_replace('`cjo_', '`' . $CJO['TABLE_PREFIX'], $sql);
+        $sql = str_replace('`cjo_', '`' . cjoProp::getTablePrefix(), $sql);
 
         // do not trim, see bug #1030644
         //$sql          = trim($sql);

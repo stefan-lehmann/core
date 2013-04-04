@@ -38,10 +38,10 @@ if ($mode == 'groups' && ($function == 'add' || $function == 'edit')) {
     $hidden['mode']->setValue($mode);
 
     //Fields
-    $fields['name'] = new textField('name', $I18N->msg("label_group_name"));
+    $fields['name'] = new textField('name', cjoI18N::translate("label_group_name"));
     $fields['name']->setValue($default_name);
-    $fields['name']->addValidator('notEmpty', $I18N->msg('msg_group_name_notEmpty'));
-    $fields['name']->addValidator('isNot', $I18N->msg('msg_name_inUse'),$used_inputs['names'],true);
+    $fields['name']->addValidator('notEmpty', cjoI18N::translate('msg_group_name_notEmpty'));
+    $fields['name']->addValidator('isNot', cjoI18N::translate('msg_name_inUse'),$used_inputs['names'],true);
 
     $sql = new cjoSql();
     $sql->setQuery("SELECT * FROM ".TBL_USER." WHERE login NOT REGEXP '^group_' ORDER BY user_id");
@@ -62,22 +62,21 @@ if ($mode == 'groups' && ($function == 'add' || $function == 'edit')) {
         $sql->next();
     }
 
-    $fields['related_user'] = new readOnlyField('related_user', $I18N->msg("label_editors"));
+    $fields['related_user'] = new readOnlyField('related_user', cjoI18N::translate("label_editors"));
     $fields['related_user']->setValue($sel_user->get());
     $fields['related_user']->activateSave(false);
 
     // Allgemeine Rechte ----------------------------------------------------------------------------------------------------------------------------
 
-    $fields['headline1'] = new readOnlyField('headline1', '', array('class' => 'formheadline slide'));
-    $fields['headline1']->setValue($I18N->msg("label_common"));
+    $fields['headline1'] = new headlineField(cjoI18N::translate("label_common"), true);
 
     $sel_all = new cjoSelect();
     $sel_all->setMultiple(true);
-    $sel_all->setSize(count($CJO['PERM']));
+    $sel_all->setSize(count(cjoProp::get('PERM')) +1);
     $sel_all->setName("userperm_all[]");
     $sel_all->setId("userperm_all");
 
-    foreach($CJO['PERM'] as $key=>$perm) {
+    foreach(cjoProp::get('PERM') as $key=>$perm) {
 
     	$curr_type = preg_replace('/\[\w*\]/', '', $perm);
     	if ($prev_type == $curr_type) {
@@ -88,23 +87,23 @@ if ($mode == 'groups' && ($function == 'add' || $function == 'edit')) {
            $prev_type = $curr_type;
     	}
 
-    	$sel_all->addOption($nbsp.$I18N->msg($key),$perm);
+    	$sel_all->addOption($nbsp.cjoI18N::translate($key),$perm);
 
         if (strpos($default_rights, '#'.$perm.'#') !== false)
             $sel_all->setSelected($perm);
     }
 
-    $fields['perm_all'] = new readOnlyField('perm_all', $I18N->msg("label_backend_perm"));
+    $fields['perm_all'] = new readOnlyField('perm_all', cjoI18N::translate("label_backend_perm"));
     $fields['perm_all']->setValue($sel_all->get());
     $fields['perm_all']->activateSave(false);
 
     $sel_addons = new cjoSelect();
     $sel_addons->setMultiple(true);
-    $sel_addons->setSize(count($CJO['PERMADDON']));
+    $sel_addons->setSize(count(cjoProp::get('PERMADDON')) +1);
     $sel_addons->setName("userperm_addon[]");
     $sel_addons->setId("userperm_addon");
 
-    foreach($CJO['PERMADDON'] as $key=>$perm) {
+    foreach(cjoProp::get('PERMADDON') as $key=>$perm) {
 
     	$curr_type = preg_replace('/\[\w*\]/', '', $perm);
     	if ($prev_type == $curr_type) {
@@ -120,21 +119,20 @@ if ($mode == 'groups' && ($function == 'add' || $function == 'edit')) {
             $sel_addons->setSelected($perm);
     }
 
-    $fields['perm_addon'] = new readOnlyField('perm_addon', $I18N->msg("label_addon_perm"));
+    $fields['perm_addon'] = new readOnlyField('perm_addon', cjoI18N::translate("label_addon_perm"));
     $fields['perm_addon']->setValue($sel_addons->get());
     $fields['perm_addon']->activateSave(false);
 
     // Zugriff auf Kategorien ----------------------------------------------------------------------------------------------------------------------------
 
-    $fields['headline2'] = new readOnlyField('headline2', '', array('class' => 'formheadline slide'));
-    $fields['headline2']->setValue($I18N->msg("label_articles"));
+    $fields['headline2'] = new headlineField(cjoI18N::translate("label_articles"), true);
 
     $sql = new cjoSql();
     $sql->setQuery("SELECT * FROM ".TBL_ARTICLES." WHERE ( startpage=1 OR re_id=0 ) AND clang=0 ORDER BY prior");
 
     $sel_cat = new cjoSelect();
     $sel_cat->setMultiple(true);
-    $sel_cat->showRoot($I18N->msg("label_rights_all").' '.$I18N->msg('label_article_root'), 'root');
+    $sel_cat->showRoot(cjoI18N::translate("label_rights_all").' '.cjoI18N::translate('label_article_root'), 'root');
     $sel_cat->setSize(($sql->getRows()>18 ? 20 : $sql->getRows()+2));
     $sel_cat->setName("userperm_cat[]");
     $sel_cat->setId("userperm_cat");
@@ -157,7 +155,7 @@ if ($mode == 'groups' && ($function == 'add' || $function == 'edit')) {
         $sql->next();
     }
 
-    $fields['perm_cat'] = new readOnlyField('perm_cat', $I18N->msg("label_structure_perm"));
+    $fields['perm_cat'] = new readOnlyField('perm_cat', cjoI18N::translate("label_structure_perm"));
     $fields['perm_cat']->setValue($sel_cat->get());
     $fields['perm_cat']->activateSave(false);
 
@@ -165,39 +163,38 @@ if ($mode == 'groups' && ($function == 'add' || $function == 'edit')) {
     // Extra-Permissions setzen
     $sel_ctypes = new cjoSelect();
     $sel_ctypes->setMultiple(true);
-    $sel_ctypes->setSize(count($CJO['CTYPE'])+1);
+    $sel_ctypes->setSize(cjoProp::countCtypes()+2);
     $sel_ctypes->setName("userperm_ctypes[]");
     $sel_ctypes->setId("userperm_ctypes");
     
-    $sel_ctypes->addOption($I18N->msg("label_rights_all").' '.strtoupper($I18N->msg("title_ctypes")),'all');
+    $sel_ctypes->addOption(cjoI18N::translate("label_rights_all").' '.strtoupper(cjoI18N::translate("title_ctypes")),'all');
 
     if (strpos($default_rights, '#ctype[all]#') !== false) {
         $sel_ctypes->setSelected('all');
         $sel_ctypes->root_selected = true;
     }    
     
-    foreach($CJO['CTYPE'] as $ctype_id=>$ctype_name) {
+    foreach(cjoProp::getCtypes() as $ctype_id=>$ctype_name) {
         $sel_ctypes->addOption('&nbsp;| &rarr; '.$ctype_name.' (ID='.$ctype_id.')',$ctype_id);
         if (strpos($default_rights, '#ctype['.$ctype_id.']#') !== false) {
             $sel_ctypes->setSelected($ctype_id);
         }
     }
     
-    $fields['perm_ctypes'] = new readOnlyField('perm_ctypes', $I18N->msg("title_ctypes"));
+    $fields['perm_ctypes'] = new readOnlyField('perm_ctypes', cjoI18N::translate("title_ctypes"));
     $fields['perm_ctypes']->setValue($sel_ctypes->get());
     $fields['perm_ctypes']->activateSave(false);
     
     // Zugriff auf Medienkategorien ----------------------------------------------------------------------------------------------------------------------------
 
-    $fields['headline3'] = new readOnlyField('headline3', '', array('class' => 'formheadline slide'));
-    $fields['headline3']->setValue($I18N->msg("label_media_perm"));
+    $fields['headline3'] = new headlineField(cjoI18N::translate("label_media_perm"), true);
 
     $sql = new cjoSql();
     $sql->setQuery("SELECT * FROM ".TBL_FILE_CATEGORIES." ORDER BY name");
 
     $sel_media = new cjoSelect();
     $sel_media->setMultiple(true);
-    $sel_media->showRoot($I18N->msg("label_rights_all").' '.$I18N->msg('label_media_root'), 'root');
+    $sel_media->showRoot(cjoI18N::translate("label_rights_all").' '.cjoI18N::translate('label_media_root'), 'root');
     $sel_media->setSize(($sql->getRows()>18 ? 20 : $sql->getRows()+2));
     $sel_media->setName("userperm_media[]");
     $sel_media->setId("userperm_media");
@@ -217,14 +214,13 @@ if ($mode == 'groups' && ($function == 'add' || $function == 'edit')) {
         $sql->next();
     }
 
-    $fields['perm_media'] = new readOnlyField('perm_media', $I18N->msg("label_mediafolder"));
+    $fields['perm_media'] = new readOnlyField('perm_media', cjoI18N::translate("label_mediafolder"));
     $fields['perm_media']->setValue($sel_media->get());
     $fields['perm_media']->activateSave(false);
 
     // Zugriff auf Module und Templates ----------------------------------------------------------------------------------------------------------------------------
 
-    $fields['headline4'] = new readOnlyField('headline4', '', array('class' => 'formheadline slide'));
-    $fields['headline4']->setValue($I18N->msg("label_module_perm"));
+    $fields['headline4'] = new headlineField(cjoI18N::translate("label_module_perm"), true);
 
     $sql = new cjoSql();
     $sql->setQuery("SELECT id, CONCAT(name,' (ID=',id,')') AS name FROM ".TBL_MODULES." ORDER BY prior");
@@ -233,9 +229,9 @@ if ($mode == 'groups' && ($function == 'add' || $function == 'edit')) {
     $sel_module->setMultiple(true);
     $sel_module->setName("userperm_modules[]");
     $sel_module->setId("userperm_modules");
-    $sel_module->setSize($sql->getRows()+1);
+    $sel_module->setSize($sql->getRows()+2);
 
-    $sel_module->addOption($I18N->msg("label_rights_all").' '.strtoupper($I18N->msg("label_modules")),0);
+    $sel_module->addOption(cjoI18N::translate("label_rights_all").' '.strtoupper(cjoI18N::translate("label_modules")),0);
 
     if (strpos($default_rights, '#module[0]#') !== false) {
         $sel_module->setSelected(0);
@@ -252,14 +248,13 @@ if ($mode == 'groups' && ($function == 'add' || $function == 'edit')) {
         $sql->next();
     }
 
-    $fields['perm_module'] = new readOnlyField('perm_module', $I18N->msg("label_modules"));
+    $fields['perm_module'] = new readOnlyField('perm_module', cjoI18N::translate("label_modules"));
     $fields['perm_module']->setValue($sel_module->get());
     $fields['perm_module']->activateSave(false);
 
 // Zugriff auf Module und Templates ----------------------------------------------------------------------------------------------------------------------------
 
-    $fields['headline4a'] = new readOnlyField('headline4a', '', array('class' => 'formheadline slide'));
-    $fields['headline4a']->setValue($I18N->msg("title_templates"));
+    $fields['headline4a'] = new headlineField(cjoI18N::translate("title_templates"), true);
 
     $sql = new cjoSql();
     $sql->setQuery("SELECT id, CONCAT(name,' (ID=',id,')') AS name FROM ".TBL_TEMPLATES." ORDER BY prior");
@@ -268,9 +263,9 @@ if ($mode == 'groups' && ($function == 'add' || $function == 'edit')) {
     $sel_template->setMultiple(true);
     $sel_template->setName("userperm_templates[]");
     $sel_template->setId("userperm_templates");
-    $sel_template->setSize($sql->getRows()+1);
+    $sel_template->setSize($sql->getRows()+2);
 
-    $sel_template->addOption($I18N->msg("label_rights_all").' '.strtoupper($I18N->msg("title_templates")),0);
+    $sel_template->addOption(cjoI18N::translate("label_rights_all").' '.strtoupper(cjoI18N::translate("title_templates")),0);
 
     if (strpos($default_rights, '#template[0]#') !== false) {
         $sel_template->setSelected(0);
@@ -287,55 +282,53 @@ if ($mode == 'groups' && ($function == 'add' || $function == 'edit')) {
         $sql->next();
     }
   
-    $fields['perm_template'] = new readOnlyField('perm_template', $I18N->msg("title_templates"));
+    $fields['perm_template'] = new readOnlyField('perm_template', cjoI18N::translate("title_templates"));
     $fields['perm_template']->setValue($sel_template->get());
     $fields['perm_template']->activateSave(false);    
     
     
-    $fields['headline5'] = new readOnlyField('headline5', '', array('class' => 'formheadline slide'));
-    $fields['headline5']->setValue($I18N->msg("label_options"));
+    $fields['headline5'] = new headlineField(cjoI18N::translate("label_options"), true);
 
     // Extra-Permissions setzen
     $sel_ext = new cjoSelect();
     $sel_ext->setMultiple(true);
-    $sel_ext->setSize(count($CJO['EXTPERM']));
+    $sel_ext->setSize(count(cjoProp::get('EXTPERM'))+1);
     $sel_ext->setName("userperm_ext[]");
     $sel_ext->setId("userperm_ext");
 
-    foreach($CJO['EXTPERM'] as $key=>$extperm) {
-        $sel_ext->addOption($I18N->msg($key),$extperm);
+    foreach(cjoProp::get('EXTPERM') as $key=>$extperm) {
+        $sel_ext->addOption(cjoI18N::translate($key),$extperm);
 
         if (strpos($default_rights, '#'.$extperm.'#') !== false)
             $sel_ext->setSelected($extperm);
     }
 
-    $fields['perm_ext'] = new readOnlyField('perm_ext', $I18N->msg("label_options"));
+    $fields['perm_ext'] = new readOnlyField('perm_ext', cjoI18N::translate("label_options"));
     $fields['perm_ext']->setValue($sel_ext->get());
     $fields['perm_ext']->activateSave(false);
 
-    // Extra-Rechte ----------------------------------------------------------------------------------------------------------------------------
-
-    $fields['headline6'] = new readOnlyField('headline6', '', array('class' => 'formheadline slide'));
-    $fields['headline6']->setValue($I18N->msg("label_extra_perm"));
-
-    $sel_extra = new cjoSelect();
-    $sel_extra->setMultiple(true);
-    $sel_extra->setSize(count($CJO['EXTRAPERM'])+1);
-    $sel_extra->setName("userperm_extra[]");
-    $sel_extra->setId("userperm_extra");
-
-    if (isset($CJO['EXTRAPERM'])) {
-        foreach($CJO['EXTRAPERM'] as $key=>$extraperm) {
-            $sel_extra->addOption($I18N->msg($key), $extraperm);
+    if (cjoProp::get('EXTRAPERM')) {
+        // Extra-Rechte ----------------------------------------------------------------------------------------------------------------------------
+    
+        $fields['headline6'] = new headlineField(cjoI18N::translate("label_extra_perm"), true);
+    
+        $sel_extra = new cjoSelect();
+        $sel_extra->setMultiple(true);
+        $sel_extra->setSize(count(cjoProp::get('EXTRAPERM'))+1);
+        $sel_extra->setName("userperm_extra[]");
+        $sel_extra->setId("userperm_extra");
+    
+        foreach(cjoProp::get('EXTRAPERM') as $key=>$extraperm) {
+            $sel_extra->addOption(cjoI18N::translate($key), $extraperm);
 
             if (strpos($default_rights, '#'.$extraperm.'#') !== false)
                 $sel_extra->setSelected($extraperm);
         }
+    
+        $fields['perm_extra'] = new readOnlyField('perm_extra', cjoI18N::translate("label_extras"));
+        $fields['perm_extra']->setValue($sel_extra->get());
+        $fields['perm_extra']->activateSave(false);
     }
-    $fields['perm_extra'] = new readOnlyField('perm_extra', $I18N->msg("label_extras"));
-    $fields['perm_extra']->setValue($sel_extra->get());
-    $fields['perm_extra']->activateSave(false);
-
     $fields['status'] = new hiddenField('status');
     $fields['status']->setValue('0');
 
@@ -347,7 +340,7 @@ if ($mode == 'groups' && ($function == 'add' || $function == 'edit')) {
 		$fields['createdate_hidden']->setValue(time());
 
 		$fields['createuser_hidden'] = new hiddenField('createuser');
-		$fields['createuser_hidden']->setValue($CJO['USER']->getValue("name"));
+		$fields['createuser_hidden']->setValue(cjoProp::getUser()->getValue("name"));
 	}
 	else {
 
@@ -355,33 +348,31 @@ if ($mode == 'groups' && ($function == 'add' || $function == 'edit')) {
 		$fields['updatedate_hidden']->setValue(time());
 
 		$fields['updateuser_hidden'] = new hiddenField('updateuser');
-		$fields['updateuser_hidden']->setValue($CJO['USER']->getValue("name"));
+		$fields['updateuser_hidden']->setValue(cjoProp::getUser()->getValue("name"));
 
-		$fields['headline7'] = new readOnlyField('headline7', '', array('class' => 'formheadline slide'));
-		$fields['headline7']->setValue($I18N->msg("label_info"));
-		$fields['headline7']->needFullColumn(true);
+		$fields['headline7'] = new headlineField(cjoI18N::translate("label_info"), true);
 
-		$fields['updatedate'] = new readOnlyField('updatedate', $I18N->msg('label_updatedate'), array(), 'label_updatedate');
-		$fields['updatedate']->setFormat('strftime',$I18N->msg('dateformat_sort'));
+		$fields['updatedate'] = new readOnlyField('updatedate', cjoI18N::translate('label_updatedate'), array(), 'label_updatedate');
+		$fields['updatedate']->setFormat('strftime',cjoI18N::translate('dateformat_sort'));
 		$fields['updatedate']->needFullColumn(true);
 
-		$fields['updateuser'] = new readOnlyField('updateuser', $I18N->msg('label_updateuser'), array(), 'label_updateuser');
+		$fields['updateuser'] = new readOnlyField('updateuser', cjoI18N::translate('label_updateuser'), array(), 'label_updateuser');
 		$fields['updateuser']->needFullColumn(true);
 
-		$fields['createdate'] = new readOnlyField('createdate', $I18N->msg('label_createdate'), array(), 'label_createdate');
-		$fields['createdate']->setFormat('strftime',$I18N->msg('dateformat_sort'));
+		$fields['createdate'] = new readOnlyField('createdate', cjoI18N::translate('label_createdate'), array(), 'label_createdate');
+		$fields['createdate']->setFormat('strftime',cjoI18N::translate('dateformat_sort'));
 		$fields['createdate']->needFullColumn(true);
 
-		$fields['createuser'] = new readOnlyField('createuser', $I18N->msg('label_createuser'), array(), 'label_createuser');
+		$fields['createuser'] = new readOnlyField('createuser', cjoI18N::translate('label_createuser'), array(), 'label_createuser');
 		$fields['createuser']->needFullColumn(true);
 	}
 
     /**
-     * Do not delete translate values for i18n collection!
+     * Do not delete translate values for cjoI18N collection!
      * [translate: label_add_group]
      * [translate: label_edit_group]
      */
-    $section = new cjoFormSection(TBL_USER, $I18N->msg('label_'.$function.'_group'), array ('user_id' => $oid));
+    $section = new cjoFormSection(TBL_USER, cjoI18N::translate('label_'.$function.'_group'), array ('user_id' => $oid));
 
     $section->addFields($fields);
     $form->addSection($section);
@@ -466,7 +457,7 @@ if ($mode == 'groups' && ($function == 'add' || $function == 'edit')) {
 
         if ($update->getError() == '') {
 
-            cjoMessage::addSuccess($I18N->msg("msg_group_updated"));
+            cjoMessage::addSuccess(cjoI18N::translate("msg_group_updated"));
 
             // einzelne Benutzer updaten
             $sql = new cjoSql();
@@ -551,33 +542,33 @@ $qry = "SELECT
 $list = new cjolist($qry, 'a.name', 'ASC', 'name', 100);
 $list->debug = false;
 $cols['icon'] = new staticColumn('<img src="img/silk_icons/group.png" alt="" />',
-                                 cjoAssistance::createBELink(
-                                 			  '<img src="img/silk_icons/add.png" alt="'.$I18N->msg("button_add").'" />',
+                                 cjoUrl::createBELink(
+                                 			  '<img src="img/silk_icons/add.png" alt="'.cjoI18N::translate("button_add").'" />',
                                                array('function' => 'add', 'mode' => 'groups', 'oid' => ''),
                                                $list->getGlobalParams(),
-                                              'title="'.$I18N->msg("button_add").'"'));
+                                              'title="'.cjoI18N::translate("button_add").'"'));
 
 $cols['icon']->setHeadAttributes('class="icon"');
 $cols['icon']->setBodyAttributes('class="icon"');
 $cols['icon']->delOption(OPT_SORT);
 
-$cols['user_id'] = new resultColumn('user_id', $I18N->msg("label_id"));
+$cols['user_id'] = new resultColumn('user_id', cjoI18N::translate("label_id"));
 $cols['user_id']->setHeadAttributes('class="icon"');
 $cols['user_id']->setBodyAttributes('class="icon"');
 
-$cols['groupname'] = new resultColumn('groupname', $I18N->msg("label_group_name"));
+$cols['groupname'] = new resultColumn('groupname', cjoI18N::translate("label_group_name"));
 $cols['groupname']->delOption(OPT_SORT);
 
-$cols['users'] = new resultColumn('users', $I18N->msg("label_editors"));
+$cols['users'] = new resultColumn('users', cjoI18N::translate("label_editors"));
 
 // Bearbeiten link
-$img = '<img src="img/silk_icons/page_white_edit.png" title="'.$I18N->msg("button_edit").'" alt="'.$I18N->msg("button_edit").'" />';
-$cols['edit'] = new staticColumn($img, $I18N->msg("label_functions"));
+$img = '<img src="img/silk_icons/page_white_edit.png" title="'.cjoI18N::translate("button_edit").'" alt="'.cjoI18N::translate("button_edit").'" />';
+$cols['edit'] = new staticColumn($img, cjoI18N::translate("label_functions"));
 $cols['edit']->setHeadAttributes('colspan="2"');
 $cols['edit']->setBodyAttributes('width="16"');
 $cols['edit']->setParams(array ('function' => 'edit', 'mode' => 'groups', 'oid' => '%user_id%'));
 
-$img = '<img src="img/silk_icons/bin.png" title="'.$I18N->msg("button_delete").'" alt="'.$I18N->msg("button_delete").'" />';
+$img = '<img src="img/silk_icons/bin.png" title="'.cjoI18N::translate("button_delete").'" alt="'.cjoI18N::translate("button_delete").'" />';
 $cols['delete'] = new staticColumn($img, NULL);
 $cols['delete']->setBodyAttributes('width="60"');
 $cols['delete']->setBodyAttributes('class="cjo_delete"');

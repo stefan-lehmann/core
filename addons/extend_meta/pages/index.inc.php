@@ -23,12 +23,6 @@
  * @filesource
  */
 
-$mypage    = 'extend_meta';
+cjoSubPages_::addPage( array('settings', 'title' => cjoAddon::translate(30,'label_settings')));
 
-// register subpages
-$subpages = new cjoSubPages($subpage, $mypage);
-$subpages->addPage( array('settings', 'title' => $I18N_30->msg('label_settings')));
-
-require_once $CJO['INCLUDE_PATH'].'/layout/top.php';
-require_once $subpages->getPage();
-require_once $CJO['INCLUDE_PATH'].'/layout/bottom.php';
+require_once cjoSubPages::getPagePath();

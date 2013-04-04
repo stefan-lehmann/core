@@ -24,28 +24,27 @@
  */
 ?>
 
-<script type="text/javascript" src="<?php echo $CJO['JQUERY_PATH']; ?>/jquery-latest.min.js"></script>
-<script type="text/javascript" src="<?php echo $CJO['BACKEND_PATH']; ?>/js/contejo.js"></script>
-<script type="text/javascript" src="<?php echo $CJO['JQUERY_PATH']; ?>/iutil.js"></script>
-<script type="text/javascript" src="<?php echo $CJO['JQUERY_PATH']; ?>/easing.js"></script>
-<script type="text/javascript" src="<?php echo $CJO['JQUERY_PATH']; ?>/jquery.blockUI.js"></script>
-<script type="text/javascript" src="<?php echo $CJO['JQUERY_PATH']; ?>/ui/jquery.ui.costum.min.js"></script>
-<script type="text/javascript" src="<?php echo $CJO['JQUERY_PATH']; ?>/ui/i18n/jquery.ui.datepicker-<?php echo $CJO['CLANG_ISO'][$clang]; ?>.js"></script>
-<script type="text/javascript" src="<?php echo $CJO['JQUERY_PATH']; ?>/jquery.customselect.js"></script>
-<script type="text/javascript" src="<?php echo $CJO['JQUERY_PATH']; ?>/jquery.flash.js"></script>
-<script type="text/javascript" src="<?php echo $CJO['JQUERY_PATH']; ?>/jquery.tablednd.js"></script>
-<script type="text/javascript" src="<?php echo $CJO['JQUERY_PATH']; ?>/jquery.fancybox.js"></script>
-<script type="text/javascript" src="<?php echo $CJO['JQUERY_PATH']; ?>/jquery.jgrowl.js"></script>
-<!-- <script type="text/javascript" src="<?php echo $CJO['BACKEND_PATH']; ?>/js/codepress/codepress.js"></script> -->
-<script type="text/javascript" src="<?php echo $CJO['BACKEND_PATH']; ?>/js/jpicker/jpicker-1.1.5.js"></script>
+<script type="text/javascript" src="<?php echo 'js/jquery/jquery-latest.min.js'; ?>"></script>
+<script type="text/javascript" src="<?php echo 'js/contejo.js'; ?>"></script>
+<script type="text/javascript" src="<?php echo 'js/jquery/iutil.js'; ?>"></script>
+<script type="text/javascript" src="<?php echo 'js/jquery/easing.js'; ?>"></script>
+<script type="text/javascript" src="<?php echo 'js/jquery/jquery.blockUI.js'; ?>"></script>
+<script type="text/javascript" src="<?php echo 'js/jquery/ui/jquery.ui.costum.min.js'; ?>"></script>
+<script type="text/javascript" src="<?php echo 'js/jquery/ui/i18n/jquery.ui.datepicker-'.cjoProp::getClangIso().'.js'; ?>"></script>
+<script type="text/javascript" src="<?php echo 'js/jquery/jquery.customselect.js'; ?>"></script>
+<script type="text/javascript" src="<?php echo 'js/jquery/jquery.flash.js'; ?>"></script>
+<script type="text/javascript" src="<?php echo 'js/jquery/jquery.fancybox.js'; ?>"></script>
+<script type="text/javascript" src="<?php echo 'js/jquery/jquery.jgrowl.js'; ?>"></script>
+<script type="text/javascript" src="<?php echo 'js/jquery/cookies.js'; ?>"></script>
+<script type="text/javascript" src="<?php echo 'js/jpicker/jpicker-1.1.5.js'; ?>"></script>
 <script type="text/javascript">
 /* <![CDATA[ */
 
     cjo.conf.contejo     = true;
-    cjo.conf.clang       = '<?php echo $CJO['CUR_CLANG']; ?>';
-    cjo.conf.jQuery_path = '<?php echo $CJO['JQUERY_PATH']; ?>';
+    cjo.conf.clang       = '<?php echo cjoProp::getClang(); ?>';
+    cjo.conf.jQuery_path = '<?php echo 'js/jquery'; ?>';
     cjo.conf.xtime       = '<?php echo !empty($_GET['cjo.xtime']) ? $_GET['cjo.xtime'] : ''; ?>';
-    cjo.conf.url         = 'index.php?page=<?php echo $page; ?>&subpage=<?php echo $subpage; ?>&article_id=<?php echo $article_id; ?>&mode=edit',
+    cjo.conf.url         = 'index.php?page=<?php echo cjoProp::getPage(); ?>&subpage=<?php echo cjoProp::getSubpage(); ?>&article_id=<?php echo cjoProp::getArticleId(); ?>&mode=edit',
     cjo.conf.article_id  = '<?php echo cjo_request('article_id', 'cjo-article-id'); ?>';
     cjo.conf.slice_id    = '<?php echo cjo_request('slice_id', 'cjo-slice-id') ?>';
     cjo.conf.ctype       = '<?php echo cjo_request('ctype', 'cjo-ctype-id') ?>';
@@ -75,9 +74,9 @@
         $(jdialog)
             .dialog({
                 buttons: {
-                    '<?php echo $I18N->msg('label_ok'); ?>': function() {
+                    '<?php echo cjoI18N::translate('label_ok'); ?>': function() {
                         $(this).dialog('close'); eval(action);
-                    }, '<?php echo $I18N->msg('label_cancel'); ?>': function() {
+                    }, '<?php echo cjoI18N::translate('label_cancel'); ?>': function() {
                         $(this).dialog('close');
                     } }
             });

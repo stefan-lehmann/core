@@ -32,7 +32,7 @@ if (!cjo_post('cjoform_cancel_button','bool')) {
 
 if ($action != '') {
 
-    $path['path'] 	  = $CJO['ADDON']['settings']['developer']['edit_path'].'/'.$CJO['TMPL_FILE_TYPE'];
+    $path['path'] 	  = liveEdit::getEditPath(liveEdit::getTmplExtension());
     $path['type'] 	  = $path['path'].'/'.$type;
 
     if ($template > 0) {
@@ -48,35 +48,35 @@ if ($action != '') {
     if ($action == 'add'){
 
         foreach($path as $val){
-            if (!file_exists($val)){ mkdir($val, $CJO['FILEPERM']); }
+            if (!file_exists($val)){ mkdir($val, cjoProp::getDirPerm()); }
         }
 
         $new_content = @file_get_contents(cjoModulTemplate::getTemplatePath($oid,0,0,$type)).' ';
-                                            $new_file 	 = array_pop($path).'/'.
-                                            $oid.'.'.
-                                            cjo_specialchars($curr_modultyp['name']).'.'.
-                                            $type.'.'.
-                                            $CJO['TMPL_FILE_TYPE'];
+                                            $new_file = array_pop($path).'/'.
+                                                                  $oid.'.'.
+                                                                  cjo_specialchars($curr_modultyp['name']).'.'.
+                                                                  $type.'.'.
+                                                                  liveEdit::getTmplExtension();
 
         /**
-         * Do not delete translate values for i18n collection!
+         * Do not delete translate values for cjoI18N collection!
          * [translate: label_input]
          * [translate: label_output]
          */
 
         if (file_put_contents($new_file,$new_content)) {
-            unset($CJO['ADDON']['settings']['developer']['tmpl']['html']);
+            //unset($CJO['ADDON']['settings']['developer']['tmpl']['html']);
             cjoExtension::registerExtensionPoint('MODULE_UPDATED', 
                                                  array('ACTION' => 'LAYOUT_ADDED',
                                                        'moduletyp_id' => $oid,
                                                        'template_id' => $template,
                                                        'ctype' => $ctype,
                                                        'type' => $type));  
-            cjoMessage::addSuccess($I18N->msg("msg_modul_layout_added", $template, $ctype, $I18N->msg("label_".$type)));
+            cjoMessage::addSuccess(cjoI18N::translate("msg_modul_layout_added", $template, $ctype, cjoI18N::translate("label_".$type)));
         }
         else {
-            cjoMessage::addError($I18N->msg("msg_modul_layout_not_added", $template, $ctype, $I18N->msg("label_".$type)));
-            cjoAssistance::isWritable($new_file);
+            cjoMessage::addError(cjoI18N::translate("msg_modul_layout_not_added", $template, $ctype, cjoI18N::translate("label_".$type)));
+            cjoFile::isWritable($new_file);
         }
     }
     if ($action == 'delete'){
@@ -89,8 +89,8 @@ if ($action != '') {
 
                 $path = array_reverse($path);
                 foreach($path as $val){ @rmdir($val); }
-                unset($CJO['ADDON']['settings']['developer']['tmpl']['html']);
-                cjoMessage::addSuccess($I18N->msg("msg_modul_layout_deleted", $template, $ctype, $I18N->msg("label_".$type)));
+                //unset($CJO['ADDON']['settings']['developer']['tmpl']['html']);
+                cjoMessage::addSuccess(cjoI18N::translate("msg_modul_layout_deleted", $template, $ctype, cjoI18N::translate("label_".$type)));
                 
                 cjoExtension::registerExtensionPoint('MODULE_UPDATED', 
                                                      array('ACTION' => 'LAYOUT_DELETED',
@@ -100,11 +100,11 @@ if ($action != '') {
                                                            'type' => $type));  
             }
             else {
-                cjoMessage::addError($I18N->msg("msg_modul_layout_not_deleted", $template, $ctype, $I18N->msg("label_".$type)));
+                cjoMessage::addError(cjoI18N::translate("msg_modul_layout_not_deleted", $template, $ctype, cjoI18N::translate("label_".$type)));
             }
         }
         else {
-            cjoMessage::addError($I18N->msg("msg_modul_layout_no_deleted_default"));
+            cjoMessage::addError(cjoI18N::translate("msg_modul_layout_no_deleted_default"));
         }
         unset($template);
         unset($ctype);
@@ -137,9 +137,9 @@ foreach ($templates as $c_tmpl_id => $c_tmpl_name){
     $data_temp = array();
 
     $data_temp['template_id'] = $c_tmpl_id;
-    $data_temp['templates'] = ($c_tmpl_id==0) ? $I18N->msg("label_default_template") : $c_tmpl_name;
+    $data_temp['templates'] = ($c_tmpl_id==0) ? cjoI18N::translate("label_default_template") : $c_tmpl_name;
 
-    foreach($CJO['CTYPE'] as $c_ctype_id=>$c_ctype_name){
+    foreach(cjoProp::get('CTYPE') as $c_ctype_id=>$c_ctype_name){
 
         $input_path  = cjoModulTemplate::getTemplatePath($oid,$c_tmpl_id,$c_ctype_id,'input');
         $output_path = cjoModulTemplate::getTemplatePath($oid,$c_tmpl_id,$c_ctype_id,'output');
@@ -151,47 +151,47 @@ foreach ($templates as $c_tmpl_id => $c_tmpl_name){
         $has_curr_ctype    = strpos($curr_modultyp['ctypes'], '|'.$c_ctype_id.'|') !== false;   
 
 		$buttons['input'] = new buttonField();
-		$buttons['input']->addButton('input_add_button_'.$c_tmpl_id.$c_ctype_id, $I18N->msg("label_input").' '.$I18N->msg('button_add'), true, 'img/silk_icons/add.png');
+		$buttons['input']->addButton('input_add_button_'.$c_tmpl_id.$c_ctype_id, cjoI18N::translate("label_input").' '.cjoI18N::translate('button_add'), true, 'img/silk_icons/add.png');
 		$buttons['input']->setButtonAttributes('input_add_button_'.$c_tmpl_id.$c_ctype_id, 'class="small"');
 		$buttons['input']->setButtonAttributes('input_add_button_'.$c_tmpl_id.$c_ctype_id,
 											   'onclick="cjo.jconfirm($(this), \'cjo.changeLocation\', [\''.
-        cjoAssistance::createBEUrl(array('mode'=>$mode, 'oid'=>$oid, 'template'=>$c_tmpl_id, 'ctype'=>$c_ctype_id, 'type'=>'input', 'action'=>'add'), array(), '&amp;').
+        cjoUrl::createBEUrl(array('mode'=>$mode, 'oid'=>$oid, 'template'=>$c_tmpl_id, 'ctype'=>$c_ctype_id, 'type'=>'input', 'action'=>'add'), array(), '&amp;').
 											   '\'])"');
 
-        $buttons['input']->addButton('input_edit_button_'.$c_tmpl_id.$c_ctype_id, $I18N->msg("label_input").' '.$I18N->msg('button_edit'), true, 'img/silk_icons/page_white_edit.png');
+        $buttons['input']->addButton('input_edit_button_'.$c_tmpl_id.$c_ctype_id, cjoI18N::translate("label_input").' '.cjoI18N::translate('button_edit'), true, 'img/silk_icons/page_white_edit.png');
         $buttons['input']->setButtonAttributes('input_edit_button_'.$c_tmpl_id.$c_ctype_id, 'class="small"');
         $buttons['input']->setButtonAttributes('input_edit_button_'.$c_tmpl_id.$c_ctype_id,
 											   'onclick="cjo.changeLocation(\''.
-        cjoAssistance::createBEUrl(array('mode'=>$mode, 'oid'=>$oid, 'template'=>$c_tmpl_id, 'ctype'=>$c_ctype_id, 'type'=>'input', 'action'=>'edit'), array(), '&amp;').
+        cjoUrl::createBEUrl(array('mode'=>$mode, 'oid'=>$oid, 'template'=>$c_tmpl_id, 'ctype'=>$c_ctype_id, 'type'=>'input', 'action'=>'edit'), array(), '&amp;').
 											   '\')"');
 
-        $buttons['input']->addButton('input_delete_button_'.$c_tmpl_id.$c_ctype_id, $I18N->msg("label_input").' '.$I18N->msg('button_delete'), true, 'img/silk_icons/bin.png');
+        $buttons['input']->addButton('input_delete_button_'.$c_tmpl_id.$c_ctype_id, cjoI18N::translate("label_input").' '.cjoI18N::translate('button_delete'), true, 'img/silk_icons/bin.png');
         $buttons['input']->setButtonAttributes('input_delete_button_'.$c_tmpl_id.$c_ctype_id, 'class="small"');
         $buttons['input']->setButtonAttributes('input_delete_button_'.$c_tmpl_id.$c_ctype_id,
 											   'onclick="cjo.jconfirm($(this), \'cjo.changeLocation\', [\''.
-        cjoAssistance::createBEUrl(array('mode'=>$mode, 'oid'=>$oid, 'template'=>$c_tmpl_id, 'ctype'=>$c_ctype_id, 'type'=>'input', 'action'=>'delete'), array(), '&amp;').
+        cjoUrl::createBEUrl(array('mode'=>$mode, 'oid'=>$oid, 'template'=>$c_tmpl_id, 'ctype'=>$c_ctype_id, 'type'=>'input', 'action'=>'delete'), array(), '&amp;').
 											   '\'])"');
 
         $buttons['output'] = new buttonField();
-        $buttons['output']->addButton('output_add_button_'.$c_tmpl_id.$c_ctype_id, $I18N->msg("label_output").' '.$I18N->msg('button_add'), true, 'img/silk_icons/add.png');
+        $buttons['output']->addButton('output_add_button_'.$c_tmpl_id.$c_ctype_id, cjoI18N::translate("label_output").' '.cjoI18N::translate('button_add'), true, 'img/silk_icons/add.png');
         $buttons['output']->setButtonAttributes('output_add_button_'.$c_tmpl_id.$c_ctype_id, 'class="small"');
         $buttons['output']->setButtonAttributes('output_add_button_'.$c_tmpl_id.$c_ctype_id,
 											   'onclick="cjo.jconfirm($(this), \'cjo.changeLocation\', [\''.
-        cjoAssistance::createBEUrl(array('mode'=>$mode, 'oid'=>$oid, 'template'=>$c_tmpl_id, 'ctype'=>$c_ctype_id, 'type'=>'output', 'action'=>'add'), array(), '&amp;').
+        cjoUrl::createBEUrl(array('mode'=>$mode, 'oid'=>$oid, 'template'=>$c_tmpl_id, 'ctype'=>$c_ctype_id, 'type'=>'output', 'action'=>'add'), array(), '&amp;').
 											   '\'])"');
 
-        $buttons['output']->addButton('output_edit_button_'.$c_tmpl_id.$c_ctype_id, $I18N->msg("label_output").' '.$I18N->msg('button_edit'), true, 'img/silk_icons/page_white_edit.png');
+        $buttons['output']->addButton('output_edit_button_'.$c_tmpl_id.$c_ctype_id, cjoI18N::translate("label_output").' '.cjoI18N::translate('button_edit'), true, 'img/silk_icons/page_white_edit.png');
         $buttons['output']->setButtonAttributes('output_edit_button_'.$c_tmpl_id.$c_ctype_id, 'class="small"');
         $buttons['output']->setButtonAttributes('output_edit_button_'.$c_tmpl_id.$c_ctype_id,
 											    'onclick="cjo.changeLocation(\''.
-        cjoAssistance::createBEUrl(array('mode'=>$mode, 'oid'=>$oid, 'template'=>$c_tmpl_id, 'ctype'=>$c_ctype_id, 'type'=>'output', 'action'=>'edit'), array(), '&amp;').
+        cjoUrl::createBEUrl(array('mode'=>$mode, 'oid'=>$oid, 'template'=>$c_tmpl_id, 'ctype'=>$c_ctype_id, 'type'=>'output', 'action'=>'edit'), array(), '&amp;').
 											    '\')"');
 
-        $buttons['output']->addButton('output_delete_button_'.$c_tmpl_id.$c_ctype_id, $I18N->msg("label_output").' '.$I18N->msg('button_delete'), true, 'img/silk_icons/bin.png');
+        $buttons['output']->addButton('output_delete_button_'.$c_tmpl_id.$c_ctype_id, cjoI18N::translate("label_output").' '.cjoI18N::translate('button_delete'), true, 'img/silk_icons/bin.png');
         $buttons['output']->setButtonAttributes('output_delete_button_'.$c_tmpl_id.$c_ctype_id, 'class="small"');
         $buttons['output']->setButtonAttributes('output_delete_button_'.$c_tmpl_id.$c_ctype_id,
 											   'onclick="cjo.jconfirm($(this), \'cjo.changeLocation\', [\''.
-        cjoAssistance::createBEUrl(array('mode'=>$mode, 'oid'=>$oid, 'template'=>$c_tmpl_id, 'ctype'=>$c_ctype_id, 'type'=>'output', 'action'=>'delete'), array(), '&amp;').
+        cjoUrl::createBEUrl(array('mode'=>$mode, 'oid'=>$oid, 'template'=>$c_tmpl_id, 'ctype'=>$c_ctype_id, 'type'=>'output', 'action'=>'delete'), array(), '&amp;').
 											   '\'])"');
 
         if(!isset($used[$input_path]) && !empty($input_path)){
@@ -245,10 +245,9 @@ foreach ($templates as $c_tmpl_id => $c_tmpl_name){
 <span style="clear: both;"></span>
 <?php
 
-unset($_GET['oid']);
 
 //LIST Ausgabe
-$list = new cjolist();
+$list = new cjoList();
 $list->curr_rows = $data;
 
 $cols['icon'] = new staticColumn('<img src="img/silk_icons/layout.png" alt="" />', '');
@@ -256,17 +255,17 @@ $cols['icon']->setHeadAttributes('class="icon"');
 $cols['icon']->setBodyAttributes('class="icon"');
 $cols['icon']->delOption(OPT_ALL);
 
-$style_width = 96/(count($CJO['CTYPE'])+1);
+$style_width = 96/(cjoProp::countCtypes()+1);
 
-$cols['templates'] = new resultColumn('templates', $I18N->msg("title_templates").' / '.$I18N->msg("title_ctypes"));
+$cols['templates'] = new resultColumn('templates', cjoI18N::translate("title_templates").' / '.cjoI18N::translate("title_ctypes"));
 $cols['templates']->setBodyAttributes('style="width:'.$style_width.'%"');
 $cols['templates']->delOption(OPT_ALL);
 
-foreach($CJO['CTYPE'] as $c_ctype_id=>$c_ctype_name){
-    $name = ($c_ctype_id==0) ? $c_ctype_name.' ('.$I18N->msg("label_default").')' : $c_ctype_name;
+foreach(cjoProp::get('CTYPE') as $c_ctype_id=>$c_ctype_name){
+    $name = ($c_ctype_id==0) ? $c_ctype_name.' ('.cjoI18N::translate("label_default").')' : $c_ctype_name;
     $cols['ctypes'.$c_ctype_id] = new resultColumn('ctypes'.$c_ctype_id, $name);
-    $cols['ctypes'.$c_ctype_id]->setHeadAttributes('style="width:'.$style_width.'%; text-align: center;"');
-    $cols['ctypes'.$c_ctype_id]->setBodyAttributes('style="width:'.$style_width.'%; text-align: center; border-left: 1px solid #ddd;"');
+    $cols['ctypes'.$c_ctype_id]->setHeadAttributes('style', 'width:'.$style_width.'%; text-align: center;');
+    $cols['ctypes'.$c_ctype_id]->setBodyAttributes('style', 'width:'.$style_width.'%; text-align: center; border-left: 1px solid #ddd;');
     $cols['ctypes'.$c_ctype_id]->delOption(OPT_ALL);
 }
 
@@ -283,7 +282,6 @@ $dataset['html'] = is_readable($dataset['path']) ? file_get_contents($dataset['p
 //Form
 $form = new cjoForm();
 $form->setEditMode(true);
-//$form->debug = true;
 
 $hidden['mode'] = new hiddenField('mode');
 $hidden['mode']->setValue($mode);
@@ -304,21 +302,21 @@ $hidden['action'] = new hiddenField('action');
 $hidden['action']->setValue('edit');
 
 //Fields
-$fields['path'] = new readOnlyField('path', $I18N->msg("label_path"), array('class' => 'large_item'));
+$fields['path'] = new readOnlyField('path', cjoI18N::translate("label_path"), array('class' => 'large_item'));
 $fields['path']->activateSave(false);
 
-$fields['html'] = new codeField('html', $I18N->msg("label_".$type));
-$fields['html']->addAttribute('class', 'inp75');
-$fields['html']->addAttribute('rows', '30');
+$fields['html'] = new codeField('html', cjoI18N::translate("label_".$type));
 $fields['html']->activateSave(false);
-$fields['html']->setNote('<a href="http://contejo.com/contejo-variablen.104.0.html" target="_blank" title="'.$I18N->msg("label_help").'"><img src="./img/silk_icons/help.png" alt="?" /></a>');
+$fields['html']->setNote('<a href="http://contejo.com/contejo-variablen.104.0.html" target="_blank" '.
+                         'title="'.cjoI18N::translate("label_help").'">'.
+                         '<img src="./img/silk_icons/help.png" alt="?" /></a>',
+                         ' style="float:right!important;position:static;width:auto;margin:5px 10px;"');
 
 $fields['path_hidden'] = new hiddenField('path', array(), 'hidden_path');
 $fields['path_hidden']->activateSave(false);
 
 //Add Fields:
-$section = new cjoFormSection(TBL_MODULES, '', array ('id' => $oid));
-$section->dataset = $dataset;
+$section = new cjoFormSection($dataset, '', array ('id' => $oid));
 
 $section->addFields($fields);
 $form->addSection($section);
@@ -337,15 +335,15 @@ if ($form->validate()) {
                                                    'type' => $type));  
 
 		if (cjo_post('cjoform_save_button', 'boolean')) {
-			cjoAssistance::redirectBE(array('mode'=>$mode, 'oid'=>$oid, 'action'=>'', 'msg'=>'msg_data_saved'));
+			cjoUrl::redirectBE(array('mode'=>$mode, 'oid'=>$oid, 'action'=>'', 'msg'=>'msg_data_saved'));
 		}
 		else {
-			cjoAssistance::redirectBE(array('mode'=>$mode, 'oid'=>$oid, 'template'=>$template, 'ctype'=>$ctype, 'type'=>$type, 'action'=>'', 'msg'=>'msg_data_saved'));
+			cjoUrl::redirectBE(array('mode'=>$mode, 'oid'=>$oid, 'template'=>$template, 'ctype'=>$ctype, 'type'=>$type, 'action'=>'', 'msg'=>'msg_data_saved'));
 		}
 	}
 	else {
-		cjoMessage::addError($I18N->msg("msg_data_not_saved"));
-		cjoMessage::addError($I18N->msg("msg_file_no_chmod",
-		                     cjoAssistance::absPath($config_file)));
+		cjoMessage::addError(cjoI18N::translate("msg_data_not_saved"));
+		cjoMessage::addError(cjoI18N::translate("msg_file_no_chmod",
+		                     cjoFile::absPath($config_file)));
 	}
 }

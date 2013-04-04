@@ -23,9 +23,6 @@
  * @filesource
  */
 
-$mypage    = 'login';
-$title = (strlen($CJO['SERVERNAME']) > 19) ? substr($CJO['SERVERNAME'],0,16).'...' : $CJO['SERVERNAME'];
-
 $local_params = array('page'     => cjo_request('page', 'string'),
                       'subpage'  => cjo_request('subpage', 'string'),
 					  'function' => '',
@@ -37,27 +34,27 @@ $local_params = array('page'     => cjo_request('page', 'string'),
 if (cjo_get('logout', 'bool'))  $local_params['page'] = 'edit';
 
 $subpages = array(array('login',
-					'title' => $title.' '.$I18N->msg('title_login'),
+					'title' => cjoProp::getServerName().' '.cjoI18N::translate('title_login'),
 					'important' => true));
 
-cjoSubPages::setTabs($mypage, $subpages, $mypage);
+cjoSubPages::setTabs('login', $subpages, 'login');
 
 ?>
 <!DOCTYPE html>
 <html>
 <head>
-<title>CJO </title>
-<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $I18N->msg("htmlcharset"); ?>" />
-<meta http-equiv="Content-Language" content="<?php echo $I18N->msg("htmllang"); ?>" />
+<title>CJO</title>
+<meta http-equiv="Content-Type" content="text/html; charset=<?php echo cjoI18N::translate("htmlcharset"); ?>" />
+<meta http-equiv="Content-Language" content="<?php echo cjoI18N::translate("htmllang"); ?>" />
 <meta http-equiv="Pragma" content="no-cache" />
-<link rel="shortcut icon" type="image/x-icon" href="<?php echo $CJO['FAVICON'] ?>" />
+<link rel="shortcut icon" type="image/x-icon" href="<?php echo cjoProp::get('FAVICON') ?>" />
 <link rel="stylesheet" type="text/css" href="css/contejo.css" />
 <link rel="stylesheet" type="text/css" href="css/login.css" />
-<?php require_once($CJO['INCLUDE_PATH']."/../js/js.inc.php") ?>
+<?php require_once cjoPath::backend('js/js.inc.php'); ?>
 <script type="text/javascript">
 	/* <![CDATA[ */
 		var contejo = true;
-		var clang = '<?php echo $CJO['CUR_CLANG']; ?>';
+		var clang = '<?php echo cjoProp::getClang(); ?>';
         window.onload = function(){
             document.getElementById("cjo_ulogin").focus();
         }
@@ -72,16 +69,16 @@ cjoSubPages::setTabs($mypage, $subpages, $mypage);
         <div id="cjo_login" class="clearfix">
             <div id="cjo_tabs"></div>
             <form
-            	action="<?php echo cjoAssistance::createBEUrl($local_params); ?>"
+            	action="<?php echo cjoUrl::createBEUrl($local_params); ?>"
             	method="post" name="loginformular" autocomplete="off">
-                <p><label for="cjo_ulogin"><?php echo $I18N->msg('label_user_login'); ?>:</label>
+                <p><label for="cjo_ulogin"><?php echo cjoI18N::translate('label_user_login'); ?>:</label>
                    <input type="text" size="15" id="cjo_ulogin"
                     	value="<?php echo $LOGIN['username']; ?>" name="LOGIN[username]"
-                    	title="<?php echo $I18N->msg('label_user_login'); ?>" /></p>
-                <p><label for="cjo_upsw"><?php echo $I18N->msg('label_user_psw'); ?>:</label>
+                    	title="<?php echo cjoI18N::translate('label_user_login'); ?>" /></p>
+                <p><label for="cjo_upsw"><?php echo cjoI18N::translate('label_user_psw'); ?>:</label>
                    <input type="password" size="15" id="cjo_upsw" name="LOGIN[password]" value=""
-                    	title="<?php echo $I18N->msg('label_user_psw'); ?>" /></p>
-                <p><input type="submit" value="<?php echo $I18N->msg('label_login'); ?>"
+                    	title="<?php echo cjoI18N::translate('label_user_psw'); ?>" /></p>
+                <p><input type="submit" value="<?php echo cjoI18N::translate('label_login'); ?>"
                 		class="submit" /></p>
             </form>
             <a href="http://contejo.com" class="cjo_home_link">contejo.com</a>

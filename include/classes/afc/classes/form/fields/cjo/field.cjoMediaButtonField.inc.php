@@ -48,7 +48,7 @@ class cjoMediaButtonField extends popupButtonField {
 
 		$this->popupButtonField($name, $label, $attributes, $id);
 		$this->setConnectAction("cjo.connectMedia($(this),'". $this->getId() ."'); return false;");
-		$this->setDisconnectAction('cjo.jconfirm(\''.$I18N->msg('label_remove_media').' ?\', \'cjo.disconnectMedia\', [$(this)]); return false;');
+		$this->setDisconnectAction('cjo.jconfirm(\''.cjoI18N::translate('label_remove_media').' ?\', \'cjo.disconnectMedia\', [$(this)]); return false;');
 	}
 
 	public function getInputFields() {
@@ -100,15 +100,15 @@ class cjoMediaButtonField extends popupButtonField {
 
 
         if ($this->getValue()) {
-		    $this->addButton($I18N->msg('label_remove_media'), $this->getDisconnectAction(), 'img/silk_icons/cross.png', 'class="small"');		
-			$url = cjoAssistance::createBEUrl(array('page' => 'media','subpage' => 'details', 'filename' => $this->getValue()),array(),'&amp;');
-			$this->addButton($I18N->msg('label_edit_media'),
+		    $this->addButton(cjoI18N::translate('label_remove_media'), $this->getDisconnectAction(), 'img/silk_icons/cross.png', 'class="small"');		
+			$url = cjoUrl::createBEUrl(array('page' => 'media','subpage' => 'details', 'filename' => $this->getValue()),array(),'&amp;');
+			$this->addButton(cjoI18N::translate('label_edit_media'),
 							 'cjo.openShortPopup(\''.$url.'\'); return false;',
 							 'img/silk_icons/page_white_edit.png',
 							 'class="small"');
         }
         else {
-		    $this->addButton($I18N->msg('label_open_media'), $this->getConnectAction(), 'img/silk_icons/add.png', 'class="small"');
+		    $this->addButton(cjoI18N::translate('label_open_media'), $this->getConnectAction(), 'img/silk_icons/add.png', 'class="small"');
         }
 
 		return str_replace('id=""','',parent::get());

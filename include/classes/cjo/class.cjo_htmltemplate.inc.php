@@ -81,8 +81,6 @@ class cjoHtmlTemplate {
      */
     public function __construct($template = false) {
 
-        global $CJO;
-
         if ($template === false) return false;
 
         $this->tmpl_sections = array();
@@ -170,9 +168,6 @@ class cjoHtmlTemplate {
      * @return void
      */
     public function fillTemplate($section, $replace_data=array(), $slice=false) {
-
-        global $CJO, $I18N;
-
         $search_keys      = array();
         $tmpl_section     = $this->tmpl_sections[$section];
 
@@ -253,7 +248,7 @@ class cjoHtmlTemplate {
             } else if (function_exists($function)) {
                 eval($call);
             } else {
-                $replace = '<!-- '.$I18N->msg('msg_class_or_function_not_available', $function.'('.$params_out.')' ).' -->';
+                $replace = '<!-- '.cjoI18N::translate('msg_class_or_function_not_available', $function.'('.$params_out.')' ).' -->';
             }
             if ($replace === null) {
                 $replace = '[['.$function.'('.$params_out.')]]';
@@ -271,11 +266,9 @@ class cjoHtmlTemplate {
      */
     protected function replaceCommonVars($content, $article_id = false) {
 
-        global $CJO;
-
         if ($article_id === false) $article_id = $GLOBALS['CJO_ARTICLE_ID'];
 
-        foreach($CJO['VARIABLES'] as $var){
+        foreach(cjoProp::get('VARIABLES') as $var){
             $content = $var->getTemplate($content, $article_id);
         }
 
@@ -295,8 +288,6 @@ class cjoHtmlTemplate {
      * @return string|boolean
      */
     public function get($print=true) {
-
-        global $CJO;
 
         $rendered = array();
         $this->rendered_html = '';
@@ -318,7 +309,7 @@ class cjoHtmlTemplate {
         $this->rendered_html = preg_replace('/\<%[A-Z0-9_]*%>/','',$this->rendered_html);
         $this->rendered_html = $this->parseConditions($this->rendered_html);
 
-        if (!$CJO['CONTEJO']) {
+        if (!cjoProp::isBackend()) {
             $this->rendered_html = preg_replace("/[\r\n|\r|\n]{2,}/", "\r\n", $this->rendered_html);
         }
 
@@ -470,9 +461,7 @@ class cjoHtmlTemplate {
      */
     public function replaceSliceDefaultValues($slice, &$content) {
 
-        global $CJO;
-
-        $search = array('[[CJO_IS_CONTEJO]]'    => $CJO['CONTEJO'],
+        $search = array('[[CJO_IS_CONTEJO]]'    => cjoProp::isBackend(),
                         '[[CJO_ARTICLE_ID]]'    => $slice->_article_id,
                         '[[CJO_MODULE_ID]]'     => $slice->_modultyp_id,
                         '[[CJO_SLICE_ID]]'      => $slice->_id,
@@ -481,17 +470,21 @@ class cjoHtmlTemplate {
                         '[[CJO_CLANG_ID]]'      => $slice->_clang);
 
         
-        if ($slice->_article_id != $CJO['ARTICLE_ID']) {
+        if ($slice->_article_id != cjoProp::getArticleId()) {
             
             $article = OOArticleSlice::getArticleBySliceId($slice->_id);
             
             if (OOArticle::isValid($article)) {
                 
+                $path = cjoAssistance::toArray($this->getPath().$article_id.'|');
+         
                 $search = array_merge($search, 
-                                      array('[[CJO_TEMPLATE_ID]]'           => $article->getTemplateId(),
+                                      array('[[CJO_ARTICLE_ID]]'            => $article_id,
+                                            '[[CJO_TEMPLATE_ID]]'           => $article->getTemplateId(),
                                             '[[CJO_ARTICLE_PARENT_ID]]'     => $article->getParentId(),
                                             '[[CJO_PARENT_ID]]'             => $article->getParentId(),
-                                            '[[CJO_ARTICLE_ROOT_ID]]'       => @array_shift(cjoAssistance::toArray($article->getPath().$article_id.'|')),
+                                            '[[CJO_ARTICLE_ROOT_ID]]'       => array_shift($path),
+                                            '[[CJO_ARTICLE_PATH]]'          => $this->getPath().$article_id.'|',
                                             '[[CJO_ARTICLE_AUTHOR]]'        => $article->getAuthor(),
                                             '[[CJO_ARTICLE_NAME]]'          => $article->getName(),
                                             '[[CJO_ARTICLE_TITLE]]'         => $article->getTitle(),
@@ -515,8 +508,8 @@ class cjoHtmlTemplate {
 
         $content = str_replace(array_keys($search), array_values($search), $content);
 
-        foreach ($CJO['VARIABLES'] as $var) {
-            if ($CJO['CONTEJO']) {
+        foreach (cjoProp::get('VARIABLES') as $var) {
+            if (cjoProp::isBackend()) {
                 $tmp = $var->getBEOutput($slice, $content);
             }
             else {

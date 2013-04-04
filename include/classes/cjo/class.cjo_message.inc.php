@@ -23,7 +23,7 @@
  * @filesource
  */
 
-if (!$CJO['CONTEJO']) return false;
+if (!cjoProp::isBackend()) return false;
 
 /**
  * cjoMessage class
@@ -37,22 +37,28 @@ if (!$CJO['CONTEJO']) return false;
 class cjoMessage {
 
     /**
+     * global message var
+     * @var object
+     */
+    public static $messages;
+
+    /**
      * Container for error messages
      * @var array
      */
-    public $errors;
+    private $errors;
 
     /**
      * Container for success messages
      * @var array
      */
-    public $successes;
+    private $successes;
 
     /**
      * Container for warnings and notifications
      * @var array
      */
-    public $warnings;
+    private $warnings;
 
     /**
      * Constructor
@@ -61,12 +67,10 @@ class cjoMessage {
      */
     public function __construct(){
 
-        global $CJO;
-
-        if (!isset($CJO['MESSAGES']) || !is_object($CJO['MESSAGES']) || !is_a($CJO['MESSAGES'], 'cjoMessage')) {
-            $CJO['MESSAGES'] = $this;
-            self::flushAllMessages();
+        if (!isset(self::$messages) || !is_object(self::$messages)) {
+            return $this;
         }
+        return self::$messages;
     }
 
     /**
@@ -76,8 +80,7 @@ class cjoMessage {
      * @access public
      */
     public static function addError($message){
-        global $CJO;
-        $CJO['MESSAGES']->errors[md5($message)] = $message;
+        self::$messages->errors[md5($message)] = $message;
     }
 
     /**
@@ -87,8 +90,7 @@ class cjoMessage {
      * @access public
      */
     public static function addSuccess($message){
-        global $CJO;
-        $CJO['MESSAGES']->successes[md5($message)] = $message;
+        self::$messages->successes[md5($message)] = $message;
     }
 
     /**
@@ -98,8 +100,7 @@ class cjoMessage {
      * @access public
      */
     public static function addWarning($message){
-        global $CJO;
-        $CJO['MESSAGES']->warnings[md5($message)] = $message;
+        self::$messages->warnings[md5($message)] = $message;
     }
 
     /**
@@ -108,9 +109,7 @@ class cjoMessage {
      * @access public
      */
     public static function hasErrors(){
-        global $CJO;
-
-        return !empty($CJO['MESSAGES']->errors);
+        return !empty(self::$messages->errors);
     }
 
     /**
@@ -120,8 +119,7 @@ class cjoMessage {
      * @access public
      */
     public static function hasError($message){
-        global $CJO;
-        foreach($CJO['MESSAGES']->errors as $error){
+        foreach(self::$messages->errors as $error){
             if ($message == $error) return true;
         }
         return false;
@@ -133,8 +131,7 @@ class cjoMessage {
      * @access public
      */
     public static function hasSuccesses(){
-        global $CJO;
-        return !empty($CJO['MESSAGES']->successes);
+        return !empty(self::$messages->successes);
     }
 
     /**
@@ -144,8 +141,7 @@ class cjoMessage {
      * @access public
      */
     public static function hasSuccess($message){
-        global $CJO;
-        foreach($CJO['MESSAGES']->successes as $success){
+        foreach(self::$messages->successes as $success){
             if ($message == $success) return true;
         }
         return false;
@@ -157,8 +153,7 @@ class cjoMessage {
      * @access public
      */
     public static function hasWarnings(){
-        global $CJO;
-        return !empty($CJO['MESSAGES']->warnings);
+        return !empty(self::$messages->warnings);
     }
 
     /**
@@ -168,8 +163,7 @@ class cjoMessage {
      * @access public
      */
     public static function hasWarning($message){
-        global $CJO;
-        foreach($CJO['MESSAGES']->warnings as $warning){
+        foreach(self::$messages->warnings as $warning){
             if ($message == $warning) return true;
         }
         return false;
@@ -181,8 +175,7 @@ class cjoMessage {
      * @access public
      */
     public static function flushErrors() {
-        global $CJO;
-        $CJO['MESSAGES']->errors = array();
+        self::$messages->errors = array();
     }
 
      /**
@@ -191,8 +184,7 @@ class cjoMessage {
      * @access public
      */
     public static function flushSuccesses() {
-        global $CJO;
-        $CJO['MESSAGES']->successes = array();
+        self::$messages->successes = array();
     }
 
      /**
@@ -201,8 +193,7 @@ class cjoMessage {
      * @access public
      */
     public static function flushWarnings() {
-        global $CJO;
-        $CJO['MESSAGES']->warnings = array();
+        self::$messages->warnings = array();
     }
 
      /**
@@ -211,10 +202,10 @@ class cjoMessage {
      * @access public
      */
     public static function flushAllMessages() {
-        global $CJO;
-        $CJO['MESSAGES']->flushErrors();
-        $CJO['MESSAGES']->flushSuccesses();
-        $CJO['MESSAGES']->flushWarnings();
+ 
+        self::$messages->flushErrors();
+        self::$messages->flushSuccesses();
+        self::$messages->flushWarnings();
     }
 
      /**
@@ -224,8 +215,7 @@ class cjoMessage {
      * @access public
      */
     public static function removeLastError() {
-        global $CJO;
-        return array_pop($CJO['MESSAGES']->errors);
+        return array_pop(self::$messages->errors);
     }
 
      /**
@@ -235,8 +225,7 @@ class cjoMessage {
      * @access public
      */
     public static function removeLastSuccess() {
-        global $CJO;
-        return array_pop($CJO['MESSAGES']->successes);
+        return array_pop(self::$messages->successes);
     }
 
      /**
@@ -246,8 +235,7 @@ class cjoMessage {
      * @access public
      */
     public static function removeLastWarning() {
-        global $CJO;
-        return array_pop($CJO['MESSAGES']->warnings);
+        return array_pop(self::$messages->warnings);
     }
 
     /**
@@ -256,8 +244,7 @@ class cjoMessage {
      * @access public
      */
     public static function getErrors() {
-        global $CJO;
-        return is_array($CJO['MESSAGES']->errors) ? $CJO['MESSAGES']->errors : array();
+        return is_array(self::$messages->errors) ? self::$messages->errors : array();
     }
 
     /**
@@ -266,8 +253,7 @@ class cjoMessage {
      * @access public
      */
     public static function getSuccesses() {
-        global $CJO;
-        return is_array($CJO['MESSAGES']->successes) ? $CJO['MESSAGES']->successes : array();
+        return is_array(self::$messages->successes) ? self::$messages->successes : array();
     }
 
     /**
@@ -276,8 +262,7 @@ class cjoMessage {
      * @access public
      */
     public static function getWarnings() {
-        global $CJO;
-        return is_array($CJO['MESSAGES']->warnings) ? $CJO['MESSAGES']->warnings : array();
+        return is_array(self::$messages->warnings) ? self::$messages->warnings : array();
     }
 
     /**
@@ -333,37 +318,34 @@ class cjoMessage {
      */
     public static function outputMessages($output_filter=true) {
 
-    	global $CJO, $I18N;
-
-    	if (!is_object($CJO['MESSAGES']) || get_class($CJO['MESSAGES']) != 'cjoMessage') {
-    	    return false;
-    	}
+    	if (!is_object(self::$messages)) return false;
+    	
     	$message_out = array();
- 
+        
         cjoExtension::registerExtensionPoint('MESSAGE_OUTPUT', array());
     	
     	//overwrite all messages, if db write access ist permitted (demo)
-        if (isset($CJO['MESSAGES']->errors[md5(1142)])){
+        if (isset(self::$messages->errors[md5(1142)])){
         	cjoMessage::flushAllMessages();
-        	cjoMessage::addError($I18N->msg('msg_deactivated_function'));
+        	cjoMessage::addError(cjoI18N::translate('msg_deactivated_function'));
     	}
 
-    	foreach ($CJO['MESSAGES']->getErrors() as $message) {
+    	foreach (self::$messages->getErrors() as $message) {
             $message_out[] = array ($message,'error');
     	}
 
-        foreach ($CJO['MESSAGES']->getSuccesses() as $message) {
+        foreach (self::$messages->getSuccesses() as $message) {
             $message_out[] = array ($message,'success');
     	}
 
-        foreach ($CJO['MESSAGES']->getWarnings() as $message) {
+        foreach (self::$messages->getWarnings() as $message) {
             $message_out[] = array ($message,'warning');
     	}
 
     	if ($output_filter) {
     		$formated_messages = cjoMessage::formatMessages($message_out, $output_filter);
     		if (trim($formated_messages) == '') return;
-    		$CJO['MESSAGES_FORMATED'] = $formated_messages;
+    		cjoProp::set('MESSAGES_FORMATED', $formated_messages);
     		cjoExtension::registerExtension('OUTPUT_FILTER', 'cjoMessage::insertMessages');
     	}
     	else{
@@ -377,10 +359,14 @@ class cjoMessage {
      * @return string
      */
     public static function insertMessages($params) {
-    	global $CJO;
-    	$content = preg_replace('/<div([^>]*)id="cjo_tabs"([^>]*)>/i',$CJO['MESSAGES_FORMATED'].'$0',$params['subject']);
+    	$content = preg_replace('/<div([^>]*)id="cjo_tabs"([^>]*)>/i',cjoProp::get('MESSAGES_FORMATED').'$0',$params['subject']);
     	$content = cjoExtension::registerExtensionPoint('OUTPUT_FILTER[MESSAGES_INSERTED]', $content);
-    	unset($CJO['MESSAGES_FORMATED']);
+    	cjoProp::remove('MESSAGES_FORMATED');
     	return $content;
+    }
+    
+    public static function init() {
+        self::$messages = new cjoMessage();
+        self::flushAllMessages();
     }
 }

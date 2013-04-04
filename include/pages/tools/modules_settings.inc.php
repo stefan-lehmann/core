@@ -32,11 +32,11 @@ $hidden['mode'] = new hiddenField('mode');
 $hidden['mode']->setValue($mode);
 
 //Fields
-$fields['name'] = new textField('name', $I18N->msg("label_name"));
-$fields['name']->addValidator('notEmpty', $I18N->msg("msg_name_notEmpty"));
+$fields['name'] = new textField('name', cjoI18N::translate("label_name"));
+$fields['name']->addValidator('notEmpty', cjoI18N::translate("msg_name_notEmpty"));
 
 if ($function == "add") {
-	$fields['id'] = new selectField('id', $I18N->msg("label_id"));
+	$fields['id'] = new selectField('id', cjoI18N::translate("label_id"));
 	$fields['id']->addAttribute('size', '1');
 	$fields['id']->addAttribute('class', 'inp10');
 
@@ -48,7 +48,7 @@ if ($function == "add") {
 				continue 2;
 			}
 		}
-		$fields['id']->addOption($I18N->msg("label_id").' '.$c,$c);
+		$fields['id']->addOption(cjoI18N::translate("label_id").' '.$c,$c);
 		$i++;
 		if ($c == 100) break;
 	}
@@ -57,27 +57,27 @@ if ($function == "add") {
 		if (strpos($value['module_id'],'_') === false && $value['id'] != $oid)
 			$used_modultyps[] = $value['type_id'];
 	}
-	$fields['id']->addValidator('notEmpty', $I18N->msg("msg_id_notEmpty"));
+	$fields['id']->addValidator('notEmpty', cjoI18N::translate("msg_id_notEmpty"));
 }
 
-$fields['templates'] = new selectField('templates', $I18N->msg("label_template_connection"));
+$fields['templates'] = new selectField('templates', cjoI18N::translate("label_template_connection"));
 $fields['templates']->setMultiple();
 $fields['templates']->setValueSeparator('|');
-$fields['templates']->addOption($I18N->msg("label_rights_all").' '.$I18N->msg("title_templates"),0);
+$fields['templates']->addOption(cjoI18N::translate("label_rights_all").' '.cjoI18N::translate("title_templates"),0);
 $fields['templates']->addSqlOptions("SELECT CONCAT(name,' (ID=',id,')') AS name, id FROM ".TBL_TEMPLATES." ORDER BY prior");
 $fields['templates']->addAttribute('size', count($fields['templates']->values)+1);
 $fields['templates']->activateSave(false);
 
-if (count($CJO['CTYPE']) > 0) {
-	$fields['ctypes'] = new selectField('ctypes', $I18N->msg("label_ctype_connection"));
+if (cjoProp::countCtypes() > 0) {
+	$fields['ctypes'] = new selectField('ctypes', cjoI18N::translate("label_ctype_connection"));
 	$fields['ctypes']->setMultiple();
 	$fields['ctypes']->setValueSeparator('|');
 	$fields['ctypes']->activateSave(false);
 
-	foreach($CJO['CTYPE'] as $key=>$val) {
+	foreach(cjoProp::get('CTYPE') as $key=>$val) {
 		$fields['ctypes']->addOption($val,$key);
 	}
-	$fields['ctypes']->addAttribute('size', count($CJO['CTYPE'])+1);
+	$fields['ctypes']->addAttribute('size', cjoProp::countCtypes()+1);
 
 } else {
 	$fields['ctypes'] = new hiddenField('ctypes');
@@ -88,22 +88,20 @@ if ($function == 'add') {
 	$oid = '';
 }
 else {
-	$fields['headline1'] = new readOnlyField('headline1', '', array('class' => 'formheadline slide'));
-	$fields['headline1']->setValue($I18N->msg("label_info"));
-	$fields['headline1']->needFullColumn(true);
+	$fields['headline1'] = new headlineField(cjoI18N::translate("label_info"), true);
 
-	$fields['updatedate'] = new readOnlyField('updatedate', $I18N->msg('label_updatedate'), array(), 'label_updatedate');
-	$fields['updatedate']->setFormat('strftime',$I18N->msg('dateformat_sort'));
+	$fields['updatedate'] = new readOnlyField('updatedate', cjoI18N::translate('label_updatedate'), array(), 'label_updatedate');
+	$fields['updatedate']->setFormat('strftime',cjoI18N::translate('dateformat_sort'));
 	$fields['updatedate']->needFullColumn(true);
 
-	$fields['updateuser'] = new readOnlyField('updateuser', $I18N->msg('label_updateuser'), array(), 'label_updateuser');
+	$fields['updateuser'] = new readOnlyField('updateuser', cjoI18N::translate('label_updateuser'), array(), 'label_updateuser');
 	$fields['updateuser']->needFullColumn(true);
 
-	$fields['createdate'] = new readOnlyField('createdate', $I18N->msg('label_createdate'), array(), 'label_createdate');
-	$fields['createdate']->setFormat('strftime',$I18N->msg('dateformat_sort'));
+	$fields['createdate'] = new readOnlyField('createdate', cjoI18N::translate('label_createdate'), array(), 'label_createdate');
+	$fields['createdate']->setFormat('strftime',cjoI18N::translate('dateformat_sort'));
 	$fields['createdate']->needFullColumn(true);
 
-	$fields['createuser'] = new readOnlyField('createuser', $I18N->msg('label_createuser'), array(), 'label_createuser');
+	$fields['createuser'] = new readOnlyField('createuser', cjoI18N::translate('label_createuser'), array(), 'label_createuser');
 	$fields['createuser']->needFullColumn(true);
 }
 
@@ -156,11 +154,11 @@ if ($form->validate()) {
 		if (cjo_post('cjoform_save_button','boolean')) {
 			if ($function == "add") {
 			    //[translate: msg_module_added]
-				cjoAssistance::redirectBE(array('mode'=>'logic', 'function'=>'', 'oid'=>$id,  'msg'=>'msg_module_added'));
+				cjoUrl::redirectBE(array('mode'=>'logic', 'function'=>'', 'oid'=>$id,  'msg'=>'msg_module_added'));
 			}
 			else {
 			    //[translate: msg_module_updated]
-				cjoAssistance::redirectBE(array('mode'=>'', 'function'=>'', 'oid'=>'', 'msg'=>'msg_module_updated'));
+				cjoUrl::redirectBE(array('mode'=>'', 'function'=>'', 'oid'=>'', 'msg'=>'msg_module_updated'));
 			}
 		}
 	}

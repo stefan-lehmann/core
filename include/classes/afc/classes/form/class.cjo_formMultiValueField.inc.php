@@ -41,8 +41,8 @@ class cjoFormMultiValueField extends cjoFormField {
      * @access protected
      */
     public function addValue($label, $value) {
-        cjo_valid_type($label, array ('string','scalar'), __FILE__, __LINE__);
-        cjo_valid_type($value, array ('string','scalar'), __FILE__, __LINE__);
+        cjoProp::isValidType($label, array ('string','scalar'), __FILE__, __LINE__);
+        cjoProp::isValidType($value, array ('string','scalar'), __FILE__, __LINE__);
 
         $this->values[] = array ($label,$value);
     }
@@ -53,7 +53,7 @@ class cjoFormMultiValueField extends cjoFormField {
      * @access protected
      */
     public function addValues($values) {
-        cjo_valid_type($values, 'array', __FILE__, __LINE__);
+        cjoProp::isValidType($values, 'array', __FILE__, __LINE__);
 
         $value = array_shift($values);
         $mode = '';
@@ -66,7 +66,7 @@ class cjoFormMultiValueField extends cjoFormField {
         elseif (is_scalar($value)) {
             $mode = 'Scalar';
         } else {
-            cjoForm :: triggerError('Unexpected Array-Structure for Array $values. Expected Keys are "0" and "1" or "label" and "value"!');
+            throw new cjoException('Unexpected Array-Structure for Array $values. Expected Keys are "0" and "1" or "label" and "value"!');
         }
 
         if ($mode == 'Numeric') {
@@ -115,7 +115,7 @@ class cjoFormMultiValueField extends cjoFormField {
             $value = array_shift($result);
 
             if (count($value) > 2) {
-                cjoForm :: triggerError('Query "'.$query.'" affects more than 2 columns!');
+                throw new cjoException('Query "'.$query.'" affects more than 2 columns!');
             }
 
             if (count($value) == 2) {
@@ -143,7 +143,7 @@ class cjoFormMultiValueField extends cjoFormField {
      * @access protected
      */
     public function delValue($value) {
-        cjo_valid_type($value, 'string', __FILE__, __LINE__);
+        cjoProp::isValidType($value, 'string', __FILE__, __LINE__);
 
         if ($this->hasValue($value)) {
             unset ($this->values[$value]);
@@ -156,7 +156,7 @@ class cjoFormMultiValueField extends cjoFormField {
      * @access protected
      */
     public function hasValue($value) {
-        cjo_valid_type($value, 'string', __FILE__, __LINE__);
+        cjoProp::isValidType($value, 'string', __FILE__, __LINE__);
 
         return array_key_exists($value, $this->getValues());
     }

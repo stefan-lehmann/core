@@ -34,8 +34,6 @@ class codeField extends textAreaField {
 
 
 	public function get() {
-	    
-        global $I18N;
 
         cjo_insertJS(false, 'js/codemirror/lib/codemirror.js');
         cjo_insertJS(false, 'js/codemirror/lib/php.js');
@@ -70,9 +68,9 @@ class codeField extends textAreaField {
 		$this->attributes = array_merge(array ('rows'=>'5','cols'=>'20'), $this->attributes);
     	$value = htmlspecialchars($this->getValue(), ENT_QUOTES, "UTF-8");
         
-        $edit_note = '<span class="multiple_note">' . $I18N->msg('code_fullscreen') . '</span>';
+        $edit_note = '<span class="multiple_note">' . cjoI18N::translate('code_fullscreen') . '</span>';
         
-		return sprintf('<textarea name="%s" id="%s" tabindex="%s"%s>%s</textarea>%s%s%s', $this->getName(), $this->getId(), cjo_a22_nextTabindex(), $this->getAttributes(), $value, $this->getNote(),$edit_note,$js);
+		return sprintf('<textarea name="%s" id="%s" tabindex="%s"%s>%s</textarea>%s%s%s', $this->getName(), $this->getId(), cjo_a22_nextTabindex(), $this->getAttributes(), $value, $edit_note, $this->getNote(),$js);
 	}
         
 }

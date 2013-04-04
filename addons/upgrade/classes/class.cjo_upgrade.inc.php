@@ -34,7 +34,7 @@ class cjojUpgrade {
         
         global $CJO;
         
-        $path = $CJO['ADDON']['settings']['developer']['edit_path'].'/'.$CJO['TMPL_FILE_TYPE'].'/*.'.$CJO['TMPL_FILE_TYPE'];
+        $path = $CJO['ADDON']['settings']['developer']['edit_path'].'/'.liveEdit::getTmplExtension().'/*.'.liveEdit::getTmplExtension();
         $replace = array();
         
         foreach(self::rglob($path) as $file) {
@@ -52,14 +52,14 @@ class cjojUpgrade {
                    '\{WYMEDITOR\}'                  =>  'CJO_WYMEDITOR[1]',
                    '\{HORIZONTAL_IMG\}'             =>  array('IMAGE_LIST_BUTTON[1]', 'CJO_IMAGE_LIST[1]' ),
                    '\{VERTICAL_IMG\}'               =>  array('IMAGE_LIST_BUTTON[2]', 'CJO_IMAGE_LIST[2]'),
-                   '\{i18n_msg: *\'?(\w)\'?\}'      =>  '[translate: $1]',
+                   '\{cjoI18N_msg: *\'?(\w)\'?\}'      =>  '[translate: $1]',
                    '\{([^ |^\}]+)\}'                =>  '[[$1]]',
                    '###([^#]+)###'                  =>  '[translate: $1]');
             
              
             foreach($replace as $pattern=>$replacement){ 
                 if (is_array($replacement)) {
-                    $replacement = (preg_match('/input\.'.$CJO['TMPL_FILE_TYPE'].'$/i',$matches)) ? $replacement[0] : $replacement[1];
+                    $replacement = (preg_match('/input\.'.liveEdit::getTmplExtension().'$/i',$matches)) ? $replacement[0] : $replacement[1];
                 }
                 $content = preg_replace('/'.$pattern.'/', $replacement, $content);
                 

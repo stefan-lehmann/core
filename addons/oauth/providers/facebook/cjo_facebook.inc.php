@@ -65,7 +65,7 @@ class cjoFacebook extends cjoOAuthProvider {
         $parameter = array('response_type' => 'code');
         if (self::isAjax()) $parameter['display'] = 'popup';
         if (isset($this->settings->scope)) $parameter['scope'] = $this->settings->scope;
-        $redirect_uri = $this->provider->getLoginUrl($parameter);
-        cjoAssistance::redirect($redirect_uri);
+        $redirect_uri = $this->provider->getLoginUrl();
+        cjoUrl::redirect($redirect_uri);
     }
 }

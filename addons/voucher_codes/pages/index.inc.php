@@ -27,10 +27,11 @@ $mypage  = 'voucher_codes';
 $oid       = cjo_request('oid', 'int', '');
 $function  = cjo_request('function', 'string');
 
-$subpages = new cjoSubPages($subpage, $mypage);
-$subpages->addPage( array('redemption', 'title' => $I18N_17->msg('subtitle_redemption')));
-$subpages->addPage( array('manage', 'title' => $I18N_17->msg('subtitle_manage')));
+cjoSubPages::addPages(array(
+                        array('redemption', 
+                              'title' => cjoAddon::translate(17,'subtitle_redemption')),
+                        array('manage', 
+                              'title' => cjoAddon::translate(17,'subtitle_manage'))
+                     ));
 
-require_once $CJO['INCLUDE_PATH'].'/layout/top.php';
-require_once $subpages->getPage();
-require_once $CJO['INCLUDE_PATH'].'/layout/bottom.php';
+require_once cjoSubPages::getPagePath();

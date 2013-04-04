@@ -1,0 +1,55 @@
+[%TEMPLATE%]
+
+<%RESULTS%>
+
+
+IF([[NO_ENTRIES]]){%
+    <div class="error">[[NO_ENTRIES]]</div>
+%}ENDIF
+
+IF([[SHORT_COMMENTS]]){%
+    <script type="text/javascript">
+    //<![CDATA[
+        $(function() {
+            if ($.fn.truncate){
+
+                $("p.short_text").truncate([[SHORT_COMMENTS_LENGTH]],{
+                    chars: /\s/,
+                    leave: false,
+                    trail: [true,
+                            ' <a href="#" title="[translate: comments_read_whole_comment]" class="truncate_link">[translate: comments_more]</a>',
+                            '&nbsp; <a href="#" title="[translate: comments_display_short_comment]" class="truncate_link">[translate: comments_less]</a>'
+                            ]
+                });
+            } else {
+                alert('The CONTEJO Comments-AddOn requires jQuery.truncate!\\n\\nPlease, use the CONTEJO jQuery-AddOn to install the missing plugin!');
+                return false;
+            }
+         });
+    //]]>
+    </script>
+%}ENDIF
+
+[[PAGINATION]]
+
+[%RESULTS%]
+
+    <div>
+        <a name="[[ANCHOR]]" class="hidden_anchor">[[ANCHOR]]</a>
+        <div class="box_main">
+            <h5>[[COUNT]] [[AUTHOR]] <span>[translate: comments_wrote]</span></h5>
+            <p class="short_text">
+                [[MESSAGE]]
+
+                IF([[REPLY]]){%
+                    <span class="reply">
+                        <strong>[translate: comments_answer_from_admin]</strong>
+                        [[REPLY]]
+                    </span>
+                %}ENDIF
+            </p>
+            <p class="info">
+                [[CREATED]] [[CITY]] [[COUNTRY]]
+            </p>
+        </div>
+    </div>

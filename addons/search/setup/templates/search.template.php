@@ -23,10 +23,10 @@
  * @filesource
  */
 
-if ($CJO['CONTEJO']) return false;
+if (cjoProp::isBackend()) return false;
     
 
-if (OOAddon::isAvailable('search')) {
+if (cjoAddon::isAvailable('search')) {
 
     if (!function_exists('cjo_performPostAction')) {
             
@@ -41,6 +41,6 @@ if (OOAddon::isAvailable('search')) {
         }
     }
 } else {
-    $this->addError($I18N_13->msg('msg_err_configure_settings', $CJO['BACKEND_PATH']));
+    $this->addError(cjoAddon::translate(13,'msg_err_configure_settings', $CJO['BACKEND_PATH']));
 }
 ?>

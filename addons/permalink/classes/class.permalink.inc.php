@@ -25,31 +25,33 @@
 
 class cjoPermalink {
     
-    static $mypage = 'permalink';
+    static $addon = 'permalink';
     
     
     public static function getArticleId() {
         
-        global $CJO;
+        if (!cjoAddon::isActivated(self::$addon)) return false;
         
-        if (!isset($CJO['VIRTUAL_PATH'])) cjoProcess::getAdjustPath();
+        if (cjoProp::get('VIRTUAL_PATH')) cjoProcess::getAdjustPath();
         
         $sql = new cjoSql();
         $sql->setTable(TBL_30_EXTEND_META);
-        $sql->setWhere('name LIKE :name AND value LIKE :value', array('name'=>self::$mypage,'value'=>$CJO['VIRTUAL_PATH']));
+        $sql->setWhere('name LIKE :name AND value LIKE :value', array('name'=>self::$addon,'value'=>cjoProp::get('VIRTUAL_PATH')));
         $sql->Select('article_id, clang');
         
-        if ($sql->getRows() != 0 && $CJO['VIRTUAL_PATH'] != '') {
-            $CJO['ARTICLE_ID'] = $sql->getValue('article_id');
-            $CJO['CUR_CLANG'] = $sql->getValue('clang');
+        if ($sql->getRows() != 0) {
+            cjoProp::set('ARTICLE_ID',$sql->getValue('article_id'));
+            cjoProp::set('CUR_CLANG',$sql->getValue('clang'));
         }
     }
     
     public static function generatedUrl($params) {
         
+        if (!cjoAddon::isActivated(self::$addon)) return $params;
+        
         $sql = new cjoSql();
         $sql->setTable(TBL_30_EXTEND_META);
-        $sql->setWhere(array('name'=>'permalink', 'article_id'=> $params['query']['article_id'], 'clang'=> $params['query']['clang']));
+        $sql->setWhere(array('name'=>self::$addon, 'article_id'=> $params['query']['article_id'], 'clang'=> $params['query']['clang']));
         $sql->Select();
         
         if ($sql->getRows() != 0 && strpos($sql->getValue('value'), '/') !== false) {
@@ -57,5 +59,28 @@ class cjoPermalink {
             $params['name'] = $sql->getValue('value');
         }
         return $params;
+    }
+    
+    public static function initAddon() {
+        
+        $fields = cjoAddon::getParameter('FIELDS', self::$addon);
+        
+        if (!cjoAddon::isActivated('extend_meta') || 
+            !is_array($fields['name']) ||
+            !in_array(self::$addon,$fields['name'])) {
+    
+            if (!cjoProp::isBackend()) {
+                cjoAddon::setProperty('status', false, self::$addon);
+                return false;
+            }
+            
+            if (!cjoAddon::isActivated('extend_meta')) {
+                $url = cjoUrl::createBEUrl(array('page' => 'addons'));
+                cjoMessage::addWarning(cjoAddon::translate(31,'msg_err_extend_meta_not_present', $url));
+            } else {
+                $url = cjoUrl::createBEUrl(array('page' => 'extend_meta', 'subpage'=>'settings'));
+                cjoMessage::addWarning(cjoAddon::translate(31,'msg_err_permalink_not_present', $url));
+            }
+        }
     }
 }

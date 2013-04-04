@@ -35,8 +35,7 @@ $hidden['prev_subpage']->setValue('step1');
 $hidden['lang'] = new hiddenField('lang');
 $hidden['lang']->setValue($lang);
 
-$fields['headline1'] = new readOnlyField('headline1', '', array('class' => 'formheadline'));
-$fields['headline1']->setValue($I18N->msg("label_license"));
+$fields['headline1'] = new headlineField(cjoI18N::translate("label_license"));
 
 $license = file_get_contents($CJO['HTDOCS_PATH'].'core/_license.txt');
 $fields['license'] = new textAreaField('license', '');
@@ -47,29 +46,28 @@ $fields['license']->addAttribute('readonly', 'readonly');
 $fields['license']->setValue($license);
 
 $fields['confirm'] = new checkboxField('confirm', '&nbsp;',  array('style' => 'width: auto;'));
-$fields['confirm']->addValidator('notEmpty', $I18N->msg("msg_confirm_license_notEmpty"));
-$fields['confirm']->addBox($I18N->msg("label_confirm_license"),1);
+$fields['confirm']->addValidator('notEmpty', cjoI18N::translate("msg_confirm_license_notEmpty"));
+$fields['confirm']->addBox(cjoI18N::translate("label_confirm_license"),1);
 
-$fields['headline2'] = new readOnlyField('headline2', '', array('class' => 'formheadline'));
-$fields['headline2']->setValue($I18N->msg("msg_setup_step2_label"));
+$fields['headline2'] = new headlineField(cjoI18N::translate("msg_setup_step2_label"));
 
 $fields['info'] = new readOnlyField('info','', array('style'=>'margin-left: 200px;'));
 $fields['info']->setContainer('div');
-$fields['info']->setValue($I18N->msg("msg_setup_step2_info"));
+$fields['info']->setValue(cjoI18N::translate("msg_setup_step2_info"));
 
 $fields['button'] = new buttonField();
-$fields['button']->addButton('cjoform_back_button',$I18N->msg("button_back"), true, 'img/silk_icons/control_play_backwards.png');
-$fields['button']->addButton('cjoform_next_button',$I18N->msg("button_next_step3"), true, 'img/silk_icons/control_play.png');
+$fields['button']->addButton('cjoform_back_button',cjoI18N::translate("button_back"), true, 'img/silk_icons/control_play_backwards.png');
+$fields['button']->addButton('cjoform_next_button',cjoI18N::translate("button_next_step3"), true, 'img/silk_icons/control_play.png');
 $fields['button']->setButtonAttributes('cjoform_next_button', ' style="color: green"');
 //Add Fields:
-$section = new cjoFormSection('', $I18N->msg("label_setup_".$subpage."_title"), array ());
+$section = new cjoFormSection('', cjoI18N::translate("label_setup_".$subpage."_title"), array ());
 
 $section->addFields($fields);
 $form->addSection($section);
 $form->addFields($hidden);
 
 if ($form->validate()) {
-    cjoAssistance::redirectBE(array('subpage' => 'step3', 'lang' => $lang));
+    cjoUrl::redirectBE(array('subpage' => 'step3', 'lang' => $lang));
 }
 
 $form->show(false);

@@ -23,11 +23,8 @@
  * @filesource
  */
 
-$mypage  = 'jquery';
 
-$subpages = new cjoSubPages($subpage, $mypage);
-$subpages->addPage( array('settings', 'title' => $I18N_11->msg('subtitle_settings')));
+$addon = 'jquery';
+cjoSubPages::addPage( array('settings', 'title' => cjoAddon::translate(11,'subtitle_settings')));
 
-require_once $CJO['INCLUDE_PATH'].'/layout/top.php';
-require_once $subpages->getPage();
-require_once $CJO['INCLUDE_PATH'].'/layout/bottom.php';
+require_once cjoSubPages::getPagePath();

@@ -33,7 +33,7 @@
 
 class cjoShopBasket {
     
-    protected static $mypage = 'shop';
+    protected static $addon = 'shop';
     
 	/**
 	 * This method updates the basket
@@ -120,8 +120,8 @@ class cjoShopBasket {
 		global $CJO;
         
 		$session_id     = session_id();
-		$clang          = $CJO['CUR_CLANG'];
-		$exchange_ratio = $CJO['ADDON']['settings'][self::$mypage]['CURRENCY']['CURR_RATIO'];
+		$clang          = cjoProp::getClang();
+		$exchange_ratio = $CJO['ADDON']['settings'][self::$addon]['CURRENCY']['CURR_RATIO'];
 
 		// is set refresh or delete
 		if (cjo_post('shop_basket_submit','bool') || cjo_post('product_amount', 'bool')) {
@@ -264,7 +264,7 @@ class cjoShopBasket {
             $total_order_value = $order_value + $payment_costs;
 
             // get delivery costs and add to the total value
-            if (!$country) $country = $CJO['ADDON']['settings'][self::$mypage]['COUNTRY'];
+            if (!$country) $country = $CJO['ADDON']['settings'][self::$addon]['COUNTRY'];
 
         	$del = new cjoShopDelivery($country);
         	$total_order_value += $del->getTotalCosts();
@@ -290,7 +290,7 @@ class cjoShopBasket {
 		} // end if datasets > 0
 
 		// prepare template content
-        $html_tpl_content = @ file_get_contents($CJO['ADDON']['settings'][self::$mypage]['HTML_TEMPLATE'][$template]);
+        $html_tpl_content = @ file_get_contents($CJO['ADDON']['settings'][self::$addon]['HTML_TEMPLATE'][$template]);
         // prepare template
 	    $html_tpl = new cjoHtmlTemplate($html_tpl_content);
 
@@ -303,7 +303,7 @@ class cjoShopBasket {
         						'PAYMENT_COSTS'		=>  $payment_costs > 0 ? cjoShopPrice::toCurrency($payment_costs) : '',
         						'SESSION'			=> 	$session_md5,
         						'DATASETS'			=>  $datasets,
-        						'CHECKOUT_URL'		=>  cjoRewrite::getUrl($CJO['ADDON']['settings'][self::$mypage]['CHECKOUT_ARTICLE_ID'])
+        						'CHECKOUT_URL'		=>  cjoUrl::getUrl($CJO['ADDON']['settings'][self::$addon]['CHECKOUT_ARTICLE_ID'])
         						));
 
         // get arrays for template sections
@@ -695,11 +695,11 @@ class cjoShopBasket {
 
 		global $CJO;
             
-        if ($CJO['ARTICLE_ID'] == $CJO['ADDON']['settings'][self::$mypage]['BASKET_ARTICLE_ID'] ||
-            $CJO['ARTICLE_ID'] == $CJO['ADDON']['settings'][self::$mypage]['CHECKOUT_ARTICLE_ID'] ||
-            $CJO['ARTICLE_ID'] == $CJO['ADDON']['settings'][self::$mypage]['POST_ORDER_ARTICLE_ID']) return false;
+        if ($CJO['ARTICLE_ID'] == $CJO['ADDON']['settings'][self::$addon]['BASKET_ARTICLE_ID'] ||
+            $CJO['ARTICLE_ID'] == $CJO['ADDON']['settings'][self::$addon]['CHECKOUT_ARTICLE_ID'] ||
+            $CJO['ARTICLE_ID'] == $CJO['ADDON']['settings'][self::$addon]['POST_ORDER_ARTICLE_ID']) return false;
 
-		$settings       = $CJO['ADDON']['settings'][self::$mypage];
+		$settings       = $CJO['ADDON']['settings'][self::$addon];
 		$exchange_ratio = $settings['CURRENCY']['CURR_RATIO'];
 		$basket_id      = $settings['BASKET_ARTICLE_ID'];
 		$delivery_id    = $settings['DELIVERY_ARTICLE_ID'];
@@ -743,7 +743,7 @@ class cjoShopBasket {
 			$product_amount += $result['amount'];
 		}
 
-		$html_tpl_content 	= @ file_get_contents($CJO['ADDON']['settings'][self::$mypage]['HTML_TEMPLATE']['BASKET_INFO']);
+		$html_tpl_content 	= @ file_get_contents($CJO['ADDON']['settings'][self::$addon]['HTML_TEMPLATE']['BASKET_INFO']);
 	    $html_tpl 			= new cjoHtmlTemplate($html_tpl_content);
 
 	    $basket_article 	= OOArticle::getArticleById($basket_id);
@@ -765,7 +765,7 @@ class cjoShopBasket {
 
 
         // get delivery costs and add to the total value
-        $country = $CJO['ADDON']['settings'][self::$mypage]['COUNTRY'];
+        $country = $CJO['ADDON']['settings'][self::$addon]['COUNTRY'];
 
     	$del = new cjoShopDelivery($country);
     	$total_order_value += $del->getTotalCosts();
@@ -839,7 +839,7 @@ class cjoShopBasket {
 
     /**
      * Returns the secure url to a article.
-     * @see cjoRewrite::getUrl
+     * @see cjoUrl::getUrl
      * @param int $id
      * @param int|boolean $clang
      * @param string|array $params parameters for query string
@@ -854,13 +854,13 @@ class cjoShopBasket {
 
 	    $temp   = array('HTTPS' => $_SERVER['HTTPS'], 'SERVER_NAME' => $_SERVER['SERVER_NAME']);
 
-	    if ($CJO['ADDON']['settings'][self::$mypage]['HTTPS']) {
-	        $secure_server = preg_replace('/\/$/', '', $CJO['ADDON']['settings'][self::$mypage]['HTTPS']);
+	    if ($CJO['ADDON']['settings'][self::$addon]['HTTPS']) {
+	        $secure_server = preg_replace('/\/$/', '', $CJO['ADDON']['settings'][self::$addon]['HTTPS']);
 	        $_SERVER['HTTPS'] = true;
 	        $_SERVER['SERVER_NAME'] = preg_replace('/^\w+:\/\//', '', $secure_server);
 	    }
 
-        $url = cjoRewrite::getUrl($id, $clang, $params, $hash_string) ;
+        $url = cjoUrl::getUrl($id, $clang, $params, $hash_string) ;
 
         $_SERVER['HTTPS']       = $temp['HTTPS'];
         $_SERVER['SERVER_NAME'] = $temp['SERVER_NAME'];

@@ -39,7 +39,7 @@ function smarty_validate_criteria_isDateOnOrAfter($value, $empty, &$params, &$fo
     if (strlen($value) == 0)  return $empty;
 
     if (!isset($params['field2'])) {
-        trigger_error("SmartyValidate: [isDateAfter] parameter 'field2' is missing.");
+        throw new cjoException("SmartyValidate: [isDateAfter] parameter 'field2' is missing.");
         return false;
     }
 
@@ -47,11 +47,11 @@ function smarty_validate_criteria_isDateOnOrAfter($value, $empty, &$params, &$fo
     $_date2 = strtotime($formvars[$params['field2']]);
 
     if ($_date1 == -1 || !$_date1) {
-        trigger_error("SmartyValidate: [isDateAfter] parameter 'field' is not a valid date.");
+        throw new cjoException("SmartyValidate: [isDateAfter] parameter 'field' is not a valid date.");
         return false;
     }
     if ($_date2 == -1 || !$_date2) {
-        trigger_error("SmartyValidate: [isDateAfter] parameter 'field2' is not a valid date.");
+        throw new cjoException("SmartyValidate: [isDateAfter] parameter 'field2' is not a valid date.");
         return false;
     }
 

@@ -37,7 +37,7 @@
 
 class cjoShopPrice {
         
-    protected static $mypage = 'shop';
+    protected static $addon = 'shop';
 
 	private $vars = array();
 	private $attributes = array();
@@ -61,7 +61,7 @@ class cjoShopPrice {
 		$discount = empty($discount) ? 0 : $discount;
 
 		//  init class vars from 'config.inc'
-		$cjo_shop 						= $CJO['ADDON']['settings'][self::$mypage]['CURRENCY'];
+		$cjo_shop 						= $CJO['ADDON']['settings'][self::$addon]['CURRENCY'];
 		$this->exchange_ratio 			= $cjo_shop['CURR_RATIO'];
 		$this->currency_name 			= $cjo_shop['CURR_SIGN'];
 		$this->separator 				= $cjo_shop['CURR_SEPARATOR'];
@@ -157,7 +157,7 @@ class cjoShopPrice {
 
 		global $CJO;
 
-		$cjo_shop = $CJO['ADDON']['settings'][self::$mypage]['CURRENCY'];
+		$cjo_shop = $CJO['ADDON']['settings'][self::$addon]['CURRENCY'];
 		$separator = $cjo_shop['CURR_SEPARATOR'];
 
 		if($suffix === false){
@@ -186,7 +186,7 @@ class cjoShopPrice {
 
 		global $CJO;
 
-		$cjo_shop = $CJO['ADDON']['settings'][self::$mypage]['CURRENCY'];
+		$cjo_shop = $CJO['ADDON']['settings'][self::$addon]['CURRENCY'];
 		$separator = $cjo_shop['CURR_SEPARATOR'];
 		$exchange_ratio = $cjo_shop['CURR_RATIO'];
         $prefix = '';
@@ -342,7 +342,7 @@ class cjoShopPrice {
 
 		global $CJO;
 
-		$settings = $CJO['ADDON']['settings'][self::$mypage];
+		$settings = $CJO['ADDON']['settings'][self::$addon];
 		// get currency name
 		preg_match_all('/(?<=^|\|)([^\|]*)=([^\|]*)(?=\||$)/',
                        $settings['CURRENCY_NAMES'],
@@ -382,7 +382,7 @@ class cjoShopPrice {
 
         $select->setSelected($settings['CURRENCY']['CURR_CODE']);
 
-        $html_tpl_content = @file_get_contents($CJO['ADDON']['settings'][$mypage]['HTML_TEMPLATE']['CURRENCY_SELECT']);
+        $html_tpl_content = @file_get_contents($CJO['ADDON']['settings'][$addon]['HTML_TEMPLATE']['CURRENCY_SELECT']);
 	    $html_tpl = new cjoHtmlTemplate($html_tpl_content);
 
         // fill template with values

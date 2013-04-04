@@ -24,8 +24,8 @@
  */
 
 if ($function == 'edit' || $function == 'add'){
-	include_once $CJO['ADDON_PATH'].'/'.$mypage.'/pages/events_form.inc.php';
+	include_once cjoPath::addon($addon, 'pages/events_form.inc.php');
 }
 else {
-    include_once $CJO['ADDON_PATH'].'/'.$mypage.'/pages/events_list.inc.php';
+    include_once cjoPath::addon($addon, 'pages/events_list.inc.php');
 }

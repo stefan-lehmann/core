@@ -91,7 +91,7 @@ $cat_false->setDisabled(0);
 $cat_false->setStyle('class="form-element inp100" style="height: 210px"');
 
 $sql = new cjoSql;
-$sql->setQuery("SELECT id, name, re_id FROM ".TBL_ARTICLES." WHERE startpage=1 AND clang='".$CJO['CUR_CLANG']."' ORDER BY prior");
+$sql->setQuery("SELECT id, name, re_id FROM ".TBL_ARTICLES." WHERE startpage=1 AND clang='".cjoProp::getClang()."' ORDER BY prior");
 for ($i = 0; $i < $sql->getRows(); $i++) {
 
     $cat_true->addOption($sql->getValue("name"), $sql->getValue("id"), $sql->getValue("id"), $sql->getValue("re_id"));
@@ -145,7 +145,7 @@ $sql->setQuery("SELECT id, name FROM ".TBL_MODULES." ORDER BY prior");
 for($i = 0; $i < $sql->getRows(); $i++) {
 
     $modul_name  = $sql->getValue('name');
-    $modul_name .= ($CJO['USER']->hasPerm('advancedMode[]')) ? ' (ID='.$sql->getValue('id').')' : '';
+    $modul_name .= (cjoProp::getUser()->hasPerm('advancedMode[]')) ? ' (ID='.$sql->getValue('id').')' : '';
 
     $modules->addOption($sql->getValue('name'), $sql->getValue('id'));
 
@@ -163,7 +163,7 @@ $ctypes->setSize(1);
 $ctypes->setMultiple(false);
 $ctypes->setStyle('class="form-element inp100"');
 
-foreach ($CJO['CTYPE'] as $ctype_id=>$ctype_name) {
+foreach (cjoProp::get('CTYPE') as $ctype_id=>$ctype_name) {
     $ctypes->addOption($ctype_name, $ctype_id);
 }
 $ctypes->setSelected("CJO_VALUE[12]");
@@ -174,7 +174,7 @@ cjoModulTemplate::addVars('TEMPLATE',
                         'SORT_SELECTION' 	 => $sort->get(),
                         'DURATION_SELECTION' => $duration->get(),
                         'MODUL_SELECTION'    => $modules->get(),
-                        'CTYPE_SELECTION'	 => (count($CJO['CTYPE'] > 1) ? $ctypes->get() : ''),
+                        'CTYPE_SELECTION'	 => (cjoProp::countCtypes() > 1 ? $ctypes->get() : ''),
 
 						'CROP_SELECTION'	 => cjoMedia::getCropSelection("VALUE[16]",
 						                                                   ("CJO_VALUE[16]" != "" ? "CJO_VALUE[16]" : $CJO['MODUL_SET'][1]['TEASER_CROP_NUM']),
@@ -190,7 +190,7 @@ cjoModulTemplate::addVars('TEMPLATE',
                         'DEBUGING_CHECKED' 	   => cjoAssistance::setChecked("CJO_VALUE[10]", array('1')),
                         'BACKBUTTON_CHECKED'   => cjoAssistance::setChecked("CJO_VALUE[14]", array('1')),
 
-                        'DISPLAY_WHERE'		   => (!$CJO['USER']->hasPerm('advancedMode[]') && !$CJO['USER']->hasPerm('admin[]')
+                        'DISPLAY_WHERE'		   => (!cjoProp::getUser()->hasPerm('advancedMode[]') && !cjoProp::getUser()->hasPerm('admin[]')
                                                    ? true : false)
                         ));
 

@@ -54,8 +54,6 @@ class resultColumn extends cjoListColumn {
 
     public function getLabel() {
 
-        global $I18N;
-
         $label = parent :: getLabel();
 
         $format     = '<img src="%s" alt="%s"/>';
@@ -76,7 +74,7 @@ class resultColumn extends cjoListColumn {
         $pattern = '/<a.*href\="?(\S+)"([^>]*)>.+<\/a>/i';
 
         if ($order_col != $this->name) {
-            $link = $this->link(sprintf($label, '', $I18N->msg('label_sort_asc')), array (
+            $link = $this->link(sprintf($label, '', cjoI18N::translate('label_sort_asc')), array (
                 'order_col' => $this->name,
                 'order_type' => 'asc',
                 'next' => $next
@@ -86,7 +84,7 @@ class resultColumn extends cjoListColumn {
             $matches = !empty($matches[1]) ? $matches[1] : '';
 
             $this->head_attributes = '';
-            $this->setHeadAttributes('class="header ' . $classes . '" title="'.$I18N->msg('label_sort_asc').'" onclick="window.location.href = \'' . preg_replace("/&(?!amp;)/", "&amp;", $matches) . '\'" style="cursor:pointer"');
+            $this->setHeadAttributes('class="header ' . $classes . '" title="'.cjoI18N::translate('label_sort_asc').'" onclick="window.location.href = \'' . preg_replace("/&(?!amp;)/", "&amp;", $matches) . '\'" style="cursor:pointer"');
         }
         else {
 
@@ -94,7 +92,7 @@ class resultColumn extends cjoListColumn {
             $attributes = '';
 
             if (strtolower($order_type) == 'desc') {
-                $link = $this->link(sprintf($label, '', $I18N->msg('label_sort_asc')), array (
+                $link = $this->link(sprintf($label, '', cjoI18N::translate('label_sort_asc')), array (
                     'order_col' => $this->name,
                     'order_type' => 'asc',
                     'next' => $next
@@ -102,14 +100,14 @@ class resultColumn extends cjoListColumn {
                 preg_match($pattern, $link, $matches);
 
                 if($this->hasOption(OPT_SORT)){
-                    $attributes = ' title="'.$I18N->msg('label_sort_asc').'" onclick="window.location.href = \'' . preg_replace("/&(?!amp;)/", "&amp;", $matches[1]). '\'" style="cursor:pointer"';
+                    $attributes = ' title="'.cjoI18N::translate('label_sort_asc').'" onclick="window.location.href = \'' . preg_replace("/&(?!amp;)/", "&amp;", $matches[1]). '\'" style="cursor:pointer"';
                 }
 
                 $this->setHeadAttributes('class="header headerSortUp '. $classes . '"'.$attributes);
             }
             else {
                 
-                $link = $this->link(sprintf($label, '', $I18N->msg('label_sort_desc')), array (
+                $link = $this->link(sprintf($label, '', cjoI18N::translate('label_sort_desc')), array (
                     'order_col' => $this->name,
                     'order_type' => 'desc',
                     'next' => $next
@@ -118,7 +116,7 @@ class resultColumn extends cjoListColumn {
                 preg_match($pattern, $link, $matches);
 
                 if($this->hasOption(OPT_SORT)){
-                    $attributes = ' title="'.$I18N->msg('label_sort_desc').'" onclick="window.location.href = \'' . preg_replace("/&(?!amp;)/", "&amp;", $matches[1]) . '\'" style="cursor:pointer"';
+                    $attributes = ' title="'.cjoI18N::translate('label_sort_desc').'" onclick="window.location.href = \'' . preg_replace("/&(?!amp;)/", "&amp;", $matches[1]) . '\'" style="cursor:pointer"';
                 }
                 $this->setHeadAttributes('class="header headerSortDown ' . $classes . '"'.$attributes);
 
@@ -144,7 +142,6 @@ class resultColumn extends cjoListColumn {
     }
 
     public function format($row) {
-        global $I18N;
 
         $format = parent :: format($row);
         if (strlen($format) != 0) {
@@ -157,7 +154,6 @@ class resultColumn extends cjoListColumn {
             if ($this->format == '') {
                 $this->format = '%' . $this->name . '%';
             }
-            // Alle Spaltenamen ersetzen durch deren Werte %id%, %name%, etc.
             $value = $this->parseString($this->format, $row);
         } else {
             $value = cjoFormatter::format($value, $this->format_type, $this->format);

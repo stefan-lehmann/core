@@ -44,28 +44,26 @@ class cjoExtension {
      * @return mixed
      * @access public
      */
-    public static function registerExtensionPoint($extension, $params = array (), $read_only = false) {
-
-    	global $CJO;
+    public static function registerExtensionPoint($extension, $params = array(), $read_only = false) {
 
     	if (!is_array($params)) {
     	    $result = $params;
     		$params = array('subject' => $params);
     	}
-    	
+
         if (class_exists('cjoLog')) cjoLog::writeLog($extension, $params);
-    	
-    	if (isset($CJO['EXTENSIONS'][$extension]) && is_array($CJO['EXTENSIONS'][$extension])) {
+
+    	if (is_array(cjoProp::get('EXTENSIONS|'.$extension))) {
 
     		if ($read_only) {
-    			foreach ($CJO['EXTENSIONS'][$extension] as $ext) {
+    			foreach (cjoProp::get('EXTENSIONS|'.$extension) as $ext) {
     				self::callFunction($ext, $params);
     			}
     		} else {
 
-    			foreach ($CJO['EXTENSIONS'][$extension] as $ext) {
+    			foreach (cjoProp::get('EXTENSIONS|'.$extension) as $ext) {
+
     				$result = self::callFunction($ext, $params);
-    				
     				// Rückgabewert nur auswerten wenn auch einer vorhanden ist
     				// damit $params['subject'] nicht verfälscht wird
 
@@ -75,7 +73,7 @@ class cjoExtension {
     			}
     		}
        	} 
-    	
+
     	return (isset($params['subject'])) ? $params['subject'] : NULL;
     }
 
@@ -90,10 +88,9 @@ class cjoExtension {
      */
     public static function registerExtension($extension, $function) {
 
-        global $CJO;
-
-    	if(!is_string($function)) return false;
-    	$CJO['EXTENSIONS'][$extension][md5($function)] = $function;
+    	if (!is_string($function)) return false;
+        //cjoProp::set('EXTENSIONS', array($extension => array(md5($function) => $function)));
+        cjoProp::set('EXTENSIONS|'.$extension.'|'.md5($function),$function);
     }
 
     /**
@@ -103,8 +100,7 @@ class cjoExtension {
      * @access public
      */
     public static function isExtensionRegistered($extension) {
-    	global $CJO;
-    	return !empty ($CJO['EXTENSIONS'][$extension]);
+    	return cjoProp::get('EXTENSIONS|'.$extension);
     }
 
     /**
@@ -128,8 +124,7 @@ class cjoExtension {
     public static function callFunction($function, $params) {
 
     	$func = '';
-
-        
+      
     	if (is_string($function) && strlen($function) > 0) {
     		// static class method
     		if (strpos($function, '::') !== false) {
@@ -144,7 +139,7 @@ class cjoExtension {
     			$func = $function;
     		}
     		else {
-    			trigger_error('cjoExtension: Function "' . $function . '" not found!');
+    			throw new cjoException('cjoExtension: Function "' . $function . '" not found!');
     		}
     	}
     	// object method call
@@ -155,10 +150,10 @@ class cjoExtension {
 
     		self::checkCallable($func = array ($_object, $_method_name));
     	} else {
-    		trigger_error('cjoExtension: Using of an unexpected function var "' . $function . '"!');
+    		throw new cjoException('cjoExtension: Using of an unexpected function var "' . $function . '"!');
     	}
 
-    	return call_user_func($func, $params);
+    	return call_user_func($function, $params);
     }
 
     /**
@@ -174,7 +169,7 @@ class cjoExtension {
     		return true;
     	} else {
     		if (!is_array($function)) {
-    			trigger_error('cjoExtension: Unexpected vartype for $function given! Expecting Array!', E_USER_ERROR);
+    			throw new cjoException('cjoExtension: Unexpected vartype for $function given! Expecting Array!', E_USER_ERROR);
     		}
     		$_object = $function[0];
     		$_method_name = $function[1];
@@ -182,11 +177,14 @@ class cjoExtension {
     		if (!is_object($_object)) {
     			$_class_name = $_object;
     			if (!class_exists($_class_name)) {
-    				trigger_error('cjoExtension: Class "' . $_class_name . '" not found!', E_USER_ERROR);
+    				throw new cjoException('cjoExtension: Class "' . $_class_name . '" not found!', E_USER_ERROR);
     			}
+                if (!method_exists($_class_name,$_method_name)){
+                    throw new cjoException('cjoExtension: No such method "' . $_method_name . '" in class "' . $_object . '"!', E_USER_ERROR);
+                }
     		}
     		else {
-    		    trigger_error('cjoExtension: No such method "' . $_method_name . '" in class "' . get_class($_object) . '"!', E_USER_ERROR);
+    		    throw new cjoException('cjoExtension: No such method "' . $_method_name . '" in class "' . get_class($_object) . '"!', E_USER_ERROR);
     		}
     	}
     }

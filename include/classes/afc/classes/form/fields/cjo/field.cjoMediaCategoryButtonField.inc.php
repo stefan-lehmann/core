@@ -38,53 +38,51 @@ class cjoMediaCategoryButtonField extends popupButtonField {
 		$attributes['class'] = (empty ($attributes['class'])) ? 'custom_select' : $attributes['class'].' custom_select';
 		
 		$this->popupButtonField($name, $label, $attributes, $id);
-		$this->setDisconnectAction('cjo.jconfirm(\''.$I18N->msg('label_remove_link').' ?\', \'cjo.disconnectLink\', [$(this)]); return false;');
+		$this->setDisconnectAction('cjo.jconfirm(\''.cjoI18N::translate('label_remove_link').' ?\', \'cjo.disconnectLink\', [$(this)]); return false;');
 	}
 
 	public function getInputFields() {
 
-		global $CJO, $I18N;
-
         $attributes = $this->getValue() ? str_replace('style="', 'style="background-image:none!important;', $this->getAttributes()) : $this->getAttributes();
 
-		if (!is_object($CJO['SEL_MEDIA'])) {
-			new cjoSelectMediaCat();
+		if (!is_object(cjoSelectMediaCat::$sel_media)) {
+			cjoSelectMediaCat::init();
 		}
 
-		$CJO['SEL_MEDIA']->resetDisabled();
-		$CJO['SEL_MEDIA']->resetSelected();
-		$CJO['SEL_MEDIA']->resetSelectedPath();
-		$CJO['SEL_MEDIA']->setLabel('');
-		$CJO['SEL_MEDIA']->resetStyle();
+		cjoSelectMediaCat::$sel_media->resetDisabled();
+		cjoSelectMediaCat::$sel_media->resetSelected();
+		cjoSelectMediaCat::$sel_media->resetSelectedPath();
+		cjoSelectMediaCat::$sel_media->setLabel('');
+		cjoSelectMediaCat::$sel_media->resetStyle();
 
 		$select_id = (int) $this->getValue();
 		$selected_cat = OOMediaCategory::getCategoryById($select_id);
 		$selected_path = ($selected_article->_id != '') ? $selected_cat->_path.'|'.$select_id : $select_id;
 
-		$CJO['SEL_MEDIA']->setName($this->getName());
-		$CJO['SEL_MEDIA']->setStyle($attributes);
-		$CJO['SEL_MEDIA']->setSize(1);
-		$CJO['SEL_MEDIA']->setDisabled(0);
-		$CJO['SEL_MEDIA']->setSelected($select_id);
+		cjoSelectMediaCat::$sel_media->setName($this->getName());
+		cjoSelectMediaCat::$sel_media->setStyle($attributes);
+		cjoSelectMediaCat::$sel_media->setSize(1);
+		cjoSelectMediaCat::$sel_media->setDisabled(0);
+		cjoSelectMediaCat::$sel_media->setSelected($select_id);
 
 		$validators = $this->getValidators();
 		if (is_array($validators)) {
 		    foreach($validators as $validator) {
 		        if ($validator['criteria'] == 'notEmptyOrNull' ||
 		            $validator['criteria'] == 'notEmpty') {
-		            $CJO['SEL_MEDIA']->resetDisabled();
+		            cjoSelectMediaCat::$sel_media->resetDisabled();
 		        }
 		    }
 		}
 
 		if ($selected_article->_id != '') {
-			$CJO['SEL_MEDIA']->setSelectedPath($selected_path);
+			cjoSelectMediaCat::$sel_media->setSelectedPath($selected_path);
 		}
-		$s = $CJO['SEL_MEDIA']->_get();
+		$s = cjoSelectMediaCat::$sel_media->_get();
 		$s .= '<script type="text/javascript">'."\r\n".
 			  '	/* <![CDATA[ */'."\r\n".
 			  '	$(function(){'."\r\n".
-			  '		$(\'#'.$CJO['SEL_MEDIA']->getSelectId().'\').selectpath({path_len: \'short\', selected: 0});'."\r\n".
+			  '		$(\'#'.cjoSelectMediaCat::$sel_media->getSelectId().'\').selectpath({path_len: \'short\', selected: 0});'."\r\n".
 			  '	});'."\r\n".
 			  '/* ]]> */ '."\r\n".
 			  '</script>'."\r\n";
@@ -107,10 +105,10 @@ class cjoMediaCategoryButtonField extends popupButtonField {
 
 		if ($this->getValue()) {
 		    
-	        $this->addButton($I18N->msg('label_remove_link'), $this->getDisconnectAction(), 'img/silk_icons/cross.png', 'class="small"');
+	        $this->addButton(cjoI18N::translate('label_remove_link'), $this->getDisconnectAction(), 'img/silk_icons/cross.png', 'class="small"');
 		    
-			$url = cjoAssistance::createBEUrl(array('page' => 'media','subpage' => 'media', 'media_category' => $this->getValue()), array(), '&amp;');
-			$this->addButton($I18N->msg('label_edit_now'),
+			$url = cjoUrl::createBEUrl(array('page' => 'media','subpage' => 'media', 'media_category' => $this->getValue()), array(), '&amp;');
+			$this->addButton(cjoI18N::translate('label_edit_now'),
 							 'cjo.openShortPopup(\''.$url.'\'); return false;',
 							 'img/silk_icons/page_white_edit.png',
 							 'class="small"');

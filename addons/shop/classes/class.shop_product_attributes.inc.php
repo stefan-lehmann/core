@@ -32,7 +32,7 @@
 
 class cjoShopProductAttributes {
 
-    protected static $mypage = 'shop';
+    protected static $addon = 'shop';
 
     /**
      * Creates an attribute.
@@ -125,7 +125,7 @@ class cjoShopProductAttributes {
             return false;
         }
 
-        cjoMessage::addSuccess($I18N_21->msg('msg_attribute_removed'));
+        cjoMessage::addSuccess(cjoAddon::translate(21,'msg_attribute_removed'));
         return true;
     }
 
@@ -301,9 +301,9 @@ class cjoShopProductAttributes {
 
     	if (empty($attribute_string)) return 0;
 
-    	$attribute_ids = str_replace('|', ' OR id=',$attribute_string);
+    	$attribute_ids = str_replace('|', ' or id=',$attribute_string);
     	$sql = new cjoSql();
-    	$qry = "SELECT SUM(offset) AS sum FROM ".TBL_21_ATTRIBUTE_VALUES." WHERE id='".$attribute_ids."'";
+    	$qry = "SELECT SUM(offset) AS sum FROM ".TBL_21_ATTRIBUTE_VALUES." WHERE id=".$attribute_ids;
     	$result = $sql->getArray($qry);
 
     	return !empty($result) ? $result[0]['sum'] : 0;
@@ -323,7 +323,7 @@ class cjoShopProductAttributes {
 
     	global $CJO;
 
-    	$clang = $CJO['CUR_CLANG'];
+    	$clang = cjoProp::getClang();
 
     	if (empty($attribute_string)) return '';
 
@@ -345,13 +345,11 @@ class cjoShopProductAttributes {
            				ON a.id = b.attribute_id)
            			ON a.translate_id=d.translate_id
            		WHERE
-           			c.clang='".$clang."'
+           			c.clang=".$clang."
            		AND
-           			d.clang='".$clang."'
+           			d.clang=".$clang."
            		AND
-           			(b.id='".$attribute_ids."')";
-
-        
+           			(b.id=".$attribute_ids.")";
 
     	$results = $sql->getArray($qry);
     	$attributes = cjoAssistance::toArray($attribute_string);
@@ -390,7 +388,7 @@ class cjoShopProductAttributes {
 
         global $CJO, $I18N_21;
 
-        if ($clang === false) $clang = $CJO['CUR_CLANG'];
+        if ($clang === false) $clang = cjoProp::getClang();
 
         $output   = '';
         $results  = array();
@@ -413,8 +411,8 @@ class cjoShopProductAttributes {
             		IF(v.offset <> 0,
             				CONCAT(t.name,
             				       ' &nbsp;&nbsp; (',
-            				       REPLACE(v.offset, '.', '".$CJO['ADDON']['settings'][self::$mypage]['CURRENCY']['DEFAULT_SEPARATOR']."'),
-    						       ' ".$CJO['ADDON']['settings'][self::$mypage]['CURRENCY']['DEFAULT_SIGN']."',
+            				       REPLACE(v.offset, '.', '".$CJO['ADDON']['settings'][self::$addon]['CURRENCY']['DEFAULT_SEPARATOR']."'),
+    						       ' ".$CJO['ADDON']['settings'][self::$addon]['CURRENCY']['DEFAULT_SIGN']."',
         			  		       ')'),
         			  		        t.name)  AS name
         		FROM ".TBL_21_ATTRIBUTES." n
@@ -442,9 +440,9 @@ class cjoShopProductAttributes {
         if (empty($attributes)) {
 
             return sprintf('<div class="formular shop_attribute_modul_select">%s %s</div>',
-                   		   $I18N_21->msg('no_product_attributes_defined', $link),
-                           cjoAssistance::createBELink($I18N_21->msg('label_attribute_setup'),
-                                                       array('page' => self::$mypage,
+                   		   cjoAddon::translate(21,'no_product_attributes_defined', $link),
+                           cjoUrl::createBELink(cjoAddon::translate(21,'label_attribute_setup'),
+                                                       array('page' => self::$addon,
                                                        		 'subpage' => 'attributes',
                                                        		 'function' => '')));
         }
@@ -524,11 +522,11 @@ class cjoShopProductAttributes {
         global $CJO;
 
         if (empty($set['attributes'])) return false;
-        if ($clang === false) $clang = $CJO['CUR_CLANG'];
+        if ($clang === false) $clang = cjoProp::getClang();
         
-        $attribute_format  = (int) $CJO['ADDON']['settings'][self::$mypage]['ATTRIBUTE_FORMAT'];
-		$exchange_ratio    = empty($CJO['ADDON']['settings'][self::$mypage]['CURRENCY']['CURR_RATIO']) 
-		                   ? $CJO['ADDON']['settings'][self::$mypage]['CURRENCY']['CURR_RATIO'] : 1;
+        $attribute_format  = (int) $CJO['ADDON']['settings'][self::$addon]['ATTRIBUTE_FORMAT'];
+		$exchange_ratio    = empty($CJO['ADDON']['settings'][self::$addon]['CURRENCY']['CURR_RATIO']) 
+		                   ? $CJO['ADDON']['settings'][self::$addon]['CURRENCY']['CURR_RATIO'] : 1;
         $discount          = cjoShopPrice::convToFloat($set['discount']);                          
         $temp              = array();
         $attributes        = array();
@@ -643,57 +641,53 @@ class cjoShopProductAttributes {
      * @access public
      */
     public static function getNameAndAttributes($string) {
-    	global $CJO;
-    	$values = explode('&', $string);
-    	$attribute_ids = str_replace('|', ' OR b.id=', $values[1]);
-		$clang = $CJO['CUR_CLANG'];
-        $attributes = '';
-        
-        if (!empty($values[1])) {
-        		// get attribute names and values from db
-            	$sql = new cjoSql();
-            	$qry = "SELECT
-            				b.id AS id,
-            				d.name AS attribute_name,
-            				c.name AS value_name
-            			FROM "
-            				.TBL_21_ATTRIBUTE_TRANSLATE." d
-            				INNER JOIN ("
-            					.TBL_21_ATTRIBUTES." a
-                   				INNER JOIN ("
-                          			.TBL_21_ATTRIBUTE_VALUES." b
-                        			INNER JOIN "
-                                       .TBL_21_ATTRIBUTE_TRANSLATE." c
-                                    ON c.translate_id = b.translate_id)
-                   				ON a.id = b.attribute_id)
-                   			ON a.translate_id=d.translate_id
-                   		WHERE
-                   			c.clang='".$clang."'
-                   		AND
-                   			d.clang='".$clang."'
-                   		AND
-                   			(b.id='".$attribute_ids."')";
-        
-                // prepare attribute values
-                $results = $sql->getArray($qry);
-        
-                $return = array();
-        
-                foreach($results as $result) {
-                	if(empty($return[$result['attribute_name']]))
-                		$return[$result['attribute_name']] = $result['value_name'];
-                	else
-                		$return[$result['attribute_name']] .= ' | '.$result['value_name'];
-                }
 
-            // build output string
-            foreach($return as $key =>  $value) {
-            	if (empty($attributes)) {
-            		$attributes = $key.': '.$value;
-            	} else {
-            		$attributes .= '<br/>'.$key.': '.$value;
-            	}
-            }
+    	$values = explode('~~', $string);
+    	$attribute_ids = str_replace('|', ' OR b.id=', $values[1]);
+		$clang = cjoProp::getClang();
+
+		// get attribute names and values from db
+    	$sql = new cjoSql();
+    	$qry = "SELECT
+    				b.id AS id,
+    				d.name AS attribute_name,
+    				c.name AS value_name
+    			FROM "
+    				.TBL_21_ATTRIBUTE_TRANSLATE." d
+    				INNER JOIN ("
+    					.TBL_21_ATTRIBUTES." a
+           				INNER JOIN ("
+                  			.TBL_21_ATTRIBUTE_VALUES." b
+                			INNER JOIN "
+                               .TBL_21_ATTRIBUTE_TRANSLATE." c
+                            ON c.translate_id = b.translate_id)
+           				ON a.id = b.attribute_id)
+           			ON a.translate_id=d.translate_id
+           		WHERE
+           			c.clang='".$clang."'
+           		AND
+           			d.clang='".$clang."'
+           		AND
+           			(b.id='".$attribute_ids."')";
+
+        // prepare attribute values
+        $results = $sql->getArray($qry);
+        $return = array();
+
+        foreach($results as $result) {
+        	if(empty($return[$result['attribute_name']]))
+        		$return[$result['attribute_name']] = $result['value_name'];
+        	else
+        		$return[$result['attribute_name']] .= ' | '.$result['value_name'];
+        }
+
+        // build output string
+        foreach($return as $key =>  $value) {
+        	if (empty($attributes)) {
+        		$attributes = $key.': '.$value;
+        	} else {
+        		$attributes .= '<br/>'.$key.': '.$value;
+        	}
         }
     	$values[0] ='<span class="large_item">'.$values[0].'</span><br/>';
     	return $values[0].$attributes;

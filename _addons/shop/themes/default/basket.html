@@ -1,0 +1,117 @@
+[%BASKET%]
+
+IF([[DATASETS]]){%
+	<a name="shop_basket" class="hidden_anchor"></a>
+	 <div class="shop_rounded_corners">
+     	<div class="rounded_corners_t"><div></div></div>
+ 		<div class="rounded_corners_c">
+  			<div class="rounded_corners_b"></div>
+			<form class="basket" id="shop_basket" method="post" action="#shop_basket" >
+				<table class="shop_basket_out">
+				<thead>
+				<tr>
+    				<th class="amount_head">[translate_21: shop_amount]</th>
+    				<th></th>
+    				<th>[translate_21: basket_out_product_name]</th>
+    				<th class="total_head">[translate_21: shop_final_amount_price]</th>
+    				<th class="delete_head">[translate_21: delete]</th>
+				</tr>
+				</thead>
+		        <tbody>
+		            <%PRODUCTS%>
+    			    <tr class="total">
+        			    <td colspan="2"><%TAX_LIST%></td>
+        				<td class="order_value_name">[translate_21: shop_order_value]</td>
+        				<td class="order_value price_col">[[ORDER_VALUE]]</td>
+				        <td></td>
+                    </tr>
+    			    <tr>
+        				<td colspan="2" rowspan="2">
+            				<button type="submit" name="shop_basket_submit"
+                                id="basket_refresh" class="shop_button refresh left"
+                                title="[translate_21: basket_refresh]"  value="[translate_21: basket_refresh]">
+                                <span class="bg">
+                                <span class="bl"><span></span></span>
+                                <span class="bc">OK</span>
+                                <span class="br"></span>
+                                </span>
+                            </button>
+                        </td>
+        				<td class="delivery_costs_name">[translate_21: shop_delivery_costs]<br/>([[DELIVERY_COUNTRY]])</td>
+        				<td class="delivery_costs price_col">[[DELIVERY_COSTS]]</td>
+				        <td></td>
+                    </tr>
+    			    <tr>
+        				<td class="total_name total_color">[translate_21: shop_total_price]</td>
+        				<td class="total_price total_color price_col">[[TOTAL_ORDER_VALUE]]</td>
+				        <td></td>
+                    </tr>
+			    </tbody>
+		    </table>
+		</form>
+			IF(![[CHECKOUT]]){%
+				<form class="basket" method="post" action="[[CHECKOUT_URL]]">
+				    <input type="hidden" name="full_basket" value="[[SESSION]]" />
+                    <button type="submit" name="shop_basket_checkout"
+                        id="shop_goto_checkout" class="shop_button goto"
+                        title="[translate_21: shop_goto_checkout]"  value="[translate_21: shop_goto_checkout]">
+                        <span class="bg">
+                        <span class="bl"></span>
+                        <span class="bc">[translate_21: shop_goto_checkout]</span>
+                        <span class="br"><span></span></span>
+                        </span>
+                    </button>
+				</form>
+			%}ENDIF
+		</div>
+	 </div>
+%}ENDIF
+
+IF(![[DATASETS]]){%
+	<div class="shop_empty_basket">
+		<p class="shop_empty_basket_text">[translate_21: shop_empty_basket]</p>
+	</div>
+%}ENDIF
+
+<script type="text/javascript">
+/*<![CDATA[*/
+    $('.shop_product_amount').change(function() {
+        $('#shop_goto_checkout')
+            .attr('disabled', 'disabled')
+            .addClass('disabled');
+        $('form#shop_basket').submit();
+    });
+/*]]>*/
+</script>
+
+
+[%PRODUCTS%]
+
+<tr class="[[TR_CLASS]] [[TR_SUBCLASS]]">
+    <td class="amount">
+        <input type="text" class="shop_product_amount" id="product_amount_[[SLICE_ID]]" value="[[AMOUNT]]"
+        name="product_amount[[[SLICE_ID]]]" size="2"/>
+     </td>
+    <td class="thumbnail">[[THUMBNAIL]]</td>
+    <td class="product_name">
+        <a href="[[PRODUCT_URL]]">[[PRODUCT_NAME]]</a>
+        <span class="description">
+            IF([[PRODUCT_ID]]){%
+            	<span>[translate_21: shop_product_id_short] [[PRODUCT_ID]]</span>
+            %}ENDIF
+        	<span>[[ATTRIBUTE]]</span>
+        	<span>[translate_21: shop_final_price] [[FINAL_PRICE]]</span>
+        	<span>[[DISCOUNT]]</span>
+            IF([[AVAILABLE_AMOUNT]]){% <span class="unavailable_amount">[[AVAILABLE_AMOUNT]]</span> %}ENDIF
+          </span>
+    </td>
+    <td class="total_price">[[FINAL_AMOUNT_PRICE]]</td>
+    <td class="delete">
+    	<input type="image" src="./contejo/img/silk_icons/cross.png" name="shop_basket_submit"
+               onclick="document.getElementById('product_amount_[[SLICE_ID]]').value = '0';" />
+    </td>
+</tr>
+
+[%TAX_LIST%]
+
+<span class="product_table_tax_rate">[[TAX_RATE]] [[TAXES]]</span>

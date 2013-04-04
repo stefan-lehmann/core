@@ -30,8 +30,6 @@ class statusBar extends cjoListToolbar {
 
 	public function show() {
 
-        global $I18N;
-
 		$found = $this->cjolist->numRows();
 		$steps = $this->cjolist->getSteps();
 		$stepping = $this->cjolist->getStepping();	
@@ -43,8 +41,8 @@ class statusBar extends cjoListToolbar {
 		// First beginnt bei 1
 		if ($first +1 <= $found) $first++;
 		
-        $dec_point     = trim($I18N->msg('dec_point'));
-        $thousands_sep = trim($I18N->msg('thousands_sep'));
+        $dec_point     = trim(cjoI18N::translate('setlocal_dec_point'));
+        $thousands_sep = trim(cjoI18N::translate('setlocal_thousands_sep'));
         
 		return $this->format(number_format($first, 0, $dec_point, $thousands_sep),
 		                     number_format($last, 0, $dec_point, $thousands_sep),
@@ -60,8 +58,7 @@ class statusBar extends cjoListToolbar {
 	public function format($first, $last, $max) {
 
 		global $I18N;
-        
-		return ($max == 0) ? '' : '<b title="'.$I18N->msg('label_entries_from_to', $first, $last, $max).'" style="display:block;padding-top:.3em;">'. $first .' - '. $last .' / '. $max .'</b>'."\n";
+		return ($max == 0) ? '' : '<b title="'.cjoI18N::translate('label_entries_from_to', $first, $last, $max).'" style="display:block;padding-top:.3em;">'. $first .' - '. $last .' / '. $max .'</b>'."\n";
 
 	}
 }

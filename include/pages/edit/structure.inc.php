@@ -24,37 +24,36 @@
  */
 
 cjoExtension::registerExtension('CJO_LIST_ARTICLES_LIST_CELLS', 'cjoFormateCells');
-cjoExtension::registerExtension('CJO_LIST_ARTICLES_LIST_ROW_ATTR', 'cjoFormateRows');
 
 // Condition für Feld NAVI_ITEM
-$cond['navi'][0] = '<img src="img/silk_icons/chart_organisation.png" title="'.$I18N->msg("label_article_hide_navi_item").'" alt="'.$I18N->msg("label_article_navi_item").'" />';
-$cond['navi'][1] = '<img src="img/silk_icons/chart_organisation_off.png" title="'.$I18N->msg("label_article_show_navi_item").'" alt="'.$I18N->msg("label_article_no_navi_item").'" />';
+$cond['navi'][0] = '<img src="img/silk_icons/chart_organisation.png" title="'.cjoI18N::translate("label_article_hide_navi_item").'" alt="'.cjoI18N::translate("label_article_navi_item").'" />';
+$cond['navi'][1] = '<img src="img/silk_icons/chart_organisation_off.png" title="'.cjoI18N::translate("label_article_show_navi_item").'" alt="'.cjoI18N::translate("label_article_no_navi_item").'" />';
 
 // Condition für Feld STATUS
-$cond['stat'][0] = '<img src="img/silk_icons/eye_off.png" title="'.$I18N->msg("label_article_do_online").'" alt="'.$I18N->msg("label_article_offline").'" />';
-$cond['stat'][1] = '<img src="img/silk_icons/eye.png" title="'.$I18N->msg("label_article_do_offline").'" alt="'.$I18N->msg("label_article_online").'" />';
+$cond['stat'][0] = '<img src="img/silk_icons/eye_off.png" title="'.cjoI18N::translate("label_article_do_online").'" alt="'.cjoI18N::translate("label_article_offline").'" />';
+$cond['stat'][1] = '<img src="img/silk_icons/eye.png" title="'.cjoI18N::translate("label_article_do_offline").'" alt="'.cjoI18N::translate("label_article_online").'" />';
 
 // Condition für Feld TEASER
-$cond['teas'][0] = '<img src="img/silk_icons/star_off.png" title="'.$I18N->msg("label_teaser_do_on").'" alt="'.$I18N->msg("label_teaser_off").'" />';
-$cond['teas'][1] = '<img src="img/silk_icons/star.png" title="'.$I18N->msg("label_teaser_do_off").'" alt="'.$I18N->msg("label_teaser_on").'" />';
+$cond['teas'][0] = '<img src="img/silk_icons/star_off.png" title="'.cjoI18N::translate("label_teaser_do_on").'" alt="'.cjoI18N::translate("label_teaser_off").'" />';
+$cond['teas'][1] = '<img src="img/silk_icons/star.png" title="'.cjoI18N::translate("label_teaser_do_off").'" alt="'.cjoI18N::translate("label_teaser_on").'" />';
 
 // Condition für Feld KOMMENTARE
-$cond['comm'][0] = '<img src="img/silk_icons/comments_off.png" title="'.$I18N->msg("label_comment_do_on").'" alt="'.$I18N->msg("label_comment_off").'" />';
-$cond['comm'][1] = '<img src="img/silk_icons/comments.png" title="'.$I18N->msg("label_comment_do_off").'" alt="'.$I18N->msg("label_comment_on").'" />';
+$cond['comm'][0] = '<img src="img/silk_icons/comments_off.png" title="'.cjoI18N::translate("label_comment_do_on").'" alt="'.cjoI18N::translate("label_comment_off").'" />';
+$cond['comm'][1] = '<img src="img/silk_icons/comments.png" title="'.cjoI18N::translate("label_comment_do_off").'" alt="'.cjoI18N::translate("label_comment_on").'" />';
 
 // Condition für Feld DELETE
-$cond['delete'] = '<img src="img/silk_icons/bin.png" title="'.$I18N->msg("label_delete_article").'" alt="'.$I18N->msg("label_delete_article").'" />';
+$cond['delete'] = '<img src="img/silk_icons/bin.png" title="'.cjoI18N::translate("label_delete_article").'" alt="'.cjoI18N::translate("label_delete_article").'" />';
 
 $sql = "SELECT
 			*,
 			id AS checkbox,
-			if (name='','".$I18N->msg("label_no_name")."',name) AS name,
+			if (name='','".cjoI18N::translate("label_no_name")."',name) AS name,
 			if (re_id<>0,0,cat_group) AS _cat_group,
-			if ((SELECT id FROM ".TBL_ARTICLES_SLICE." WHERE article_id='id' AND clang='".$CJO['CUR_CLANG']."' LIMIT 1)>0, 1,0) AS slices
+			if ((SELECT id FROM ".TBL_ARTICLES_SLICE." WHERE article_id='id' AND clang='".cjoProp::getClang()."' LIMIT 1)>0, 1,0) AS slices
         FROM
             ".TBL_ARTICLES."
         WHERE
-            re_id='".$article_id."' AND clang='".$CJO['CUR_CLANG']."'" ;
+            re_id='".$article_id."' AND clang='".cjoProp::getClang()."'" ;
 
 
 $list = new cjolist($sql, '_cat_group, prior', 'ASC', 'name', 100);
@@ -62,22 +61,22 @@ $list->setName('ARTICLES_LIST');
 $list->setAttributes('id="articles_list"');
 
 $add_button = '';
-if ($CJO['USER']->isAdmin() ||
-   ($CJO['USER']->hasCatPermWrite($article_id) &&
-    $CJO['USER']->hasPerm('publishArticle[]') &&
-    !$CJO['USER']->hasPerm('editContentOnly[]'))) {
-	$add_button = cjoAssistance::createBELink(
-						'<img src="img/silk_icons/add.png" title="'.$I18N->msg("button_add").'" alt="'.$I18N->msg("button_add").'" />',
+if (cjoProp::getUser()->isAdmin() ||
+   (cjoProp::getUser()->hasCatPermWrite($article_id) &&
+    cjoProp::getUser()->hasPerm('publishArticle[]') &&
+    !cjoProp::getUser()->hasPerm('editContentOnly[]'))) {
+	$add_button = cjoUrl::createBELink(
+						'<img src="img/silk_icons/add.png" title="'.cjoI18N::translate("button_add").'" alt="'.cjoI18N::translate("button_add").'" />',
                         array('subpage' => 'settings', 'article_id'=> $article_id, 'function' => 'add', 'oid' => ''),
                         $list->getGlobalParams(),
-                        'title="'.$I18N->msg("button_add").'"');
+                        'title="'.cjoI18N::translate("button_add").'"');
 }
 $temp = '';
-if ((!$CJO['USER']->hasPerm("copyArticle[]") &&
-    !$CJO['USER']->hasPerm("copyContent[]") &&
-    !$CJO['USER']->hasPerm("moveArticle[]") &&
-    !$CJO['USER']->hasPerm("deleteArticleTree[]")) || 
-    $CJO['USER']->hasPerm('editContentOnly[]')) {
+if ((!cjoProp::getUser()->hasPerm("copyArticle[]") &&
+    !cjoProp::getUser()->hasPerm("copyContent[]") &&
+    !cjoProp::getUser()->hasPerm("moveArticle[]") &&
+    !cjoProp::getUser()->hasPerm("deleteArticleTree[]")) || 
+    cjoProp::getUser()->hasPerm('editContentOnly[]')) {
     $temp = ' disabled="disabled"';
 }
 $cols['checkbox'] = new resultColumn('checkbox', $add_button, 'sprintf', '<input type="checkbox" class="checkbox" '.$temp.' value="%s" />');
@@ -85,49 +84,46 @@ $cols['checkbox']->setHeadAttributes('class="icon"');
 $cols['checkbox']->setBodyAttributes('class="icon"');
 $cols['checkbox']->delOption(OPT_ALL);
 
-$cols['startpage'] = new resultColumn('startpage', $I18N->msg('label_name'));
+$cols['startpage'] = new resultColumn('startpage', cjoI18N::translate('label_name'));
 $cols['startpage']->setHeadAttributes('colspan="2"');
 $cols['startpage']->setBodyAttributes('class="icon"');
 $cols['startpage']->delOption(OPT_ALL);
 
-$cols['id'] = new resultColumn('id', null, 'sprintf', '<span title="'.$I18N->msg('label_id').'">ID %s</span>');
-$cols['template_id'] = new resultColumn('template_id', null, 'sprintf', '<span title="'.$I18N->msg('label_template').'"><img src="img/mini_icons/layout.png" alt="" />%s</span>');
-$cols['cat_group'] = new resultColumn('cat_group', null, 'sprintf', '<span title="'.$I18N->msg('label_cat_group').'"><img src="img/mini_icons/chart_organisation.png" alt="" />%s</span>');
+$cols['id'] = new resultColumn('id', null, 'sprintf', '<span title="'.cjoI18N::translate('label_id').'">ID %s</span>');
+$cols['template_id'] = new resultColumn('template_id', null, 'sprintf', '<span title="'.cjoI18N::translate('label_template').'"><img src="img/mini_icons/layout.png" alt="" />%s</span>');
+$cols['cat_group'] = new resultColumn('cat_group', null, 'sprintf', '<span title="'.cjoI18N::translate('label_cat_group').'"><img src="img/mini_icons/chart_organisation.png" alt="" />%s</span>');
 
 $cols['name'] = new resultColumn('name', NULL, 'truncate',array( 'length' => 60, 'etc' => '...', 'break_words' => false));
 $cols['name']->setBodyAttributes('class="large_item"');
-$cols['name']->setParams(array ('article_id'=> '%id%', 're_id'=> $re_id, 'clang' => $CJO['CUR_CLANG']));
+$cols['name']->setParams(array ('article_id'=> '%id%', 're_id'=> $re_id, 'clang' => cjoProp::getClang()));
 $cols['name']->delOption(OPT_ALL);
 
-$cols['prio'] = new resultColumn('prior', $I18N->msg('label_prio'),'sprintf','<strong>%s</strong>');
+$cols['prio'] = new resultColumn('prior', cjoI18N::translate('label_prio'),'sprintf','<strong>%s</strong>');
 $cols['prio']->setHeadAttributes('class="icon"');
 $cols['prio']->setBodyAttributes('class="icon dragHandle tablednd"');
-$cols['prio']->setBodyAttributes('title="'.$I18N->msg("label_change_prio").'"');
+$cols['prio']->setBodyAttributes('title="'.cjoI18N::translate("label_change_prio").'"');
 $cols['prio']->delOption(OPT_ALL);
 
-if ($CJO['ONLINE_FROM_TO_ENABLED'] == true) { 
-    $cols['online_from'] = new resultColumn('online_from', $I18N->msg('label_from_to'), 'strftime', $I18N->msg("dateformat"));
-    $cols['online_from']->addCondition('online_from', array('>', time()), '<i>'.$I18N->msg("date_from").'</i><span class="begin_date date_error">%s</span>');
-    $cols['online_from']->addCondition('online_from', array('<', time()), '<i>'.$I18N->msg("date_from").'</i><span class="begin_date">%s</span>');
-    if (!$CJO['USER']->hasPerm('editContentOnly[]')) $cols['online_from']->setBodyAttributes('class="online_from_to"');
-    $cols['online_from']->delOption(OPT_ALL);
-    
-    $cols['online_to'] = new resultColumn('online_to', null, 'strftime', $I18N->msg("dateformat"));
-    $cols['online_to']->addCondition('online_to', array('<', time()), '<i>'.$I18N->msg("date_to").'</i><span class="end_date date_error">%s</span>');
-    $cols['online_to']->addCondition('online_to', array('>', time()), '<i>'.$I18N->msg("date_to").'</i><span class="end_date">%s</span>');
-}
-if ($CJO['LOGIN_ENABLED'] == true) {
-    $cols['type_id'] = new resultColumn('type_id', $I18N->msg('label_login'), 'sprintf', '<span>%s</span>');
-    $cols['type_id']->setBodyAttributes('width="100"');
-    $cols['type_id']->delOption(OPT_ALL);
-}
+$cols['online_from'] = new resultColumn('online_from', cjoI18N::translate('label_from_to'), 'strftime', cjoI18N::translate("dateformat"));
+$cols['online_from']->addCondition('online_from', array('>', time()), '<i>'.cjoI18N::translate("date_from").'</i><span class="begin_date date_error">%s</span>');
+$cols['online_from']->addCondition('online_from', array('<', time()), '<i>'.cjoI18N::translate("date_from").'</i><span class="begin_date">%s</span>');
+if (!cjoProp::getUser()->hasPerm('editContentOnly[]')) $cols['online_from']->setBodyAttributes('class="online_from_to"');
+$cols['online_from']->delOption(OPT_ALL);
+
+$cols['online_to'] = new resultColumn('online_to', null, 'strftime', cjoI18N::translate("dateformat"));
+$cols['online_to']->addCondition('online_to', array('<', time()), '<i>'.cjoI18N::translate("date_to").'</i><span class="end_date date_error">%s</span>');
+$cols['online_to']->addCondition('online_to', array('>', time()), '<i>'.cjoI18N::translate("date_to").'</i><span class="end_date">%s</span>');
+
+$cols['type_id'] = new resultColumn('type_id', cjoI18N::translate('label_login'), 'sprintf', '<span>%s</span>');
+$cols['type_id']->setBodyAttributes('width="100"');
+$cols['type_id']->delOption(OPT_ALL);
 
 $colspan = false;
 $count = 0;
 
-$cols['navi_item'] = new staticColumn('navi_item', $I18N->msg('label_functions'));
+$cols['navi_item'] = new staticColumn('navi_item', cjoI18N::translate('label_functions'));
 $cols['navi_item']->setBodyAttributes('width="16"');
-if (!$CJO['USER']->hasPerm('editContentOnly[]')) $cols['navi_item']->setBodyAttributes('class="cjo_navi_item"');
+if (!cjoProp::getUser()->hasPerm('editContentOnly[]')) $cols['navi_item']->setBodyAttributes('class="cjo_navi_item"');
 $cols['navi_item']->addCondition('navi_item', '1', $cond['navi'][0]);
 $cols['navi_item']->addCondition('navi_item', '0', $cond['navi'][1]);
 $colspan = 'navi_item';
@@ -136,7 +132,7 @@ $count++;
 $cols['status'] = new staticColumn('status', NULL);
 $cols['status']->setBodyAttributes('width="16"');
 $cols['status']->setBodyAttributes('style="border-left: none;"');
-if (!$CJO['USER']->hasPerm('editContentOnly[]')) $cols['status']->setBodyAttributes('class="cjo_status"');
+if (!cjoProp::getUser()->hasPerm('editContentOnly[]')) $cols['status']->setBodyAttributes('class="cjo_status"');
 $cols['status']->addCondition('status', '0', $cond['stat'][0]);
 $cols['status']->addCondition('status', '1', $cond['stat'][1]);
 $count++;
@@ -145,25 +141,25 @@ if ($CJO['TEASER_ENABLED']) {
 	$cols['teaser'] = new staticColumn('teaser', NULL);
 	$cols['teaser']->setBodyAttributes('width="16"');
 	$cols['teaser']->setBodyAttributes('style="border-left: none;"');
-	if (!$CJO['USER']->hasPerm('editContentOnly[]')) $cols['teaser']->setBodyAttributes('class="cjo_teaser"');
+	if (!cjoProp::getUser()->hasPerm('editContentOnly[]')) $cols['teaser']->setBodyAttributes('class="cjo_teaser"');
 	$cols['teaser']->addCondition('teaser', '0', $cond['teas'][0]);
 	$cols['teaser']->addCondition('teaser', '1', $cond['teas'][1]);
 	$count++;
 }
 
-if (OOAddon::isAvailable('comments')) {
+if (cjoAddon::isAvailable('comments')) {
 	$cols['comments'] = new staticColumn('comments', NULL);
 	$style = !$colspan ? '' : ' style="border-left: none;"';
 	$cols['comments']->setBodyAttributes('width="16"');
 	$cols['comments']->setBodyAttributes($style);
-	if (!$CJO['USER']->hasPerm('editContentOnly[]')) $cols['comments']->setBodyAttributes('class="cjo_comments"');
+	if (!cjoProp::getUser()->hasPerm('editContentOnly[]')) $cols['comments']->setBodyAttributes('class="cjo_comments"');
 	$cols['comments']->addCondition('comments', '0', $cond['comm'][0]);
 	$cols['comments']->addCondition('comments', '1', $cond['comm'][1]);
 	$colspan = !$colspan ? 'comments' : 'navi_item';
 	$count++;
 }
 
-if (!$CJO['USER']->hasPerm('editContentOnly[]')) {
+if (!cjoProp::getUser()->hasPerm('editContentOnly[]')) {
     $cols['delete'] = new staticColumn($cond['delete'], NULL);
     $cols['delete']->setBodyAttributes('width="60"');
     $cols['delete']->setBodyAttributes('class="cjo_delete"');
@@ -176,8 +172,8 @@ $cols[$colspan]->setHeadAttributes('colspan="'.$count.'"');
 if ($re_id != '')
 	unset($cols['cat_group']);
 
-$rowAttributes = ' onclick="location.href=\'index.php?page=edit&amp;subpage=structure&amp;article_id='.$re_id.'&amp;clang='.$CJO['CUR_CLANG'].'\';" ' .
-                 ' class="cat_uplink" title="'.$I18N->msg("label_level_up").'"';
+$rowAttributes = ' onclick="location.href=\'index.php?page=edit&amp;subpage=structure&amp;article_id='.$re_id.'&amp;clang='.cjoProp::getClang().'\';" ' .
+                 ' class="cat_uplink" title="'.cjoI18N::translate("label_level_up").'"';
 
 $up_link  = '            <tr'.$rowAttributes.' valign="middle" class="nodrop">'."\r\n".
             '              <td class="icon" height="20"> &nbsp; </td>'."\r\n".
@@ -192,20 +188,21 @@ if (!isset($cjo_data) || !$cjo_data['startpage']) $list->setVar(LIST_VAR_NO_DATA
 
 $list->addColumns($cols);
 
-if ($list->hasRows()) {
+if ($list->numRows() != 0) {
 
-	$CJO['SEL_ARTICLE']->setName("target_location");
-	$CJO['SEL_ARTICLE']->setStyle("width:250px;clear:none;");
+	cjoSelectArticle::$sel_article->setName("target_location");
+	cjoSelectArticle::$sel_article->setStyle("width:250px;clear:none;");
 
 	$buttons = new popupButtonField('', '', '', '');
-	$buttons->addButton($I18N->msg('label_run_process'), false, 'img/silk_icons/tick.png', 'id="ajax_update_button"');
+	$buttons->addButton(cjoI18N::translate('label_run_process'), false, 'img/silk_icons/tick.png', 'id="ajax_update_button"');
 
 	$clang_a_sel = new cjoSelect();
     $clang_a_sel->setName('clang_a');
     $clang_a_sel->setSize(1);
     $clang_a_sel->setStyle('class="cjo_float_l" style="width: auto"');
-	foreach($CJO['CLANG'] as $key => $val) {
-		if ($CJO['USER']->hasPerm("clang[".$key."]")) {
+
+	foreach(cjoProp::get('CLANG') as $key => $val) {
+		if (cjoProp::getUser()->hasPerm("clang[".$key."]")) {
 			$clang_a_sel->addOption($val,$key);
 		}
 	}
@@ -215,10 +212,10 @@ if ($list->hasRows()) {
     $ctype_sel = new cjoSelect();
     $ctype_sel->setName('target_ctype');
     $ctype_sel->setSize(1);
-    $ctype_sel->setSelectExtra('title="'.$I18N->msg('label_select_ctype').'"');    
-    $ctype_sel->addOption($I18N->msg('label_all_ctypes'), '-1');
+    $ctype_sel->setSelectExtra('title="'.cjoI18N::translate('label_select_ctype').'"');    
+    $ctype_sel->addOption(cjoI18N::translate('label_all_ctypes'), '-1');
     $ctype_sel->setSelected('-1');    
-    foreach ($CJO['CTYPE'] as $ctype_id=>$ctype_name) {
+    foreach (cjoProp::getCtypes() as $ctype_id=>$ctype_name) {
         $ctype_sel->addOption($ctype_name, $ctype_id); 
     }
     
@@ -226,40 +223,40 @@ if ($list->hasRows()) {
     $update_sel->setName('update_selection');
     $update_sel->setSize(1);
     $update_sel->setStyle('class="cjo_float_l" disabled="disabled"');
-    $update_sel->addOption($I18N->msg('label_update_selection'), 0);
+    $update_sel->addOption(cjoI18N::translate('label_update_selection'), 0);
     $update_sel->setSelected(0);
 
     $temp = false;
 
-    if ($CJO['USER']->hasPerm("copyArticle[]")) {
-        $update_sel->addOption($I18N->msg('label_copy_to'), 1);
+    if (cjoProp::getUser()->hasPerm("copyArticle[]")) {
+        $update_sel->addOption(cjoI18N::translate('label_copy_to'), 1);
         $temp = true;
     }
-    if ($CJO['USER']->hasPerm("copyArticle[]")) {
-        $update_sel->addOption($I18N->msg('label_rcopy_to'), 2);
+    if (cjoProp::getUser()->hasPerm("copyArticle[]")) {
+        $update_sel->addOption(cjoI18N::translate('label_rcopy_to'), 2);
         $temp = true;
     }
-    if ($CJO['USER']->hasPerm("copyContent[]")) {
-        $update_sel->addOption($I18N->msg('label_copy_content_to_article'), 6); 
-        $update_sel->addOption($I18N->msg('label_copy_content'), 3);       
+    if (cjoProp::getUser()->hasPerm("copyContent[]")) {
+        $update_sel->addOption(cjoI18N::translate('label_copy_content_to_article'), 6); 
+        $update_sel->addOption(cjoI18N::translate('label_copy_content'), 3);       
         $temp = true;
     }
-    if ($CJO['USER']->hasPerm("moveArticle[]")) {
-        $update_sel->addOption($I18N->msg('label_rmove_to'), 4);
+    if (cjoProp::getUser()->hasPerm("moveArticle[]")) {
+        $update_sel->addOption(cjoI18N::translate('label_rmove_to'), 4);
         $temp = true;
     }
-    if ($CJO['USER']->hasPerm("deleteArticleTree[]")) {
-        $update_sel->addOption($I18N->msg('label_rdelete'), 5);
+    if (cjoProp::getUser()->hasPerm("deleteArticleTree[]")) {
+        $update_sel->addOption(cjoI18N::translate('label_rdelete'), 5);
         $temp = true;
     }
 
 	$toolbar_ext = '<tr class="toolbar_ext">'."\r\n".
 				   '	<td class="icon">'.
-				   '    	<input type="checkbox" class="hidden_container check_all" title="'.$I18N->msg('label_select_deselect_all').'" />'.
+				   '    	<input type="checkbox" class="hidden_container check_all" title="'.cjoI18N::translate('label_select_deselect_all').'" />'.
 				   '	</td>'.
 				   '	<td colspan="'.(count($cols)-2).'">'.
 				   '		<div class="hidden_container">'.$update_sel->get().
-				   '		<span class="cjo_float_l cjo_article_path hide_me">'.$CJO['SEL_ARTICLE']->_get().'</span>'.
+				   '		<span class="cjo_float_l cjo_article_path hide_me">'.cjoSelectArticle::getOutput().'</span>'.
 				   '		<span class="cjo_float_l cjo_clang hide_me">'.$clang_a_sel->get().
 				   '          <img src="img/silk_icons/control_fastforward.png" alt=">>" class="icon" />'.
 				   '		  '.$clang_b_sel->get().
@@ -284,26 +281,27 @@ $list->show(false);
  * @ignore
  */
 function cjoFormateCells($cell) {
-
-    global $CJO, $I18N, $list, $oid, $ctype, $re_id;
+    
+    $re_id         = cjo_request('re_id', 'cjo-article-id');
+    $ctype         = cjo_request('ctype', 'cjo-ctype-id');
 
     $curr_body = $cell['cells'][$cell['name']]['body'];
     $curr_cell = $cell['cells'][$cell['name']]['cell'];
 
     $default_typenames = array('1' => '--',
-    						   'out' => $I18N->msg('label_type_logged_out'),
-    						   'in' => $I18N->msg('label_type_logged_in'),
-                               'contejo' => $I18N->msg('label_preview_for_editors'));
+    						   'out' => cjoI18N::translate('label_type_logged_out'),
+    						   'in' => cjoI18N::translate('label_type_logged_in'),
+                               'contejo' => cjoI18N::translate('label_preview_for_editors'));
 
     $article_id = $cell['cells']['checkbox']['unformated'];
    // cjo_Debug($cell['cells'],$cell['cells']['checkbox']['unformated']);
     $template_id = isset($cell['cells']['template_id']) ? $cell['cells']['template_id']['unformated'] : 1;
 
     $article = OOArticle::getArticleById($article_id);
-    
+
     $perm      = array();
-    $perm['r'] = $CJO['USER']->hasCatPermRead($article_id);
-    $perm['w'] = $CJO['USER']->hasCatPermWrite($article_id,true);
+    $perm['r'] = cjoProp::getUser()->hasCatPermRead($article_id);
+    $perm['w'] = cjoProp::getUser()->hasCatPermWrite($article_id,true);
 
     $sql = new cjoSql();
     
@@ -312,28 +310,28 @@ function cjoFormateCells($cell) {
     	case 'startpage':
     			$icon = ($curr_cell) ? 'files' : 'file';
         		$sql->flush();
-        		$sql->setQuery("SELECT id FROM ".TBL_ARTICLES_SLICE." WHERE article_id='".$article_id."' AND clang='".$CJO['CUR_CLANG']."'");
+        		$sql->setQuery("SELECT id FROM ".TBL_ARTICLES_SLICE." WHERE article_id='".$article_id."' AND clang='".cjoProp::getClang()."'");
         		$icon .= ($sql->getRows() > 0) ? '2' : '';
         		$icon = '<img src="img/radium_icons/'.$icon.'.png" alt="" />';
 				$sql->flush();
-        		$sql->setQuery("SELECT redirect FROM ".TBL_ARTICLES." WHERE id='".$article_id."' AND clang='".$CJO['CUR_CLANG']."'");
+        		$sql->setQuery("SELECT redirect FROM ".TBL_ARTICLES." WHERE id='".$article_id."' AND clang='".cjoProp::getClang()."'");
         		
         		
                 if ($article->isAdminOnly()) {
-                    $icon .= '<img src="img/radium_icons/user_orange.png" class="icon_overlay" alt="" title="'.$I18N->msg('label_superadmin_only').'" />';
+                    $icon .= '<img src="img/radium_icons/user_orange.png" class="icon_overlay" alt="" title="'.cjoI18N::translate('label_superadmin_only').'" />';
                 }
                 elseif ($locked_user = $article->isLocked()) {
                     $locked_user = cjoLogin::getUser($locked_user);
-                    $icon .= '<img src="img/radium_icons/user.png" class="icon_overlay" alt="" title="'.$I18N->msg('msg_edit_by_user', $locked_user['name']).'" />';
+                    $icon .= '<img src="img/radium_icons/user.png" class="icon_overlay" alt="" title="'.cjoI18N::translate('msg_edit_by_user', $locked_user['name']).'" />';
                 }
                 elseif (preg_match('/\D+/', $sql->getValue('redirect'))) {
-                    $icon .= '<a href="'.$sql->getValue('redirect').'" title="'.$I18N->msg('label_redirect_type').' '.$I18N->msg('label_ext_redirect').' ('.$sql->getValue('redirect').')">'.
+                    $icon .= '<a href="'.$sql->getValue('redirect').'" title="'.cjoI18N::translate('label_redirect_type').' '.cjoI18N::translate('label_ext_redirect').' ('.$sql->getValue('redirect').')">'.
                             '<img src="img/radium_icons/redirect.png" class="icon_overlay" alt="" />'.
                             '</a>';
         		} else if($sql->getValue('redirect')) {
-                    $icon .= cjoAssistance::createBELink('<img src="img/radium_icons/redirect.png" class="icon_overlay" alt="" />', 
-                                    array('subpage'=>'structure','article_id'=>$sql->getValue('redirect'),'clang'=>$CJO['CUR_CLANG'],'ctype'=>$ctype), 
-                                    array(), 'title="'.$I18N->msg('label_redirect_type').' '.$I18N->msg('label_int_redirect').' (ID='.$sql->getValue('redirect').')"');
+                    $icon .= cjoUrl::createBELink('<img src="img/radium_icons/redirect.png" class="icon_overlay" alt="" />', 
+                                    array('subpage'=>'structure','article_id'=>$sql->getValue('redirect'),'clang'=>cjoProp::getClang(),'ctype'=>$ctype), 
+                                    array(), 'title="'.cjoI18N::translate('label_redirect_type').' '.cjoI18N::translate('label_int_redirect').' (ID='.$sql->getValue('redirect').')"');
         		}
         		$curr_cell = '<span style="position: relative; display: block;"'.(!$perm['r'] ? ' class="cjo_alpha_50"' :'').'>'.$icon.'</span>';
         		break;
@@ -376,7 +374,7 @@ function cjoFormateCells($cell) {
 				    $active_ctypes = cjoTemplate::getCtypes($template_id);
     
                     foreach($active_ctypes as $key=>$ctype_id) {
-                        if (!$CJO['USER']->hasCtypePerm($ctype_id)) {
+                        if (!cjoProp::getUser()->hasCtypePerm($ctype_id)) {
                             unset($active_ctypes[$key]);
                         }              
                     }
@@ -390,23 +388,23 @@ function cjoFormateCells($cell) {
 				    
 				    $temp[] = count($active_ctypes) > 1 
 				            ? cjoArticle::createCtypeMultiLink($article_id, $ctype)
-				            : cjoAssistance::createBELink($I18N->msg('title_content'), 
-                                            array('subpage'=>'content','article_id'=>$article_id,'clang'=>$CJO['CUR_CLANG'],'ctype'=>$ctype), 
+				            : cjoUrl::createBELink(cjoI18N::translate('title_content'), 
+                                            array('subpage'=>'content','article_id'=>$article_id,'clang'=>cjoProp::getClang(),'ctype'=>$ctype), 
                                             array(), 
-                                            'title="'.$I18N->msg('title_content').'"');
+                                            'title="'.cjoI18N::translate('title_content').'"');
 				    
-				    $temp[] = cjoAssistance::createBELink($I18N->msg('title_settings'), 
-				                                          array('subpage'=>'settings','article_id'=>$article_id,'clang'=>$CJO['CUR_CLANG'],'ctype'=>$ctype), 
+				    $temp[] = cjoUrl::createBELink(cjoI18N::translate('title_settings'), 
+				                                          array('subpage'=>'settings','article_id'=>$article_id,'clang'=>cjoProp::getClang(),'ctype'=>$ctype), 
 				                                          array(), 
-				                                          'title="'.$I18N->msg('label_edit_article_settings').'"');
+				                                          'title="'.cjoI18N::translate('label_edit_article_settings').'"');
 				                                               
-				    $temp[] = cjoAssistance::createBELink($I18N->msg('title_metadata'), 
-				                                          array('subpage'=>'metadata','article_id'=>$article_id,'clang'=>$CJO['CUR_CLANG'],'ctype'=>$ctype),
+				    $temp[] = cjoUrl::createBELink(cjoI18N::translate('title_metadata'), 
+				                                          array('subpage'=>'metadata','article_id'=>$article_id,'clang'=>cjoProp::getClang(),'ctype'=>$ctype),
 				                                          array(), 
-				                                          'title="'.$I18N->msg('label_edit_article_metadata').'"');
+				                                          'title="'.cjoI18N::translate('label_edit_article_metadata').'"');
 				}   
-				    $temp[] = '<a href="#" onclick="cjo.openShortPopup(\''.cjoRewrite::getUrl($article_id, $CJO['CUR_CLANG']).'\').focus();" '.
-				                  'title="'.$I18N->msg('label_article_view_title').'">'.$I18N->msg('label_article_view').'</a>';
+				    $temp[] = '<a href="#" onclick="cjo.openShortPopup(\''.cjoUrl::getUrl($article_id, cjoProp::getClang()).'\').focus();" '.
+				                  'title="'.cjoI18N::translate('label_article_view_title').'">'.cjoI18N::translate('label_article_view').'</a>';
 
 				foreach ($temp as $value) {
 				    if (!$value) continue;
@@ -427,14 +425,14 @@ function cjoFormateCells($cell) {
 		case 'online_to':
     		    if ($perm['w']) {
             		$curr_cell = $cell['cells']['online_from']['cell'].'<br/>'.$curr_cell;
-            	    if (!$CJO['USER']->hasPerm('editContentOnly[]')) {
-                		$curr_cell = cjoAssistance::createBELink(
+            	    if (!cjoProp::getUser()->hasPerm('editContentOnly[]')) {
+                		$curr_cell = cjoUrl::createBELink(
                 		                      $curr_cell,
                             				  array ('subpage' => 'settings',
                             				  		 'article_id'=> $article_id,
-                            				  		 're_id'=> $re_id, 'clang' => $CJO['CUR_CLANG']),
+                            				  		 're_id'=> $re_id, 'clang' => cjoProp::getClang()),
         	        				          array(),
-                                              'title="'.$I18N->msg('label_edit_from_to').'"');
+                                              'title="'.cjoI18N::translate('label_edit_from_to').'"');
     		        }
     		    }
     		    else {
@@ -454,14 +452,14 @@ function cjoFormateCells($cell) {
     
             		    if (empty($curr_name)) $curr_name = $sql->getValue('name');
             		    
-            		    if (!$CJO['USER']->hasPerm('editContentOnly[]')) {
-                			$curr_cell = cjoAssistance::createBELink(
+            		    if (!cjoProp::getUser()->hasPerm('editContentOnly[]')) {
+                			$curr_cell = cjoUrl::createBELink(
                 			                          cjoFormatter :: format($curr_name, $cell['format_type'], $cell['format']),
                 									  array ('subpage' => 'settings',
                 									  		 'article_id'=> $article_id,
-                									  		 're_id'=> $re_id, 'clang' => $CJO['CUR_CLANG']),
+                									  		 're_id'=> $re_id, 'clang' => cjoProp::getClang()),
                 									  array(),
-                                                      'title="'.$I18N->msg('label_edit_login').'"');
+                                                      'title="'.cjoI18N::translate('label_edit_login').'"');
             		    }
             		    else {
             		        $curr_cell = cjoFormatter :: format($curr_name, $cell['format_type'], $cell['format']);
@@ -502,8 +500,6 @@ function cjoFormateCells($cell) {
  * @ignore
  */
 function cjoFormateRows($rows) {
-
-    global $CJO, $I18N, $list, $article_id;
 
     if (!cjo_request('article_id', 'cjo-article-id')) {
 
@@ -580,15 +576,15 @@ function cjoFormateRows($rows) {
 
 			if (mode == 'delete') {
 
-					var jdialog = cjo.appendJDialog('<?php echo $I18N->msg('msg_confirm_delete_article'); ?>');
+					var jdialog = cjo.appendJDialog('<?php echo cjoI18N::translate('msg_confirm_delete_article'); ?>');
 
     				$(jdialog).dialog({
             			buttons: {
-            				'<?php echo $I18N->msg('label_ok'); ?>': function() {
+            				'<?php echo cjoI18N::translate('label_ok'); ?>': function() {
             					$(this).dialog('close');
             					confirm_action();
             				},
-            				'<?php echo $I18N->msg('label_cancel'); ?>': function() {
+            				'<?php echo cjoI18N::translate('label_cancel'); ?>': function() {
             					$(this).dialog('close');
             				}
             			}
@@ -673,11 +669,11 @@ function cjoFormateRows($rows) {
 
 				$(jdialog).dialog({
         			buttons: {
-        				'<?php echo $I18N->msg('label_ok'); ?>': function() {
+        				'<?php echo cjoI18N::translate('label_ok'); ?>': function() {
         					$(this).dialog('close');
         					confirm_action();
         				},
-        				'<?php echo $I18N->msg('label_cancel'); ?>': function() {
+        				'<?php echo cjoI18N::translate('label_cancel'); ?>': function() {
         					$(this).dialog('close');
         					location.reload();
         				}
@@ -799,12 +795,12 @@ function cjoFormateRows($rows) {
 			var target_ctype = $('#target_ctype :selected').val() *1;
 
 			var messages 	= [];
-			 	messages[1] = '<?php echo $I18N->msg('msg_confirm_copy_to') ?>';
-			 	messages[2] = '<?php echo $I18N->msg('msg_confirm_rcopy_to') ?>';
-			 	messages[3] = '<?php echo $I18N->msg('msg_confirm_copy_content') ?>';
-			 	messages[4] = '<?php echo $I18N->msg('msg_confirm_rmove_to') ?>';
-			 	messages[5] = '<?php echo $I18N->msg('msg_confirm_rdelete') ?>';
-                messages[6] = '<?php echo $I18N->msg('msg_confirm_copy_content_to_article') ?>';			 	
+			 	messages[1] = '<?php echo cjoI18N::translate('msg_confirm_copy_to') ?>';
+			 	messages[2] = '<?php echo cjoI18N::translate('msg_confirm_rcopy_to') ?>';
+			 	messages[3] = '<?php echo cjoI18N::translate('msg_confirm_copy_content') ?>';
+			 	messages[4] = '<?php echo cjoI18N::translate('msg_confirm_rmove_to') ?>';
+			 	messages[5] = '<?php echo cjoI18N::translate('msg_confirm_rdelete') ?>';
+                messages[6] = '<?php echo cjoI18N::translate('msg_confirm_copy_content_to_article') ?>';			 	
 
 			if (cb.length < 1) return false;
 
@@ -889,11 +885,11 @@ function cjoFormateRows($rows) {
 
 			$(jdialog).dialog({
     			buttons: {
-    				'<?php echo $I18N->msg('label_ok'); ?>': function() {
+    				'<?php echo cjoI18N::translate('label_ok'); ?>': function() {
     					$(this).dialog('close');
     					confirm_action();
     				},
-    				'<?php echo $I18N->msg('label_cancel'); ?>': function() {
+    				'<?php echo cjoI18N::translate('label_cancel'); ?>': function() {
     					$(this).dialog('close');
     				}
     			}

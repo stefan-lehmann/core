@@ -446,11 +446,11 @@ class OOMediaCategory {
 //		$cat = OOMediaCategory :: getCategoryById($id);
 //
 //		if (!is_object($cat)) {
-//			cjoMessage::addError($I18N->msg("msg_category_not_found"));
+//			cjoMessage::addError(cjoI18N::translate("msg_category_not_found"));
 //			return false;
 //		}
-//		if (!$CJO['USER']->hasMediaPerm($id)) {
-//			cjoMessage::addError($I18N->msg("msg_no_permissions"));
+//		if (!cjoProp::getUser()->hasMediaPerm($id)) {
+//			cjoMessage::addError(cjoI18N::translate("msg_no_permissions"));
 //			return false;
 //		}
 //		return $cat->_delete($recurse, $exclude_files);
@@ -490,7 +490,7 @@ class OOMediaCategory {
 //    			if (!status) return false;
 //		    }
 //		    else {
-//		        cjoMessage::addError($I18N->msg("msg_mediacat_has_files", $this->getName()));
+//		        cjoMessage::addError(cjoI18N::translate("msg_mediacat_has_files", $this->getName()));
 //		        return false;
 //		    }
 //		}
@@ -499,7 +499,7 @@ class OOMediaCategory {
 //		$results = $sql->getArray("SELECT * FROM ".TBL_FILE_CATEGORIES." WHERE id = ".$this->getId()." LIMIT 1");
 //		$sql->flush();
 //		$qry = "DELETE FROM ".TBL_FILE_CATEGORIES." WHERE id = ".$this->getId()." LIMIT 1";
-//		if ($sql->statusQuery($qry, $I18N->msg('msg_mediacat_deleted', $this->getName()))) {
+//		if ($sql->statusQuery($qry, cjoI18N::translate('msg_mediacat_deleted', $this->getName()))) {
 //    		cjoExtension::registerExtensionPoint('MEDIA_CATEGORY_UPDATED', $results[0]);
 //    		return true;
 //		}

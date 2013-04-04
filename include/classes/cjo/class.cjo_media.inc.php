@@ -34,6 +34,13 @@
  */
 class cjoMedia {
 
+    public static function getCategoryId() {
+        if (!cjoProp::get('MEDIA_CATEGORY_ID'))
+            cjoProp::set('MEDIA_CATEGORY_ID', cjo_post('media_category','int', cjo_get('media_category','int', cjo_session('MEDIA_CATEGORY'))));
+
+        return cjoProp::get('MEDIA_CATEGORY_ID');
+    }
+
     /**
      * Regenerates the crop settings of all media.
      * @param int $crop_num the current crop number
@@ -41,8 +48,6 @@ class cjoMedia {
      * @access public
      */
     public static function resetAllMedia($crop_num = -1) {
-
-    	global $CJO, $I18N;
 
     	$count_accepted = 0;
     	$max_script_time = get_cfg_var('max_execution_time');
@@ -68,7 +73,7 @@ class cjoMedia {
 
     			ob_end_clean();
 
-                echo '<pre>'.$I18N_8->msg('msg_wait_while_generating_images').'</pre>';
+                echo '<pre>'.cjoAddon::translate(8,'msg_wait_while_generating_images').'</pre>';
                 echo '<script type="text/javascript">'."\r\n";
                 echo 'location.reload();'."\r\n";
                 echo '</script>'."\r\n";
@@ -79,7 +84,7 @@ class cjoMedia {
     		$count_accepted++;
     	}
 
-    	cjoMessage::addSuccess($I18N->msg("msg_all_media_repaired",
+    	cjoMessage::addSuccess(cjoI18N::translate("msg_all_media_repaired",
     	                       count($effected_files),
     	                       $count_accepted));
 
@@ -95,13 +100,13 @@ class cjoMedia {
      */
     public static function resetMedia($file, $crop_num = -1) {
 
-    	global $CJO;
-
-    	if (!file_exists($CJO['MEDIAFOLDER'].'/'.$file['filename'])) return false;
+    	if (!OOMedia::isAvailable($file['filename'])) return false;
     	
-        $imagesize = @getimagesize($CJO['MEDIAFOLDER'].'/'.$file['filename']);
-        $filesize = filesize($CJO['MEDIAFOLDER'].'/'.$file['filename']);  
-        $filetime = filemtime($CJO['MEDIAFOLDER'].'/'.$file['filename']); 
+        $fullpath = cjoPath::media($file['filename']);
+        
+        $imagesize = @getimagesize($fullpath);
+        $filesize = filesize($fullpath);  
+        $filetime = filemtime($fullpath); 
             
         $update = new cjoSql();
         $update->setTable(TBL_FILES);
@@ -109,14 +114,11 @@ class cjoMedia {
         
         if (OOMedia :: isImageType($file['filetype'])) {
     
-        	if ($CJO['ADDON']['status']['image_processor'] == 1) {
-        		if (!class_exists("resizecache")) {
-        			require_once $CJO['ADDON_PATH'].'/image_processor/classes/class.resizecache.inc.php';
-        		}
-        		if (resizecache :: is_conflict_memory_limit($CJO['MEDIAFOLDER'].'/'.$file['filename'])) {
+        	if (cjoAddon::isActivated('image_processor')) {
+        		if (resizecache :: is_conflict_memory_limit($fullpath)) {
         			return false;
         		}
-        		$crop = imageProcessor_initCropValues($imagesize);
+        		$crop = cjoImageProcessor::initCropValues($imagesize);
         	}
     
         	if ($crop_num == -1 &&
@@ -148,7 +150,7 @@ class cjoMedia {
         	if ($crop_num == -1 || $crop_num == 5)
         		$update->setValue("crop_5", $crop[5]);
         		
-        	@imageProcessor_unlinkCached($file['filename']);
+        	@cjoImageProcessor::unlinkCached($file['filename']);
         }
         
     	$update->setValue("width", $imagesize[0]);
@@ -156,7 +158,7 @@ class cjoMedia {
         $update->setValue("filesize", $filesize);   
         $update->setValue("createdate", $filetime); 
     	$update->setValue("updatedate", time());
-    	$update->setValue("updateuser", $CJO['USER']->getValue("name"));
+    	$update->setValue("updateuser", cjoProp::getUser()->getValue("name"));
     	return $update->Update();
     }
     
@@ -173,20 +175,18 @@ class cjoMedia {
      */
     public static function moveMedia($filenames, $target_id=0, $parent_id=0, $delimiter='|') {
 
-    	global $CJO, $I18N;
-
-    	if (!$CJO['USER']->hasMediaPerm($parent_id) ||
-    		!$CJO['USER']->hasMediaPerm($target_id) ||
-            $CJO['USER']->hasPerm('editContentOnly[]')) {
-    		cjoMessage::addError($I18N->msg('msg_no_rights'));
+    	if (!cjoProp::getUser()->hasMediaPerm($parent_id) ||
+    		!cjoProp::getUser()->hasMediaPerm($target_id) ||
+            cjoProp::getUser()->hasPerm('editContentOnly[]')) {
+    		cjoMessage::addError(cjoI18N::translate('msg_no_rights'));
     		return false;
     	}
     	if ($target_id == $parent_id) {
-    		cjoMessage::addError($I18N->msg('msg_you_selected_the_current_category'));
+    		cjoMessage::addError(cjoI18N::translate('msg_you_selected_the_current_category'));
     		return false;
     	}
     	if ($filenames == '') {
-    		cjoMessage::addError($I18N->msg('msg_no_files'));
+    		cjoMessage::addError(cjoI18N::translate('msg_no_files'));
     		return false;
     	}
 
@@ -198,7 +198,7 @@ class cjoMedia {
     		$update->setWhere("filename='".$filename."' AND category_id='".$parent_id."'");
     		$update->setValue('category_id', $target_id);
     		$update->setValue("updatedate", time());
-    		$update->setValue("updateuser", $CJO['USER']->getValue("name"));
+    		$update->setValue("updateuser", cjoProp::getUser()->getValue("name"));
     		$update->Update();
 
     		if ($update->getError() != ''){
@@ -215,7 +215,7 @@ class cjoMedia {
                                              "old_parent_id" => $parent_id,
                                              "new_parent_id" => $target_id));
 
-    	cjoMessage::addSuccess($I18N->msg('msg_all_files_moved'));
+    	cjoMessage::addSuccess(cjoI18N::translate('msg_all_files_moved'));
     	return true;
     }
     
@@ -228,12 +228,10 @@ class cjoMedia {
      */
     public static function moveMediaCategory($id, $target_id=0) {
 
-    	global $CJO, $I18N;
-
-    	if (!$CJO['USER']->hasMediaPerm($id) ||
-    		!$CJO['USER']->hasMediaPerm($target_id) ||
-            $CJO['USER']->hasPerm('editContentOnly[]')) {
-    		cjoMessage::addError($I18N->msg('msg_no_rights'));
+    	if (!cjoProp::getUser()->hasMediaPerm($id) ||
+    		!cjoProp::getUser()->hasMediaPerm($target_id) ||
+            cjoProp::getUser()->hasPerm('editContentOnly[]')) {
+    		cjoMessage::addError(cjoI18N::translate('msg_no_rights'));
     		return false;
     	}
 
@@ -241,27 +239,27 @@ class cjoMedia {
     	$target = OOMediaCategory::getCategoryById($target_id);
     	
     	if (!OOMediaCategory::isValid($mediacat)) {
-    		cjoMessage::addError($I18N->msg('msg_category_not_found'));
+    		cjoMessage::addError(cjoI18N::translate('msg_category_not_found'));
     		return false;
     	}
         
     	if (!OOMediaCategory::isValid($target) && $target_id != 0) {
-    		cjoMessage::addError($I18N->msg('msg_media_target_does_not_exist'));
+    		cjoMessage::addError(cjoI18N::translate('msg_media_target_does_not_exist'));
     		return false;
     	}
     	
         $target_path = ($target_id > 0) ?  $target->_path.$target_id.'|' : "|";
-        $target_name = ($target_id > 0) ?  $target->getName() : $I18N->msg('label_media_root');
+        $target_name = ($target_id > 0) ?  $target->getName() : cjoI18N::translate('label_media_root');
     	$parent_id   = $mediacat->getParentId();
     	    	
         if ($target_id == $parent_id) {
-    		cjoMessage::addError($I18N->msg('msg_you_selected_the_current_category'));
+    		cjoMessage::addError(cjoI18N::translate('msg_you_selected_the_current_category'));
     		return false;
     	}
     	
         if (strpos($target_path,'|'.$id.'|') !== false ||
     	    $parent_id == $target_id) {
-    	    cjoMessage::addError($I18N->msg('msg_error_move_media_cat_self', $mediacat->getName()));
+    	    cjoMessage::addError(cjoI18N::translate('msg_error_move_media_cat_self', $mediacat->getName()));
     	    return false;
     	}
     	
@@ -271,7 +269,7 @@ class cjoMedia {
 		$update->setValue('re_id', $target_id);
 		$update->addGlobalUpdateFields();
 		$update->setWhere('id="'.$id.'"');
-		$update->Update($I18N->msg("msg_media_cat_moved", $mediacat->getName(), $target_name));    	
+		$update->Update(cjoI18N::translate("msg_media_cat_moved", $mediacat->getName(), $target_name));    	
 
     	if (cjoMessage::hasErrors()) {
     	    return false;
@@ -319,16 +317,14 @@ class cjoMedia {
      */
     public static function deleteMediaCategory($id, $recurse = true, $exclude_files = true) {
 
-        global $CJO, $I18N;
-
         $cat = OOMediaCategory :: getCategoryById($id);
 
         if (!is_object($cat)) {
-            cjoMessage::addError($I18N->msg("msg_category_not_found"));
+            cjoMessage::addError(cjoI18N::translate("msg_category_not_found"));
             return false;
         }
-        if (!$CJO['USER']->hasMediaPerm($id)) {
-            cjoMessage::addError($I18N->msg("msg_no_permissions"));
+        if (!cjoProp::getUser()->hasMediaPerm($id)) {
+            cjoMessage::addError(cjoI18N::translate("msg_no_permissions"));
             return false;
         }
         return self::_deleteMediaCategory($cat, $recurse, $exclude_files);
@@ -342,8 +338,6 @@ class cjoMedia {
      */
     protected static function _deleteMediaCategory($cat, $recurse = true, $exclude_files = true) {
 
-        global $I18N;
-
         $status = true;
         
         // delete recrusive
@@ -351,7 +345,7 @@ class cjoMedia {
             if ($cat->hasChildren()) {
                 $childs = $cat->getChildren();
                 foreach ($childs as $child) {
-                    $child->_delete($recurse,$exclude_files);
+                    self::_deleteMediaCategory($child, $recurse, $exclude_files);
                 }
             }
         }
@@ -368,7 +362,7 @@ class cjoMedia {
                 if (!status) return false;
             }
             else {
-                cjoMessage::addError($I18N->msg("msg_mediacat_has_files", $cat->getName()));
+                cjoMessage::addError(cjoI18N::translate("msg_mediacat_has_files", $cat->getName()));
                 return false;
             }
         }
@@ -377,7 +371,7 @@ class cjoMedia {
         $results = $sql->getArray("SELECT * FROM ".TBL_FILE_CATEGORIES." WHERE id = ".$cat->getId()." LIMIT 1");
         $sql->flush();
         $qry = "DELETE FROM ".TBL_FILE_CATEGORIES." WHERE id = ".$cat->getId()." LIMIT 1";
-        if ($sql->statusQuery($qry, $I18N->msg('msg_mediacat_deleted', $cat->getName()))) {
+        if ($sql->statusQuery($qry, cjoI18N::translate('msg_mediacat_deleted', $cat->getName()))) {
             cjoExtension::registerExtensionPoint('MEDIA_CATEGORY_DELETED', $results[0]);
             return true;
         }
@@ -396,17 +390,15 @@ class cjoMedia {
      */
     public static function saveMedia($file_id, $filenames='', $media_category=0, $fileinfos= array(), $delimiter='|') {
 
-    	global $CJO, $I18N;
-
     	$message = array();
 
-    	if (!$CJO['USER']->hasMediaPerm($media_category)){
-    		cjoMessage::addError( $I18N->msg('msg_no_rights'));
+    	if (!cjoProp::getUser()->hasMediaPerm($media_category)){
+    		cjoMessage::addError( cjoI18N::translate('msg_no_rights'));
     		return false;
     	}
 
     	$filenames = cjoAssistance::toArray($filenames, $delimiter);
-    	$path = $CJO['UPLOADFOLDER'];
+    	$path = cjoPath::uploads();
 
     	if ($filenames == '') return false;
 
@@ -415,7 +407,7 @@ class cjoMedia {
     		$fileinfos = cjoAssistance::unserializeJquerySerialized($fileinfos);
     		$fileinfos['desc_serialized'] = serialize($fileinfos['description']);
     		$fileinfos['file_id'] = $file_id;
-    		$fileinfos['title'] = $fileinfos['title'] == '' ? $I18N->msg('label_no_title') : $fileinfos['title'];
+    		$fileinfos['title'] = $fileinfos['title'] == '' ? cjoI18N::translate('label_no_title') : $fileinfos['title'];
     	}
     	else {
     		$mode = 'update';
@@ -425,30 +417,31 @@ class cjoMedia {
 
     	foreach($filenames as $filename){
 
-    		if (!file_exists($path.'/'.$filename) || $filename == ''){
-    			cjoMessage::addError($I18N->msg('msg_file_is_missing',$filename));
+            $source = $path.'/'.$filename;
+    		if (!file_exists($source) || $filename == ''){
+    			cjoMessage::addError(cjoI18N::translate('msg_file_is_missing',$filename));
     			continue;
     		}
     		
     		
-            $fileinfos['size'] = @getimagesize($path.'/'.$filename);
+            $fileinfos['size'] = @getimagesize($source);
             
     		$fileinfos['filetype'] = $fileinfos['size']['mime'] 
     		                       ? $fileinfos['size']['mime'] 
-    		                       : cjoMedia::detectMime($path.'/'.$filename);
+    		                       : cjoMedia::detectMime($source);
 
     		if ($mode == 'insert'){
 
     			$fileinfos['filename'] = cjoMedia::generateNewMediaName($path, $filename);
     			$fileinfos['org_filename'] = $filename;
-    			$fileinfos['filesize'] = filesize($path.'/'.$filename);
+    			$fileinfos['filesize'] = filesize($source);
 
-    			if (!@copy($path.'/'.$fileinfos['org_filename'], $CJO['MEDIAFOLDER'].'/'.$fileinfos['filename'])){
-    				cjoMessage::addError($I18N->msg('msg_file_copy_not_possible', $fileinfos['org_filename']));
+    			if (!@copy($path.'/'.$fileinfos['org_filename'], cjoPath::media($fileinfos['filename']))){
+    				cjoMessage::addError(cjoI18N::translate('msg_file_copy_not_possible', $fileinfos['org_filename']));
     				continue;
     			}
     			@unlink($path.'/'.$filename);
-    			@chmod($CJO['MEDIAFOLDER'].'/'.$new_filename, $CJO['FILEPERM']);
+    			@chmod(cjoPath::media($fileinfos['filename']), cjoProp::getFilePerm());
 
     			$insert = new cjoSql();
     			$insert->setTable(TBL_FILES);
@@ -469,7 +462,7 @@ class cjoMedia {
     			if ($insert->getError() == ''){
     				$fileinfos['file_id'] = $insert->getLastID();
     				cjoMedia::resetMedia($fileinfos);
-    				cjoMessage::addSuccess($I18N->msg('msg_file_saved', $fileinfos['org_filename']));
+    				cjoMessage::addSuccess(cjoI18N::translate('msg_file_saved', $fileinfos['org_filename']));
 			        cjoExtension::registerExtensionPoint('MEDIA_ADDED', $fileinfos);
     			}
     			else {
@@ -483,16 +476,16 @@ class cjoMedia {
     			$fileinfos['org_filename'] = $filename;
 
     			if ($fileinfos['filetype'] != $media->getType()){
-    				cjoMessage::addError($I18N->msg('msg_different_media_type'));
+    				cjoMessage::addError(cjoI18N::translate('msg_different_media_type'));
     			}
-    			if (!@copy($path.'/'.$fileinfos['org_filename'], $CJO['MEDIAFOLDER'].'/'.$fileinfos['filename'])){
-    				cjoMessage::addError($I18N->msg('msg_file_copy_not_possible', $fileinfos['org_filename']));
+    			if (!@copy($path.'/'.$fileinfos['org_filename'], cjoPath::media($fileinfos['filename']))){
+    				cjoMessage::addError(cjoI18N::translate('msg_file_copy_not_possible', $fileinfos['org_filename']));
     			}
     			@unlink($path.'/'.$fileinfos['org_filename']);
-    			@chmod($CJO['MEDIAFOLDER'].'/'.$fileinfos['filename'], $CJO['FILEPERM']);
+    			@chmod(cjoPath::media($fileinfos['filename']), cjoProp::getFilePerm());
 
     			if (cjoMedia::resetMedia($fileinfos)){
-    				cjoMessage::addSuccess($I18N->msg('msg_file_saved', $fileinfos['org_filename']));
+    				cjoMessage::addSuccess(cjoI18N::translate('msg_file_saved', $fileinfos['org_filename']));
     				cjoExtension::registerExtensionPoint('MEDIA_UPDATED', $fileinfos);
                                                          
     			}
@@ -514,8 +507,6 @@ class cjoMedia {
      */
     public static function generateNewMediaName($path, $filename){
 
-    	global $CJO;
-
     	$path_info = pathinfo($path.'/'.$filename);
     	$name = strtolower(substr($filename, 0, strrpos($filename, '.')));
     	$ext = strtolower(substr($filename, strrpos($filename, '.')));
@@ -524,16 +515,16 @@ class cjoMedia {
     	$new_name = str_replace(array('.',',',';','|','/','+','*',':',' '),'-', $name);
     	$new_name = preg_replace("/_{2,}/", "_", $new_name);
 
-    	if (!in_array($ext, $CJO['UPLOAD_EXTENSIONS'])){
+    	if (!in_array($ext, cjoProp::get('UPLOAD_EXTENSIONS'))){
     		$ext .= '.txt';
     	}
 
     	$new_filename = $new_name.$ext;
 
-    	if (file_exists($CJO['MEDIAFOLDER']."/$new_filename")) {
+    	if (OOMedia::isAvailable($new_filename)) {
     		for ($i = 1; $i < 1000; $i++) {
     			$new_filename = $new_name."_".$i.$ext;
-    			if (!file_exists($CJO['MEDIAFOLDER']."/$new_filename")){
+    			if (!OOMedia::isAvailable($new_filename)){
     				return $new_filename;
     			}
     		}
@@ -549,15 +540,13 @@ class cjoMedia {
      */
     public static function deleteByName($filename) {
 
-        global $CJO, $I18N;
-
         $media = OOMedia::getMediaByName($filename);
 
         if (!OOMedia::isValid($media)) return false;
 
-        if (!$CJO['USER']->hasMediaPerm($media->getCategoryId()) ||
-            $CJO['USER']->hasPerm('editContentOnly[]')) {
-            cjoMessage::addError($I18N->msg("msg_no_permissions"));
+        if (!cjoProp::getUser()->hasMediaPerm($media->getCategoryId()) ||
+            cjoProp::getUser()->hasPerm('editContentOnly[]')) {
+            cjoMessage::addError(cjoI18N::translate("msg_no_permissions"));
             return false;
         }
 
@@ -569,17 +558,17 @@ class cjoMedia {
             $qry = "DELETE FROM ".TBL_FILES." WHERE file_id='".$media->getId()."' LIMIT 1";
 
             if (!$sql->setQuery($qry)) {
-                cjoMessage::addError($I18N->msg('msg_file_not_deleted', $sql->getError()));
+                cjoMessage::addError(cjoI18N::translate('msg_file_not_deleted', $sql->getError()));
                 return false;
             }
 
-            @unlink($CJO['MEDIAFOLDER'].'/'.$media->getFileName());
+            unlink(cjoPath::media($media->getFileName()));
 
-            if ($CJO['ADDON']['status']['image_processor'] == 1) {
-                imageProcessor_unlinkCached($media->getFileName());
+            if (cjoAddon::isActivated('image_processor')) {
+                cjoImageProcessor::unlinkCached($media->getFileName());
             }
-            cjoMessage::addSuccess($I18N->msg('msg_file_deleted', $media->getFileName()));
-            
+            cjoMessage::addSuccess(cjoI18N::translate('msg_file_deleted', $filename));
+
             cjoExtension::registerExtensionPoint('MEDIA_DELETED', 
                                                  array ("id" => $media->getFileName(),
                                                         "filename" => $media->getFileName(),
@@ -590,8 +579,8 @@ class cjoMedia {
         }
         elseif (is_array($inuse)) {
 
-            $message  = $I18N->msg('msg_file_delete_error_1', $filename)." ";
-            $message .= $I18N->msg('msg_file_delete_error_2')."<br/>";
+            $message  = cjoI18N::translate('msg_file_delete_error_1', $filename)." ";
+            $message .= cjoI18N::translate('msg_file_delete_error_2')."<br/>";
 
             $_GET = array();
 
@@ -599,17 +588,17 @@ class cjoMedia {
 
             foreach ($inuse as $value) {
 
-                $value['article_name'] = (count($CJO['CTYPE']) > 1)
-                    ? $value['article_name'].' ('.$CJO['CTYPE'][$value['ctype']].')'
+                $value['article_name'] = (cjoProp::countCtypes() > 1)
+                    ? $value['article_name'].' ('.cjoProp::getCtypeName($value['ctype']).')'
                     : $value['article_name'];
 
-                $temp[] = cjoAssistance::createBELink($value['article_name'],
+                $temp[] = cjoUrl::createBELink($value['article_name'],
                                             array ('page' => 'edit',
                                                    'subpage' => 'content',
                                                    'article_id' => $value['article_id'],
                                                    'mode' => 'edit',
                                                    'ctype' => $value['ctype'],
-                                                   'clang' => $CJO['CUR_CLANG']),
+                                                   'clang' => cjoProp::getClang()),
                                             array (),
                                             'target="_blank"');
             }
@@ -653,19 +642,17 @@ class cjoMedia {
      */
     public static function splitDescription($desc, $type = '') {
 
-    	global $CJO, $I18N, $TPERM, $PERMALL;
-
     	$output     = '';
     	$desc_array = (!is_array($desc)) ? unserialize($desc) : $desc;
 
-    	foreach ($CJO['CLANG_ISO'] as $clang_id => $clang_name) {
+    	foreach (cjoProp::getClangs() as $clang_id => $clang_name) {
     		if ($type == 'alt') {
-    			return htmlspecialchars(stripslashes($desc_array[$CJO['CUR_CLANG']]));
+    			return htmlspecialchars(stripslashes($desc_array[cjoProp::getClangIso($clang_id)]));
     		}
     		else if ($type == 'flags') {
     			if ($desc_array[$clang_id] != '')
-    			$output .= '<img src="img/flags/'.$clang_name.'.png"
-    						alt="'.$clang_name.'" title="'.
+    			$output .= '<img src="img/flags/'.cjoProp::getClangIso($clang_id).'.png"
+    						alt="'.cjoProp::getClangIso($clang_id).'" title="'.
     						htmlspecialchars(stripslashes($desc_array[$clang_id])).'"
     						style="vertical-align: middle;" /> ';
     		}
@@ -673,7 +660,7 @@ class cjoMedia {
 
     	return ($output != '')
     	? '<span class="media_desc">'.$output.'</span>'
-    	: '<span class="media_desc">'.$I18N->msg('msg_pool_file_no_description').'</span>';
+    	: '<span class="media_desc">'.cjoI18N::translate('msg_pool_file_no_description').'</span>';
     }
 
     /**
@@ -685,14 +672,11 @@ class cjoMedia {
      */
     public static function getUploads($path=false){
 
-    	global $CJO;
-
-    	if ($path === false) $path = $CJO['UPLOADFOLDER'];
+    	if ($path === false) $path = cjoUrl::uploads();
     	
         $files = array();
-    	$temp = cjoAssistance::toArray(glob($path.'/*.*'));
 
-        foreach($temp as $file) {
+        foreach(glob($path.'/*.*') as $file) {
 
             if (is_dir($file)) {
 
@@ -705,7 +689,6 @@ class cjoMedia {
         }
 
         natcasesort($files);
-
     	return $files;
     }
     
@@ -717,8 +700,6 @@ class cjoMedia {
      * @access private
      */
     private static function removeSpecialCharsFromFilename(&$filename, $return_fullpath = true) {
-        
-        global $CJO;
         
         $temp_array = explode('/',$filename);
         $temp_name = array_pop($temp_array);
@@ -733,14 +714,14 @@ class cjoMedia {
             $new_path = implode('/',$temp_array).'/'.$new_name;
 
             @copy($filename, $new_path);
-            @chmod($new_path, $CJO['FILEPERM']);
+            @chmod($new_path, cjoProp::getFilePerm());
             @unlink($filename);
 
             $filename = $new_path;
         }
         
         if (!$return_fullpath)
-            $filename = str_replace($CJO['UPLOADFOLDER'].'/','', $filename);
+            $filename = $temp_name;
     }
 
     /**
@@ -755,12 +736,10 @@ class cjoMedia {
      */
     public static function getMediaContainer($filename, $fullpath=false, $upload=false, $params=array('width' => 80, 'height' => 80)){
 
-    	global $CJO, $I18N;
-
     	$buttons    = '';
     	$attributes = '';
     	$css        = '';
-    	
+
     	if (!empty($params['css'])) {
     	    $css = $params['css'];
     	    unset($params['css']);
@@ -770,16 +749,17 @@ class cjoMedia {
 
     	if ($upload){
     		if ($fullpath == 'swfupload'){
-    			$fullpath = $CJO['UPLOADFOLDER'].'/'.$filename;
+    			$fullpath = cjoUrl::uploads($filename);
     			if (!file_exists($fullpath)) return false;
     			$css .= ' hide_me';
     		}
-    		$buttons .= '<input name="delete_upload" type="image" title="'.$I18N->msg('label_delete').'" value="'.$filename.'" src="img/silk_icons/cross.png" />';
+    		$buttons .= '<input name="delete_upload" type="image" title="'.cjoI18N::translate('label_delete').'" value="'.$filename.'" src="img/silk_icons/cross.png" />';
     	}
-    	$buttons .= '<input name="preview_upload" type="image" title="'.$I18N->msg('label_preview').'" value="'.$filename.'" src="img/silk_icons/zoom.png" />';
+    	$buttons .= '<input name="preview_upload" type="image" title="'.cjoI18N::translate('label_preview').'" value="'.$filename.'" src="img/silk_icons/zoom.png" />';
 
     	$tbnl  = OOMedia::toThumbnail($filename, $fullpath, $params); // $file;
-    	$title = (!$params['title']) ? $I18N->msg("label_select_file").': '.$filename : $params['title'];
+
+    	$title = (!$params['title']) ? cjoI18N::translate("label_select_file").': '.$filename : $params['title'];
     	$id	   = str_replace('.','_DOT_',$filename);
 
     	return sprintf('<div class="cjo_image_container%s" id="%s" title="%s">%s&nbsp;<b>%s</b><span>%s</span></div>', $css, $id, $title, $tbnl, $filename, $buttons);
@@ -787,48 +767,41 @@ class cjoMedia {
 
     public static function getCropSelection($name, $crop_id, $css='cjo_crop_select cjo_select_box') {
 
-        global $CJO, $I18N;
-
         OOMedia::getDefaultImageSizes();
 
-    	if ($crop_id == ''){
-    	    if (strpos($name, 'zoom') !== false) {
-    	        $crop_id = $GLOBALS['IMG_DEFAULT']['zoom'];
-    	    }
-    	    else {
-    	        $crop_id = $GLOBALS['IMG_DEFAULT']['default'];
-    	    }
+    	if (empty($crop_id)){
+    	    $crop_id = (strpos($name, 'zoom') !== false) 
+    	             ? cjoProp::get('IMG_DEFAULT|zoom') 
+    	             : cjoProp::get('IMG_DEFAULT|default');
     	}
 
-        if (!isset($CJO['CROP_SELECT']) || !is_object($CJO['CROP_SELECT'])) {
-
-            $CJO['CROP_SELECT'] = new cjoSelect();
-            $CJO['CROP_SELECT']->setSize(1);
-            $CJO['CROP_SELECT']->setMultiple(false);
-            $CJO['CROP_SELECT']->addSqlOptions("SELECT name, id FROM ".TBL_IMG_CROP." WHERE status!=0 ORDER BY id");
+        if (cjoProp::get('CROP_SELECT', false)) {
+            $CROP_SELECT = new cjoSelect();
+            $CROP_SELECT->setSize(1);
+            $CROP_SELECT->setMultiple(false);
+            $CROP_SELECT->addSqlOptions("SELECT name, id FROM ".TBL_IMG_CROP." WHERE status!=0 ORDER BY id");
+            cjoProp::set('CROP_SELECT', $CROP_SELECT);
         }
 
-        $sel = clone($CJO['CROP_SELECT']);
+        $sel = cjoProp::get('CROP_SELECT');
 
         $sel->setName($name);
         $sel->setStyle('class="'.$css.'"');
-        $sel->addOption($I18N->msg('label_use_original_size'), '-');
+        $sel->addOption(cjoI18N::translate('label_use_original_size'), '-');
         $sel->setSelected($crop_id);
         return $sel->get();
     }
 
     public static function getBrandSelection($name, $value, $crop_id) {
 
-        global $I18N;
-
     	$brand = '<input type="hidden" name="'.$name.'" value="off" />'."\r\n";
 
-    	if (!$CJO['IMAGE_LIST_BUTTON']['BRAND_IMG']) return $brand;
+    	if (!cjoProp::get('IMAGE_LIST_BUTTON|BRAND_IMG', false)) return $brand;
 
     	$brand .= '<input type="checkbox" name="'.$name.'" value="on"'.
     			   cjo_input_check_checked($value, array('on')).
     			   cjo_input_check_disabled(crop_id, array('-')).' />'."\r\n".
-    	          '	<label class="right">'.$I18N->msg('label_show_watermark').'</label>'."\r\n";
+    	          '	<label class="right">'.cjoI18N::translate('label_show_watermark').'</label>'."\r\n";
 
     	return $brand;
     }

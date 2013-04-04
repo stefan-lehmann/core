@@ -49,13 +49,13 @@ function smarty_validate_transform_makeDate($value, $params, &$formvars) {
     }
 
     if (!isset($formvars[$_year]) || strlen($formvars[$_year]) == 0) {
-        trigger_error("SmartyValidate: [makeDate] form field '$_year' is empty.");
+        throw new cjoException("SmartyValidate: [makeDate] form field '$_year' is empty.");
         return $value;
     } elseif (!isset($formvars[$_month]) || strlen($formvars[$_month]) == 0) {
-        trigger_error("SmartyValidate: [makeDate] form field '$_month' is empty.");
+        throw new cjoException("SmartyValidate: [makeDate] form field '$_month' is empty.");
         return $value;
     } elseif (!isset($formvars[$_day]) || strlen($formvars[$_day]) == 0) {
-        trigger_error("SmartyValidate: [makeDate] form field '$_day' is empty.");
+        throw new cjoException("SmartyValidate: [makeDate] form field '$_day' is empty.");
         return $value;
     } else {
         return $formvars[$_year] . '-' . $formvars[$_month] . '-' . $formvars[$_day];

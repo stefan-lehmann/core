@@ -24,7 +24,7 @@
  */
 
 /**
- * Do not delete translate values for i18n collection!
+ * Do not delete translate values for cjoI18N collection!
  * [translate: label_no_password]
  * [translate: label_allow_to_all]
  */
@@ -46,7 +46,7 @@ if ($function == "delete") {
 
         $temp = array();
         foreach ($results as $result) {
-                $temp[] = cjoAssistance::createBELink(
+                $temp[] = cjoUrl::createBELink(
 			                            	'<b>'.$result['name'].'</b> (ID='.$result['id'].')',
                                             array('page' => 'edit',
                                             	  'subpage' => 'settings',
@@ -58,16 +58,16 @@ if ($function == "delete") {
         }
 
         if (!empty($temp))
-            cjoMessage::addError($I18N->msg("msg__still_used").'<br/>'.implode(' | ',$temp));
+            cjoMessage::addError(cjoI18N::translate("msg__still_used").'<br/>'.implode(' | ',$temp));
 
         if (!cjoMessage::hasErrors()) {
             $sql->flush();
             $result = $sql->getArray("SELECT * FROM ".TBL_ARTICLES_TYPE." WHERE type_id='".$oid."'");
             $sql->flush();            
             if ($sql->statusQuery("DELETE FROM ".TBL_ARTICLES_TYPE." WHERE type_id = '".$oid."' LIMIT 1",
-                              $I18N->msg("msg_article_type_deleted")) &&
+                              cjoI18N::translate("msg_types_deleted")) &&
                 $sql->statusQuery("UPDATE ".TBL_ARTICLES." SET type_id = '1' WHERE type_id = '".$oid."'",
-                              $I18N->msg("msg_article_type_deleted"))) {
+                              cjoI18N::translate("msg_types_deleted"))) {
                 cjoExtension::registerExtensionPoint('ARTICLE_TYPE_DELETED', $result[0]); 
             }
         }
@@ -81,16 +81,16 @@ if ($function == "add" || $function == "edit" ) {
     $form->setEditMode($oid);
 
     //Fields
-    $fields['name'] = new textField('name', $I18N->msg("label_type_name"));
-    $fields['name']->addValidator('notEmpty', $I18N->msg("msg_type_name_notEmpty"), false, false);
+    $fields['name'] = new textField('name', cjoI18N::translate("label_types_name"));
+    $fields['name']->addValidator('notEmpty', cjoI18N::translate("msg_types_name_notEmpty"), false, false);
 
-    $fields['description'] = new textAreaField('description', $I18N->msg("label_type_description"), array('rows' => 2));
-    $fields['description']->addValidator('notEmpty', $I18N->msg("msg_type_description_notEmpty"), false, false);
+    $fields['description'] = new textAreaField('description', cjoI18N::translate("label_types_description"), array('rows' => 2));
+    $fields['description']->addValidator('notEmpty', cjoI18N::translate("msg_types_description_notEmpty"), false, false);
 
     $hidden['groups_hidden'] = new hiddenField('groups');
 	$hidden['groups_hidden']->setValue('0');
 
-    if ($CJO['ADDON']['status']['community']) {
+    if (cjoAddon::isActivated('community')) {
 
 		$sel_group = cjoCommunityGroups::getSelectGroups($oid);
 		$sel_group->setSelected(cjo_post('groups', 'array'));
@@ -108,9 +108,9 @@ if ($function == "add" || $function == "edit" ) {
 			$sel_group->setSelected($val);
 		}
 
-		$fields['groups'] = new readOnlyField('groups[]', $I18N->msg('label_groups'));
+		$fields['groups'] = new readOnlyField('groups[]', cjoI18N::translate('label_groups'));
 		$fields['groups']->setValue($sel_group->get());
-		$fields['groups']->addValidator('notEmpty', $I18N_10->msg('err_notEmpty_groups'));
+		$fields['groups']->addValidator('notEmpty', cjoAddon::translate(10,'err_notEmpty_groups'));
     }
 
 	if ($function == 'add') {
@@ -121,7 +121,7 @@ if ($function == "add" || $function == "edit" ) {
 		$fields['createdate_hidden']->setValue(time());
 
 		$fields['createuser_hidden'] = new hiddenField('createuser');
-		$fields['createuser_hidden']->setValue($CJO['USER']->getValue("name"));
+		$fields['createuser_hidden']->setValue(cjoProp::getUser()->getValue("name"));
 	}
 	else {
 
@@ -129,33 +129,31 @@ if ($function == "add" || $function == "edit" ) {
 		$fields['updatedate_hidden']->setValue(time());
 
 		$fields['updateuser_hidden'] = new hiddenField('updateuser');
-		$fields['updateuser_hidden']->setValue($CJO['USER']->getValue("name"));
+		$fields['updateuser_hidden']->setValue(cjoProp::getUser()->getValue("name"));
 
-		$fields['headline1'] = new readOnlyField('headline1', '', array('class' => 'formheadline slide'));
-		$fields['headline1']->setValue($I18N->msg("label_info"));
-		$fields['headline1']->needFullColumn(true);
+		$fields['headline1'] = new headlineField(cjoI18N::translate("label_info"), true);
 
-		$fields['updatedate'] = new readOnlyField('updatedate', $I18N->msg('label_updatedate'), array(), 'label_updatedate');
-		$fields['updatedate']->setFormat('strftime',$I18N->msg('dateformat_sort'));
+		$fields['updatedate'] = new readOnlyField('updatedate', cjoI18N::translate('label_updatedate'), array(), 'label_updatedate');
+		$fields['updatedate']->setFormat('strftime',cjoI18N::translate('dateformat_sort'));
 		$fields['updatedate']->needFullColumn(true);
 
-		$fields['updateuser'] = new readOnlyField('updateuser', $I18N->msg('label_updateuser'), array(), 'label_updateuser');
+		$fields['updateuser'] = new readOnlyField('updateuser', cjoI18N::translate('label_updateuser'), array(), 'label_updateuser');
 		$fields['updateuser']->needFullColumn(true);
 
-		$fields['createdate'] = new readOnlyField('createdate', $I18N->msg('label_createdate'), array(), 'label_createdate');
-		$fields['createdate']->setFormat('strftime',$I18N->msg('dateformat_sort'));
+		$fields['createdate'] = new readOnlyField('createdate', cjoI18N::translate('label_createdate'), array(), 'label_createdate');
+		$fields['createdate']->setFormat('strftime',cjoI18N::translate('dateformat_sort'));
 		$fields['createdate']->needFullColumn(true);
 
-		$fields['createuser'] = new readOnlyField('createuser', $I18N->msg('label_createuser'), array(), 'label_createuser');
+		$fields['createuser'] = new readOnlyField('createuser', cjoI18N::translate('label_createuser'), array(), 'label_createuser');
 		$fields['createuser']->needFullColumn(true);
 	}
 
     /**
-     * Do not delete translate values for i18n collection!
+     * Do not delete translate values for cjoI18N collection!
      * [translate: label_add_type]
      * [translate: label_edit_type]
      */
-    $section = new cjoFormSection(TBL_ARTICLES_TYPE, $I18N->msg('label_'.$function."_type"), array ('type_id' => $oid));
+    $section = new cjoFormSection(TBL_ARTICLES_TYPE, cjoI18N::translate('label_'.$function."_types"), array ('type_id' => $oid));
 
     $section->addFields($fields);
     $form->addSection($section);
@@ -173,10 +171,10 @@ if ($function == "add" || $function == "edit" ) {
 
         if (cjo_post('cjoform_save_button', 'boolean')) {
     		if ($function == 'edit') {
-    		    cjoMessage::addSuccess($I18N->msg("msg_article_type_updated"));
+    		    cjoMessage::addSuccess(cjoI18N::translate("msg_types_updated"));
     		}
     		else {
-    		    cjoMessage::addSuccess($I18N->msg("msg_article_type_saved"));
+    		    cjoMessage::addSuccess(cjoI18N::translate("msg_types_saved"));
     		}
     	}
     	if ($function == "add") {
@@ -203,32 +201,31 @@ if (!$function) {
     $list->setAttributes('id="types_list"');
 
     $cols['icon'] = new staticColumn('<img src="img/silk_icons/lock.png" alt="" />',
-    	                             cjoAssistance::createBELink(
-    	                             			  '<img src="img/silk_icons/add.png" alt="'.$I18N->msg("button_add").'" />',
+    	                             cjoUrl::createBELink(
+    	                             			  '<img src="img/silk_icons/add.png" alt="'.cjoI18N::translate("button_add").'" />',
     	                                           array('function' => 'add', 'oid' => ''),
                                                    $list->getGlobalParams(),
-    	                                          'title="'.$I18N->msg("button_add").'"')
+    	                                          'title="'.cjoI18N::translate("button_add").'"')
     	                            );
 
     $cols['icon']->setHeadAttributes('class="icon"');
     $cols['icon']->setBodyAttributes('class="icon"');
     $cols['icon']->delOption(OPT_SORT);
 
-    $cols['type_id'] = new resultColumn('type_id', $I18N->msg("label_id"));
+    $cols['type_id'] = new resultColumn('type_id', cjoI18N::translate("label_id"));
     $cols['type_id']->setHeadAttributes('class="icon"');
     $cols['type_id']->setBodyAttributes('class="icon"');
 
-    $cols['name'] = new resultColumn('name', $I18N->msg("label_type_name").' ');
+    $cols['name'] = new resultColumn('name', cjoI18N::translate("label_type_name").' ');
 
-    $cols['description'] = new resultColumn('description', $I18N->msg("label_type_description").' ');
+    $cols['description'] = new resultColumn('description', cjoI18N::translate("label_type_description").' ');
     $cols['description']->delOption(OPT_SORT);
 
-    $cols['prio'] = new resultColumn('prior', $I18N->msg('label_prio'),'sprintf','<strong>%s</strong>');
-    $cols['prio']->setHeadAttributes('class="icon"');
-    $cols['prio']->setBodyAttributes('class="icon dragHandle tablednd"');
-    $cols['prio']->setBodyAttributes('title="'.$I18N->msg("label_change_prio").'"');
+    $cols['prio'] = new prioColumn('prior', cjoI18N::translate('label_prio'),'sprintf');
+
 
     $replace_groups = array();
+      
     $sql = new cjoSql();
     $sql->setQuery("SELECT * FROM ".TBL_COMMUNITY_GROUPS);
     for ($i=0; $i<$sql->getRows(); $i++) {
@@ -238,18 +235,18 @@ if (!$function) {
     	$sql->next();
     }
 
-    $cols['groups'] = new resultColumn('groups', $I18N->msg('label_groups'), 'replace_array', array($replace_groups,'%s', 'delimiter_in' => '|','delimiter_out' => ', ' ));
+    $cols['groups'] = new resultColumn('groups', cjoI18N::translate('label_groups'), 'replace_array', array($replace_groups,'%s', 'delimiter_in' => '|','delimiter_out' => ', ' ));
     $cols['groups']->setBodyAttributes('width="300"');
     $cols['groups']->delOption(OPT_ALL);
 
     // Bearbeiten link
-    $img = '<img src="img/silk_icons/page_white_edit.png" title="'.$I18N->msg("button_edit").'" alt="'.$I18N->msg("button_edit").'" />';
-    $cols['edit'] = new staticColumn($img, $I18N->msg("label_functions"));
+    $img = '<img src="img/silk_icons/page_white_edit.png" title="'.cjoI18N::translate("button_edit").'" alt="'.cjoI18N::translate("button_edit").'" />';
+    $cols['edit'] = new staticColumn($img, cjoI18N::translate("label_functions"));
     $cols['edit']->setHeadAttributes('colspan="2"');
     $cols['edit']->setBodyAttributes('width="16"');
     $cols['edit']->setParams(array ('function' => 'edit', 'oid' => '%type_id%'));
 
-    $img = '<img src="img/silk_icons/bin.png" title="'.$I18N->msg("button_delete").'" alt="'.$I18N->msg("button_delete").'" />';
+    $img = '<img src="img/silk_icons/bin.png" title="'.cjoI18N::translate("button_delete").'" alt="'.cjoI18N::translate("button_delete").'" />';
     $cols['delete'] = new staticColumn($img, NULL);
     $cols['delete']->setBodyAttributes('width="60"');
     $cols['delete']->setBodyAttributes('class="cjo_delete"');
@@ -261,106 +258,3 @@ if (!$function) {
     //Tabelle anzeigen
     $list->show(false);
 }
-?>
-<script type="text/javascript">
-/* <![CDATA[ */
-
-	$(function() {
-
-		var update_id, curr_row_id, old_prio, new_prio;
-
-        $("table#types_list").tableDnD({
-            onDragClass: "dragging",
-            onDrop: function(table, row) {
-
-				var cells   = $(table).find('td.tablednd');
-				var allrows	= $(row).parent('tbody').children();
-				var change  = true;
-
-                cells.each(function(i) {
-                	if ($(this).parent('tr').is('#'+curr_row_id)) {
-
-                		new_prio = i+1;
-                		if (old_prio == new_prio) {
-                			change = false;
-						}
-						return true;
-					}
-				});
-
-				if (!change) return false;
-
-				var confirm_action = function() {
-
-	                allrows.block({ message: null });
-
-	                cells.each(function(i) {
-	                	$(this).children().hide().text((i+1));
-					});
-
-					cells.removeClass('dragHandle')
-						 .removeClass('tablednd')
-						 .append(cjo.conf.ajax_loader);
-
-	                if (old_prio < new_prio) new_prio++;
-
-					$.get('ajax.php',{
-						   'function': 'cjoAssistance::updatePrio',
-						   'table': '<?php echo TBL_ARTICLES_TYPE; ?>',
-						   'type_id': update_id,
-						   'new_prio' : new_prio,
-						   'col' : 'type_id' },
-						  	function(message) {
-
-							  	if (cjo.setStatusMessage(message)) {
-
-									cells
-										.find('img.ajax_loader')
-										.remove();
-									cells
-										.children()
-										.toggle();
-									 cells
-									 	.addClass('dragHandle')
-										.addClass('tablednd');
-									 allrows
-									 	.unblock();
-							   }
-					});
-                };
-
-        		var message = $(row).find('td.tablednd').attr('title');
-                if (!message.match(/\?/))  message += '?';
-            	var jdialog = cjo.appendJDialog(message);
-
-				$(jdialog).dialog({
-        			buttons: {
-        				'<?php echo $I18N->msg('label_ok'); ?>': function() {
-        					$(this).dialog('close');
-        					confirm_action();
-        				},
-        				'<?php echo $I18N->msg('label_cancel'); ?>': function() {
-        					$(this).dialog('close');
-        					location.reload();
-        				}
-        			}
-        		});
-            },
-            onDragStart: function(table, row) {
-
-            	old_prio = $(row).text();
-
-            	curr_row_id = $(row).parent('tr').attr('id');
-
-            	var re = new RegExp('[0-9]+$');
-  				var ma = re.exec(curr_row_id);
-			    for (i = 0; i < ma.length; i++) {
-			      update_id = ma[i];
-			    }
-			},
-            dragHandle: "dragHandle"
-        });
-    });
-
-/* ]]> */
-</script>

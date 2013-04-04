@@ -23,37 +23,41 @@
  * @filesource
  */
 
-$mypage    = 'shop';
+$addon    = 'shop';
 $oid       = cjo_request('oid', 'int', '');
 $function  = cjo_request('function', 'string');
 $mode      = cjo_request('mode', 'string');
 
 // define required variables
-$currency_name = $CJO['ADDON']['settings'][$mypage]['CURRENCY']['CURR_NAME'];
-$separator =  $CJO['ADDON']['settings'][$mypage]['CURRENCY']['CURR_SEPARATOR'];
-$pay_methods = $CJO['ADDON']['settings'][$mypage]['PAY_METHODS'];
+$currency_name = cjoAddon::getParameter('CURRENCY|CURR_NAME', $addon);
+$separator     = cjoAddon::getParameter('CURRENCY|CURR_SEPARATOR', $addon);
+$pay_methods   = cjoAddon::getParameter('PAY_METHODS', $addon);
 
-// declare settings pages
-$subpages = new cjoSubPages($subpage, $mypage);
-$subpages->addPage(array('orders', 'title' => $I18N_21->msg('title_orders')));
-$subpages->addPage(array('products', 'title' => $I18N_21->msg('title_products')));
-$subpages->addPage(array('attributes', 'title' => $I18N_21->msg('shop_attributes')));
-$subpages->addPage(array('shipping', 'title' => $I18N_21->msg('title_shipping')));
-$subpages->addPage(array('payment', 'title' => $I18N_21->msg('title_payment')));
-$subpages->addPage(array('localisation', 'title' => $I18N_21->msg('title_localisation')));
-$subpages->addPage(array('basic_settings', 'title' => $I18N_21->msg('title_basic_settings')));
+cjoSubPages::addPages( array(
+                        array('orders', 
+                              'title' => cjoAddon::translate(21,'title_orders')),
+                        array('products', 
+                              'title' => cjoAddon::translate(21,'title_products')),
+                        array('attributes', 
+                              'title' => cjoAddon::translate(21,'shop_attributes')),
+                        array('shipping', 
+                              'title' => cjoAddon::translate(21,'title_shipping')),
+                        array('payment', 
+                              'title' => cjoAddon::translate(21,'title_payment')),
+                        array('localisation', 
+                              'title' => cjoAddon::translate(21,'title_localisation')),
+                        array('basic_settings', 
+                              'title' => cjoAddon::translate(21,'title_basic_settings'))
+                     ));
+                     
+cjo_insertCss(false, cjoUrl::addon($addon, cjoAddon::getParameter('CSS_BACKEND', $addon)));
+cjo_insertJs(false, cjoUrl::addon($addon, cjoAddon::getParameter('JS_BACKEND', $addon)));
 
-// Layout-Kopf
-require_once $CJO['INCLUDE_PATH'].'/layout/top.php';
-
-cjo_insertCss(false, $CJO['ADDON']['settings'][$mypage]['CSS']['BACKEND']);
-
-require_once $subpages->getPage();
+require_once cjoSubPages::getPagePath();
 // Layout-Footer
-require_once $CJO['INCLUDE_PATH'].'/layout/bottom.php';
 
 if ($subpage == 'orders' &&
     $subpage == 'shipping' &&
     $subpage == 'payment') return false;
 
-$CJO['SEL_LANG']->get();
+cjoSelectLang::get();

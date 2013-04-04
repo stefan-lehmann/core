@@ -31,6 +31,7 @@
  * CJO_MEDIA[1],
  * CJO_IMAGE[1],
  * CJO_IMAGE_LIST[1],
+ * CJO_VIDEO_URL[1], 
  * CJO_VIDEO[1], 
  * CJO_VIDEO_LINK[1], 
  * CJO_MEDIALIST[1],
@@ -69,7 +70,6 @@ class cjoVarMedia extends cjoVars {
 
     public function setACValues(& $sql, $CJO_ACTION, $escape = false) {
 
-        global $CJO;
         for ($i = 1; $i <= 10; $i++) {
             $this->setValue($sql, 'file'. $i    , $CJO_ACTION['MEDIA'][$i]    , $escape);
             $this->setValue($sql, 'filelist'. $i, $CJO_ACTION['MEDIALIST'][$i], $escape);
@@ -97,7 +97,7 @@ class cjoVarMedia extends cjoVars {
     public function getOutput(& $sql, $content) {
         $content = $this->matchMedia($sql, $content);
         $content = $this->matchImage($sql, $content);
-        $content = $this->matchVideoUrl($sql, $content);
+        $content = $this->matchVideoUrl($sql, $content);  
         $content = $this->matchVideoLink($sql, $content);      
         $content = $this->matchVideo($sql, $content);
         $content = $this->matchMediaList($sql, $content);
@@ -324,12 +324,11 @@ class cjoVarMedia extends cjoVars {
         return $content;
     } 
 
+
     /**
      * Wert für die Ausgabe
      */
     private function matchVideoUrl(& $sql, $content) {
-
-        global $CJO;
         
         $vars = array('CJO_VIDEO_URL');
         $performed = array();  
@@ -370,7 +369,7 @@ class cjoVarMedia extends cjoVars {
                     $params['autoplay']   = (!isset($args['autoplay']) || !empty($args['autoplay']))  ? true : false;  
                     $params['controls']   = (!isset($args['autoplay']) || !empty($args['controls'])) ? true : false;
                     
-                    $replace = cjoRewrite::getUrl($CJO['ARTICLE_ID'],$params['clang'],$params);
+                    $replace = cjoRewrite::getUrl(cjoProp::getArticleId(),$params['clang'],$params);
                 }
                 else {
                     $replace = '<!-- Sorry, MediaSet of '.$file.' has no supportet video file and/or no valid preview image. -->';
@@ -386,13 +385,10 @@ class cjoVarMedia extends cjoVars {
         return $content;
     }   
 
-
     /**
      * Wert für die Ausgabe
      */
     private function matchVideoLink(& $sql, $content) {
-
-        global $CJO;
         
         $vars = array('CJO_VIDEO_LINK');
         $performed = array();  
@@ -412,7 +408,7 @@ class cjoVarMedia extends cjoVars {
                 if (!$file) $file = $this->getValue($sql, 'file'.$id);
 
                 $mediaset = OOMedia::getMediaSetByName($file);
-     
+                
                 if (OOMedia::isValid($mediaset['image']) && OOMedia::isValid($mediaset['video'])) {
                 
                     $params = array();
@@ -426,14 +422,14 @@ class cjoVarMedia extends cjoVars {
                     $image = OOMedia::toThumbnail($mediaset['image']->getFileName(), false, $params);
 
                     $params = array();
-                    $params['html5video'] = $mediaset['video']->getId();                    
-                    $params['width']      = $mediaset['image']->getWidth(); 
-                    $params['height']     = $mediaset['image']->getHeight();   
-                    $params['preload']    = (isset($args['preload']))   ? true : false;                                                   
-                    $params['autoplay']   = (!isset($args['autoplay']) || !empty($args['autoplay']))  ? true : false;  
-                    $params['controls']   = (!isset($args['autoplay']) || !empty($args['controls'])) ? true : false;
+                    $params['video']     = $mediaset['video']->getId();                    
+                    $params['width']     = $mediaset['image']->getWidth(); 
+                    $params['height']    = $mediaset['image']->getHeight();   
+                    $params['preload']   = (isset($args['preload']))   ? true : false;                                                   
+                    $params['autoplay']  = (!isset($args['autoplay']) || !empty($args['autoplay']))  ? true : false;  
+                    $params['controls']  = (!isset($args['autoplay']) || !empty($args['controls'])) ? true : false;
 
-                    $url = cjoRewrite::getUrl($CJO['ARTICLE_ID'],$params['clang'],$params);
+                    $url = cjoUrl::getUrl(cjoProp::getArticleId(),$params['clang'],$params);
                     $css = !empty($args['class']) ? ' '.$args['class'] : ''; 
                     
                     $replace = sprintf('<a rel="videobox" href="%s" name="%s" '.
@@ -448,7 +444,7 @@ class cjoVarMedia extends cjoVars {
                 else {
                     $replace = '<!-- Sorry, MediaSet of '.$file.' has no supportet video file and/or no valid preview image. -->';
                 }
-                           cjo_Debug($replace, $file);
+                
                 $replace = $this->handleGlobalVarParams($var, $args, $replace); 
                 $content = preg_replace('/(?<!\[\[)'.$var.'\['.$param_str.'\](?!\]\])/', $replace, $content);
                 $content = str_replace('[['.$var.'['.$param_str.']]]', $var.'['.$param_str.']', $content);
@@ -535,8 +531,6 @@ class cjoVarMedia extends cjoVars {
      */
     private function matchImageList(& $sql, $content) {
 
-        global $CJO, $I18N;
-
         $vars = array('CJO_IMAGE_LIST');
         $performed = array();  
 
@@ -553,12 +547,13 @@ class cjoVarMedia extends cjoVars {
                 if (!empty($performed[$var][$id]) || $id < 0 && $id > 2) continue;
 
                 if ($id == 1) {
-                    $start = $CJO['IMAGE_LIST_BUTTON']['1']['FROM'];
-                    $end   = $CJO['IMAGE_LIST_BUTTON']['1']['TO'];
-                } else {
-                    $start = $CJO['IMAGE_LIST_BUTTON']['2']['FROM'];
-                    $end   = $CJO['IMAGE_LIST_BUTTON']['2']['TO'];
+                    $start = cjoProp::get('IMAGE_LIST_BUTTON|1|FROM');
+                    $end   = cjoProp::get('IMAGE_LIST_BUTTON|1|TO');
                 }
+                else {
+                    $start = cjoProp::get('IMAGE_LIST_BUTTON|2|FROM');
+                    $end   = cjoProp::get('IMAGE_LIST_BUTTON|2|TO');
+                }                
                 $replace = '';
 
                 for ($i = $start; $i <= $end; $i++){
@@ -582,27 +577,25 @@ class cjoVarMedia extends cjoVars {
      */
     private function getMediaButton($id, $filename, $imagelist= false, $attributes = array('style'=> 'width: 300px'), $id_tag = 'cjo_mediabutton_') {
 
-        global $CJO, $I18N;
+        if ($id >= cjoProp::get('IMAGE_LIST_BUTTON|1|FROM') &&
+            $id <= cjoProp::get('IMAGE_LIST_BUTTON|1|TO')) {
 
-        if ($id >= $CJO['IMAGE_LIST_BUTTON']['1']['FROM'] &&
-            $id <= $CJO['IMAGE_LIST_BUTTON']['1']['TO']) {
-
-            $end = $CJO['IMAGE_LIST_BUTTON']['1']['TO'];
+            $end = cjoProp::get('IMAGE_LIST_BUTTON|1|TO');
         }
-        elseif ($id >= $CJO['IMAGE_LIST_BUTTON']['2']['FROM'] &&
-                $id <= $CJO['IMAGE_LIST_BUTTON']['2']['TO']) {
+        elseif ($id >= cjoProp::get('IMAGE_LIST_BUTTON|2|FROM') &&
+                $id <= cjoProp::get('IMAGE_LIST_BUTTON|2|TO')) {
 
-            $end = $CJO['IMAGE_LIST_BUTTON']['2']['TO'];
+            $end = cjoProp::get('IMAGE_LIST_BUTTON|2|TO');
         }
 
-        $media_button = new cjoMediaButtonField('MEDIA['.$id.']', $I18N->msg('label_mediabutton'), $attributes, $id_tag.$id);
+        $media_button = new cjoMediaButtonField('MEDIA['.$id.']', cjoI18N::translate('label_mediabutton'), $attributes, $id_tag.$id);
         $media_button->setValue($filename);
-        $media_button->setDisconnectAction('cjo.jconfirm(\''.$I18N->msg('label_remove_media').' ?\', \'cjo.disconnectContentMedia\',['.$id.','.$end.']); return false;');
+        $media_button->setDisconnectAction('cjo.jconfirm(\''.cjoI18N::translate('label_remove_media').' ?\', \'cjo.disconnectContentMedia\',['.$id.','.$end.']); return false;');
 
         if (!$imagelist) return $media_button->get();
 
         return sprintf ('<h3 title="%1$s">%1$s</h3><div class="container hide_me clearfix">%2$s</div>'."\r\n",
-                        $I18N->msg('label_file'),
+                        cjoI18N::translate('label_file'),
                         $media_button->get());
 
     }
@@ -613,9 +606,7 @@ class cjoVarMedia extends cjoVars {
      */
     private function getMedialistButton($id, $medialist, $attributes = array ('style'=> 'float: left; width: 300px'), $id_tag = 'cjo_medialist_') {
 
-        global $I18N;
-
-        $medialist_button = new cjoMediaListField('MEDIALIST['.$id.']', $I18N->msg('label_medialist'), $attributes, $id_tag.$id);
+        $medialist_button = new cjoMediaListField('MEDIALIST['.$id.']', cjoI18N::translate('label_medialist'), $attributes, $id_tag.$id);
         $medialist_button->setValue($medialist);
         return $medialist_button->get();
     }
@@ -625,15 +616,13 @@ class cjoVarMedia extends cjoVars {
      */
     private function getImageListButton($id, $sql, $attributes = array ('style'=> 'width: 300px'), $id_tag = 'cjo_mediabutton_') {
 
-        global $CJO, $I18N, $CJO_ACTION;
-
         if ($id == 1) {
-            $start = $CJO['IMAGE_LIST_BUTTON']['1']['FROM'];
-            $end   = $CJO['IMAGE_LIST_BUTTON']['1']['TO'];
+            $start = cjoProp::get('IMAGE_LIST_BUTTON|1|FROM');
+            $end   = cjoProp::get('IMAGE_LIST_BUTTON|1|TO');
         }
         else {
-            $start = $CJO['IMAGE_LIST_BUTTON']['2']['FROM'];
-            $end   = $CJO['IMAGE_LIST_BUTTON']['2']['TO'];
+            $start = cjoProp::get('IMAGE_LIST_BUTTON|2|FROM');
+            $end   = cjoProp::get('IMAGE_LIST_BUTTON|2|TO');
         }
 
         if (empty($start) || empty($end)) return false;
@@ -665,8 +654,6 @@ class cjoVarMedia extends cjoVars {
 
     private function getImageListHead($i, $params, $filename) {
 
-        global $CJO, $I18N;
-
         $up_down = '';
 
         if ($filename != ''){
@@ -675,19 +662,19 @@ class cjoVarMedia extends cjoVars {
 
             $image = OOMedia::toResizedImage($filename, $params[$i], true);
 
-            if ($i != $CJO['IMAGE_LIST_BUTTON']['1']['FROM'] &&
-                $i != $CJO['IMAGE_LIST_BUTTON']['2']['FROM']) {
+            if ($i != cjoProp::get('IMAGE_LIST_BUTTON|1|FROM') &&
+                $i != cjoProp::get('IMAGE_LIST_BUTTON|2|FROM')) {
                 $up_down .= sprintf ('<input type="image" class="cjo_img_move_up" value="%s"
                                      title="%s" src="img/silk_icons/move_up_green.png" />',
-                                     $i, $I18N->msg('button_move_up'));
+                                     $i, cjoI18N::translate('button_move_up'));
             }
 
-            if ($i != $CJO['IMAGE_LIST_BUTTON']['1']['TO'] &&
-                $i != $CJO['IMAGE_LIST_BUTTON']['2']['TO'] &&
+            if ($i != cjoProp::get('IMAGE_LIST_BUTTON|1|TO') &&
+                $i != cjoProp::get('IMAGE_LIST_BUTTON|2|TO') &&
                 !empty($params[($i+1)]['img'])) {
                 $up_down .= sprintf ('<input type="image" class="cjo_img_move_down" value="%s"
                                      title="%s" src="img/silk_icons/move_down_green.png" />',
-                                     $i, $I18N->msg('button_move_down'));
+                                     $i, cjoI18N::translate('button_move_down'));
             }
             if ($up_down != '') {
                 $up_down = '<div class="up_down">'.$up_down.'</div>';
@@ -698,14 +685,12 @@ class cjoVarMedia extends cjoVars {
                         <h2 class="no_bg_image" title="CJO_MEDIA&#91;%s&#93;">%s</h2>
                         %s</div><div class="cjo_img_prev">%s</div>',
                         $i,
-                        (($filename != '') ? $I18N->msg('label_image') : $I18N->msg('label_image_add')),
+                        (($filename != '') ? cjoI18N::translate('label_image') : cjoI18N::translate('label_image_add')),
                         $up_down,
                         $image);
     }
 
     private function getImageListHeadButtons($i, $filename) {
-
-        global $CJO, $I18N;
 
         if ($filename == '') {
 
@@ -715,17 +700,17 @@ class cjoVarMedia extends cjoVars {
                             <input type="image" name="imgslice_update" value="%1$s"
                                 title="%3$s" src="img/silk_icons/tick.png" /></div>',
                             $i,
-                            $I18N->msg('label_toggle_inserts'),
-                            $I18N->msg('button_update'));
+                            cjoI18N::translate('label_toggle_inserts'),
+                            cjoI18N::translate('button_update'));
         }
 
-        if ($i >= $CJO['IMAGE_LIST_BUTTON']['1']['FROM'] &&
-            $i <= $CJO['IMAGE_LIST_BUTTON']['1']['TO']) {
-            $end = $CJO['IMAGE_LIST_BUTTON']['1']['TO'];
+        if ($i >= cjoProp::get('IMAGE_LIST_BUTTON|1|FROM') &&
+            $i <= cjoProp::get('IMAGE_LIST_BUTTON|1|TO')) {
+            $end = cjoProp::get('IMAGE_LIST_BUTTON|1|TO');
         }
-        elseif ($i >= $CJO['IMAGE_LIST_BUTTON']['2']['FROM'] &&
-            $i <= $CJO['IMAGE_LIST_BUTTON']['2']['TO']) {
-            $end = $CJO['IMAGE_LIST_BUTTON']['2']['TO'];
+        elseif ($i >= cjoProp::get('IMAGE_LIST_BUTTON|2|FROM') &&
+            $i <= cjoProp::get('IMAGE_LIST_BUTTON|2|TO')) {
+            $end = cjoProp::get('IMAGE_LIST_BUTTON|2|TO');
         }
 
         return sprintf ('<div class="cjo_imgslice_buttons">
@@ -737,17 +722,15 @@ class cjoVarMedia extends cjoVars {
                           title="%5$s" src="img/silk_icons/cross.png" />
                         </div>',
                         $i, $end,
-                        $I18N->msg('label_toggle_inserts'),
-                        $I18N->msg('button_update'),
-                        $I18N->msg('label_remove_media'));
+                        cjoI18N::translate('label_toggle_inserts'),
+                        cjoI18N::translate('button_update'),
+                        cjoI18N::translate('label_remove_media'));
     }
 
     private function getImageCropSettings($i, $params) {
 
-        global $I18N;
-
         return sprintf ('<h3>%1$s</h3><div class="container hide_me clearfix">%2$s%3$s</div>'."\r\n",
-                        $I18N->msg('label_size_format'),
+                        cjoI18N::translate('label_size_format'),
                         cjoMedia::getCropSelection('CJO_EXT_VALUE['.$i.'][img][crop_num]',
                                                    $params['img']['crop_num']),
                         cjoMedia::getBrandSelection('CJO_EXT_VALUE['.$i.'][img][brand]',
@@ -757,10 +740,7 @@ class cjoVarMedia extends cjoVars {
 
     private function getImageDescriptionSettings($i, $params, $filename) {
 
-        global $CJO, $I18N;
-
-        if (isset($CJO['IMAGE_LIST_BUTTON']['DESCRIPTION']) && 
-            $CJO['IMAGE_LIST_BUTTON']['DESCRIPTION'] == false) {
+        if (!cjoProp::get('IMAGE_LIST_BUTTON|DESCRIPTION')) {
            return false;   
         }
         
@@ -768,9 +748,9 @@ class cjoVarMedia extends cjoVars {
         $sel->setName('CJO_EXT_VALUE['.$i.'][des][settings]');
         $sel->setStyle('class="cjo_select_box toggle_next"');
         $sel->setSize(1);
-        $sel->addOption($I18N->msg('label_without'), '-');
-        $sel->addOption($I18N->msg('label_media_description'), 1);
-        $sel->addOption($I18N->msg('label_individual_description'), 2);
+        $sel->addOption(cjoI18N::translate('label_without'), '-');
+        $sel->addOption(cjoI18N::translate('label_media_description'), 1);
+        $sel->addOption(cjoI18N::translate('label_individual_description'), 2);
         $sel->setSelected($params['des']['settings']);
 
         if (!empty($params['img'])){
@@ -782,7 +762,7 @@ class cjoVarMedia extends cjoVars {
                         <textarea rows="2" cols="10" class="hide_me" disabled="disabled">%s</textarea>
                         <textarea rows="2" cols="10" name="CJO_EXT_VALUE[%s][des][2]" class="hide_me">%s</textarea>
                         </div>',
-                        $I18N->msg('label_description'),
+                        cjoI18N::translate('label_description'),
                         $sel->get(),
                         $description,
                         $i,
@@ -792,9 +772,7 @@ class cjoVarMedia extends cjoVars {
 
     private function getImageFunctionSettings($i, $params){
 
-        global $CJO, $I18N;
-
-        if (!$CJO['IMAGE_LIST_BUTTON']['FUNCTIONS']) return false;
+        if (!cjoProp::get('IMAGE_LIST_BUTTON|FUNCTIONS')) return false;
 
         $options = array('-' => 'WITHOUT', 1 => 'IMAGEBOX', 2 => 'FLASHBOX',
                           4 => 'INT_LINK', 5 => 'EXT_LINK', 6 => 'VIDEOBOX');
@@ -808,7 +786,7 @@ class cjoVarMedia extends cjoVars {
         foreach($options as $key => $option) {
 
             /**
-             * Do not delete translate values for i18n collection!
+             * Do not delete translate values for cjoI18N collection!
              * [translate: label_without]
              * [translate: label_imagebox]
              * [translate: label_flashbox]
@@ -817,14 +795,14 @@ class cjoVarMedia extends cjoVars {
              * [translate: label_videobox]
              */
 
-            if (is_string($key) || $CJO['IMAGE_LIST_BUTTON'][$option]) {
-                $name = $I18N->msg('label_'.strtolower($option));
+            if (is_string($key) || cjoProp::get('IMAGE_LIST_BUTTON|'.$option)) {
+                $name = cjoI18N::translate('label_'.strtolower($option));
                 $sel->addOption($name, $key);
             }
         }
 
         $test = sprintf ('<h3>%s</h3><div class="container hide_me clearfix">%s%s%s%s%s%s</div>',
-                        $I18N->msg('label_functions'),
+                        cjoI18N::translate('label_functions'),
                         $sel->get(),
                         $this->getZoomSettings($i, $params),
                         $this->getFlashSettings($i, $params),
@@ -836,12 +814,10 @@ class cjoVarMedia extends cjoVars {
 
     private function getZoomSettings($i, $params){
 
-        global $CJO, $I18N;
-
-        if (!$CJO['IMAGE_LIST_BUTTON']['IMAGEBOX']) return false;
+        if (!cjoProp::get('IMAGE_LIST_BUTTON|IMAGEBOX')) return false;
 
         return sprintf ("\r\n".'<div class="hide_me"><label>%s</label>%s%s</div>'."\r\n",
-                        $I18N->msg('label_size_format'),
+                        cjoI18N::translate('label_size_format'),
                         cjoMedia::getCropSelection('CJO_EXT_VALUE['.$i.'][zoom][crop_num]',
                                                    $params['zoom']['crop_num']),
                         cjoMedia::getBrandSelection('CJO_EXT_VALUE['.$i.'][zoom][brand]',
@@ -851,21 +827,19 @@ class cjoVarMedia extends cjoVars {
 
     private function getFlashSettings($i, $params){
 
-        global $CJO, $I18N;
+        if (!cjoProp::get('IMAGE_LIST_BUTTON|FLASHBOX')) return false;
 
-        if (!$CJO['IMAGE_LIST_BUTTON']['FLASHBOX']) return false;
-
-        $button = new cjoMediaButtonField('CJO_EXT_VALUE['.$i.'][fun][swf][name]', $I18N->msg('label_mediabutton'));
+        $button = new cjoMediaButtonField('CJO_EXT_VALUE['.$i.'][fun][swf][name]', cjoI18N::translate('label_mediabutton'));
         if (!empty($params['fun']['swf']['name']))
             $button->setValue($params['fun']['swf']['name']);
 
         $flash_params = sprintf ('<label style="clear:both;">%s</label>
                                  <input type="text" size="255" name="CJO_EXT_VALUE[%s][fun][swf][prams]" value="%s" />',
-                                 $I18N->msg('label_get_param'),
+                                 cjoI18N::translate('label_get_param'),
                                  $i,
                                  $params['fun']['swf']['prams']);
 
-        if (!$CJO['USER']->hasPerm('advancedMode[]')) $flash_params = '';
+        if (!cjoProp::getUser()->hasPerm('advancedMode[]')) $flash_params = '';
 
         return sprintf ("\r\n".'<div class="hide_me"><label>%2$s</label>%3$s<label>%4$s</label>
                         <input type="text" name="CJO_EXT_VALUE[%1$s][fun][swf][width]" value="%5$s" class="cjo_float_l"
@@ -874,9 +848,9 @@ class cjoVarMedia extends cjoVars {
                           style="width:30px!important" />&nbsp;px
                         <input type="hidden" name="CJO_EXT_VALUE[%1$s][fun][swf][grp]" value="%7$s" />%8$s</div>',
                         $i,
-                        $I18N->msg('label_flash_file'),
+                        cjoI18N::translate('label_flash_file'),
                         $button->get(),
-                        $I18N->msg('label_width_x_height'),
+                        cjoI18N::translate('label_width_x_height'),
                         $params['fun']['swf']['width'],
                         $params['fun']['swf']['height'],
                         $params['fun']['swf']['grp'],
@@ -885,20 +859,18 @@ class cjoVarMedia extends cjoVars {
 
     private function getVideoSettings($i, $params){
 
-        global $CJO, $I18N;
-
-        if (!$CJO['IMAGE_LIST_BUTTON']['VIDEOBOX']) return false;
+        if (!cjoProp::get('IMAGE_LIST_BUTTON|VIDEOBOX')) return false;
 
         //compatibility
         if (!empty($params['fun']['flv']) && empty($params['fun']['video'])) {
             $params['fun']['video'] = & $params['fun']['flv'];
         }
         
-        $button = new cjoMediaButtonField('CJO_EXT_VALUE['.$i.'][fun][video][name]', $I18N->msg('label_mediabutton'));
+        $button = new cjoMediaButtonField('CJO_EXT_VALUE['.$i.'][fun][video][name]', cjoI18N::translate('label_mediabutton'));
         $button->setValue($params['fun']['video']['name']);
         
-        if (empty($params['fun']['video']['width'])) $params['fun']['video']['width'] = $CJO['VIDEO']['DEFAULT_WIDTH'];
-        if (empty($params['fun']['video']['height'])) $params['fun']['video']['height'] = $CJO['VIDEO']['DEFAULT_HEIGHT'];        
+        if (empty($params['fun']['video']['width'])) $params['fun']['video']['width'] = cjoProp::get('VIDEO|DEFAULT_WIDTH');
+        if (empty($params['fun']['video']['height'])) $params['fun']['video']['height'] = cjoProp::get('VIDEO|DEFAULT_HEIGHT');        
 
         return sprintf ("\r\n".'<div class="hide_me"><label>%2$s</label>%3$s<label>%4$s</label>
                         <input type="text" size="5" name="CJO_EXT_VALUE[%1$s][fun][video][width]" value="%5$s"
@@ -914,34 +886,30 @@ class cjoVarMedia extends cjoVars {
                         <label class="right">%10$s</label>                        
                         <input type="hidden" name="CJO_EXT_VALUE[%1$s][fun][video][grp]" value="%11$s" /></div>',
                         $i,
-                        $I18N->msg('label_video_file'),
+                        cjoI18N::translate('label_video_file'),
                         $button->get(),
-                        $I18N->msg('label_width_x_height'),
+                        cjoI18N::translate('label_width_x_height'),
                         $params['fun']['video']['width'],
                         $params['fun']['video']['height'],
                         cjoAssistance::setChecked($params['fun']['video']['autoplay'], array('true','')),
-                        $I18N->msg('label_autoplay'),
+                        cjoI18N::translate('label_autoplay'),
                         cjoAssistance::setChecked($params['fun']['video']['controls'], array('true','')),
-                        $I18N->msg('label_controls'),                        
+                        cjoI18N::translate('label_controls'),                        
                         $params['fun']['video']['grp']);
     }
 
     private function getIntLinkSettings($i, $params){
 
-        global $CJO, $I18N;
+        if (!cjoProp::get('IMAGE_LIST_BUTTON|INT_LINK')) return false;
 
-        if (!$CJO['IMAGE_LIST_BUTTON']['INT_LINK']) return false;
-
-        $button = new cjoLinkButtonField('CJO_EXT_VALUE['.$i.'][fun][int][id]', $I18N->msg('label_linkbutton'), array('class'=>'hide_me', 'style'=>'width: 200px'));
+        $button = new cjoLinkButtonField('CJO_EXT_VALUE['.$i.'][fun][int][id]', cjoI18N::translate('label_linkbutton'), array('class'=>'hide_me', 'style'=>'width: 200px'));
         $button->setValue($params['fun']['int']['id']);
         return sprintf ("\r\n".'<div class="hide_me">%s</div>', $button->get());
     }
 
     private function getExtLinkSettings($i, $params){
 
-        global $CJO;
-
-        if (!$CJO['IMAGE_LIST_BUTTON']['EXT_LINK']) return false;
+        if (!cjoProp::get('IMAGE_LIST_BUTTON|EXT_LINK')) return false;
 
         $url = ($params['fun']['ext'] != '') ? $params['fun']['ext'] : 'http://www.';
 
@@ -951,9 +919,7 @@ class cjoVarMedia extends cjoVars {
 
     private function getStyleSettings($i, $params){
 
-        global $CJO, $I18N;
-
-        if (!$CJO['IMAGE_LIST_BUTTON']['STYLE'] && empty($CJO['IMAGE_LIST_BUTTON']['CSS'])) return false;
+        if (!cjoProp::get('IMAGE_LIST_BUTTON|STYLE') && !cjoProp::get('IMAGE_LIST_BUTTON|CSS')) return false;
 
         $style = sprintf('<label>Style</label><input type="text" name="CJO_EXT_VALUE[%s][stl][0]" value="%s" />',
                          $i, $params['stl'][0]);
@@ -964,16 +930,16 @@ class cjoVarMedia extends cjoVars {
         $sel->setSelected($params['css'][0]);
         $sel->addOption('','');
 
-        foreach(cjoAssistance::toArray($CJO['IMAGE_LIST_BUTTON']['CSS']) as $key => $option) {
+        foreach(cjoAssistance::toArray(cjoProp::get('IMAGE_LIST_BUTTON|CSS')) as $key => $option) {
             $sel->addOption($option,$option);
         }
 
         $css = sprintf('<label>CSS</label>%s', $sel->get());
 
-        if (!$CJO['IMAGE_LIST_BUTTON']['STYLE'] || !$CJO['USER']->hasPerm('advancedMode[]')) $style = '';
-        if (empty($CJO['IMAGE_LIST_BUTTON']['CSS'])) $css = '';
+        if (!cjoProp::get('IMAGE_LIST_BUTTON|STYLE') || !cjoProp::getUser()->hasPerm('advancedMode[]')) $style = '';
+        if (!cjoProp::get('IMAGE_LIST_BUTTON|CSS')) $css = '';
 
-        return sprintf ('<h3>%s</h3><div class="container hide_me">%s%s</div>', $I18N->msg('label_style'), $style, $css);
+        return sprintf ('<h3>%s</h3><div class="container hide_me">%s%s</div>', cjoI18N::translate('label_style'), $style, $css);
     }
 
 }

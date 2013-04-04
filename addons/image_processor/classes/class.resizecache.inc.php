@@ -25,6 +25,7 @@
 
 class resizecache {
 
+    private static $addon = 'image_processor';
     public $settings;
     public $types;
 
@@ -43,14 +44,7 @@ class resizecache {
     public $aspectratio;
     public $shadow;
 
-    public function resizecache() {
-        global $CJO;
-        $this->settings = $CJO['ADDON']['settings']['image_processor'];
-    }
-
     public function generate($fullpath, $cacheImgpath, $args) {
-
-        global $CJO;
 
         $no_resize = false;
         $unsharp   = false;
@@ -86,9 +80,10 @@ class resizecache {
         $resizeImageInfo[0] = $this->x;
         $resizeImageInfo[1] = $this->y;
 
-        $this->resize      = (isset($args['r'])) ? (boolean) $args['r'] : (boolean) $this->settings['default']['resize'];
-        $this->aspectratio = (isset($args['a'])) ? (boolean) $args['a'] : (boolean) $this->settings['default']['aspectratio'];
-        $this->jpgquality  = ((isset($args['jq']) && $this->settings['allowoverride']['jpg-quality'])) ? $args['jq'] : $this->settings['default']['jpg-quality'];
+        $this->resize      = isset($args['r']) ? (boolean) $args['r'] : (boolean) cjoAddon::getParameter('default|resize', self::$addon);
+        $this->aspectratio = isset($args['a']) ? (boolean) $args['a'] : (boolean) cjoAddon::getParameter('default|aspectratio', self::$addon);
+        $this->jpgquality  = isset($args['jq']) && cjoAddon::getParameter('allowoverride|jpg-quality', self::$addon)
+                           ? $args['jq'] : cjoAddon::getParameter('default|jpg-quality', self::$addon);
 
         $this->orgImageInfo[0] = $this->crop_w;
         $this->orgImageInfo[1] = $this->crop_h;
@@ -138,17 +133,17 @@ class resizecache {
                 imagecopyresized ($thumb, $image, 0, 0, $this->crop_x, $this->crop_y, $this->x, $this->y, $this->crop_w, $this->crop_h);
             }
             if ($unsharp) {
-                $thumb = ip_unsharp_image($thumb);
+                $thumb = cjoImageProcessor::unSharp($thumb);
             }
         }
 
         if ($this->shadow && !self::is_conflict_memory_limit($this->orgImgpath)) {
-            if ($CJO['ADDON']['settings']['image_processor']['shadow']['background_color'] == '' ||
-                $CJO['ADDON']['settings']['image_processor']['shadow']['background_color'] == 'transparent'){
+            if (!cjoAddon::getParameter('shadow|background_color', self::$addon) ||
+                cjoAddon::getParameter('shadow|background_color', self::$addon) == 'transparent'){
                 $this->orgImageInfo['mime'] = 'image/png';
             }
 
-            $thumb = ip_drop_shadow_image($thumb, $this->x, $this->y, $this->orgImageInfo['mime']);
+            $thumb = cjoImageProcessor::dropShadow($thumb, $this->x, $this->y, $this->orgImageInfo['mime']);
         }
 
         switch ($this->orgImageInfo['mime']) {
@@ -166,8 +161,6 @@ class resizecache {
     }
 
     public static function is_conflict_memory_limit($fullpath) {
-
-        global $CJO;
 
         $imagesize = @getimagesize($fullpath);
         
@@ -189,30 +182,21 @@ class resizecache {
 
     public function checkOrgImage(){
 
-        global $CJO;
-
         $error = false;
-        if (!file_exists($this->orgImgpath) || is_dir($this->orgImgpath)) {
-            $error = true;
-        }
-        if (!$error)
-            $this->orgImageInfo = getimagesize($this->orgImgpath);
+        if (!file_exists($this->orgImgpath) || is_dir($this->orgImgpath)) $error = true;
+        if (!$error) $this->orgImageInfo = getimagesize($this->orgImgpath);
+        if (!$this->orgImageInfo[2] || $this->orgImageInfo[2] > 3) $error = true;
 
-        if (!$this->orgImageInfo[2] || $this->orgImageInfo[2] > 3) {
-            $error = true;
-        }
         if ($error) {
 
-            $this->orgImgpath = $CJO['MEDIAFOLDER'].'/'.$CJO['ADDON']['settings']['image_processor']['error_img'];
+            $this->orgImgpath = cjoImageProcessor::getErrorImage(true);
             $errorImage = "";
             if($this->y) $errorImage = "y".$this->y.$errorImage;
             if($this->x) $errorImage = "x".$this->x.$errorImage;
             $errorImage = ($errorImage != "")
-            ? $errorImage."_".$CJO['ADDON']['settings']['image_processor']['error_img']
-            : $CJO['ADDON']['settings']['image_processor']['error_img'];
-
-            $cacheErrorimgpath = $CJO['MEDIAFOLDER'].'/'.$this->settings['cachedir'].$errorImage;
-            $this->cacheImgpath = $cacheErrorimgpath;
+                        ? $errorImage."_".cjoImageProcessor::getErrorImage()
+                        : cjoImageProcessor::getErrorImage();
+            $this->cacheImgpath = cjoUrl::mediaCache($errorImage);
         }
 
         $this->orgImageInfo = @getimagesize($this->orgImgpath);

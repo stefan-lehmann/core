@@ -29,7 +29,7 @@
  */
 
 global $CJO;
-$mypage = 'shop';
+$addon = 'shop';
 
 $form_elements_in = array();
 $confirm_details = array();
@@ -38,10 +38,10 @@ $confirm_details = array();
 
 // prepare pay data output
 $pay_method 		= $posted['checkout']['pay_method'];
-$pay_methods_path 	= $CJO['ADDON']['settings'][$mypage]['PAY_METHODS_PATH'];
+$pay_methods_path 	= $CJO['ADDON']['settings'][$addon]['PAY_METHODS_PATH'];
 
 // get requiredclass and config file
-$pay_methods_path = $CJO['ADDON']['settings'][$mypage]['PAY_METHODS_PATH'];
+$pay_methods_path = $CJO['ADDON']['settings'][$addon]['PAY_METHODS_PATH'];
 $class_file = $pay_methods_path.'/'.$pay_method.'/class.shop_'.$pay_method.'.inc.php';
 $conf_file  = $pay_methods_path.'/'.$pay_method.'/config.inc.php';
 
@@ -52,8 +52,8 @@ $pay_costs = $pay_costs[$pay_method];
 
 // get personal data
 $personals = explode('|', $posted['checkout']['personals']);
-$contact = $I18N_21->msg('shop_email').': '.$personals[1];
-$contact .= !empty($personals[2]) ? "\r\n".$I18N_21->msg('shop_phone_nr').': '.$personals[2] : '';
+$contact = cjoAddon::translate(21,'shop_email').': '.$personals[1];
+$contact .= !empty($personals[2]) ? "\r\n".cjoAddon::translate(21,'shop_phone_nr').': '.$personals[2] : '';
 
 //display all customer data
 $confirm_details['page'][0]           = $page;
@@ -62,7 +62,7 @@ $confirm_details['address2'][0]       = !empty($posted['checkout']['address2'])
 								  	  ? new cjoShopSupplyAddress($posted['checkout']['address2'])
 								      : $confirm_details['address1'][0];
 $confirm_details['product_table'][0]  = cjoShopBasket::out('PRODUCT_TABLE', $pay_costs, $confirm_details['address2'][0]->getCountry());
-$confirm_details['pay_method'][0]     = $I18N_21->msg('shop_'.$pay_method);
+$confirm_details['pay_method'][0]     = cjoAddon::translate(21,'shop_'.$pay_method);
 $confirm_details['pay_data'][0]       = $pay_object->out();
 
 $confirm_details['contact'][0]        = $contact;
@@ -76,8 +76,8 @@ $confirm_details['comment_value'][0]  = $posted['checkout']['comment'];
 $confirm_details['dest_address'][0]	  = $supply_address ? 'address2' : 'address1';
 
 $business_terms = '';
-if (file_exists($CJO['ADDON']['settings'][$mypage]['BUSINESS_TERMS'])) {
-    $business_terms =  file_get_contents($CJO['ADDON']['settings'][$mypage]['BUSINESS_TERMS']);
+if (file_exists($CJO['ADDON']['settings'][$addon]['BUSINESS_TERMS'])) {
+    $business_terms =  file_get_contents($CJO['ADDON']['settings'][$addon]['BUSINESS_TERMS']);
     $business_terms = nl2br($business_terms);
 }
 
@@ -91,9 +91,9 @@ $elements_in['name'] 		= 'business_terms';
 $elements_in['value']		= 1;
 $elements_in['default']		= 0;
 $elements_in['required']	= 1;
-$elements_in['label']		= $I18N_21->msg('confirm_business_terms');
+$elements_in['label']		= cjoAddon::translate(21,'confirm_business_terms');
 $elements_in['validate']	= 'equal';
-$elements_in['error_msg']	= $I18N_21->msg('msg_not_confirmed_business_terms');
+$elements_in['error_msg']	= cjoAddon::translate(21,'msg_not_confirmed_business_terms');
 $elements_in['equal_value']	= 1;
 $form_elements_in[]         = $elements_in;
 

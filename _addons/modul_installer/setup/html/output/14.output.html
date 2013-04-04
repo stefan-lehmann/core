@@ -1,0 +1,241 @@
+[%TEMPLATE%]
+
+   IF([[SHOW_FORM]]){%
+    <div class="form">
+        <a name="[[FORM_NAME]]" class="hidden_anchor">[[FORM_NAME]]</a>
+        <form id="[[FORM_ID]]" action="[[ACTION_URL]]#[[FORM_NAME]]" IF({UTF-8}){% accept-charset="UTF-8" %}ENDIF method="post">
+            <fieldset>
+
+		        IF(![[HIDE_LEGEND]]){% 
+		       		<legend><span>CJO_VALUE[8]</span></legend>
+	   		    %}ENDIF
+		        IF([[HAS_ERRORS]]){% 
+	   		    <div class="all_errors"><%ERROR_MESSAGES%></div>
+	   		    %}ENDIF
+                <%FORM_ELEMENTS%>
+
+            </fieldset>
+            <fieldset class="hidden">
+                <div class="qfrow">
+                    <label for="[[FORM_NAME]]_submit" class="qflabel">&nbsp;</label>
+                    <div class="qfelement">
+                        <span class="button"><input type="submit" name="[[FORM_NAME]][submit]" value="CJO_VALUE[7]" id="[[FORM_NAME]]_submit" /></span>
+                    </div>
+                </div>
+                IF(CJO_VALUE[12]){%
+                <div class="qfreqnote"><span class="required">*</span> CJO_VALUE[12]</div>
+                %}ENDIF
+            </fieldset>
+        </form>
+    </div>
+   %}ENDIF
+
+    IF(![[SHOW_FORM]]){%
+        <a name="[[FORM_NAME]]_acknowledgment" class="hidden_anchor">[[FORM_NAME]]</a>
+        <div class="accept">CJO_HTML_VALUE[6]</div>
+   %}ENDIF
+
+[%ERROR_MESSAGES%]
+<p><b>!</b> [[ELEMENT_ERROR_MSG]].</p>
+
+[%FORM_ELEMENTS%]
+
+##
+
+   IF([[ELEMENT_TYPE_HEADLINE]]){%
+        <div class="qfrow" id="[[ELEMENT_ID]]_cont">
+            <div class="qfheadline">
+                [[ELEMENT_VALUE]]
+            </div>
+        </div>
+   %}ENDIF
+
+##
+
+   IF([[ELEMENT_TYPE_FIELDSET]]){%
+           </fieldset>
+        <fieldset class="[[ELEMENT_CLASS]]">
+           IF(![[HIDE_LEGEND]]){% 
+            <legend><span>[[ELEMENT_VALUE]]</span></legend>
+           %}ENDIF
+   %}ENDIF
+
+##
+
+   IF([[ELEMENT_TYPE_SEPARATOR]]){%
+        <div class="qfrow" id="[[ELEMENT_ID]]_cont">
+            <div class="qfdivide">
+            </div>
+        </div>
+   %}ENDIF
+
+##
+
+   IF([[ELEMENT_TYPE_NOTICE]]){%
+        <div class="qfrow" id="[[ELEMENT_ID]]_cont">
+            <span class="qflabel">[[ELEMENT_LABEL]]</span>
+            <div class="qftext">
+                [[ELEMENT_VALUE]]
+            </div>
+        </div>
+   %}ENDIF
+
+##
+
+    IF([[ELEMENT_TYPE_HIDDEN]]){%
+        <input type="hidden" name="[[ELEMENT_NAME]]" value="[[ELEMENT_VALUE]]" />
+    %}ENDIF
+
+
+##
+
+    IF([[ELEMENT_TYPE_TEXT]]){%
+        <div class="qfrow" id="[[ELEMENT_ID]]_cont">
+            <label class="qflabel" for="[[ELEMENT_ID]]">[[ELEMENT_LABEL]] IF([[ELEMENT_REQUIRED]]){%<span class="required">*</span>%}ENDIF </label>
+
+            <div class="qfelement IF([[ELEMENT_ERROR_MSG]]){% form_error %}ENDIF">
+                IF([[ELEMENT_ERROR_MSG]]){%
+                    <span class="form_error">[[ELEMENT_ERROR_MSG]]</span>
+                %}ENDIF
+
+                <input type="text" name="[[ELEMENT_NAME]]"
+                value="[[ELEMENT_VALUE]]" title="[[ELEMENT_LABEL]]"
+                id="[[ELEMENT_ID]]" class="[[ELEMENT_CLASS]]" />
+
+            </div>
+        </div>
+    %}ENDIF
+
+##
+
+    IF([[ELEMENT_TYPE_PASSWORD]]){%
+        <div class="qfrow" id="[[ELEMENT_ID]]_cont">
+           <label class="qflabel" for="[[ELEMENT_ID]]">[[ELEMENT_LABEL]] IF([[ELEMENT_REQUIRED]]){%<span class="required">*</span>%}ENDIF </label>
+
+            <div class="qfelement IF([[ELEMENT_ERROR_MSG]]){% form_error %}ENDIF">
+                IF([[ELEMENT_ERROR_MSG]]){%
+                    <span class="form_error">[[ELEMENT_ERROR_MSG]]</span>
+                %}ENDIF
+
+                <input type="password" name="[[ELEMENT_NAME]]"
+                value="[[ELEMENT_VALUE]]" title="[[ELEMENT_LABEL]]"
+                id="[[ELEMENT_ID]]" class="[[ELEMENT_CLASS]]" />
+
+            </div>
+        </div>
+    %}ENDIF
+
+##
+
+    IF([[ELEMENT_TYPE_TEXTAREA]]){%
+        <div class="qfrow" id="[[ELEMENT_ID]]_cont">
+           <label class="qflabel" for="[[ELEMENT_ID]]">[[ELEMENT_LABEL]] IF([[ELEMENT_REQUIRED]]){%<span class="required">*</span>%}ENDIF </label>
+
+            <div class="qfelement IF([[ELEMENT_ERROR_MSG]]){% form_error %}ENDIF">
+                IF([[ELEMENT_ERROR_MSG]]){%
+                    <span class="form_error">[[ELEMENT_ERROR_MSG]]</span>
+                %}ENDIF
+
+                <textarea name="[[ELEMENT_NAME]]" title="[[ELEMENT_LABEL]]"
+                id="[[ELEMENT_ID]]" class="[[ELEMENT_CLASS]]" cols="10" rows="10">
+                [[ELEMENT_VALUE]]</textarea>
+
+            </div>
+        </div>
+    %}ENDIF
+
+##
+
+    IF([[ELEMENT_TYPE_CHECKBOX]]){%
+        <div class="qfrow" id="[[ELEMENT_ID]]_cont">
+            <label class="qflabel" for="[[ELEMENT_ID]]">
+                [[ELEMENT_LABEL]]
+            </label>
+
+            <div class="qfelement checkbox IF([[ELEMENT_ERROR_MSG]]){% form_error %}ENDIF">
+
+                IF([[ELEMENT_ERROR_MSG]]){%
+                    <span class="form_error checkbox">[[ELEMENT_ERROR_MSG]]</span>
+                %}ENDIF
+
+                <input type="hidden" name="[[ELEMENT_NAME]]" value="0" />
+                <input type="checkbox" name="[[ELEMENT_NAME]]" value="[[ELEMENT_VALUE]]"
+                title="[[ELEMENT_LABEL]]" id="[[ELEMENT_ID]]" class="checkbox [[ELEMENT_CLASS]]"
+                [[ELEMENT_CHECKED]] />
+
+                IF([[ELEMENT_REQUIRED]]){%
+                    <span class="required">*</span>
+                %}ENDIF
+
+                [[CHECKBOX_LABEL]]
+
+            </div>
+        </div>
+    %}ENDIF
+
+##
+
+    IF([[ELEMENT_TYPE_RADIO]]){%
+        <div class="qfrow" id="[[ELEMENT_ID]]_cont">
+            <label class="qflabel" for="[[ELEMENT_ID]]">
+                [[ELEMENT_LABEL]]
+            </label>
+
+            <div class="qfelement radio IF([[ELEMENT_ERROR_MSG]]){% form_error %}ENDIF">
+
+                IF([[ELEMENT_ERROR_MSG]]){%
+                    <span class="form_error radio">[[ELEMENT_ERROR_MSG]]</span>
+                %}ENDIF
+
+                <input type="radio" name="[[ELEMENT_NAME]]" value="[[ELEMENT_VALUE]]"
+                title="[[ELEMENT_LABEL]]" id="[[ELEMENT_ID]]" class="radio [[ELEMENT_CLASS]]"
+                [[ELEMENT_CHECKED]] />
+
+                IF([[ELEMENT_REQUIRED]]){%
+                    <span class="required">*</span>
+                %}ENDIF
+
+                [[RADIO_LABEL]]
+
+            </div>
+        </div>
+    %}ENDIF
+
+##
+
+    IF([[ELEMENT_TYPE_SELECT]]){%
+        <div class="qfrow" id="[[ELEMENT_ID]]_cont">
+           <label class="qflabel" for="[[ELEMENT_ID]]">[[ELEMENT_LABEL]] IF([[ELEMENT_REQUIRED]]){%<span class="required">*</span>%}ENDIF </label>
+
+            <div class="qfelement IF([[ELEMENT_ERROR_MSG]]){% form_error %}ENDIF">
+                IF([[ELEMENT_ERROR_MSG]]){%
+                    <span class="form_error">[[ELEMENT_ERROR_MSG]]</span>
+                %}ENDIF
+
+                [[ELEMENT_SELECT_OUT]]
+
+            </div>
+        </div>
+    %}ENDIF
+
+##
+
+    IF([[ELEMENT_TYPE_ANTISPAM]]){%
+        <div class="qfrow" id="[[ELEMENT_ID]]_cont">
+           <label class="qflabel" for="[[ELEMENT_ID]]">[[ELEMENT_LABEL]] IF([[ELEMENT_REQUIRED]]){%<span class="required">*</span>%}ENDIF </label>
+
+            <div class="qfelement IF([[ELEMENT_ERROR_MSG]]){% form_error %}ENDIF">
+                IF([[ELEMENT_ERROR_MSG]]){%
+                    <span class="form_error">[[ELEMENT_ERROR_MSG]]</span>
+                %}ENDIF
+
+                <input type="text" name="[[ELEMENT_NAME]]" value="[[ELEMENT_VALUE]]" autocomplete="off"
+                title="[[ELEMENT_LABEL]]" id="[[ELEMENT_ID]]" class="[[ELEMENT_CLASS]]" />
+                <input type="hidden" name="mathresult" value="[[MATHRESULT]]" />
+                <input type="hidden" name="antispam_label" value="[[ELEMENT_LABEL]]" />
+
+            </div>
+        </div>
+    %}ENDIF
+
+##

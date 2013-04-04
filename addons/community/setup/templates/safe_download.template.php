@@ -23,15 +23,15 @@
  * @filesource
  */
 
-if ($CJO['CONTEJO']) return false;
+if (cjoProp::isBackend()) return false;
 
-if (OOAddon::isAvailable('community')) {
+if (cjoAddon::isAvailable('community')) {
     global $I18N_10;
     if (!cjoCommunityTemplate::secureDownload()){
-        echo '<p class="error">'.$I18N_10->msg('msg_err_configure_settings', $CJO['BACKEND_PATH']).'</p>';
+        echo '<p class="error">'.cjoAddon::translate(10,'msg_err_configure_settings', $CJO['BACKEND_PATH']).'</p>';
     }
     
 } else {
     global $I18N_10;
-    echo '<p class="error">'.@$I18N_10->msg('msg_err_configure_settings', $CJO['BACKEND_PATH']).'</p>';
+    echo '<p class="error">'.@cjoAddon::translate(10,'msg_err_configure_settings', $CJO['BACKEND_PATH']).'</p>';
 }

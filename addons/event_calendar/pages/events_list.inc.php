@@ -39,10 +39,10 @@ $list = new cjoList($sql,
                     '',
                     100);
 
-$add_button = cjoAssistance::createBELink('<img src="img/silk_icons/add.png" title="'.$I18N->msg("button_add").'" alt="'.$I18N->msg("button_add").'" />',
+$add_button = cjoUrl::createBELink('<img src="img/silk_icons/add.png" title="'.cjoI18N::translate("button_add").'" alt="'.cjoI18N::translate("button_add").'" />',
                                            $list->getGlobalParams(),
                                            array('function' => 'add', 'oid' => ''),
-                                           'title="'.$I18N->msg("button_add").'"');
+                                           'title="'.cjoI18N::translate("button_add").'"');
 
 $cols['id'] = new resultColumn('id', $add_button, 'sprintf', '<span>%s</span>');
 $cols['id']->setHeadAttributes('class="icon "');
@@ -57,18 +57,18 @@ if (cjoAssistance::inMultival('file', $CJO['ADDON']['settings'][$mypage]['enable
 }
 $cols['file']->delOption(OPT_ALL);
 
-$cols['title'] = new resultColumn('title', $I18N->msg('label_title'), 'truncate', array('length' => 60));
+$cols['title'] = new resultColumn('title', cjoI18N::translate('label_title'), 'truncate', array('length' => 60));
 $cols['title']->setBodyAttributes('class="large_item" width="200"');
 
-$cols['short_description'] = new resultColumn('short_description', $I18N_16->msg('label_short_description'), 'truncate', array('length' => 120));
+$cols['short_description'] = new resultColumn('short_description', cjoAddon::translate(16,'label_short_description'), 'truncate', array('length' => 120));
 $cols['short_description']->setBodyAttributes('width="200" valign="top"');
 
-$cols['start_date'] = new resultColumn('start', $I18N_16->msg('label_start'), 'strftime', $I18N->msg("dateformat_sort"));
+$cols['start_date'] = new resultColumn('start', cjoAddon::translate(16,'label_start'), 'strftime', cjoI18N::translate("dateformat_sort"));
 $cols['start_date']->addCondition('broadcasting', 1,'<strong style="color:green">%s</strong>');
 $cols['start_date']->addCondition('end', array('<', time()),'<span style="color:red">%s</span>');
 $cols['start_date']->delOption(OPT_SEARCH);
          
-$cols['end_date'] = new resultColumn('end', $I18N_16->msg('label_end'), 'strftime', $I18N->msg("dateformat_sort"));
+$cols['end_date'] = new resultColumn('end', cjoAddon::translate(16,'label_end'), 'strftime', cjoI18N::translate("dateformat_sort"));
 $cols['end_date']->addCondition('broadcasting', 1,'<strong style="color:green">%s</strong>');
 $cols['end_date']->addCondition('end', array('<', time()),'<span style="color:red">%s</span>');
 $cols['end_date']->delOption(OPT_SEARCH);
@@ -121,15 +121,15 @@ for ($i=1;$i<=10;$i++) {
 }
 
 // Bearbeiten link
-$img = '<img src="img/silk_icons/page_white_edit.png" title="'.$I18N->msg("button_edit").'" alt="'.$I18N->msg("button_edit").'" />';
-$cols['edit'] = new staticColumn($img, $I18N->msg("label_functions"));
+$img = '<img src="img/silk_icons/page_white_edit.png" title="'.cjoI18N::translate("button_edit").'" alt="'.cjoI18N::translate("button_edit").'" />';
+$cols['edit'] = new staticColumn($img, cjoI18N::translate("label_functions"));
 $cols['edit']->setHeadAttributes('colspan="3"');
 $cols['edit']->setBodyAttributes('width="20"');
 $cols['edit']->setParams(array ('function' => 'edit', 'oid' => '%id%'));
 
 // Status link
-$cond['stat'][0] = '<img src="img/silk_icons/eye_off.png" title="'.$I18N_16->msg("label_status_do_online").'" alt="'.$I18N_16->msg("label_status_offline").'" />';
-$cond['stat'][1] = '<img src="img/silk_icons/eye.png" title="'.$I18N_16->msg("label_status_do_offline").'" alt="'.$I18N_16->msg("label_status_online").'" />';
+$cond['stat'][0] = '<img src="img/silk_icons/eye_off.png" title="'.cjoAddon::translate(16,"label_status_do_online").'" alt="'.cjoAddon::translate(16,"label_status_offline").'" />';
+$cond['stat'][1] = '<img src="img/silk_icons/eye.png" title="'.cjoAddon::translate(16,"label_status_do_offline").'" alt="'.cjoAddon::translate(16,"label_status_online").'" />';
 $cols['status'] = new staticColumn('status', NULL);
 $cols['status']->setBodyAttributes('width="16"');
 $cols['status']->setBodyAttributes('class="cjo_status"');
@@ -137,7 +137,7 @@ $cols['status']->addCondition('status', '0', $cond['stat'][0]);
 $cols['status']->addCondition('status', '1', $cond['stat'][1]);
 
 // Lösch link
-$cond['delete'] = '<img src="img/silk_icons/bin.png" title="'.$I18N_16->msg("label_delete_event").'" alt="'.$I18N_16->msg("label_delete_event").'" />';
+$cond['delete'] = '<img src="img/silk_icons/bin.png" title="'.cjoAddon::translate(16,"label_delete_event").'" alt="'.cjoAddon::translate(16,"label_delete_event").'" />';
 $cols['delete'] = new staticColumn($cond['delete'], NULL);
 $cols['delete']->setBodyAttributes('width="60"');
 $cols['delete']->setBodyAttributes('class="cjo_delete"');
@@ -202,15 +202,15 @@ $list->show();
                 };
     
                 if(mode == 'delete'){
-                    var jdialog = cjo.appendJDialog('<?php echo $I18N_16->msg("label_delete_event"); ?> ?');
+                    var jdialog = cjo.appendJDialog('<?php echo cjoAddon::translate(16,"label_delete_event"); ?> ?');
     
                     $(jdialog).dialog({
                         buttons: {
-                            '<?php echo $I18N->msg('label_ok'); ?>': function() {
+                            '<?php echo cjoI18N::translate('label_ok'); ?>': function() {
                                 $(this).dialog('close');
                                 confirm_action();
                             },
-                            '<?php echo $I18N->msg('label_cancel'); ?>': function() {
+                            '<?php echo cjoI18N::translate('label_cancel'); ?>': function() {
                                 $(this).dialog('close');
                             }
                         }

@@ -32,6 +32,8 @@
  */
 class cjoModulTemplate extends cjoHtmlTemplate {
         
+    private static $html_templates = false; 
+        
     /**
      * Returns the full path to the first matching HTML-template file in the
      * HTML-template directory. The search starts at the highest level of
@@ -66,30 +68,27 @@ class cjoModulTemplate extends cjoHtmlTemplate {
      * @param int $template_id the id of the current template
      * @param int $ctype the id of the current ctype
      * @param string $type either 'input' or 'output'
+     * @param bool $use_cache
      * @return string
 	 * @access public
      */
-	public static function getTemplatePath($modultyp_id='', $template_id, $ctype, $type='output') {
+	public static function getTemplatePath($modultyp_id='', $template_id, $ctype, $type='output', $use_cache=true) {
 
-	    global $CJO;
+        $tmpl_ext       = liveEdit::getTmplExtension();
+        $ctype          = (empty($ctype) || $ctype == '-1') ? 0 : $ctype;        
+        $extension      = $type.'.'.$tmpl_ext;
+        $html_templates = !self::$html_templates || !$use_cache 
+                        ? cjoModulTemplate::readTemplateDir(liveEdit::getEditPath($tmpl_ext)) 
+                        : self::$html_templates;
 
-	    $path['path'] = $CJO['ADDON']['settings']['developer']['edit_path'].'/'.
-	                    $CJO['TMPL_FILE_TYPE'];
+        self::$html_templates = $html_templates;
 
-	    //$html_templates = $CJO['ADDON']['settings']['developer']['tmpl']['html'];
-	    $extension 		= $type.'.'.$CJO['TMPL_FILE_TYPE'];
-
-	   // if (empty($html_templates))
-		$html_templates = cjoModulTemplate::readTemplateDir($path['path']);
-
-	    $ctype = (empty($ctype) || $ctype == '-1') ? 0 : $ctype;
-
-	    $path['path'] 	             = $CJO['ADDON']['settings']['developer']['edit_path'].'/'.
-	                                   $CJO['TMPL_FILE_TYPE'];
-	    $path['type'] 	  			 = $path['path'].'/'.$type;
-	    $path['type_template'] 		 = $path['type'].'/'.$template_id.'.template';
-	    $path['type_ctype'] 		 = $path['type'].'/'.$ctype.'.ctype';
-	    $path['type_template_ctype'] = $path['type_template'].'/'.$ctype.'.ctype';
+        $path                        = array();
+	    $path['path']                = liveEdit::getEditPath($tmpl_ext);
+        $path['type']                = $path['path'].'/'.$type;
+        $path['type_template']       = $path['type'].'/'.$template_id.'.template';
+        $path['type_ctype']          = $path['type'].'/'.$ctype.'.ctype';
+        $path['type_template_ctype'] = $path['type_template'].'/'.$ctype.'.ctype';
 
 	    /**
 	     * If matching HTML-template (eg. "./input/X.template/Y.ctype/Z.foo.input.html") exists
@@ -107,6 +106,7 @@ class cjoModulTemplate extends cjoHtmlTemplate {
 	     */
 	    if (isset($html_templates[$path['type_template']]) && 
             is_array($html_templates[$path['type_template']])) {
+
 		    foreach($html_templates[$path['type_template']] as $file) {
 		    	if (preg_match('/^'.$modultyp_id.'\.\S+?\.?'.$extension.'/',$file))
 		    		return $path['type_template'].'/'.$file;
@@ -144,8 +144,6 @@ class cjoModulTemplate extends cjoHtmlTemplate {
 	 */
 	private static function readTemplateDir($directory = '') {
 
-		global $CJO;
-
 		$files = array();
 
 		if ($directory == '' || !file_exists($directory)) return array();
@@ -154,7 +152,7 @@ class cjoModulTemplate extends cjoHtmlTemplate {
 
 		while (false!==($item = readdir($handle))) {
 
-			if ($item == '.' || $item == '..' || $item == '.svn')  continue;
+			if ($item == '.' || $item == '..' || $item == '.svn' || $item == '.gitignore')  continue;
 
 			if (is_dir($directory.'/'.$item)) {
 				$temp = cjoModulTemplate::readTemplateDir($directory.'/'.$item);

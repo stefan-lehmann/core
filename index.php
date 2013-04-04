@@ -23,73 +23,62 @@
  * @filesource
  */
 
-error_reporting(E_ALL & ~E_STRICT & ~E_NOTICE);
+error_reporting(E_ALL ^ E_NOTICE);
 // ----- caching start für output filter
 
 ob_start();
 
-$CJO                = array();
-$CJO['HTDOCS_PATH'] = '../';
-$CJO['CONTEJO']     = true;
-$CJO['PAGEPATH']    = '';
-$cur_page           = array();
-$cur_page['header'] = true;
+$CJO = array('HTDOCS_PATH' => '../', 'CONTEJO' => true, 'PAGE_HEADER' => true);
 
-require_once "./include/functions/function.cjo_mquotes.inc.php";
 require_once './include/master.inc.php';
 
 // ----------------- SETUP
-if ($CJO['SETUP']){
+if (cjoProp::isSetup()) {
 
-    require_once $CJO['INCLUDE_PATH']."/functions/function.cjo_setup.inc.php";
+    require_once cjoPath::inc('functions/function.cjo_setup.inc.php');
 
-	// ----------------- SET SETUP LANG
-    $CJO['USER'] = false;
-    $cur_page['header'] = true;
-	$CJO['LANG'] = empty($lang) ? 'de' : $lang;
-	$I18N = new i18n($CJO['LANG']);
+    cjoProp::set('USER', false);
+    cjoProp::set('PAGE_HEADER', true);
+    cjoProp::setPage('setup');
+    cjoProp::set('PAGE_NAME', cjoI18N::translate('title_setup'));
+	cjoProp::set('LANG', cjo_get('lang', 'string', 'de'));
 
-	foreach ($I18N->getLocales() as $k => $l) {
+	foreach (cjoI18N::getLocales() as $k => $l) {
 		if (cjo_request($k,'string') == $l){
-			$CJO['LANG'] = $l;
-			$I18N = new i18n($CJO['LANG']);
+            cjoProp::set('LANG',  $l);
+            cjoI18N::reset();
+			cjoI18N::init(cjoProp::get('LANG'));
 		}
 	}
-
-	setlocale(LC_ALL,cjoAssistance::toArray($I18N->msg('setlocale'),','));
-
-	$cur_page['name']    = $I18N->msg('title_setup');
-	$cur_page['page']    = 'setup';
-	$CJO['SERVERNAME']   = $CJO['SERVERNAME'] == '' ? 'CONTEJO' : $CJO['SERVERNAME'];
-	$CJO['SERVER']       = $CJO['SERVER'] == '' ? $_SERVER['HTTP_HOST'] : $CJO['SERVER'];
 }
 else {
 
+    $page = cjo_request('page', 'string', '');
     $subpage = cjo_request('subpage', 'string', '');
 
-	if ($CJO['USER'] != false) {
+	if (cjoProp::getUser() != false) {
     	// --- addon page check
-    	if (is_array($CJO['ADDON']['page'])) {
+    	if (cjoAddon::getProperty('page')) {
 
-    		$match = array_search($page,$CJO['ADDON']['page']);
+    		$match = array_search($page, cjoAddon::getProperty('page'));
 
     		if ($match !== false){
-    			// --- addon gefunden
-    			$perm = $CJO['ADDON']['perm'][$match];
-    			if ($CJO['ADDON']['status'][$page] == 1 && $CJO['USER']->hasAddonPerm($match,true)){
 
-    				$parent_page = $CJO['ADDON']['menu'][$page];
-    				$CJO['ADDON']['curr_subpage'][$page] = cjo_request('subpage', 'string');
+    			$perm = cjoAddon::getProperty('perm',$page);
+    			if (cjoAddon::isActivated($page) && cjoProp::getUser()->hasAddonPerm($page,true)){
+
+    				$parent_page = cjoAddon::getProperty('menu',$page);
+    				cjoAddon::setProperty('curr_subpage', $subpage, $page);
 
     				if ($parent_page != 1) {
 
-    					$match = array_search($parent_page,$CJO['ADDON']['page']);
+    					$match = array_search($parent_page,cjoAddon::getProperty('page'));
 
-    					if ($match !== false && $CJO['USER']->hasAddonPerm($match,true)) {
+    					if ($match !== false && cjoProp::getUser()->hasAddonPerm($match,true)) {
     						$subpage = $page;
     						$page = $parent_page;
     					}
-    					else if ($CJO['USER']->hasPerm($parent_page.'[')) {
+    					else if (cjoProp::getUser()->hasPerm($parent_page.'[')) {
     						$subpage = $page;
     						$page = $parent_page;
     					}
@@ -98,17 +87,19 @@ else {
     					}
     				}
 
-    				if ($CJO['ADDON']['menu'][$page]) {
-    					$cur_page['header'] = false;
-    					$cur_page['page'] = $page;
-    					$CJO['PAGEPATH'] = $CJO['ADDON_PATH'].'/'.$cur_page['page'].'/pages/index.inc.php';
-                        if (!file_exists($CJO['PAGEPATH']))
-                            $CJO['PAGEPATH'] = $CJO['ADDON_CONFIG_PATH'].'/'.$cur_page['page'].'/pages/index.inc.php';
-                        if (!file_exists($CJO['PAGEPATH'])) {
-                            $cur_page['header'] = true;
-                            $cur_page['page'] = '';
-                            $CJO['PAGEPATH'] = '';
-                            cjoMessage::addError($I18N->msg('msg_page_not_found'));
+    				if (cjoAddon::getProperty('menu',$page)) {
+    				    
+    					cjoProp::setPage($page);
+    					cjoProp::set('PAGE_PATH', cjoPath::addon(cjoProp::getPage(),'pages/index.inc.php'));
+                        
+                        if (!file_exists(cjoProp::get('PAGE_PATH')))
+                            cjoProp::set('PAGE_PATH', cjoPath::addonAssets(cjoProp::getPage(),'pages/index.inc.php'));
+                        
+                        if (!file_exists(cjoProp::get('PAGE_PATH'))) {
+                            cjoProp::set('PAGE_HEADER', true);
+                            cjoProp::remove('PAGE_PAGE');
+                            cjoProp::remove('PAGE_PATH');
+                            cjoMessage::addError(cjoI18N::translate('msg_page_not_found'));
                         }
                         
     				}
@@ -116,75 +107,69 @@ else {
     		}
     	}
 
-    	$cur_page['popup'] = cjo_request('popup', 'boolean');
+        cjoProp::set('PAGE_POPUP', cjo_request('popup', 'boolean', false));
     	// ----- standard pages
-    	if ($CJO['PAGEPATH'] == '') {
+    	if (!cjoProp::get('PAGE_PATH')) {
     		switch($page){
     			case 'addons':
-    				if ($CJO['USER']->hasPerm('addons[]')) {
-    					$cur_page['name'] = $I18N->msg('title_addons');
-    					$cur_page['page'] = $page;
+    				if (cjoProp::getUser()->hasPerm('addons[]')) {
+    					cjoProp::set('PAGE_NAME', cjoI18N::translate('title_addons'));
+    					cjoProp::setPage($page);
     				} break;
 
     			case 'specials':
-    				if ($CJO['USER']->hasPerm('specials[')) {
-    					$cur_page['name'] = $I18N->msg('title_specials');
-    					$cur_page['page'] = $page;
+    				if (cjoProp::getUser()->hasPerm('specials[')) {
+    					cjoProp::set('PAGE_NAME', cjoI18N::translate('title_specials'));
+    					cjoProp::setPage($page);
     				} break;
 
     			case 'tools':
-    				if ($CJO['USER']->hasPerm('tools[')) {
-    					$cur_page['name'] = $I18N->msg('title_tools');
-    					$cur_page['page'] = $page;
+    				if (cjoProp::getUser()->hasPerm('tools[')) {
+    					cjoProp::set('PAGE_NAME', cjoI18N::translate('title_tools'));
+    					cjoProp::setPage($page);
     				} break;
 
     			case 'users':
-    				if ($CJO['USER']->hasPerm('users[')) {
-    					$cur_page['name'] = $I18N->msg('title_user');
-    					$cur_page['page'] = $page;
+    				if (cjoProp::getUser()->hasPerm('users[')) {
+    					cjoProp::set('PAGE_NAME', cjoI18N::translate('title_user'));
+    					cjoProp::setPage($page);
     				} break;
 
     			case 'medienpool':
     			case 'mediapool':
     			case 'media':
-    				if ($CJO['USER']->isValueOf("rights",'media[') ||
-    					$CJO['USER']->isAdmin()) {
-    					$cur_page['name'] = $I18N->msg('title_media');
-    					$cur_page['page'] = 'media';
+    				if (cjoProp::getUser()->isValueOf("rights",'media[') ||
+    					cjoProp::getUser()->isAdmin()) {
+    					cjoProp::set('PAGE_NAME', cjoI18N::translate('title_media'));
+    					cjoProp::setPage('media');
     				} break;
-    		}
-    		if (empty($cur_page['page'])) {
-    			$cur_page['name'] = $I18N->msg('title_edit');
-    			$cur_page['page'] = 'edit';
-    		}
+                default:
+        			cjoProp::set('PAGE_NAME', cjoI18N::translate('title_edit'));
+        			cjoProp::setPage('edit');
+        		}
     	}
 
-    	new cjoSelectArticle($article_id);
-        new cjoSelectMediaCat();
-        new cjoSelectLang();
+    	cjoSelectArticle::init();
+        cjoSelectMediaCat::init();
+        cjoSelectLang::init();
 	}
+
+    cjoProp::setSubpage($subpage);
 }
 
-if (($CJO['USER'] || $CJO['SETUP']) && cjo_get('msg', 'boolean')) {
-	cjoMessage::addSuccess($I18N->msg(cjoAssistance::cleanInput(cjo_get('msg', 'string'))));
+if ((cjoProp::getUser() || cjoProp::isSetup()) && cjo_get('msg', 'boolean')) {
+	cjoMessage::addSuccess(cjoI18N::translate(cjoAssistance::cleanInput(cjo_get('msg', 'string'))));
 }
-if (($CJO['USER'] || $CJO['SETUP']) && cjo_get('err_msg', 'boolean')) {
-	cjoMessage::addError($I18N->msg(cjoAssistance::cleanInput(cjo_get('err_msg', 'string'))));
+if ((cjoProp::getUser() || cjoProp::isSetup()) && cjo_get('err_msg', 'boolean')) {
+	cjoMessage::addError(cjoI18N::translate(cjoAssistance::cleanInput(cjo_get('err_msg', 'string'))));
 }
 // ----- kein pagepath -> kein addon -> path setzen
-if ($CJO['PAGEPATH'] == '') {
-    $CJO['PAGEPATH'] = $CJO['INCLUDE_PATH'].'/pages/'.$cur_page['page'].'/_'.$cur_page['page'].'.inc.php';
+if (!cjoProp::get('PAGE_PATH')) {
+    cjoProp::set('PAGE_PATH', cjoPath::inc('pages/'.cjoProp::getPage().'/_'.cjoProp::getPage().'.inc.php'));
 }
+   
+cjoSubPages::generatePage();
 
-// ----- ausgabe des includes
-if ($cur_page['header']){
-	require_once $CJO['INCLUDE_PATH'].'/layout/top.php';
-}
-include $CJO['PAGEPATH'];
-
-if ($cur_page['header']) {
-	require_once $CJO['INCLUDE_PATH'].'/layout/bottom.php';
-}
 cjoValidateEngine::cleanup();
 cjoMessage::outputMessages();
 

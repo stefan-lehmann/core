@@ -22,17 +22,10 @@
  *  details.
  * @filesource
  */
-/**
- * Template Objekt.
- * Zust�ndig f�r die Verarbeitung eines Templates
- *
- * @package redaxo4
- * @version svn:$Id: class.cjo_template.inc.php 1335 2011-07-31 10:32:23Z s_lehmann $
- */
 
 class cjoTemplate {
 
-    var $id;
+    private $id;
 
     function __construct ($template_id = 0) {
         $this->setId($template_id);
@@ -40,14 +33,12 @@ class cjoTemplate {
 
     public static function addTemplate($template) {
 
-       global $CJO, $I18N;
-
         if (!is_array($template)) {
             return false;
         }
 
-        if (!$CJO['CONTEJO']) {
-            cjoMessage::addError($I18N->msg("msg_no_permissions"));
+        if (!cjoProp::isBackend()) {
+            cjoMessage::addError(cjoI18N::translate("msg_no_permissions"));
             return false;
         }
 
@@ -75,12 +66,20 @@ class cjoTemplate {
 		$sql->setWhere("id='".$id."'");
 		$sql->setValue("content", $template['content']);
 
-		if (!$sql->Update($I18N->msg("msg_template_added", $template['name']))) return false;
+		if (!$sql->Update(cjoI18N::translate("msg_template_added", $template['name']))) return false;
 
-		cjoGenerate::putFileContents($CJO['FOLDER_GENERATED_TEMPLATES']."/".$id.'.template', $template['content']);
+		cjoGenerate::putFileContents(cjoPath::generated('templates', $id.'.template'), $template['content']);
 		return $id;
     }
 
+    public static function getContent($template_id) {
+        return file_get_contents(cjoPath::generated('templates', $template_id.'.template'));
+    }
+
+    public static function getGeneratedPath($template_id) {
+        return file_get_contents(cjoPath::generated('templates', $template_id.'.template'));
+    }
+    
     public function getId() {
         return $this->id;
     }
@@ -89,8 +88,8 @@ class cjoTemplate {
         $this->id = (int) $id;
     }
 
-    public function getFile()
-    {
+    public function getFile() {
+        
         if ($this->getId() < 1) return false;
         $tempalte_file = $this->getFilePath($this->getId());
         if (!$tempalte_file) return false;
@@ -98,7 +97,7 @@ class cjoTemplate {
 
             // Generated Datei erzeugen
             if (!$this->generate()) {
-                trigger_error('Unable to generate Template with id "'. $this->getId() . '"', E_USER_ERROR);
+                throw new cjoException('Unable to generate Template with id "'. $this->getId() . '"', E_USER_ERROR);
                 return false;
             }
         }
@@ -107,20 +106,15 @@ class cjoTemplate {
 
     public function getFilePath($template_id) {
         if ($template_id < 1) return false;
-        return cjoTemplate::getTemplatesDir().'/'.$template_id .'.template';
+        return cjoPath::generated('templates', $template_id.'.template');
     }
 
-    public function getTemplatesDir() {
-        global $CJO;
-        return $CJO['FOLDER_GENERATED_TEMPLATES'];
-    }
-
-    public function getTemplate($article_id = false, $template_id = false) {
+    public function getTemplate($article_id = false) {
         $tempalte_file = $this->getFile();
         if (!$tempalte_file) return false;
-        if (!$template_id) $template_id = $this->getId();
-        $content = @file_get_contents($tempalte_file);
-        return $this->replaceTemplateVars($content, $article_id, $template_id);
+        $content = file_get_contents($tempalte_file);
+        
+        return $this->replaceTemplateVars($content, $article_id, $this->getId());
     }
     
     public function executeTemplate($article_id = false) {
@@ -133,17 +127,15 @@ class cjoTemplate {
         }
     }
 
-    public function replaceTemplateVars($content, $article_id = false, $template_id = false) {
-        global $CJO;
-        foreach($CJO['VARIABLES'] as $var){
-            $content = $var->getTemplate($content, $article_id, $template_id);
+    public function replaceTemplateVars($content, $article_id = false) {
+
+        foreach(cjoProp::get('VARIABLES') as $var){
+            $content = $var->getTemplate($content, $article_id);
         }
         return $content;
     }
 
     public static function getCtypes($template_id) {
-
-        global $CJO;
         
         $ctypes = array();
         
@@ -153,7 +145,7 @@ class cjoTemplate {
     	
     	if (!empty($results[0])) {
         	foreach(cjoAssistance::toArray($results[0]['ctypes']) as $ctype_id) {
-        	    if (isset($CJO['CTYPE'][$ctype_id])) {
+        	    if (cjoProp::getCtypeName($ctype_id)) {
         	        $ctypes[] = $ctype_id;
         	    }
         	}
@@ -164,7 +156,6 @@ class cjoTemplate {
     public static function hasCtype($template_id, $ctype) {
 
         $ctype = (int) $ctype;
-
         foreach(self::getCtypes($template_id) as $id) {
     	    if ($ctype == $id) return true;
     	}
@@ -172,16 +163,60 @@ class cjoTemplate {
     }
 
     public function generate() {
-        global $CJO;
         if ($this->getId() < 1) return false;
-        require_once $CJO['INCLUDE_PATH']."/classes/cjo/class.cjo_generate.inc.php";
         return cjoGenerate::generateTemplates($this->getId());
     }
 
     public function deleteCache() {
-        global $CJO;
         if($this->id < 1) return false;
         $tempalte_file = $this->getFilePath($this->getId());
         return @unlink($tempalte_file);
     }
+    
+    public static function deleteTemplate($id) {
+        if ($id == '1') {
+            cjoMessage::addError(cjoI18N::translate("msg_cant_delete_default_template"));
+        }
+        elseif ($id != '') {
+    
+            $sql = new cjoSql();
+            $qry = "SELECT DISTINCT
+                    a.id AS id,
+                        a.clang AS clang,
+                        a.name AS name,
+                        t.name AS template_name
+                   FROM ".TBL_ARTICLES." a
+                   LEFT JOIN ".TBL_TEMPLATES." t
+                   ON a.template_id = t.id
+                   WHERE a.template_id='".$id."'";
+            $results = $sql->getArray($qry);
+    
+            $temp = array();
+            foreach ($results as $result) {
+                    $temp[] = cjoUrl::createBELink(
+                                            '<b>'.$result['name'].'</b> (ID='.$result['id'].')',
+                                                array('page' => 'edit',
+                                                      'subpage' => 'settings',
+                                                      'function' => '',
+                                                      'oid' => '',
+                                                      'article_id' => $result['id'],
+                                                      'clang' => $result['clang']));
+            }
+    
+            if (!empty($temp))
+                cjoMessage::addError(cjoI18N::translate("msg_cant_delete_template_in_use",
+                                                $results[0]['template_name']).'<br />'.implode(' | ',$temp));
+    
+            if (!cjoMessage::hasErrors()) {
+                $sql->flush();  
+                $results = $sql->getArray("SELECT * FROM ".TBL_TEMPLATES." WHERE id='".$id."'");
+                $sql->flush();
+                if ($sql->statusQuery("DELETE FROM ".TBL_TEMPLATES." WHERE id='".$id."'",
+                                  cjoI18N::translate("msg_template_deleted"))) {
+                    cjoAssistance::updatePrio(TBL_TEMPLATES);
+                    cjoExtension::registerExtensionPoint('TEMPLATE_DELETED', $results[0]);
+                }
+            }
+        }
+    }    
 }

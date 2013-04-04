@@ -34,8 +34,8 @@ class cjoCommunityGroups {
         $temp = array();
         $return = array();
         
-        $dec_point = trim($I18N->msg('dec_point'));
-        $thousands_sep = trim($I18N->msg('thousands_sep'));
+        $setlocal_dec_point = trim(cjoI18N::translate('setlocal_dec_point'));
+        $setlocal_thousands_sep = trim(cjoI18N::translate('setlocal_thousands_sep'));
 
         $sql = new cjoSql();
         $qry = "SELECT ug.group_id AS group_id, us.status AS status, COUNT(*) AS user
@@ -53,7 +53,7 @@ class cjoCommunityGroups {
         foreach($results as $i=>$result) {
             if ($result['status'] == 0 || $result['status'] == 1) {
                 if (!isset($temp[$result['group_id']])) $temp[$result['group_id']] = array(0,0);
-                $temp[$result['group_id']][$result['status']]  = number_format($result['user'], 0, $dec_point, $thousands_sep) ;
+                $temp[$result['group_id']][$result['status']]  = number_format($result['user'], 0, $setlocal_dec_point, $setlocal_thousands_sep) ;
             }
         }
         
@@ -69,7 +69,7 @@ class cjoCommunityGroups {
     	global $CJO, $I18N_10;
 
     	$select = new cjoSelect;
-    	$select->showRoot($I18N_10->msg('label_root'),'root');
+    	$select->showRoot(cjoAddon::translate(10,'label_root'),'root');
 
     	$n = cjoCommunityGroups::countUsers();
 
@@ -163,7 +163,7 @@ class cjoCommunityGroups {
 
     	if ($sql->getRows() != 0){
     	    #TODO Change subpage=types (Relocated to Admin tools)
-    		cjoMessage::addError($I18N_10->msg('error_connected_type_ids','index.php?page=specials&subpage=types'));
+    		cjoMessage::addError(cjoAddon::translate(10,'error_connected_type_ids','index.php?page=specials&subpage=types'));
     		return false;
     	}
 
@@ -171,7 +171,7 @@ class cjoCommunityGroups {
     	$sql->setQuery("SELECT * FROM ".TBL_COMMUNITY_GROUPS." WHERE re_id='".$group_id."'");
 
     	if ($sql->getRows() != 0){
-    	    cjoMessage::addError($I18N_10->msg('error_has_children'));
+    	    cjoMessage::addError(cjoAddon::translate(10,'error_has_children'));
     	    return false;
     	}
 
@@ -203,11 +203,11 @@ class cjoCommunityGroups {
     	cjoCommunityUserGroups::delete(false,$group_id);
 
     	if ($error != '' || !cjoCommunityUserGroups::delete(false,$group_id)){
-        	cjoMessage::addError($I18N_10->msg('error_groups_deleted').$error);
+        	cjoMessage::addError(cjoAddon::translate(10,'error_groups_deleted').$error);
         	return false;
 
     	}
-    	cjoMessage::addSuccess($I18N_10->msg('msg_groups_deleted'));
+    	cjoMessage::addSuccess(cjoAddon::translate(10,'msg_groups_deleted'));
     	return true;
     }
 

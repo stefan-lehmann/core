@@ -23,20 +23,12 @@
  * @filesource
  */
 
-$mypage  = 'import_export';
-
 $function       = cjo_request('function', 'string');
 $import_file    = cjo_request('import_file', 'string');
 $export_file    = cjo_request('export_file', 'string');
 $download       = cjo_request('download', 'string');
 $export_include = cjo_request('export_include', 'array');
 
-require_once $CJO['ADDON_PATH'].'/'.$mypage.'/classes/class.cjo_import_export.inc.php';
+cjoSubPages::addPage( array('import_export_db', 'title' => cjoAddon::translate(3,'import_export_db')));
 
-$subpages = new cjoSubPages($subpage, $mypage);
-$subpages->addPage( array('import_export_db', 'title' => $I18N_3->msg('import_export_db')));
-//$subpages->addPage( array('import_export_files', 'title' => $I18N_3->msg('import_export_files')));
-
-require_once $CJO['INCLUDE_PATH'].'/layout/top.php';
-require_once $subpages->getPage();
-require_once $CJO['INCLUDE_PATH'].'/layout/bottom.php';
+require_once cjoSubPages::getPagePath();;

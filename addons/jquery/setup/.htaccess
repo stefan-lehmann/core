@@ -1,0 +1,7 @@
+AddEncoding gzip .gz
+<FilesMatch "\.js\.gz$">
+  AddType "text/javascript" .js.gz
+</FilesMatch>
+<FilesMatch "\.css\.gz$">
+  AddType "text/css" .css.gz
+</FilesMatch>

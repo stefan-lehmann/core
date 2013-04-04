@@ -23,7 +23,7 @@
  * @filesource
  */
 
-if (!$CJO['CONTEJO']) return false;
+if (!cjoProp::isBackend()) return false;
 
 /**
  * cjoSubpages class
@@ -36,34 +36,32 @@ if (!$CJO['CONTEJO']) return false;
  */
 class cjoSubPages {
 
-    public $subpage;
-
-    public $mypage;
-
-    public $params;
-
-    public $subpages;
-
-    public $debug;
+    private static $level       = 0;
+    private static $subpages    = false; 
+    private static $initialized = false;  
+    private static $call        = '';
+    private $subpage;
+    private $page;
+    private $page_settings;
+    private $params;
+    private $debug;
 
 	/**
      * Constructor. Generates the subpage navigation based on the users permissions.
      * If there is no permission to the called page or subpage the user
      * is redirected to CONTEJOs backend startpage.
      *
-     * @param string $subpage name of the active subpage
-     * @param string $mypage name of the active page
      * @param boolean $debug
      * @return void
      * @access public
      */
-    public function __construct($subpage, $mypage, $debug=false) {
+    public function __construct($debug=false) {
 
-        $this->subpage   = $subpage;
-        $this->mypage    = $mypage;
-        $this->debug     = $debug;
-        $this->params    = array();
-        $this->subpages  = array();
+        $this->subpage       = cjoProp::getSubpage();
+        $this->page          = self::$level > 0 ? cjoProp::getSubpage() : cjoProp::getPage();
+        $this->debug         = $debug;
+        $this->page_settings = array();
+        $this->params        = array();
     }
 
     /**
@@ -71,18 +69,16 @@ class cjoSubPages {
      * via output filter extensionpoint.
      *
      * @param string $subpage name of the active subpage
-     * @param array $subpages settings of available subpages
-     * @param string $mypage name of the active page
+     * @param array $params settings of available subpages
+     * @param string $page name of the active page
      * @return void
      * @access public
      */
-    public static function setTabs($subpage, $subpages, $mypage) {
+    public static function setTabs($subpage, $params, $page) {
 
-    	global $CJO, $I18N;
-
-    	if (count($subpages) <= 1 && !array_key_exists('important', current($subpages))) {
-    	    $title = (!$subpages[0]['title']) ? $I18N->msg('title_'.$subpages[0][0]) : $subpages[0]['title'];
-    	    if (empty($CJO['title'])) $CJO['title'] = $title;
+    	if (count($params) <= 1 && !array_key_exists('important', current($params))) {
+    	    $title = (!$params[0]['title']) ? cjoI18N::translate('title_'.$params[0][0].'s') : $params[0]['title'];
+    	    if (!cjoProp::get('title')) cjoProp::set('title', $title);
     		cjoExtension::registerExtension('OUTPUT_FILTER', 'cjoSubPages::insertTitle');
     	    return false;
     	}
@@ -90,37 +86,58 @@ class cjoSubPages {
     	$clang = cjo_request('clang', 'cjo-clang-id', 0);
 
     	$tabs = '';
-    	foreach($subpages as $cur) {
+    	foreach($params as $param) {
 
-    		$title = (empty($cur['title'])) ? $I18N->msg('title_'.$cur[0]) : $cur['title'];
+    		if (empty($param['title'])) {
+    		     $param['title'] = cjoI18N::translate('title_'.$param[0]);
+            }
+            if (strpos($param['title'], 'title_'.$param[0]) !== false) {
+                 $param['title'] = cjoI18N::translate('title_'.$param[0].'s');
+            }
+            $title = $param['title'];
 
-    		if ($cur[0] == $subpage) {
+    		if ($param[0] == $subpage) {
     			$current = ' class="current"';
-    			if (empty($CJO['title'])) {
-    				$CJO['title'] = strip_tags($title);
+    			if (!cjoProp::get('title')) {
+    				cjoProp::set('title', strip_tags($title));
     				cjoExtension::registerExtension('OUTPUT_FILTER', 'cjoSubPages::insertTitle');
     			}
-    		}
-    		else {
+    		} else {
     			$current = '';
     		}
-    		$cur['query_str'] = (empty($cur['query_str'])) ? 'page='.$mypage.'&subpage='.$cur[0].'&clang='.$clang : $cur['query_str'];
-    		$url = (empty($cur['url'])) ? 'index.php?'.$cur['query_str'] : $cur['url'];
 
-    		$tabs[$cur[0]] = '<a href="'.$url.'" title="'.strip_tags($title).'"'.$current.'>
+    		if (!is_array($param['params'])) {
+		        if(is_string($param['query_str'])) {
+		            parse_str(parse_str($param['query_str']), $param['params']);
+		        }
+                else {
+                    $param['params'] = array('page'=>$page, 'subpage'=>$param[0], 'clang'=>$clang);
+                }
+            }
+            
+            if(!isset($param['params']['oid']))      $param['params']['oid']      = NULL;
+            if(!isset($param['params']['function'])) $param['params']['function'] = NULL;
+            if(!isset($param['params']['mode']))     $param['params']['mode']     = NULL;
+            if(!isset($param['params']['stepping'])) $param['params']['stepping'] = NULL;
+            if(!isset($param['params']['next']))     $param['params']['next']     = NULL;
+            
+    		$url = (empty($param['url'])) ? cjoUrl::createBEUrl($param['params']) : $param['url'];
+
+    		$tabs[$param[0]] = '<a href="'.$url.'" title="'.strip_tags($title).'"'.$current.'>
         						<span class="left"></span>
         						<span class="center">'.$title.'</span>
         						<span class="right"></span>
         					</a>'."\r\n";
+                            
     	}
 
 
-    	if (empty($CJO['cjo_tabs'])) {
-    		$CJO['cjo_tabs'] = $tabs;
+    	if (!cjoProp::get('cjo_tabs')) {
+    		cjoProp::set('cjo_tabs',$tabs);
     		cjoExtension::registerExtension('OUTPUT_FILTER', 'cjoSubPages::insertTabs');
     	}
     	else {
-    		$CJO['cjo_sub_tabs'] = $tabs;
+            cjoProp::set('cjo_sub_tabs',$tabs);
     		cjoExtension::registerExtension('OUTPUT_FILTER', 'cjoSubPages::insertSubTabs');
     	}
     }
@@ -128,16 +145,14 @@ class cjoSubPages {
     /**
      * Method to insert main tabs called by output filter extensionpoint.
      *
-     * @param array $params output filter parameters
+     * @param array $page_settings output filter parameters
      * @return void
      * @access public
      */
     public static function insertTabs($params) {
-        
-    	global $CJO;
     	
     	$tabs = '<ul class="tabnmenu">';
-    	foreach($CJO['cjo_tabs'] as $key=>$tab) {
+    	foreach(cjoProp::get('cjo_tabs') as $key=>$tab) {
             $tabs .= '<li id="cjo_tabs_'.$key.'">'.$tab.'</li>';
     	}
     	$tabs .= '</ul>';
@@ -155,11 +170,9 @@ class cjoSubPages {
      * @access public
      */
     public static function insertSubTabs($params) {
-        
-    	global $CJO;
 
     	$tabs = '<div id="cjo_sub_tabs" class="floatbox"><ul class="tabnmenu">';
-        foreach($CJO['cjo_sub_tabs'] as $key=>$tab) {
+        foreach(cjoProp::get('cjo_sub_tabs') as $key=>$tab) {
             $tabs .= '<li id="cjo_sub_tabs_'.$key.'">'.$tab.'</li>';
         }
         $tabs .= '</ul></div>';
@@ -177,8 +190,7 @@ class cjoSubPages {
      * @access public
      */
     public static function insertTitle($params) {
-    	global $CJO;
-    	$content = preg_replace('/<\/title>/',' | '.$CJO['title'].'\0',$params['subject'],1);
+    	$content = preg_replace('/<\/title>/',' | '.cjoProp::get('title').'\0',$params['subject'],1);
     	$content = cjoExtension::registerExtensionPoint('OUTPUT_FILTER[TITLE_INSERTED]', $content);
     	return $content;
     }
@@ -187,42 +199,30 @@ class cjoSubPages {
      * Reads all addons that have been connected to
      * the currend page by the "Show Addon in"-Dialog
      *
-     * @param string $mypage name of the active page
+     * @param string $page name of the active page
      * @return array connected addons
      * @access public
      */
     public function getAddonSubPages() {
 
-    	global $CJO;
-
     	$addon_subpages = array();
+        
+    	if (!cjoProp::getUser()) return $addon_subpages;
 
-    	if (empty($CJO['USER'])) return $addon_subpages;
+    	foreach (cjoAssistance::toArray(cjoAddon::getProperty('status')) as $addon => $item) {
 
-    	foreach (cjoAssistance::toArray($CJO['ADDON']['status']) as $key => $item) {
+    		if (!cjoAddon::getProperty('status', $addon) ||
+    			!cjoAddon::getProperty('menu', $addon) ||
+    			cjoAddon::getProperty('menu', $addon) != $this->page) continue;
 
-    		if (!$CJO['ADDON']['status'][$key] ||
-    			!$CJO['ADDON']['menu'][$key] ||
-    			$CJO['ADDON']['menu'][$key] != $this->mypage) continue;
+    		$name = (cjoAddon::getProperty('name', $addon, false)) ? cjoAddon::getProperty('name', $addon) : false;
 
-    		$name = (isset($CJO['ADDON']['name'][$key])) ? $CJO['ADDON']['name'][$key] : false;
-
-    		if ($CJO['ADDON']['status'][$key] && $name && $CJO['USER']->hasAddonPerm($key, true)) {
-    			$addon_subpages[] = array($key, 'title' => $name, 'addon'=>true);
+    		if (cjoAddon::isActivated($addon) && $name && cjoProp::getUser()->hasAddonPerm($addon, true)) {
+    			$addon_subpages[] = array($addon, 'title' => $name, 'addon'=>true);
     		}
     	}
+    	
     	return $addon_subpages;
-    }
-
-    /**
-     * Adds a subpage.
-     * @param array $params parameters of the subpage
-     * @return void
-     * @access public
-     */
-    public function addPage($params) {
-        if (is_array($params))
-            $this->params[] = $params;
     }
 
     /**
@@ -230,96 +230,100 @@ class cjoSubPages {
      * @return string
      * @access public
      */
-    public function getPage() {
+    
+    private function getPage() {
 
-        global $CJO, $I18N, $cur_page, $subpage;
-
-    	$subpage = '';
+    	$subpage = false;
+        $default_path = cjoPath::inc('pages/edit/structure.inc.php');
     	$addon_index = false;
 
-    	if (is_array($this->params) && empty($cur_page['popup'])) {
+    	if (is_array($this->page_settings) && !cjoProp::get('PAGE_POPUP')) {
 
-    		if (empty($CJO['cjo_tabs'])) {
-    			$this->params = array_merge($this->params, $this->getAddonSubPages());
+    		if (!cjoProp::get('cjo_tabs')) {
+    			$this->page_settings = array_merge($this->page_settings, $this->getAddonSubPages());
     		}
-    		$subpage = !empty($subpages[0][0]) ? $subpages[0][0] : '';
 
-    		foreach($this->params as $cur) {
+    		foreach($this->page_settings as $param) {
 
     			$per = true;
-    			if (isset($cur['rights']) && is_array($cur['rights'])) {
+    			if (isset($param['rights']) && is_array($param['rights'])) {
 
-    				foreach($cur['rights'] as $right) {
-    					if (!$CJO['USER']->hasPerm($right)) {
+    				foreach($param['rights'] as $right) {
+    					if (!empty($right) && !cjoProp::getUser()->hasPerm($right)) {
     						$per = false;
     						break;
     					}
     				}
     			}
+                      
     			if ($per) {
-    				$this->subpages[] = $cur;
-    				if ($cur[0] == $this->subpage) {
-    					$subpage = $cur[0];
-    					if (!empty($cur['addon'])) $addon_index = true;
+    				$this->params[] = $param;
+    				
+    				if ($this->subpage && $param[0] == $this->subpage) {
+    					$subpage = $param[0];
+    					if (!empty($param['addon'])) $addon_index = true;
     				}
     			}
     			else {
-    				if ($cur[0] == $this->subpage)
-    				    cjoMessage::addError($I18N->msg("msg_no_permissions"));
+    				if ($param[0] == $this->subpage)
+    				    cjoMessage::addError(cjoI18N::translate("msg_no_permissions"));
     			}
     		}
+    		// if (empty($this->params))
+    		    // cjoMessage::addError(cjoI18N::translate("msg_no_permissions"));
 
-    		if (empty($this->subpages))
-    		    cjoMessage::addError($I18N->msg("msg_no_permissions"));
+    		if (!$subpage && !cjoMessage::hasError(cjoI18N::translate("msg_no_permissions")))
+    		    $subpage = $this->params[0][0];
 
-    		if ($subpage == '' && !cjoMessage::hasError($I18N->msg("msg_no_permissions")))
-    		    $subpage = $this->subpages[0][0];
-
-    		if (isset($CJO['ADDON']['curr_subpage']) && 
-    		    isset($CJO['ADDON']['curr_subpage'][$this->mypage]) && 
-    		    isset($CJO['cjo_tabs'])) {
-    			$subpage = $CJO['ADDON']['curr_subpage'][$this->mypage];
+    		if (cjoAddon::getProperty('curr_subpage') && 
+    		    cjoAddon::getProperty('curr_subpage', $this->page) && 
+    		    cjoProp::get('cjo_tabs')) {
+    			$subpage = cjoAddon::getProperty('curr_subpage', $this->page);
     		}
-    		if (!cjoMessage::hasError($I18N->msg("msg_no_permissions")))
-    		$this->setTabs($subpage, $this->subpages, $this->mypage);
+    		if (!cjoMessage::hasError(cjoI18N::translate("msg_no_permissions"))) {
+    		    $this->setTabs($subpage, $this->params, $this->page);
+            }
+    	}
+    	if (cjoProp::get('PAGE_POPUP')) {
+    		$this->page = cjo_request('page', 'string', '');
+    		$subpage    = cjo_request('subpage', 'string', '');
     	}
 
-    	if (!empty($cur_page['popup'])) {
-    		$this->mypage =  cjo_request('page', 'string', '');
-    		$subpage = cjo_request('subpage', 'string', '');
-    	}
+        cjoProp::setPage($this->page); 
+        cjoProp::setSubpage($subpage);
 
     	if ($addon_index) {
     	    
-    		if ($this->debug) echo '1.) '.$CJO['ADDON_PATH'].'/'.$subpage.'/pages/index.inc.php<br/>';
-    		
-    		if (file_exists($CJO['ADDON_PATH'].'/'.$subpage.'/pages/index.inc.php'))
-    		    return $CJO['ADDON_PATH'].'/'.$subpage.'/pages/index.inc.php';
-    		  
-            if (file_exists($CJO['ADDON_CONFIG_PATH'].'/'.$subpage.'/pages/index.inc.php'))
-                return $CJO['ADDON_CONFIG_PATH'].'/'.$subpage.'/pages/index.inc.php';                   
-            
-            return $CJO['INCLUDE_PATH'].'/pages/edit/structure.inc.php'; 
+            $path1 = cjoPath::addon($subpage, 'pages/index.inc.php');
+            $path2 = cjoPath::addonAssets($subpage, 'pages/index.inc.php');
+
+            if ($this->debug) echo '1.) '.$path1.'<br/>';
+            if (file_exists($path1)) return $path1;   
+            if (file_exists($path2)) return $path2;  
+            return $default_path; 
               		  
     	}
-    	elseif (!empty($CJO['ADDON']['status'][$this->mypage]) && $subpage != '') {
+        elseif (cjoAddon::isActivated($this->page) && $subpage) {
     	    
-    		if ($this->debug) echo '2.) '.$CJO['ADDON_PATH'].'/'.$this->mypage.'/pages/'.$subpage.'.inc.php<br/>';
-    		
-            if (file_exists($CJO['ADDON_PATH'].'/'.$this->mypage.'/pages/'.$subpage.'.inc.php'))
-                return $CJO['ADDON_PATH'].'/'.$this->mypage.'/pages/'.$subpage.'.inc.php';      		
+            $path1 = cjoPath::addon($this->page, 'pages/'.$subpage.'.inc.php');
+            $path2 = cjoPath::addonAssets($this->page, 'pages/'.$subpage.'.inc.php');
 
-            if (file_exists($CJO['ADDON_CONFIG_PATH'].'/'.$this->mypage.'/pages/'.$subpage.'.inc.php'))
-                return $CJO['ADDON_CONFIG_PATH'].'/'.$this->mypage.'/pages/'.$subpage.'.inc.php';  
-                
-            return $CJO['INCLUDE_PATH'].'/pages/edit/structure.inc.php';      
+    		if ($this->debug) echo '2.) '.$path1.'<br/>';
+            self::$call = $subpage;
+            if (file_exists($path1)) return $path1;  
+            if (file_exists($path2)) return $path2;  
+            self::$call = 'EditStructure';
+            return $default_path;      
               
     	}
-    	else if ($subpage != '' || $subpage === 0) {
-    		if ($this->debug) echo '3.) '.$CJO['INCLUDE_PATH'].'/pages/'.$this->mypage.'/'.$subpage.'.inc.php<br/>';
-    		return $CJO['INCLUDE_PATH'].'/pages/'.$this->mypage.'/'.$subpage.'.inc.php';
+    	else if ($subpage || $subpage === 0) {
+    	    
+            $path1 = cjoPath::inc('pages/'.$this->page.'/'.$subpage.'.inc.php');
+            self::$call = $this->page.$subpage;
+    		if ($this->debug) echo '3.) '.$path1.'<br/>';
+    		return $path1;
     	}
-    	else if ($this->mypage != 'login') {
+    	else if ($this->page != 'login') {
 
             $article_id = cjo_request('article_id', 'cjo-article-id');
             //[translate: msg_no_permissions_redirected]
@@ -327,11 +331,88 @@ class cjoSubPages {
                                    'article_id'=> $article_id, 'err_msg'=>'msg_no_permissions_redirected');
 
             if ($this->debug) {
-                echo '4.) '.cjoAssistance::createBEUrl($local_params).'<br/>';
+                echo '4.) '.cjoUrl::createBEUrl($local_params).'<br/>';
             }
             else {
-                cjoAssistance::redirectBE($local_params);
+                cjoUrl::redirectBE($local_params);
             }
         }
+    }
+
+    /**
+     * Adds a number of subpages.
+     * @param array $page_settings parameters of the subpages
+     * @return void
+     * @access public
+     */
+    public static function addPages($page_settings) {
+        if (!is_array($page_settings)) {
+            throw new cjoException('Expecting $page_settings to be array, but ' . gettype($page_settings) . ' given!');
+        }
+        
+        foreach($page_settings as $page_setting) {
+            self::addPage($page_setting);
+        }
+    }
+    
+    /**
+     * Adds a subpage.
+     * @param array $page_setting parameters of the subpage
+     * @return void
+     * @access public
+     */
+    public static function addPage($page_setting) {
+
+        if (!is_array($page_setting)) {
+            throw new cjoException('Expecting $page_settings to be array, but ' . gettype($page_setting) . ' given!');
+        }               
+        
+        self::init(); 
+        
+        if (is_array($page_setting))
+            self::$subpages->page_settings[] = $page_setting;
+    }
+    
+    public static function generatePage() {
+        
+        self::init();
+
+        if (cjoProp::get('PAGE_HEADER')){
+            require_once cjoPath::inc('layout/top.php');
+        }
+
+        include_once cjoProp::get('PAGE_PATH');
+        self::$subpages->getPage();
+        $class_name = 'cjoPage'.self::$call;
+
+            
+        if (class_exists($class_name)) {
+            new $class_name();
+        }
+
+        if (cjoProp::get('PAGE_HEADER')) {
+            require_once cjoPath::inc('/layout/bottom.php');
+        }
+    }
+    
+    /**
+     * Adds a subpage.
+     * @param array $page_setting parameters of the subpage
+     * @return void
+     * @access public
+     */
+    public static function getPagePath() {
+        self::$level++;
+        self::$initialized = false;
+        $page_path = self::$subpages->getPage();
+        if (cjoFile::isReadable($page_path)) {
+            return $page_path;
+        }
+    }    
+    
+    public static function init() {
+        if (self::$initialized) return false;
+        self::$subpages = new cjoSubPages();
+        self::$initialized = true;
     }
 }

@@ -1,0 +1,48 @@
+[%TEMPLATE%]
+
+[[FILTER]]
+
+IF([[NO_DATA]]){%
+    <div class="textblock no_data">[[NO_DATA]]</div>
+%}ENDIF
+
+
+<%RESULTS%>
+[[PAGINATION]]
+
+
+[%RESULTS%]
+
+<div class="absatz"></div>
+
+<div class="floatbox">
+
+    IF([[FILE]]){%
+        <div class="float_left vrt_img">
+            [[THUMBNAIL]]
+        </div>
+    %}ENDIF
+
+    <div class="textblock">
+        <h3>[[NUMBER]]. [[TITLE]]
+            <span>[[START_DATE]] [[START_TIME]]</span>
+        </h3>
+
+        [[SHORT_DESCRIPTION]]
+
+        [[ARTICLE]]
+        <br/><br/>
+        [[START_DATE]] , [[START_TIME]]<br/>
+        [[END_DATE]] , [[END_TIME]]<br/>
+        [[ATTRIBUTE_1]]<br/>
+        [[ATTRIBUTE_2]]<br/>
+        [[ATTRIBUTE_3]]<br/>
+        [[ATTRIBUTE_4]]<br/>
+        [[ATTRIBUTE_5]]<br/>
+        [[ATTRIBUTE_6]]<br/>
+        [[ATTRIBUTE_7]]<br/>
+        [[ATTRIBUTE_8]]<br/>
+        [[ATTRIBUTE_9]]<br/>
+        [[ATTRIBUTE_10]]<br/>
+    </div>
+</div>

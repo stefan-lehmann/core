@@ -126,7 +126,7 @@ class OOContejo {
                 return $this->getValue('file');
             }                
         }
-        return isset($this->$value) ? $this->$value : null;
+        return $this->$value;
     }
 
     /**
@@ -137,7 +137,7 @@ class OOContejo {
      * @access public
      */
     public function getUrl($params = '', $hash_string = '') {
-        return cjoRewrite::getUrl($this->getId(), $this->getClang(), $params, $hash_string);
+        return cjoUrl::getUrl($this->getId(), $this->getClang(), $params, $hash_string);
     }
 
     /**
@@ -174,7 +174,7 @@ class OOContejo {
             return htmlspecialchars($this->_title);
         }
         else{
-            return $I18N->msg("label_no_name");
+            return cjoI18N::translate("label_no_name");
         }
     }
 
@@ -186,8 +186,7 @@ class OOContejo {
      * @access public
      */
     public function getFile($fullpath = false) {
-       global $CJO;
-       return ($fullpath == true) ? $CJO['MEDIAFOLDER'].'/'.$this->_file : $this->_file;
+       return ($fullpath == true) ? cjoUrl::media($this->_file) : $this->_file;
     }
 
     /**
@@ -437,7 +436,7 @@ class OOContejo {
 
         if ($format !== null) {
             if (strpos($format, '%') === false && isset($I18N)) {
-                $format = $I18N->msg('dateformat');
+                $format = cjoI18N::translate('dateformat');
             }
             return @strftime($format, $date);
         }
@@ -464,8 +463,7 @@ class OOContejo {
      * @access public
      */
     public function isAdminOnly() {
-        global $CJO;
-        return !$CJO['USER']->isAdmin() && $this->_admin_only == 1 ? true : false;
+        return !cjoProp::getUser()->isAdmin() && $this->_admin_only == 1 ? true : false;
     }   
     
     
@@ -535,13 +533,13 @@ class OOContejo {
 
             global $CJO;
 
-            $file = $CJO['FOLDER_GENERATED_ARTICLES']."/".$CJO['START_ARTICLE_ID'].".0.article";
+            $file = cjoPath::generated('articles', cjoProp::get('START_ARTICLE_ID').'.0.article');
 
-            if ($CJO['GG'] && file_exists($file)) {
+            if (cjoProp::get('GG') && file_exists($file)) {
 
                 include_once($file);
 
-                $genVars = OOContejo::convertGeneratedArray($CJO['ART'][$CJO['START_ARTICLE_ID']],0);
+                $genVars = OOContejo::convertGeneratedArray($CJO['ART'][cjoProp::get('START_ARTICLE_ID')],0);
                 unset($genVars['article_id']);
                 unset($genVars['last_update_stamp']);
                 foreach($genVars as $name => $value) {
@@ -620,7 +618,7 @@ class OOContejo {
      */
     public function isSiteStartArticle() {
         global $CJO;
-        return $this->_id == $CJO['START_ARTICLE_ID'];
+        return $this->_id == cjoProp::get('START_ARTICLE_ID');
     }
 
     /**

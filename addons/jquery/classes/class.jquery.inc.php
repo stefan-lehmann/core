@@ -25,42 +25,41 @@
 
 class cjojQuery {
 
-    private static $mypage  = "jquery";
-    private static $jq_path = "/jquery/jquery/";
+    private static $addon  = "jquery";
     
-    public static function copyjQueryFiles() {
-
-        global $CJO, $I18N_11;
+    public static function copyjQueryFiles($params=array()) {
         
-        $jq_incl_path  = $CJO['ADDON_CONFIG_PATH'].self::$jq_path;
-        $files = array();
-    
+        $path  = cjoUrl::addonAssets(self::$addon, cjoAddon::getParameter('INCLUDE_PATH', self::$addon).'/');
+        $files = array('js' => array(), 'css' => array());
+
     	$jq_version = cjo_post('VERSION', 'string');
         $jq_plugins = cjo_post('PLUGINS','array');
     	
-        if (file_exists($jq_incl_path) && !cjoAssistance::deleteDir($jq_incl_path,true)) {
-    		cjoMessage::addError($I18N_11->msg("err_create_plugin_dir", $jq_incl_path));
+        if (file_exists($path) && !cjoAssistance::deleteDir($path,true)) {
+    		cjoMessage::addError(cjoAddon::translate(11,"err_create_plugin_dir", $path));
     	}
     
-    	if (!@mkdir($jq_incl_path, $CJO['FILEPERM'])) {
-    		cjoMessage::addError($I18N_11->msg("err_create_plugin_dir", $jq_incl_path));
+    	if (!@mkdir($path, cjoProp::getDirPerm())) {
+    		cjoMessage::addError(cjoAddon::translate(11,"err_create_plugin_dir", $path));
     	}
     
     	if (!file_exists($jq_version)) {
-    		cjoMessage::addError($I18N_11->msg("err_jquery_version_is_missing", $jq_version));
+    		cjoMessage::addError(cjoAddon::translate(11,"err_jquery_version_is_missing", $jq_version));
     		return false;
     	}
-    
-    	$dest = str_replace($CJO['ADDON_PATH'], $CJO['ADDON_CONFIG_PATH'], $jq_version);
+        
+        $dest = str_replace(cjoUrl::addon(self::$addon,cjoAddon::getParameter('INCLUDE_PATH', self::$addon).'/'), 
+                            cjoUrl::addonAssets(self::$addon,cjoAddon::getParameter('INCLUDE_PATH', self::$addon).'/'),
+                            $jq_version);
     
     	if (!@copy($jq_version, $dest)) {
-    		cjoMessage::addError($I18N_11->msg("err_copy_version", $jq_version, $dest));
+    		cjoMessage::addError(cjoAddon::translate(11,"err_copy_version", $jq_version, $dest));
     	}
     	else {
-    	    @chmod($dest, $CJO['FILEPERM']);
-    	    $files['js'][] = str_replace($jq_incl_path,'', $dest);
+    	    @chmod($dest, cjoProp::getFilePerm());
+    	    $files['js'][] = str_replace($path,'', $dest);
     	}
-    	
+
     	foreach($jq_plugins as $key=>$jq_plugin) {
     
     		if (cjoMessage::hasErrors()) break;
@@ -69,10 +68,11 @@ class cjojQuery {
     	    if (is_dir($jq_plugin)) {
                 if ($dh = opendir($jq_plugin)) {
                     while (($file = readdir($dh)) !== false) {
-                        if (substr($file, 0, 1) != '_' && end(explode('.', $file)) == 'js') {
+                        $ext = pathinfo($file,PATHINFO_EXTENSION);
+                        if (substr($file, 0, 1) != '_' && $ext == 'js') {
                             $files['js'][] = $file;
                         }
-                        if (substr($file, 0, 1) != '_' && end(explode('.', $file)) == 'css') {
+                        if (substr($file, 0, 1) != '_' && $ext == 'css') {
                             $files['css'][] = $file;
                         }
                     }
@@ -80,19 +80,17 @@ class cjojQuery {
                 }
             }
     		
-    		$dest = str_replace($CJO['ADDON_PATH'], $CJO['ADDON_CONFIG_PATH'], $jq_plugin);
+            $dest = str_replace(cjoUrl::addon(self::$addon,cjoAddon::getParameter('INCLUDE_PATH', self::$addon).'/'), 
+                                cjoUrl::addonAssets(self::$addon,cjoAddon::getParameter('INCLUDE_PATH', self::$addon).'/'), 
+                                $jq_plugin);
     
-    		if (!cjoAssistance::copyDir($jq_plugin, $jq_incl_path)) {
-    			cjoMessage::addError($I18N_11->msg("err_copy_plugin_dir", $jq_plugin, $dest));
+    		if (!cjoFile::copyDir($jq_plugin, $path)) {
+    			cjoMessage::addError(cjoAddon::translate(11,"err_copy_plugin_dir", $jq_plugin, $dest));
     		}
     	}
-    	
-    	$CJO['ADDON']['settings'][self::$mypage]['JS_FILES'] = $files['js'];
-    	$CJO['ADDON']['settings'][self::$mypage]['CSS_FILES'] = $files['css'];    
-    	$_POST['JS_FILES'] = $files['js'];
-    	$_POST['CSS_FILES'] = $files['css'];     	
 
-    	cjoGenerate::updateSettingsFile($CJO['ADDON']['settings'][self::$mypage]['SETTINGS']);
+    	cjoAddon::setParameter('JS_FILES', implode('|',$files['js']), self::$addon);
+        cjoAddon::setParameter('CSS_FILES', implode('|',$files['css']), self::$addon);       
 
     	self::combineJsFiles($files['js']);
     	self::combineCssFiles($files['css']);
@@ -100,52 +98,44 @@ class cjojQuery {
     
     public static function combineJsFiles($files = NULL) {
     	
-    	global $CJO;
-        
-    	include $CJO['ADDON']['settings'][self::$mypage]['SETTINGS'];
-    	
     	$content  = '';
-        $path     = $CJO['ADDON_CONFIG_PATH'].self::$jq_path;
-    	$filename = $path.$CJO['ADDON']['settings'][self::$mypage]['COMBINED_NAME'].'.js';
+        $path     = cjoUrl::addonAssets(self::$addon, cjoAddon::getParameter('INCLUDE_PATH', self::$addon).'/');    
+        $filename = $path.'/'.cjoAddon::getParameter('COMBINED_NAME', self::$addon).'.js';
     	    	
     	if ($files == NULL)    	
-    	    $files = cjoAssistance::toArray($CJO['ADDON']['settings'][self::$mypage]['JS_FILES']);	
+    	    $files = cjoAssistance::toArray(cjoAddon::getParameter('JS_FILES',self::$addon));	
 
     	foreach($files as $file) {
-    	    if (!cjoAssistance::isReadable($path.$file)) continue;
+    	    if (!cjoFile::isReadable($path.$file)) continue;
     	    $content .= "\r\n\r\n /********************\r\n  *\r\n  *".$path.$file."\r\n  *\r\n  *********************/\r\n\r\n ";
     	    $content .= file_get_contents($path.$file);
     	}
         file_put_contents($filename, $content); 
-	    @chmod($filename, $CJO['FILEPERM']);          
+	    @chmod($filename, cjoProp::getFilePerm());          
         file_put_contents($filename.'.gz', gzencode($content,9));   
-	    @chmod($filename.'.gz', $CJO['FILEPERM']);        
+	    @chmod($filename.'.gz', cjoProp::getFilePerm());        
    }
 
     public static function combineCssFiles($files = NULL) {
     	
-    	global $CJO;
-        
-    	include $CJO['ADDON']['settings'][self::$mypage]['SETTINGS'];
-    	
     	$content  = '';
-        $path     = $CJO['ADDON_CONFIG_PATH'].self::$jq_path;    	
-    	$filename = $path.$CJO['ADDON']['settings'][self::$mypage]['COMBINED_NAME'].'.css';
+        $path     = cjoUrl::addonAssets(self::$addon, cjoAddon::getParameter('INCLUDE_PATH', self::$addon).'/');   	
+    	$filename = $path.'/'.cjoAddon::getParameter('COMBINED_NAME', self::$addon).'.css';
 
     	if ($files == NULL)
-    	    $files    = cjoAssistance::toArray($CJO['ADDON']['settings'][self::$mypage]['CSS_FILES']);	
+            $files = cjoAssistance::toArray(cjoAddon::getParameter('CSS_FILES',self::$addon));   ;	
 
     	foreach($files as $file) {
     	    
-    	    if (!cjoAssistance::isReadable($path.$file)) continue;
+    	    if (!cjoFile::isReadable($path.$file)) continue;
     	    
     	    $content .= "\r\n\r\n /*    ".$path.$file."    */\r\n ";
     	    $content .= file_get_contents($path.$file);
     	}
     	
         file_put_contents($filename, $content); 
-	    @chmod($filename, $CJO['FILEPERM']);          
+	    @chmod($filename, cjoProp::getFilePerm());          
         file_put_contents($filename.'.gz', gzencode($content,9));   
-	    @chmod($filename.'.gz', $CJO['FILEPERM']);          
+	    @chmod($filename.'.gz', cjoProp::getFilePerm());          
    }  
 }

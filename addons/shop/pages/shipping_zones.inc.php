@@ -24,9 +24,9 @@
  */
 
 global $CJO;
-$mypage = 'shop';
-$delivery_method = $CJO['ADDON']['settings'][$mypage]['DELIVERY_METHOD'];
-$currency_sign = $CJO['ADDON']['settings'][$mypage]['CURRENCY']['DEFAULT_SIGN'];
+$addon = 'shop';
+$delivery_method = $CJO['ADDON']['settings'][$addon]['DELIVERY_METHOD'];
+$currency_sign = $CJO['ADDON']['settings'][$addon]['CURRENCY']['DEFAULT_SIGN'];
 
 // reset all lists and forms
 cjoAssistance::resetAfcVars();
@@ -77,7 +77,7 @@ if ($function == 'delete') {
 	$sql->flush();
 
 	// redirect to previous page
-	cjoAssistance::redirectBE(array('function' => '', 'mode' => ''));
+	cjoUrl::redirectBE(array('function' => '', 'mode' => ''));
 } // end if function = delete
 
 
@@ -99,14 +99,14 @@ if ($function == 'edit' || $function = 'add') {
 	$hidden['zone_id']->setValue($zone_id);
 
     // fields
-    $fields['zone'] = new textField('zone', $I18N_21->msg('shop_zone_name'));
-    $fields['zone']->addValidator('notEmpty', $I18N_21->msg("msg_name_notEmpty"), false, false);
+    $fields['zone'] = new textField('zone', cjoAddon::translate(21,'shop_zone_name'));
+    $fields['zone']->addValidator('notEmpty', cjoAddon::translate(21,"msg_name_notEmpty"), false, false);
 	$fields['zone']->needFullColumn(true);
 
-    $fields['new_country'] = new selectField('countries', $I18N_21->msg('shop_edit_countries'));
+    $fields['new_country'] = new selectField('countries', cjoAddon::translate(21,'shop_edit_countries'));
     $fields['new_country']->setMultiple(true);
     $fields['new_country']->addAttribute('size', '20');
-    $fields['new_country']->addValidator('notEmpty', $I18N_21->msg("msg_country_name_notEmpty"), false, false);
+    $fields['new_country']->addValidator('notEmpty', cjoAddon::translate(21,"msg_country_name_notEmpty"), false, false);
 	$fields['new_country']->needFullColumn(true);
 
     // add select options
@@ -123,63 +123,59 @@ if ($function == 'edit' || $function = 'add') {
         	$i = $value['id'];
             $count++;
 
-    		$fields['headline_'.$i] = new readOnlyField('headline_'.$i, '', array('class' => 'formheadline'));
-		    $fields['headline_'.$i]->setValue($count.'. '.$I18N_21->msg('shop_delivery_costs'));
-    		$fields['headline_'.$i]->needFullColumn(true);
+    		$fields['headline_'.$i] = new headlineField($count.'. '.cjoAddon::translate(21,'shop_delivery_costs'));
 
-    	    $fields['order_value_'.$i] = new textField('order_value_'.$i,$I18N_21->msg('shop_be_order_value'));
+    	    $fields['order_value_'.$i] = new textField('order_value_'.$i,cjoAddon::translate(21,'shop_be_order_value'));
     		$fields['order_value_'.$i]->setValue(cjoShopPrice::toCurrency($value['order_value'], true));
     		$fields['order_value_'.$i]->addAttribute('style', 'width: 49px; text-align: right');
-			$fields['order_value_'.$i]->addValidator('notEmpty', $I18N_21->msg("msg_package_costs_notEmpty"),false, false);
-	    	$fields['order_value_'.$i]->addValidator('isPrice', $I18N_21->msg("msg_package_costs_no_price"),false, false);
+			$fields['order_value_'.$i]->addValidator('notEmpty', cjoAddon::translate(21,"msg_package_costs_notEmpty"),false, false);
+	    	$fields['order_value_'.$i]->addValidator('isPrice', cjoAddon::translate(21,"msg_package_costs_no_price"),false, false);
     	    $fields['order_value_'.$i]->setNote($currency_sign, 'style="width: auto!important"');
 
     	    $fields['delete_'.$i] = new checkboxField('delete_'.$i, '&nbsp;');
-    		$fields['delete_'.$i]->addBox( $I18N_21->msg('shop_delete'), 1);
-    		$fields['delete_'.$i]->setHelp($I18N_21->msg('shop_help_edit_zone_costs'), 'style="float: right!important"');
+    		$fields['delete_'.$i]->addBox( cjoAddon::translate(21,'shop_delete'), 1);
+    		$fields['delete_'.$i]->setHelp(cjoAddon::translate(21,'shop_help_edit_zone_costs'), 'style="float: right!important"');
 
-    		$fields['costs_'.$i] = new textField('costs_'.$i, $I18N_21->msg('shop_netto_price'));
+    		$fields['costs_'.$i] = new textField('costs_'.$i, cjoAddon::translate(21,'shop_netto_price'));
     		$fields['costs_'.$i]->setValue(cjoShopPrice::toCurrency($value['costs'], true));
     		$fields['costs_'.$i]->setNote($currency_sign, 'style="width: auto!important"');
     		$fields['costs_'.$i]->addAttribute('style', 'width: 49px; text-align: right');
-    		$fields['costs_'.$i]->addValidator('notEmpty', $I18N_21->msg("msg_package_costs_notEmpty"), false, false);
-	    	$fields['costs_'.$i]->addValidator('isPrice', $I18N_21->msg("msg_package_costs_no_price"), false, false);
+    		$fields['costs_'.$i]->addValidator('notEmpty', cjoAddon::translate(21,"msg_package_costs_notEmpty"), false, false);
+	    	$fields['costs_'.$i]->addValidator('isPrice', cjoAddon::translate(21,"msg_package_costs_no_price"), false, false);
 
-	    	$fields['tax_'.$i] = new textField('tax_'.$i, $I18N_21->msg('shop_tax'));
+	    	$fields['tax_'.$i] = new textField('tax_'.$i, cjoAddon::translate(21,'shop_tax'));
 	    	$fields['tax_'.$i]->setValue(cjoShopPrice::formatNumber($value['tax'], true));
     		$fields['tax_'.$i]->setNote('%','style="width: auto!important"');
     		$fields['tax_'.$i]->addAttribute('style', 'width: 49px; text-align: right');
-    		$fields['tax_'.$i]->addValidator('notEmpty', $I18N_21->msg("msg_package_costs_notEmpty"),false, false);
-	    	$fields['tax_'.$i]->addValidator('isRegExp', $I18N_21->msg("msg_packing_units_no_number"),array('expression' => '/^\d+([,\.]\d+)?$/'), false);
+    		$fields['tax_'.$i]->addValidator('notEmpty', cjoAddon::translate(21,"msg_package_costs_notEmpty"),false, false);
+	    	$fields['tax_'.$i]->addValidator('isRegExp', cjoAddon::translate(21,"msg_packing_units_no_number"),array('expression' => '/^\d+([,\.]\d+)?$/'), false);
     	}
 
-		$fields['headline_add'] = new readOnlyField('headline_'.$i, '', array('class' => 'formheadline slide'));
-	    $fields['headline_add']->setValue($I18N_21->msg('shop_delivery_costs_add'));
-		$fields['headline_add']->needFullColumn(true);
+		$fields['headline_add'] = new headlineField(cjoAddon::translate(21,'shop_delivery_costs_add'), true);
 
-    	$fields['order_value_new'] = new textField('order_value_new', $I18N_21->msg('shop_be_order_value'));
+    	$fields['order_value_new'] = new textField('order_value_new', cjoAddon::translate(21,'shop_be_order_value'));
     	$fields['order_value_new']->addAttribute('style', 'width: 49px; text-align: right');
     	$fields['order_value_new']->setNote($currency_sign, 'style="width: auto!important"');
 
     	$fields['delte_new'] = new readOnlyField('delte_new', '&nbsp;');
-    	$fields['delte_new']->setHelp($I18N_21->msg('shop_help_edit_zone_costs'));
+    	$fields['delte_new']->setHelp(cjoAddon::translate(21,'shop_help_edit_zone_costs'));
 
-    	$fields['costs_new'] = new textField('costs_new', $I18N_21->msg('shop_netto_price'));
+    	$fields['costs_new'] = new textField('costs_new', cjoAddon::translate(21,'shop_netto_price'));
     	$fields['costs_new']->setNote($currency_sign, 'style="width: auto!important"');
     	$fields['costs_new']->addAttribute('style', 'width: 49px; text-align: right');
 
-    	$fields['tax_new'] = new textField('tax_new', $I18N_21->msg('shop_tax'));
+    	$fields['tax_new'] = new textField('tax_new', cjoAddon::translate(21,'shop_tax'));
     	$fields['tax_new']->setNote('%','style="width: auto!important"');
     	$fields['tax_new']->addAttribute('style', 'width: 49px; text-align: right');
     }
 
     $fields['button'] = new buttonField();
-	$fields['button']->addButton('cjoform_save_button', $I18N->msg('button_save'), true, 'img/silk_icons/disk.png');
-    $fields['button']->addButton('cjoform_update_button', $I18N->msg('button_update'), true, 'img/silk_icons/tick.png');
-	$fields['button']->addButton('cjoform_cancel_button', $I18N->msg('button_cancel'), true, 'img/silk_icons/cancel.png');
+	$fields['button']->addButton('cjoform_save_button', cjoI18N::translate('button_save'), true, 'img/silk_icons/disk.png');
+    $fields['button']->addButton('cjoform_update_button', cjoI18N::translate('button_update'), true, 'img/silk_icons/tick.png');
+	$fields['button']->addButton('cjoform_cancel_button', cjoI18N::translate('button_cancel'), true, 'img/silk_icons/cancel.png');
 	$fields['button']->needFullColumn(true);
 
-	$msg = ($function == 'add') ? $I18N_21->msg('shop_add_country_zone') : $I18N_21->msg('shop_edit_country_zone');
+	$msg = ($function == 'add') ? cjoAddon::translate(21,'shop_add_country_zone') : cjoAddon::translate(21,'shop_edit_country_zone');
 
     // add to form
     $section = new cjoFormSection(TBL_21_COUNTRY_ZONE, $msg, array('id' => $zone_id), array('35%', '65%'));
@@ -191,19 +187,19 @@ if ($function == 'edit' || $function = 'add') {
     if ($form->validate()) {
         
 		if (cjo_post('cjoform_cancel_button')) {
-			cjoAssistance::redirectBE(array('function' => '', 'mode' => ''));
+			cjoUrl::redirectBE(array('function' => '', 'mode' => ''));
 		}
 		elseif(cjo_post('cjoform_save_button')) {
 		    $redirect = cjoShopDeliverySettings::saveZoneSettings();
 			if ($redirect !== false) {
-				cjoAssistance::redirectBE(array('function' => '', 'mode' => '', 'msg' => 'msg_data_saved'));
+				cjoUrl::redirectBE(array('function' => '', 'mode' => '', 'msg' => 'msg_data_saved'));
 			}
 		}
 		else {
 			$redirect = cjoShopDeliverySettings::saveZoneSettings();
 			if ($redirect != false) {
 				$redirect['msg'] = 'msg_data_saved';
-				cjoAssistance::redirectBE($redirect);
+				cjoUrl::redirectBE($redirect);
 			}
 			$form->valid_master = false;
 		}

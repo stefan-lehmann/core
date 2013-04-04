@@ -26,7 +26,7 @@
 class cjoOAuthProvider {
 
     protected $name = false;
-    protected static $mypage = 'oauth';
+    protected static $addon = 'oauth';
     protected $settings;
     protected $provider;
 
@@ -39,7 +39,7 @@ class cjoOAuthProvider {
         
         foreach(self::getProviders() as $provider){
             
-            include_once $CJO['ADDON_PATH'].'/'.self::$mypage.'/providers/'.$provider.'/cjo_'.$provider.'.inc.php';
+            include_once cjoPath::addon(self::$addon, 'providers/'.$provider.'/cjo_'.$provider.'.inc.php');
         
             $class_name = 'cjo'.$provider;
             if (cjo_get(self::generateGetKey($provider),'string') == $provider) {
@@ -64,7 +64,7 @@ class cjoOAuthProvider {
         }
         if (self::isAjax()) {
             require_once $CJO['INCLUDE_PATH']."/classes/afc/functions/function_cjo_common.inc.php";
-            $content = cjo_insertJS($content, $CJO['ADDON']['settings'][self::$mypage]['oauth_js']);
+            $content = cjo_insertJS($content, $CJO['ADDON']['settings'][self::$addon]['oauth_js']);
         }
         return $content;
     }
@@ -72,7 +72,7 @@ class cjoOAuthProvider {
     protected function getSettings($provider = false) {
         global $CJO;
         if ($provider === false) $provider = $this->name;
-        $json = file_get_contents($CJO['ADDON_CONFIG_PATH'] . '/' . self::$mypage . '/' . $provider . '/settings.json');
+        $json = file_get_contents($CJO['ADDON_CONFIG_PATH'] . '/' . self::$addon . '/' . $provider . '/settings.json');
         $this->settings = json_decode($json);
     }
 
@@ -127,10 +127,10 @@ class cjoOAuthProvider {
         $redirect_uri = cjo_session('oauth_page','string');
         if ($redirect_uri && preg_match('/^https*:\/\//i', $redirect_uri)) {
             cjo_set_session('oauth_page', NULL);
-            cjoAssistance::redirect($redirect_uri); 
+            cjoUrl::redirect($redirect_uri); 
         } 
         else {
-            cjoAssistance::redirectFE($CJO['START_ARTICLE_ID']); 
+            cjoUrl::redirectFE(cjoProp::get('START_ARTICLE_ID')); 
         }
     }
 
@@ -155,7 +155,7 @@ class cjoOAuthProvider {
     
     protected static function generateGetKey($provider) {
         global $CJO;
-        return md5('cjo_outh_connect'.$CJO['INSTNAME'].$provider.session_id());
+        return md5('cjo_outh_connect'.cjoProp::getInstname().$provider.session_id());
     }
     
     protected function getHttpHost() {
@@ -180,12 +180,12 @@ class cjoOAuthProvider {
 
     private static function getProviders(){
         global $CJO;
-        return cjoAssistance::toArray($CJO['ADDON']['settings'][self::$mypage]['providers']);
+        return cjoAssistance::toArray($CJO['ADDON']['settings'][self::$addon]['providers']);
     }
     
     protected static function isAjax() {
         global $CJO;        
-        return !empty($CJO['ADDON']['settings'][self::$mypage]['ajax']) && $CJO['ADDON']['settings'][self::$mypage]['ajax'] != 'false';
+        return !empty($CJO['ADDON']['settings'][self::$addon]['ajax']) && $CJO['ADDON']['settings'][self::$addon]['ajax'] != 'false';
     }
 
     /**
@@ -248,5 +248,9 @@ class cjoOAuthProvider {
         }
 
         return true;
+    }
+    
+    public static function initAddon() {
+        if (!cjoProp::isBackend()) self::initProviders();
     }
 }

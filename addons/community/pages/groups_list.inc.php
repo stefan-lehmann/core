@@ -41,38 +41,38 @@ $list->setName('GROUP_LIST');
 $list->setAttributes('id="group_list"');
 //$list->debug = true;
 
-$add_button = cjoAssistance::createBELink(
-							'<img src="img/silk_icons/add.png" alt="'.$I18N->msg("button_add").'" />',
+$add_button = cjoUrl::createBELink(
+							'<img src="img/silk_icons/add.png" alt="'.cjoI18N::translate("button_add").'" />',
 							array('group_id'=> $group_id, 'function' => 'add', 'oid' => ''),
 							$list->getGlobalParams(),
-                            'title="'.$I18N->msg("button_add").'"');
+                            'title="'.cjoI18N::translate("button_add").'"');
 
 $cols['id'] = new resultColumn('id', $add_button, 'sprintf', '<span>%s</span>');
 $cols['id']->setHeadAttributes('class="icon"');
 $cols['id']->setBodyAttributes('class="icon cjo_id"');
 $cols['id']->delOption(OPT_ALL);
 
-$cols['name'] = new resultColumn('name', $I18N_10->msg('label_group_name'));
+$cols['name'] = new resultColumn('name', cjoAddon::translate(10,'label_group_name'));
 $cols['name']->setBodyAttributes('class="large_item"');
 $cols['name']->setParams(array ('group_id' => '%id%'));
 $cols['name']->delOption(OPT_ALL);
 
-$cols['article_types'] = new resultColumn('article_types', $I18N_10->msg('label_article_types'), 'call_user_func',
+$cols['article_types'] = new resultColumn('article_types', cjoAddon::translate(10,'label_article_types'), 'call_user_func',
 								  		  array('cjoCommunityGroups::getArticleTypesOfGroup',array('%s','names')));
 $cols['article_types']->delOption(OPT_ALL);
 
-$cols['users'] = new resultColumn('users', $I18N_10->msg('label_user'), 'replace', array($users_number,'--'));
+$cols['users'] = new resultColumn('users', cjoAddon::translate(10,'label_user'), 'replace', array($users_number,'--'));
 $cols['users']->setBodyAttributes('width="150"');
 $cols['users']->delOption(OPT_ALL);
 
 // Bearbeiten link
-$img = '<img src="img/silk_icons/page_white_edit.png" title="'.$I18N->msg("button_edit").'" alt="'.$I18N->msg("button_edit").'" />';
-$cols['edit'] = new staticColumn($img, $I18N->msg("label_functions"));
+$img = '<img src="img/silk_icons/page_white_edit.png" title="'.cjoI18N::translate("button_edit").'" alt="'.cjoI18N::translate("button_edit").'" />';
+$cols['edit'] = new staticColumn($img, cjoI18N::translate("label_functions"));
 $cols['edit']->setHeadAttributes('colspan="2"');
 $cols['edit']->setBodyAttributes('width="16"');
 $cols['edit']->setParams(array ('function' => 'edit', 'group_id'=> $group_id , 'oid' => '%id%'));
 
-$img = '<img src="img/silk_icons/bin.png" title="'.$I18N->msg("button_delete").'" alt="'.$I18N->msg("button_delete").'" />';
+$img = '<img src="img/silk_icons/bin.png" title="'.cjoI18N::translate("button_delete").'" alt="'.cjoI18N::translate("button_delete").'" />';
 $cols['delete'] = new staticColumn($img, NULL);
 $cols['delete']->setBodyAttributes('width="60"');
 $cols['delete']->setBodyAttributes('class="cjo_delete"');
@@ -83,7 +83,7 @@ $sql->setQuery("SELECT re_id FROM ".TBL_COMMUNITY_GROUPS." WHERE id='".$group_id
 $re_id = $sql->getValue('re_id');
 
 $rowAttributes = ' onclick="location.href=\'index.php?page='.$mypage.'&amp;subpage='.$subpage.'&amp;clang='.$clang.'&amp;group_id='.$re_id.'\';" ' .
-	             ' class="cat_uplink" title="'.$I18N->msg("label_level_up").'"';
+	             ' class="cat_uplink" title="'.cjoI18N::translate("label_level_up").'"';
 
 $up_link  = '            <tr'.$rowAttributes.' valign="middle" class="nodrop">'."\r\n".
             '              <td class="icon" height="20"> ID </td>'."\r\n".

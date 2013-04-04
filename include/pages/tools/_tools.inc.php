@@ -23,43 +23,38 @@
  * @filesource
  */
 
-$mypage        = $cur_page['page'];
-$oid           = cjo_request('oid', 'int');
-$function      = cjo_request('function', 'string');
-$mode          = cjo_request('mode', 'string');
+cjoSubPages::addPages(array(
+                        array('templates',
+					          'rights' => array('tools[templates]'),
+					          'important' => true),
 
-$subpages = new cjoSubPages($subpage, $mypage);
-$subpages->addPage( array('templates',
-					'rights' => array('tools[templates]'),
-					'important' => true));
+					    array('modules',
+					          'rights' => array('tools[modules]'),
+					          'important' => true),
 
-$subpages->addPage( array('modules',
-					'rights' => array('tools[modules]'),
-					'important' => true));
+    					array('actions',
+    					      'rights' => array('tools[actions]'),
+    					      'important' => true),
 
-$subpages->addPage( array('actions',
-					'rights' => array('tools[actions]'),
-					'important' => true));
+					    array('ctypes',
+					          'rights' => array('tools[ctypes]'),
+					          'important' => true),
 
-$subpages->addPage( array('ctypes',
-					'rights' => array('tools[ctypes]'),
-					'important' => true));
+					    array('catgroups', 'rights' => array('tools[catgroups]'),
+					          'important' => true),
 
-$subpages->addPage( array('catgroups', 'rights' => array('tools[catgroups]'),
-					'important' => true));
+					    array('langs', 'rights' => array('tools[langs]'),
+					          'important' => true)
+                   ));
 
-$subpages->addPage( array('langs', 'rights' => array('tools[langs]'),
-					'important' => true));
-
-if ($CJO['LOGIN_ENABLED'])
-    $subpages->addPage(array('types',
+if (cjoProp::get('LOGIN_ENABLED') && cjoAddon::isActivated('community'))
+    cjoSubPages::addPage(array('types',
 					'rights' => array('tools[types]'),
 					'important' => true));
 
-require_once $subpages->getPage();
 
 /**
- * Do not delete translate values for i18n collection!
+ * Do not delete translate values for cjoI18N collection!
  * [translate: title_templates]
  * [translate: title_modules]
  * [translate: title_actions]

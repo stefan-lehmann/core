@@ -37,8 +37,6 @@ class cjoClientCache {
      */
     public static function sendArticle($article, $content, $environment, $sendcharset = false) {
 
-        global $CJO;
-
         // ----- EXTENSION POINT
         $content = cjoExtension::registerExtensionPoint('OUTPUT_FILTER', array('subject' => $content, 'environment' => $environment, 'sendcharset' => $sendcharset));
 
@@ -51,9 +49,13 @@ class cjoClientCache {
             $content = cjoOutput::replaceHTML5Tags($content);
         }
         
-        if ($CJO['ADJUST_PATH']) {
-            $content = preg_replace('#(?<!\.)'.preg_quote($CJO['HTDOCS_PATH']).'#', $CJO['ADJUST_PATH'],$content);
-            $content = preg_replace('#(?<!\.)'.str_replace('/', '\\\/', preg_quote($CJO['HTDOCS_PATH'])).'#', str_replace('/', '\/', $CJO['ADJUST_PATH']),$content);
+        if (cjoProp::get('ADJUST_PATH')) {
+            $content = preg_replace('#(?<!\.)'.preg_quote(cjoPath::htdocs()).'#', 
+                                    cjoProp::get('ADJUST_PATH'),
+                                    $content);
+            $content = preg_replace('#(?<!\.)'.str_replace('/', '\\\/', preg_quote(cjoPath::htdocs())).'#', 
+                                    str_replace('/', '\/', cjoProp::get('ADJUST_PATH')),
+                                    $content);
         }
 
         $content = cjoOutput::prettifyOutput($content);
@@ -68,8 +70,8 @@ class cjoClientCache {
             $last_modified = $article->getValue('updatedate');
             $etag .= $article->getValue('pid');
 
-            if ($article->getArticleId() == $CJO['NOTFOUND_ARTICLE_ID'] &&
-                $article->getArticleId() != $CJO['START_ARTICLE_ID']) {
+            if ($article->getArticleId() == cjoProp::get('NOTFOUND_ARTICLE_ID') &&
+                $article->getArticleId() != cjoProp::get('START_ARTICLE_ID')) {
                 header("HTTP/1.0 404 Not Found");
             }
         } else {
@@ -89,9 +91,7 @@ class cjoClientCache {
      */
     public static function sendImage($filename, $content_type = false, $environment = 'frontend') {
 
-        global $CJO;
-        $CJO['USE_GZIP'] = false;
-
+        cjoProp::set('USE_GZIP',false);
         self::sendFile($filename, $content_type, $environment);
     }
 
@@ -104,8 +104,6 @@ class cjoClientCache {
      * (frontend/backend)
      */
     public static function sendFile($filename, $content_type = false, $environment = 'frontend') {
-
-        global $CJO;
 
         while(@ob_end_clean());
 
@@ -157,8 +155,6 @@ class cjoClientCache {
      */
     public static function sendContent($content, $last_modified, $etag, $environment, $sendcharset = false) {
 
-        global $CJO;
-
         while(@ob_end_clean());
 
         // Cachen erlauben, nach revalidierung
@@ -167,26 +163,25 @@ class cjoClientCache {
         header('Cache-Control: must-revalidate, proxy-revalidate, private');
 
         if ($sendcharset) {
-            global $I18N;
-            header('Content-Type: text/html; charset='.$I18N->msg('htmlcharset'));
+            header('Content-Type: text/html; charset='.cjoI18N::translate('htmlcharset'));
         }
 
         // ----- Last-Modified
-        if ($CJO['USE_LAST_MODIFIED'] === 'true' ||
-            $CJO['USE_LAST_MODIFIED'] == $environment) self::sendLastModified($last_modified);
+        if (cjoProp::get('USE_LAST_MODIFIED') === 'true' ||
+            cjoProp::get('USE_LAST_MODIFIED') == $environment) self::sendLastModified($last_modified);
 
         // ----- ETAG
-        if ($CJO['USE_ETAG'] === 'true' ||
-            $CJO['USE_ETAG'] == $environment) self::sendEtag($etag);
+        if (cjoProp::get('USE_ETAG') === 'true' ||
+            cjoProp::get('USE_ETAG') == $environment) self::sendEtag($etag);
 
         // ----- GZIP
-        if ($CJO['USE_GZIP'] === 'true' ||
-            $CJO['USE_GZIP'] == $environment) $content = self::sendGzip($content);
+        if (cjoProp::get('USE_GZIP') === 'true' ||
+            cjoProp::get('USE_GZIP') == $environment) $content = self::sendGzip($content);
 
         // ----- MD5 Checksum
         // dynamische teile sollen die md5 summe nicht beeinflussen
-        if ($CJO['USE_MD5'] === 'true' ||
-            $CJO['USE_MD5'] == $environment) self::sendChecksum($content);
+        if (cjoProp::get('USE_MD5') === 'true' ||
+            cjoProp::get('USE_MD5') == $environment) self::sendChecksum($content);
 
         // content length schicken, damit der browser einen ladebalken anzeigen kann
         header('Content-Length: '. strlen($content));
@@ -282,7 +277,7 @@ class cjoClientCache {
 
     /**
      * Sendet eine MD5 Checksumme als HTTP Header, damit der Browser validieren
-     * kann, ob �bertragungsfehler aufgetreten sind
+     * kann, ob übertragungsfehler aufgetreten sind
      *
      * XHTML 1.1: HTTP_CONTENT_MD5 feature
      *

@@ -35,20 +35,19 @@ $hidden['prev_subpage']->setValue('step5');
 $hidden['lang'] = new hiddenField('lang');
 $hidden['lang']->setValue($lang);
 
-$fields['headline1'] = new readOnlyField('headline1', '', array('class' => 'formheadline'));
-$fields['headline1']->setValue($I18N->msg("label_setup_mysql_db"));
+$fields['headline1'] = new headlineField(cjoI18N::translate("label_setup_mysql_db"));
 
-$fields['import'] = new selectField('import', $I18N->msg("label_import_mode"));
-$fields['import']->addValidator('notEmpty', $I18N->msg("msg_import_notEmpty"));
+$fields['import'] = new selectField('import', cjoI18N::translate("label_import_mode"));
+$fields['import']->addValidator('notEmpty', cjoI18N::translate("msg_import_notEmpty"));
 $fields['import']->addAttribute('size', '7', false);
 
-$fields['import']->addOption($I18N->msg("label_contejo_import_db_without_drop"), 1);
-$fields['import']->addOption($I18N->msg("label_contejo_import_db_with_drop"), 2);
-$fields['import']->addOption($I18N->msg("label_update_from_contejo",'2.3', $CJO['VERSION']), 3);
-$fields['import']->addOption($I18N->msg("label_update_from_contejo",'2.0', $CJO['VERSION']), 6);
-$fields['import']->addOption($I18N->msg("label_update_from_contejo",'1.1', $CJO['VERSION']), 7);
+$fields['import']->addOption(cjoI18N::translate("label_contejo_import_db_without_drop"), 1);
+$fields['import']->addOption(cjoI18N::translate("label_contejo_import_db_with_drop"), 2);
+$fields['import']->addOption(cjoI18N::translate("label_update_from_contejo",'2.3', $CJO['VERSION']), 3);
+$fields['import']->addOption(cjoI18N::translate("label_update_from_contejo",'2.0', $CJO['VERSION']), 6);
+$fields['import']->addOption(cjoI18N::translate("label_update_from_contejo",'1.1', $CJO['VERSION']), 7);
 
-$fields['import_name'] = new selectField('import_name', $I18N->msg("label_exports"));
+$fields['import_name'] = new selectField('import_name', cjoI18N::translate("label_exports"));
 
 $fields['import_name']->addAttribute('disabled', 'disabled');
 
@@ -82,7 +81,7 @@ if (is_dir($im_export_dir)){
 	foreach ($export_sqls as $sql_export){
 		// Es ist ein Export Archiv + SQL File vorhanden
 		$note = (!in_array($sql_export, $export_tars))
-		? '&nbsp;&nbsp; '.$I18N->msg("label_only_sql") : '';
+		? '&nbsp;&nbsp; '.cjoI18N::translate("label_only_sql") : '';
 
 		$fields['import_name']->addOption($sql_export.$note, $sql_export);
 		$show_export_option = true;
@@ -91,17 +90,17 @@ if (is_dir($im_export_dir)){
 $fields['import_name']->addAttribute('size', count($export_sqls)+1);
 
 if ($show_export_option)
-	$fields['import']->addOption($I18N->msg("label_contejo_import_im_export_db"), 5);
+	$fields['import']->addOption(cjoI18N::translate("label_contejo_import_im_export_db"), 5);
 
-$fields['import']->addOption($I18N->msg("label_contejo_import_no_db"), 0);
+$fields['import']->addOption(cjoI18N::translate("label_contejo_import_no_db"), 0);
 
 $fields['button'] = new buttonField();
-$fields['button']->addButton('cjoform_back_button',$I18N->msg("button_back"), true, 'img/silk_icons/control_play_backwards.png');
-$fields['button']->addButton('cjoform_next_button',$I18N->msg("button_next_step7"), true, 'img/silk_icons/control_play.png');
+$fields['button']->addButton('cjoform_back_button',cjoI18N::translate("button_back"), true, 'img/silk_icons/control_play_backwards.png');
+$fields['button']->addButton('cjoform_next_button',cjoI18N::translate("button_next_step7"), true, 'img/silk_icons/control_play.png');
 $fields['button']->setButtonAttributes('cjoform_next_button', ' style="color: green"');
 
 //Add Fields:
-$section = new cjoFormSection('', $I18N->msg("label_setup_".$subpage."_title"), array ());
+$section = new cjoFormSection('', cjoI18N::translate("label_setup_".$subpage."_title"), array ());
 
 $section->addFields($fields);
 $form->addSection($section);
@@ -124,7 +123,7 @@ if ($form->validate()) {
         		break;
         case 6: cjoSetupImport($CJO['INCLUDE_PATH'].'/install/cjo_2.0_to_contejo'.$CJO['VERSION'].'.sql');
         		break;
-        case 4: if ($import_name) cjoMessage::addError($I18N->msg('msg_no_export_selected'));
+        case 4: if ($import_name) cjoMessage::addError(cjoI18N::translate('msg_no_export_selected'));
         		break;
         case 5:
 			$import_sql = $CJO['ADDON']['settings']['import_export']['folder'].'/'.$import_name.'.sql';
@@ -163,12 +162,12 @@ if ($form->validate()) {
     
     	foreach ($check_tables as $tablename=>$status) {
     		if ($status != 1){
-    			cjoMessage::addError($I18N->msg("msg_table_not_found",$tablename));
+    			cjoMessage::addError(cjoI18N::translate("msg_table_not_found",$tablename));
     		}
     	}
 	}
 	if (!cjoMessage::hasErrors()) {
-	    cjoAssistance::redirectBE(array('subpage' => 'step7', 'lang' => $lang));
+	    cjoUrl::redirectBE(array('subpage' => 'step7', 'lang' => $lang));
 	}
 }
 
@@ -200,7 +199,7 @@ $form->show(false);
 			if (im.find('option[value=5]').is(':selected') ||
 				im.find('option[value=2]').is(':selected')) {
 				$('#cjoform_next_button').click(function(){
-					cjo.jconfirm('<?php echo $I18N->msg("msg_confirm_overwrite_db"); ?>', 'cjo.submitForm', [$(this)]);
+					cjo.jconfirm('<?php echo cjoI18N::translate("msg_confirm_overwrite_db"); ?>', 'cjo.submitForm', [$(this)]);
 					return false;
 				});
 			}

@@ -31,7 +31,7 @@ class saveField extends buttonField {
 		global $I18N;
 
 		$this->saveButtonName = 'cjoform_save_button';
-		$this->addButton($this->saveButtonName, $I18N->msg('button_save'), true, 'img/silk_icons/disk.png');
+		$this->addButton($this->saveButtonName, cjoI18N::translate('button_save'), true, 'img/silk_icons/disk.png');
 
 		$this->buttonField($attributes);
 	}

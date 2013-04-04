@@ -33,27 +33,43 @@ class cjoFormSection extends cjofieldController {
     public $id;
     // Anker
     public $anchor;
+    // datasource
+    public $type;  
+    // file
+    public $file;  
     
     /**
      * Klassenkonstruktor
      */
-    public function cjoFormSection($dataset, $label, $where_params = array(), $columns = 1) {
-        cjo_valid_type($label, 'string', __FILE__, __LINE__);
-
+    public function cjoFormSection($data, $label='', $where = array(), $columns = 1) {
+        
+        cjoProp::isValidType($label, 'string', __FILE__, __LINE__);
+ 
         $this->label   = $label;
         $this->columns = $columns;
         $this->anchor  = '';
 
-        if (!is_array($dataset)) {
+        if (is_string($data) && cjoAddon::isActivated($data)) {
+        
+            $this->cjoFieldContainer();
+            $this->mode = null;
+            $this->dataset = cjoProp::get('ADDON|settings|'.$data);
+            $this->errors = null;
+            $this->type = $data;
+            $this->file = is_string($where) ? $where : 'settings';
+        }
+        elseif (is_array($data)) {
             // Parentkonstruktor aufrufen
-            $this->cjofieldController($dataset, $where_params);
+            $this->cjoFieldContainer();
+            $this->mode = null;
+            $this->dataset = $data;
+            $this->errors = null;
+            $this->type = 'array';
         }
         else {
             // Parentkonstruktor aufrufen
-            $this->cjoFieldContainer();
-            $this->mode    = null;
-            $this->dataset = $dataset;
-            $this->errors  = null;
+            $this->cjofieldController($data, $where);
+            $this->type = 'sql';
         }
     }
     /**

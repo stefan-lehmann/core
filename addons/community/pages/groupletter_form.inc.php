@@ -25,9 +25,6 @@
 
 $send_type = cjo_post('SEND_TYPE', 'string', $CJO['ADDON']['settings'][$mypage]['SEND_TYPE']);
 
-if (cjo_get('msg_10', 'boolean')) {
-    cjoMessage::addSuccess($I18N_10->msg(cjoAssistance::cleanInput(cjo_get('msg_10', 'string'))));
-}
 
 //Form
 $form = new cjoForm();
@@ -35,30 +32,29 @@ $form->setEditMode(true);
 $form->debug = false;
 
 //Fields
-$fields['headline1'] = new readOnlyField('headline1', '', array('class' => 'formheadline'));
-$fields['headline1']->setValue('1. '. $I18N_10->msg('label_mail_data'));
+$fields['headline1'] = new headlineField('1. '. cjoAddon::translate(10,'label_mail_data'));
 
-$fields['subject'] = new textField('GL_SUBJECT', $I18N_10->msg('label_subject'));
-$fields['subject']->addValidator('notEmpty', $I18N_10->msg("err_empty_subject"));
+$fields['subject'] = new textField('GL_SUBJECT', cjoAddon::translate(10,'label_subject'));
+$fields['subject']->addValidator('notEmpty', cjoAddon::translate(10,"err_empty_subject"));
 
-$fields['mail_account'] = new selectField('MAIL_ACCOUNT', $I18N_10->msg('label_php_mailer_account'));
+$fields['mail_account'] = new selectField('MAIL_ACCOUNT', cjoAddon::translate(10,'label_php_mailer_account'));
 $fields['mail_account']->addSqlOptions("SELECT CONCAT(from_name,' &lt;',from_email,'&gt;') AS name, id FROM ".TBL_20_MAIL_SETTINGS);
 $fields['mail_account']->setMultiple(false);
 $fields['mail_account']->addAttribute('size', '1', true);
-$fields['mail_account']->addValidator('notEmpty', $I18N_10->msg("msg_php_mailer_account"));
+$fields['mail_account']->addValidator('notEmpty', cjoAddon::translate(10,"msg_php_mailer_account"));
 
-$fields['send_type'] = new radioField('SEND_TYPE', $I18N_10->msg('label_send_type'),  array('style' => 'width: auto;'));
-$fields['send_type']->addRadio($I18N_10->msg('label_send_html'), 'html');
-$fields['send_type']->addRadio($I18N_10->msg('label_send_text'), 'text');
+$fields['send_type'] = new radioField('SEND_TYPE', cjoAddon::translate(10,'label_send_type'),  array('style' => 'width: auto;'));
+$fields['send_type']->addRadio(cjoAddon::translate(10,'label_send_html'), 'html');
+$fields['send_type']->addRadio(cjoAddon::translate(10,'label_send_text'), 'text');
 $fields['send_type']->setValue($send_type);
 $fields['send_type']->addColAttribute('class', 'send_type', 'join');
 $fields['send_type']->activateSave(false);
 
-$fields['defaultletter'] = new cjoLinkButtonField('DEFAULTLETTER', $I18N_10->msg('label_defaultletter'));
+$fields['defaultletter'] = new cjoLinkButtonField('DEFAULTLETTER', cjoAddon::translate(10,'label_defaultletter'));
 $fields['defaultletter']->addColAttribute('class', 'defaultletter', 'join');
-$fields['defaultletter']->addValidator('notEmpty', $I18N_10->msg("msg_empty_defaultletter"));
+$fields['defaultletter']->addValidator('notEmpty', cjoAddon::translate(10,"msg_empty_defaultletter"));
 
-$fields['text'] = new textAreaField('TEXT', $I18N_10->msg('label_nl_text'));
+$fields['text'] = new textAreaField('TEXT', cjoAddon::translate(10,'label_nl_text'));
 $fields['text']->addAttribute('rows', '12');
 $fields['text']->setDefault("\r\n\r\n".$CJO['ADDON']['settings'][$mypage]['NL_TEXT']);
 $fields['text']->addColAttribute('class', 'nl_text', 'join');
@@ -67,15 +63,14 @@ if ($send_type != 'text') {
 }
 
 $qry = "SELECT CONCAT(name,' (ID=',id,')') AS name, id FROM ".TBL_TEMPLATES." ORDER BY prior";
-$fields['template'] = new selectField('TEMPLATE', $I18N_10->msg('label_groupletter_template'));
+$fields['template'] = new selectField('TEMPLATE', cjoAddon::translate(10,'label_groupletter_template'));
 $fields['template']->addSQLOptions($qry);
 $fields['template']->addAttribute('size', '1');
-$fields['template']->addValidator('notEmpty', $I18N_10->msg("msg_empty_groupletter_template"));
+$fields['template']->addValidator('notEmpty', cjoAddon::translate(10,"msg_empty_groupletter_template"));
 
 // Empfängergruppen auswählen  ----------------------------------------------------------------------------------------------------------------------------
 
-$fields['headline2'] = new readOnlyField('headline2', '', array('class' => 'formheadline '));
-$fields['headline2']->setValue('2. '. $I18N_10->msg('label_select_groups'));
+$fields['headline2'] = new headlineField('2. '. cjoAddon::translate(10,'label_select_groups'));
 
 
 $sel_group = cjoCommunityGroups::getSelectGroups($oid);
@@ -91,26 +86,25 @@ foreach (cjoAssistance::toArray($group_ids) as $val) {
 	$sel_group->setSelected($val);
 }
 
-$fields['groups'] = new readOnlyField('groups[]', $I18N_10->msg('label_groups'));
+$fields['groups'] = new readOnlyField('groups[]', cjoAddon::translate(10,'label_groups'));
 $fields['groups']->setValue($sel_group->get());
-$fields['groups']->addValidator('notEmpty', $I18N_10->msg('err_notEmpty_groups'));
+$fields['groups']->addValidator('notEmpty', cjoAddon::translate(10,'err_notEmpty_groups'));
 
-$fields['atonce'] = new textField('ATONCE', $I18N_10->msg("label_atonce"), array('maxlength' => 4));
-$fields['atonce']->setNote($I18N_10->msg("note_atonce"));
-$fields['atonce']->addValidator('notEmpty', $I18N_10->msg("msg_isRange_label_atonce"), false, false);
-$fields['atonce']->addValidator('isRange', $I18N_10->msg("msg_isRange_label_atonce"), array('low' => '1', 'high' => '5000'), false);
+$fields['atonce'] = new textField('ATONCE', cjoAddon::translate(10,"label_atonce"), array('maxlength' => 4));
+$fields['atonce']->setNote(cjoAddon::translate(10,"note_atonce"));
+$fields['atonce']->addValidator('notEmpty', cjoAddon::translate(10,"msg_isRange_label_atonce"), false, false);
+$fields['atonce']->addValidator('isRange', cjoAddon::translate(10,"msg_isRange_label_atonce"), array('low' => '1', 'high' => '5000'), false);
 $fields['atonce']->addAttribute('style', 'width: 80px;');
 
 $fields['save_default'] = new simpleButtonField('button_save_default', '&nbsp;',  array('style' => 'width: auto; margin-right: 390px; float: right;'));
-$fields['save_default']->setValue($I18N_10->msg('button_save_default'));
+$fields['save_default']->setValue(cjoAddon::translate(10,'button_save_default'));
 $fields['save_default']->activateSave(false);
 
 // Testmail versenden  ----------------------------------------------------------------------------------------------------------------------------
 
-$fields['headline3'] = new readOnlyField('headline3', '', array('class' => 'formheadline '));
-$fields['headline3']->setValue('3. '. $I18N_10->msg('label_send_testmail'));
+$fields['headline3'] = new headlineField('3. '. cjoAddon::translate(10,'label_send_testmail'));
 
-$fields['test_gender'] = new selectField('TEST_GENDER', $I18N_10->msg('label_gender'));
+$fields['test_gender'] = new selectField('TEST_GENDER', cjoAddon::translate(10,'label_gender'));
 $fields['test_gender']->addAttribute('size', '1');
 $fields['test_gender']->addAttribute('style', 'width: 130px;');
 $fields['test_gender']->setDefault($CJO['ADDON']['settings'][$mypage]['TEST_GENDER']);
@@ -125,40 +119,39 @@ foreach($gender_types as $gender_type) {
 	$fields['test_gender']->addOption($gender_type[2], $gender_type[1]);
 }
 
-$fields['test_firstname'] = new textField('TEST_FIRSTNAME', $I18N_10->msg('label_firstname'));
+$fields['test_firstname'] = new textField('TEST_FIRSTNAME', cjoAddon::translate(10,'label_firstname'));
 $fields['test_firstname']->setDefault($CJO['ADDON']['settings'][$mypage]['TEST_FIRSTNAME']);
 
-$fields['test_name'] = new textField('TEST_NAME', $I18N_10->msg('label_name'));
+$fields['test_name'] = new textField('TEST_NAME', cjoAddon::translate(10,'label_name'));
 $fields['test_name']->setDefault($CJO['ADDON']['settings'][$mypage]['TEST_NAME']);
 
-$fields['test_email'] = new textField('TEST_EMAIL', $I18N_10->msg('label_email'));
-$fields['test_email']->addValidator('isEmail', $I18N_10->msg('msg_no_valid_test_email'), true, false);
+$fields['test_email'] = new textField('TEST_EMAIL', cjoAddon::translate(10,'label_email'));
+$fields['test_email']->addValidator('isEmail', cjoAddon::translate(10,'msg_no_valid_test_email'), true, false);
 $fields['test_email']->setDefault($CJO['ADDON']['settings'][$mypage]['TEST_EMAIL']);
 
 $fields['send_testmail'] = new simpleButtonField('button_send_testmail', '&nbsp;',  array('style' => 'width: auto; margin-right: 390px; float: right;'));
-$fields['send_testmail']->setValue($I18N_10->msg('button_send_testmail'));
+$fields['send_testmail']->setValue(cjoAddon::translate(10,'button_send_testmail'));
 $fields['send_testmail']->activateSave(false);
 
 // Hilfetext  ----------------------------------------------------------------------------------------------------------------------------
 
-$fields['headline4'] = new readOnlyField('headline4', '', array('class' => 'formheadline slide'));
-$fields['headline4']->setValue($I18N_10->msg('label_help'));
+$fields['headline4'] = new headlineField(cjoAddon::translate(10,'label_help'));
 
-$explain = 	$I18N_10->msg("text_explain_cycle1").
-			$I18N_10->msg("text_explain_cycle2").
-			$I18N_10->msg("text_explain_cycle3").
-			$I18N_10->msg("text_explain_cycle4").
-			$I18N_10->msg("text_explain_cycle5").
-			$I18N_10->msg("text_explain_cycle6");
+$explain = 	cjoAddon::translate(10,"text_explain_cycle1").
+			cjoAddon::translate(10,"text_explain_cycle2").
+			cjoAddon::translate(10,"text_explain_cycle3").
+			cjoAddon::translate(10,"text_explain_cycle4").
+			cjoAddon::translate(10,"text_explain_cycle5").
+			cjoAddon::translate(10,"text_explain_cycle6");
 
 $fields['explain'] = new readOnlyField('', '', array('style'=>'display: block; padding:20px;'));
 $fields['explain']->setValue($explain);
 
 $fields['button'] = new buttonField();
-$fields['button']->addButton('cjoform_prepare_button',$I18N_10->msg("button_prepare"), true, 'img/silk_icons/arrow_refresh.png');
+$fields['button']->addButton('cjoform_prepare_button',cjoAddon::translate(10,"button_prepare"), true, 'img/silk_icons/arrow_refresh.png');
 
 //Add Fields
-$section = new cjoFormSection('', $I18N_10->msg('label_prepare_groupletter'), array ());
+$section = new cjoFormSection('', cjoAddon::translate(10,'label_prepare_groupletter'), array ());
 $section->dataset = $CJO['ADDON']['settings'][$mypage];
 
 $section->addFields($fields);
@@ -174,23 +167,23 @@ if ($form->validate()) {
 
 		$error = array();
 		if (!cjo_post('TEST_GENDER', 'bool')) {
-			cjoMessage::addError($I18N_10->msg('err_not_empty_test_gender'));
+			cjoMessage::addError(cjoAddon::translate(10,'err_not_empty_test_gender'));
 			$fields['test_gender']->addAttribute('class', 'invalid');
 		}
 		if (!cjo_post('TEST_FIRSTNAME', 'bool')) {
-			cjoMessage::addError($I18N_10->msg('err_not_empty_test_firstname'));
+			cjoMessage::addError(cjoAddon::translate(10,'err_not_empty_test_firstname'));
 			$fields['test_firstname']->addAttribute('class', 'invalid');
 		}
 		if (!cjo_post('TEST_NAME', 'bool')) {
-			cjoMessage::addError($I18N_10->msg('err_not_empty_test_name'));
+			cjoMessage::addError(cjoAddon::translate(10,'err_not_empty_test_name'));
 			$fields['test_name']->addAttribute('class', 'invalid');
 		}
 		if (!cjo_post('TEST_EMAIL', 'bool')) {
-			cjoMessage::addError($I18N_10->msg('err_not_empty_email'));
+			cjoMessage::addError(cjoAddon::translate(10,'err_not_empty_email'));
 			$fields['test_email']->addAttribute('class', 'invalid');
 		}	
 		if (cjo_post('SEND_TYPE','string') != 'text' && !OOArticle::isOnline(cjo_post('DEFAULTLETTER','cjo-article-id'))) {
-            cjoMessage::addError($I18N_10->msg('label_defaultletter_offline'));
+            cjoMessage::addError(cjoAddon::translate(10,'label_defaultletter_offline'));
             $fields['defaultletter']->addAttribute('class', 'invalid');
         }
 		
@@ -219,13 +212,13 @@ if ($form->validate()) {
 	            $groupletter->setBodyText($preferences['TEXT']);
 		    }
 	        else {
-	            $html = $groupletter->getArticle($preferences['DEFAULTLETTER'], $CJO['CUR_CLANG'], $preferences['TEMPLATE']);
+	            $html = $groupletter->getArticle($preferences['DEFAULTLETTER'], cjoProp::getClang(), $preferences['TEMPLATE']);
     	        $groupletter->setBodyHtml($html);
 	        }
 	        $groupletter->setRecipient($test_recipient);
 
 	        if ($groupletter->sendGroupletter()) {
-	            cjoMessage::addSuccess($I18N_10->msg('msg_test_send_success', $preferences['TEST_EMAIL']));
+	            cjoMessage::addSuccess(cjoAddon::translate(10,'msg_test_send_success', $preferences['TEST_EMAIL']));
 		    }
 	        else {
 	            cjoMessage::addError($groupletter->mail_error);
@@ -237,9 +230,9 @@ if ($form->validate()) {
 			$config_file = $CJO['ADDON']['settings'][$mypage]['SETTINGS'];
 			$lang_conf = $CJO['ADDON']['settings'][$mypage]['CLANG_CONF'];			
 
-        	if (!cjoAssistance::isWritable($config_file)) {
+        	if (!cjoFile::isWritable($config_file)) {
         	    $error = cjoMessage::removeLastError();
-        		cjoMessage::addError($I18N->msg("msg_data_not_saved"));
+        		cjoMessage::addError(cjoI18N::translate("msg_data_not_saved"));
         		cjoMessage::addError($error);
 				$form->valid_master = false;
 			}
@@ -249,18 +242,18 @@ if ($form->validate()) {
 
 				if (cjoGenerate::updateSettingsFile($config_file) &&
 			        cjoGenerate::updateSettingsFile($lang_conf)) {
-					cjoAssistance::redirectBE(array('msg'=>'msg_data_saved'));
+					cjoUrl::redirectBE(array('msg'=>'msg_data_saved'));
 				}
 				else{
 					$form->valid_master = false;
-					cjoMessage::addError($I18N->msg("msg_data_not_saved"));
-					cjoMessage::addError($I18N->msg("msg_file_no_chmod", cjo_absPath($config_file)));
+					cjoMessage::addError(cjoI18N::translate("msg_data_not_saved"));
+					cjoMessage::addError(cjoI18N::translate("msg_file_no_chmod", cjo_absPath($config_file)));
 				}
 			}
 	}
 	elseif (cjo_post('cjoform_prepare_button','bool')) {
 		if ($groupletter->prepareGroupLetter($preferences)) {
-			cjoAssistance::redirectBE(array('ok'=>''));
+			cjoUrl::redirectBE(array('ok'=>''));
 		}
 	}
 }

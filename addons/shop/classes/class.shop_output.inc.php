@@ -32,7 +32,7 @@ class shopOutput {
 
         $form_elements_in = array();
         $form_elements    = array();
-        $factor           = (int) preg_replace('/\D/', '', $CJO['INSTNAME']);
+        $factor           = cjoProp::getUniqueNumber();
         $form_values      = cjo_request($form_name, 'array', array(), true);
 
 		if (!is_array($form_fields)) $form_fields = self::convertFormFields($form_fields);
@@ -361,7 +361,7 @@ class shopOutput {
                 break;
             # Prüfung Spam-Aufgabe
             case 'antispam':
-                $factor = (int) preg_replace('/\D/', '', $CJO['INSTNAME']);
+                $factor = cjoProp::getUniqueNumber();
                 if ($anti_spam && $_POST['mathresult'] != ($_POST['antispam'] * $factor)) return $message;
                 break;
             case 'not_empty_strict':

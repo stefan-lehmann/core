@@ -20,7 +20,7 @@
  * @filesource
  */
 
-if (OOAddon::isActivated('shop')) {
+if (cjoAddon::isActivated('shop')) {
     cjo_insertJS(false, $CJO['ADDON']['settings']['shop']['JS']['BACKEND']);
     cjo_insertCSS(false, $CJO['ADDON']['settings']['shop']['CSS']['BACKEND']);
     
@@ -118,7 +118,7 @@ if (empty($product_name)) {
 </div>
 <div class="settings">
     <h2>[translate_21: shop_product_statistic]
-        (<?php echo @strftime($I18N->msg('dateformat'), 'CJO_VALUE[13]').' - '.@strftime($I18N->msg('dateformat'), time()); ?>)</h2>
+        (<?php echo @strftime(cjoI18N::translate('dateformat'), 'CJO_VALUE[13]').' - '.@strftime(cjoI18N::translate('dateformat'), time()); ?>)</h2>
     <div class="formular">
         <input type="hidden" name="VALUE[13]" value="CJO_VALUE[13]" />
         <input type="checkbox" name="VALUE[13]" value="0" />
@@ -137,7 +137,7 @@ if (empty($product_name)) {
 </div>
 <?php
 }
-elseif ($CJO['CONTEJO']) {
-    echo $I18N->msg('msg_addon_not_activated', 'Shop');
+elseif (cjoProp::isBackend()) {
+    echo cjoI18N::translate('msg_addon_not_activated', 'Shop');
 }
 ?>

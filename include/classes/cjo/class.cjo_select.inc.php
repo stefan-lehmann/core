@@ -548,7 +548,7 @@ class cjoSelect {
         }
 
         if (!empty($this->select_multiple)) {
-            $multiple_note = '<span class="multiple_note">'.$I18N->msg("ctrl").'</span>';
+            $multiple_note = '<span class="multiple_note">'.cjoI18N::translate("ctrl").'</span>';
             $this->select_style_class = $this->select_style_class ? str_replace('class="', ' class="multiple ', $this->select_style_class) : ' class="multiple"';
         }
 
@@ -660,13 +660,13 @@ class cjoSelect {
             $bsps .= "&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;";
             $pre = (strpos($text, '&rarr;') === false) ? $bsps . '&nbsp;&nbsp;|&rarr; ' : '&nbsp;&nbsp;';
         }
-        elseif ($CJO['CONTEJO']) {
+        elseif (cjoProp::isBackend()) {
             $pre = '&nbsp;';
             $post = '&nbsp;';
         }
 
         if ($this->option_disabled !== null) {
-            $disabled_style = ($CJO['CONTEJO']) ? ' style="background:#ddd"' : '';
+            $disabled_style = (cjoProp::isBackend()) ? ' style="background:#ddd"' : '';
             
              foreach($this->option_disabled as $temp) {
                 if ($temp == $value) {
@@ -677,7 +677,7 @@ class cjoSelect {
         }
 
         if ($this->option_selected !== null) {
-            $selected_style = ($CJO['CONTEJO'] && empty($disabled_style)) ? ' style="background:#ffe097"' : '';
+            $selected_style = (cjoProp::isBackend() && empty($disabled_style)) ? ' style="background:#ffe097"' : '';
             
             foreach($this->option_selected as $temp) {
                 if ($temp == $value) {

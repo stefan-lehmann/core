@@ -22,7 +22,8 @@
  *  details.
  * @filesource
  */
-error_reporting(E_ALL & ~E_STRICT & ~E_NOTICE);
+
+error_reporting(E_ALL ^ E_NOTICE);
 
 ob_start();
 
@@ -35,29 +36,20 @@ if (preg_match('#.*?/contejo/*[^/]*$#', $_SERVER['REQUEST_URI'], $matches)) {
     header('Location: ../core/index.php');
     exit();
 } 
-
 $CJO = array();
-
-// Flag ob Inhalte mit CONTEJO aufgerufen oder
-// von der Webseite aus
-// Kann wichtig für die Darstellung sein
-// Sollte immer false bleiben
+// setzte pfad und includiere klassen und funktionen
+$CJO['HTDOCS_PATH'] = "./";
 $CJO['CONTEJO'] = false;
+require_once $CJO['HTDOCS_PATH']."core/include/master.inc.php";
 
 // Wenn $CJO[GG] = true; dann wird der
 // Content aus den contejo/include/generated/
 // genommen
-$CJO['GG'] = true;
-
-// setzte pfad und includiere klassen und funktionen
-$CJO['HTDOCS_PATH'] = "./";
-
-require_once $CJO['HTDOCS_PATH']."core/include/functions/function.cjo_mquotes.inc.php";
-require_once $CJO['HTDOCS_PATH']."core/include/master.inc.php";
+cjoProp::set('GG', true);
 
 $CJO_ARTICLE = new cjoArticle();
-$CJO_ARTICLE->setCLang($CJO['CUR_CLANG']);
-$CJO_ARTICLE->setArticleId($CJO['ARTICLE_ID']);
+$CJO_ARTICLE->setCLang(cjoProp::getClang()); 
+$CJO_ARTICLE->setArticleId(cjoProp::getArticleId());
 $CONTENT = $CJO_ARTICLE->getArticleTemplate();
 
 cjoClientCache::sendArticle($CJO_ARTICLE, $CONTENT, 'frontend', true);

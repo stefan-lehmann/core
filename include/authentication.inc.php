@@ -23,7 +23,7 @@
  * @filesource
  */
 
-if (!$CJO['CONTEJO'] || $CJO['SETUP']) return;
+if (!cjoProp::isBackend() || cjoProp::isSetup()) return;
 
 $LOGIN['username'] = '';
 $LOGIN['password'] = '';
@@ -39,27 +39,25 @@ if (!cjo_session('ST', 'bool')) {
     cjo_set_session('ST', cjo_post('ST', 'int', 0, true));
 }
 
-$CJO['USER'] = array('LOGIN' => false, 'BACKEND' => true);
+$cjo_login = new cjoLogin(true);
+$cjo_login->setUserTable(TBL_USER);
+$cjo_login->setLogin($LOGIN['username'], $LOGIN['password']);
+$cjo_login->setUserID('user_id');
 
-$CJO['LOGIN'] = new cjoLogin();
-$CJO['LOGIN']->setUserTable(TBL_USER);
-$CJO['LOGIN']->setLogin($LOGIN['username'], $LOGIN['password']);
-$CJO['LOGIN']->setUserID('user_id');
+if (cjo_get('logout', 'bool')) $cjo_login->setLogout(true);
 
-if (cjo_get('logout', 'bool')) $CJO['LOGIN']->setLogout(true);
-
-$CJO['LOGIN']->setUserQuery("SELECT *
+$cjo_login->setUserQuery("SELECT *
                              FROM 	".TBL_USER."
                              WHERE  user_id='%USR_UID%'");
 
-$CJO['LOGIN']->setLoginQuery("SELECT *
+$cjo_login->setLoginQuery("SELECT *
                               FROM 	".TBL_USER."
                               WHERE login = '%USR_LOGIN%'
                               AND 	psw = '%USR_PSW%'
                               AND   lasttrydate <'".(time()-$CJO['RELOGINDELAY'])."'
                               AND   (login_tries <= '".$CJO['MAXLOGINS']."' OR lasttrydate <'".(time()- (12 * 60 * 60))."')");
 
-if (!$CJO['LOGIN']->checkLogin()) {
+if (!$cjo_login->checkLogin()) {
 
     if (!preg_match('/\/index\.php$/',$_SERVER['PHP_SELF'])) {
         header('Location: index.php');
@@ -67,9 +65,9 @@ if (!$CJO['LOGIN']->checkLogin()) {
     }
 
 	// login failed
-	$CJO['USER']        = false;
-	$cur_page['page']   = 'login';
-	$cur_page['header'] = false;
+	cjoProp::set('USER', false);
+    cjoProp::setPage('login');
+    cjoProp::set('PAGE_HEADER', false);
 
     $sql = new cjoSql();
     $sql->setQuery("SELECT lasttrydate, login_tries FROM ".TBL_USER." WHERE login ='".$LOGIN['username']."'");
@@ -77,17 +75,18 @@ if (!$CJO['LOGIN']->checkLogin()) {
     // fehlversuch speichern | login_tries++
     if ($sql->getRows() == 1) {
 
-        $login_tries = ($sql->getValue('lasttrydate') < (time()- (2 * 60 * 60))) ? "1" : $sql->getValue('login_tries') + 1;
+        $cjo_login_tries = ($sql->getValue('lasttrydate') < (time()- (2 * 60 * 60))) ? "1" : $sql->getValue('login_tries') + 1;
 
         $update = new cjoSql();
         $update->setTable(TBL_USER);
         $update->setWhere("login = '".$LOGIN['username']."'");
-        $update->setValue("login_tries", $login_tries);
+        $update->setValue("login_tries", $cjo_login_tries);
         $update->setValue("lasttrydate", time());
         $update->Update();
     }
 }
 else {
+ 
     // gelungenen versuch speichern | login_tries = 0
     if ($LOGIN['username'] != '') {
 
@@ -100,6 +99,10 @@ else {
         header ('Location:index.php?'.$_SERVER['QUERY_STRING']);
         exit;
     }
-
-    $CJO['USER'] = $CJO['LOGIN']->USER;
+    
+    cjoProp::set('USER', $cjo_login->USER);
 }
+
+
+
+

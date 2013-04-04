@@ -32,15 +32,13 @@ class cjoGenerate {
      */
     public static function generateAll() {
 
-    	global $CJO, $I18N;
-
     	self::deleteGeneratedArticles();
     	self::generateTemplates();
     	self::generateClangs();
 
         if (!cjoMessage::hasErrors()) {
-    	    cjoMessage::addSuccess($I18N->msg('msg_articles_generated')." ".
-    	                           $I18N->msg('msg_old_articles_deleted'));
+    	    cjoMessage::addSuccess(cjoI18N::translate('msg_articles_generated')." ".
+    	                           cjoI18N::translate('msg_old_articles_deleted'));
     	}
 
     	cjoExtension::registerExtensionPoint('ALL_GENERATED');
@@ -54,12 +52,10 @@ class cjoGenerate {
      */
     public static function generateTemplates($id=false) {
 
-    	global $CJO;
-
     	$addsql = '';
 
     	if ($id === false) {
-    		cjoAssistance::deleteDir($CJO['FOLDER_GENERATED_TEMPLATES'], 0);
+    		cjoAssistance::deleteDir(cjoPath::generated('templates'), 0);
     	}
     	else {
     		$addsql = " WHERE id='".$id."'";
@@ -69,12 +65,16 @@ class cjoGenerate {
     	$sql->setQuery("SELECT id, content FROM ".TBL_TEMPLATES.$addsql);
 
     	for ($i = 0; $i < $sql->getRows(); $i++) {
-    		$file = $CJO['FOLDER_GENERATED_TEMPLATES']."/".$sql->getValue("id").".template";
+    		$file = cjoPath::generated('templates', $sql->getValue("id").'.template');
     		$new_content = $sql->getValue("content");
     		self::putFileContents($file, $new_content);
     		$sql->next();
     	}
     	return true;
+    }
+    
+    public static function isTemplateGenerated($template_id) {
+        return is_readable(cjoPath::generated('templates', $template_id.'.template'));
     }
 
     /**
@@ -85,15 +85,13 @@ class cjoGenerate {
      * @access public
      */
     public static function deleteGeneratedArticle($article_id, $aspath=false) {
-
-    	global $CJO;
     	
     	$pattern  = "*.alist";
         $pattern .= ",*.content";
         $pattern .= ",*.article";    
         if ($aspath) $pattern .= ",*.aspath";           
 
-        $pattern = $CJO['FOLDER_GENERATED_ARTICLES'].'/'.$article_id.'.[0-9]{'.$pattern.'}';
+        $pattern = cjoPath::generated('articles').$article_id.'.[0-9]{'.$pattern.'}';
 
     	foreach (cjoAssistance::toArray(glob($pattern,GLOB_BRACE)) as $filename) {
     	    @unlink($filename);
@@ -107,8 +105,7 @@ class cjoGenerate {
      * @access public
      */
     public static function deleteGeneratedArticles($exclude=array()) {
-    	global $CJO;
-    	return cjoAssistance::deleteDir($CJO['FOLDER_GENERATED_ARTICLES'],false,$exclude);
+    	return cjoAssistance::deleteDir(cjoPath::generated('articles'),false,$exclude);
     }
 
     /**
@@ -120,17 +117,15 @@ class cjoGenerate {
      */
     public static function generateArticle($article_id, $generate_content = true, $clang = false, $template_id=false) {
 
-    	global $CJO;
-
     	$article = new cjoArticle();
         $article->getAsQuery(true); // Content aus Datenbank holen, no cache
         $article->setEval(false); // Content nicht ausführen, damit in Cachedatei gespeichert werden kann
 
-        foreach($CJO['CLANG'] as $curr_clang => $clang_name) {
+        foreach(cjoProp::getClangs() as $clang_id) {
 
-            if ($clang !== false && $clang != $curr_clang) continue;
+            if ($clang !== false && $clang != $clang_id) continue;
 
-            $article->setCLang($curr_clang);
+            $article->setCLang($clang_id);
             if (!$article->setArticleId($article_id)) return false;
             $article->setTemplateId($template_id);
             
@@ -152,8 +147,6 @@ class cjoGenerate {
 
     public static function generateArticles($generate_ids = false) {
 
-    	global $CJO;
-
     	if ($generate_ids === false) {
     		global $generate_ids;
     	}
@@ -165,19 +158,17 @@ class cjoGenerate {
 
     public static function generateArticleMeta($article) {
 
-        global $CJO, $I18N;
-
         $article_id = $article->getValue("id");
         $clang = $article->getValue("clang");
 
-	    $file = $CJO['FOLDER_GENERATED_ARTICLES']."/".$article_id.".".$clang.".article";
+	    $file = cjoPath::generated('articles', $article_id.'.'.$clang.'.article');
 
-        if (!cjoAssistance::isWritable($CJO['FOLDER_GENERATED_ARTICLES'])) {
+        if (!cjoFile::isWritable(cjoPath::generated('articles'))) {
 
             cjoMessage::removeLastError();
-			cjoMessage::addError($I18N->msg('msg_article_could_not_be_generated')." ".
-								 $I18N->msg('msg_check_rights_in_directory').
-								 $CJO['FOLDER_GENERATED_ARTICLES']);
+			cjoMessage::addError(cjoI18N::translate('msg_article_could_not_be_generated')." ".
+								 cjoI18N::translate('msg_check_rights_in_directory').
+								 cjoPath::generated('articles'));
 	         return false;
         }
         
@@ -198,7 +189,7 @@ class cjoGenerate {
 
         $new_content .= '?>'."\r\n";
         
-		foreach (cjoAssistance::toArray(glob($CJO['FOLDER_GENERATED_ARTICLES']."/"."*.".$clang.".aspath")) as $filename) {
+		foreach (cjoAssistance::toArray(glob(cjoPath::generated('articles').'*.'.$clang.'.aspath')) as $filename) {
 	    	@ unlink($filename);
 		}
 		if (!self::putFileContents($file, $new_content)) return false;
@@ -208,33 +199,29 @@ class cjoGenerate {
 
     public static function generateArticleContent($article, $template_id=0) {
 
-        global $CJO, $I18N;
-        $temp = $CJO['CONTEJO'];
+        $temp = cjoProp::isBackend();
         $article_id = $article->getValue("id");
         $clang = $article->getValue("clang");
-        $template_id = (int) $template_id;
 
-        $file = $CJO['FOLDER_GENERATED_ARTICLES']."/".$article_id.".".$clang.".".$template_id.".content";
+        $file = cjoPath::generated('articles', $article_id.".".$clang.".".$template_id.".content");
 
-        if (!cjoAssistance::isWritable($CJO['FOLDER_GENERATED_ARTICLES'])) {
+        if (!cjoFile::isWritable(cjoPath::generated('articles'))) {
 
             cjoMessage::removeLastError();
-			cjoMessage::addError($I18N->msg('msg_article_could_not_be_generated')." ".
-								 $I18N->msg('msg_check_rights_in_directory').
-								 $CJO['FOLDER_GENERATED_ARTICLES']);
+			cjoMessage::addError(cjoI18N::translate('msg_article_could_not_be_generated')." ".
+								 cjoI18N::translate('msg_check_rights_in_directory').
+								 cjoPath::generated('articles'));
 	         return false;
         }
-        $CJO['CONTEJO'] = false;
-        $new_content = '?>'.$article->getArticle();
-        $CJO['CONTEJO'] = $temp;
-		if (!self::putFileContents($file, $new_content)) return false;
+        cjoProp::set('CONTEJO',false);
+        $content = '?>'.$article->getArticle();
+        cjoProp::set('CONTEJO',$temp);
+		if (!self::putFileContents($file, $content)) return false;
 
     	return true;
     }
 
     public static function toggleStartpageArticle($id='', $re_id='') {
-
-    	global $CJO, $I18N;
 
     	if ($id == '' && $re_id == '') return false;
 
@@ -257,9 +244,7 @@ class cjoGenerate {
     	$update->setValue("startpage", $startpage);
     	$update->Update();
 
-    	foreach ($CJO['CLANG'] as $lang=>$name) {
-    		self::generateArticle($re_id, false, $lang);
-    	}
+    	self::generateArticle($re_id, false, $lang);
 
     	return true;
     }
@@ -271,14 +256,12 @@ class cjoGenerate {
      */
     public static function generateLists($re_id) {
 
-    	global $CJO;
-
     	if (empty($re_id)) $re_id = 0;
 
-    	foreach (cjoAssistance::toArray($CJO['CLANG']) as $clang=>$name) {
+    	 foreach(cjoProp::getClangs() as $clang_id) {
 
     		$sql = new cjoSql();
-    		$sql->setQuery("SELECT * FROM ".TBL_ARTICLES." WHERE re_id='".$re_id."' AND clang='".$clang."' ORDER BY prior, name");
+    		$sql->setQuery("SELECT * FROM ".TBL_ARTICLES." WHERE re_id='".$re_id."' AND clang='".$clang_id."' ORDER BY prior, name");
 
     		$new_content = "<?php\r\n";
     		for ($i = 0; $i < $sql->getRows(); $i++) {
@@ -287,7 +270,7 @@ class cjoGenerate {
     			$sql->next();
     		}
     		$new_content .= "\r\n?>";
-    		$file = $CJO['FOLDER_GENERATED_ARTICLES']."/".$re_id.".".$clang.".alist";
+    		$file = cjoPath::generated('articles').$re_id.".".$clang_id.".alist";
     		if (!self::putFileContents($file, $new_content)) {
                 cjoMessage::removeLastError();
             }
@@ -303,8 +286,6 @@ class cjoGenerate {
      * @param $old_prio Alte PrioNr der Kategorie
      */
     public static function newPrio($re_id, $clang, $new_prio, $old_prio) {
-
-    	global $CJO;
 
     	if ($new_prio != $old_prio) {
 
@@ -340,11 +321,9 @@ class cjoGenerate {
      */
     public static function deleteArticle($id, $recrusive = false) {
 
-    	global $CJO, $I18N;
-
-    	if (!$CJO['USER']->hasCatPermWrite($id) ||
-    	    $CJO['USER']->hasPerm('editContentOnly[]')) {
-    	    cjoMessage::addError($I18N->msg('msg_no_rights'));
+    	if (!cjoProp::getUser()->hasCatPermWrite($id) ||
+    	    cjoProp::getUser()->hasPerm('editContentOnly[]')) {
+    	    cjoMessage::addError(cjoI18N::translate('msg_no_rights'));
     	    return false;
     	}
 
@@ -353,33 +332,33 @@ class cjoGenerate {
 
 
         if (!OOArticle::isValid($article)) {
-    	    cjoMessage::addError($I18N->msg('msg_article_doesnt_exist'));
+    	    cjoMessage::addError(cjoI18N::translate('msg_article_doesnt_exist'));
     	    return false;
     	}
 
-    	if ($id == $CJO['START_ARTICLE_ID']) {
-    		cjoMessage::addError($I18N->msg("msg_error_can_not_delete_start_article"));
+    	if ($id == cjoProp::get('START_ARTICLE_ID')) {
+    		cjoMessage::addError(cjoI18N::translate("msg_error_can_not_delete_start_article"));
     		return false;
     	}
 
-        if ($id == $CJO['NOTFOUND_ARTICLE_ID']) {
-    		cjoMessage::addError($I18N->msg("msg_error_can_not_delete_notfound_article"));
+        if ($id == cjoProp::get('NOTFOUND_ARTICLE_ID')) {
+    		cjoMessage::addError(cjoI18N::translate("msg_error_can_not_delete_notfound_article"));
     		return false;
     	}
 
     	if ($recrusive) {
 
-    	    $start_article = OOArticle::getArticleById($CJO['START_ARTICLE_ID']);
+    	    $start_article = OOArticle::getArticleById(cjoProp::get('START_ARTICLE_ID'));
 
     	    if (strpos($start_article->path,'|'.$id.'|') !== false) {
-        		cjoMessage::addError($I18N->msg("msg_error_start_article_in_tree"));
+        		cjoMessage::addError(cjoI18N::translate("msg_error_start_article_in_tree"));
         		return false;
     	    }
 
-    	    $notfound_article = OOArticle::getArticleById($CJO['NOTFOUND_ARTICLE_ID']);
+    	    $notfound_article = OOArticle::getArticleById(cjoProp::get('NOTFOUND_ARTICLE_ID'));
 
     	    if (strpos($notfound_article->path,'|'.$id.'|') !== false) {
-        		cjoMessage::addError($I18N->msg("msg_error_notfound_article_in_tree"));
+        		cjoMessage::addError(cjoI18N::translate("msg_error_notfound_article_in_tree"));
         		return false;
     	    }
     	}
@@ -389,9 +368,9 @@ class cjoGenerate {
     	$parent_id = $article->getValue("re_id");
 
     	if ($article->isStartPage()) {
-    	    if (!$recrusive || !$CJO['USER']->hasPerm("deleteArticleTree[]")) {
-                cjoMessage::addError($I18N->msg("msg_article_could_not_be_deleted", $article->getName())." ".
-                                     $I18N->msg("msg_article_still_contains_articles"));
+    	    if (!$recrusive || !cjoProp::getUser()->hasPerm("deleteArticleTree[]")) {
+                cjoMessage::addError(cjoI18N::translate("msg_article_could_not_be_deleted", $article->getName())." ".
+                                     cjoI18N::translate("msg_article_still_contains_articles"));
                 return false;
         	}
         	else {
@@ -404,7 +383,7 @@ class cjoGenerate {
             		$sql->setQuery("DELETE FROM ".TBL_ARTICLES." WHERE id='".$child['id']."'");
             		$sql->setQuery("DELETE FROM ".TBL_ARTICLES_SLICE." WHERE article_id='".$child['id']."'");
 
-    				foreach (cjoAssistance::toArray(glob($CJO['FOLDER_GENERATED_ARTICLES']."/".$child['id'].".*.*")) as $filename) {
+    				foreach (cjoAssistance::toArray(glob(cjoPath::generated('articles').$child['id'].".*.*")) as $filename) {
             		    @ unlink($filename);
             		}
 
@@ -417,23 +396,23 @@ class cjoGenerate {
 		$sql->setQuery("DELETE FROM ".TBL_ARTICLES." WHERE id='".$id."'");
 		$sql->setQuery("DELETE FROM ".TBL_ARTICLES_SLICE." WHERE article_id='".$id."'");
 
-		foreach (cjoAssistance::toArray(glob($CJO['FOLDER_GENERATED_ARTICLES']."/".$id.".*.*")) as $filename) {
+		foreach (cjoAssistance::toArray(glob(cjoPath::generated('articles').$id.".*.*")) as $filename) {
 		    @ unlink($filename);
 		}
-		foreach (cjoAssistance::toArray(glob($CJO['FOLDER_GENERATED_ARTICLES']."/*.aspath")) as $filename) {
+		foreach (cjoAssistance::toArray(glob(cjoPath::generated('articles')."*.aspath")) as $filename) {
 		    @ unlink($filename);
 		}
 
         cjoExtension::registerExtensionPoint('ARTICLE_DELETED', array ("id" => $id,
                                                              		   "re_id" => $parent_id));
 
-		foreach ($CJO['CLANG'] as $key => $lang) {
-			self::newPrio($parent_id, $key, 0, 1);
+		foreach(cjoProp::getClangs() as $clang_id) {
+			self::newPrio($parent_id, $clang_id, 0, 1);
 		}
 		self::toggleStartpageArticle('',$parent_id);
 		self::generateArticle($parent_id, false);
 
-		cjoMessage::addSuccess($I18N->msg('msg_article_deleted', $article->getName()));
+		cjoMessage::addSuccess(cjoI18N::translate('msg_article_deleted', $article->getName()));
         return true;
     }
 
@@ -446,13 +425,11 @@ class cjoGenerate {
      */
     public static function moveArticle($id, $target_id, $permission= true) {
 
-    	global $CJO, $I18N;
-
     	if ($permission && (
-    	    !$CJO['USER']->hasPerm("moveArticle[]") ||
-    	    !$CJO['USER']->hasCatPermWrite($id) ||
-    	    $CJO['USER']->hasPerm('editContentOnly[]'))) {
-    	    cjoMessage::addError($I18N->msg('msg_no_rights'));
+    	    !cjoProp::getUser()->hasPerm("moveArticle[]") ||
+    	    !cjoProp::getUser()->hasCatPermWrite($id) ||
+    	    cjoProp::getUser()->hasPerm('editContentOnly[]'))) {
+    	    cjoMessage::addError(cjoI18N::translate('msg_no_rights'));
     	    return false;
     	}
 
@@ -464,22 +441,22 @@ class cjoGenerate {
 
     	if (!OOArticle::isValid($article) || (
     	    $target_id != 0 && !OOArticle::isValid($target))) {
-    	    cjoMessage::addError($I18N->msg('msg_article_doesnt_exist'));
+    	    cjoMessage::addError(cjoI18N::translate('msg_article_doesnt_exist'));
     	    return false;
     	}
 
-        if (!$CJO['USER']->hasCatPermWrite($target_id)) {
-            cjoMessage::addError($I18N->msg('msg_no_target_rights'));
+        if (!cjoProp::getUser()->hasCatPermWrite($target_id)) {
+            cjoMessage::addError(cjoI18N::translate('msg_no_target_rights'));
     	    return false;
     	}
 
         $target_path = ($target_id > 0) ?  $target->getPath().$target_id.'|' : "|";
-        $target_name = ($target_id > 0) ?  $target->getName() : $I18N->msg('label_article_root');
+        $target_name = ($target_id > 0) ?  $target->getName() : cjoI18N::translate('label_article_root');
     	$parent_id = $article->getValue('re_id');
 
     	if (strpos($target_path,'|'.$id.'|') !== false ||
     	    $parent_id == $target_id) {
-    	    cjoMessage::addError($I18N->msg('msg_error_move_article_self', $article->getName()));
+    	    cjoMessage::addError(cjoI18N::translate('msg_error_move_article_self', $article->getName()));
     	    return false;
     	}
 
@@ -490,12 +467,12 @@ class cjoGenerate {
 		$update->setValue('prior', time());
 		$update->addGlobalUpdateFields();
 		$update->setWhere('id="'.$id.'"');
-		$update->Update($I18N->msg("msg_content_article_moved", $article->getName(), $target_name));
+		$update->Update(cjoI18N::translate("msg_content_article_moved", $article->getName(), $target_name));
 
 		// Prios neu berechnen
-		foreach ($CJO['CLANG'] as $clang=>$name ) {
-			self::newPrio($target_id, $clang, 1, 0);
-			self::newPrio($parent_id, $clang, 1, 0);
+		foreach(cjoProp::getClangs() as $clang_id) {
+			self::newPrio($target_id, $clang_id, 1, 0);
+			self::newPrio($parent_id, $clang_id, 1, 0);
 		}
 
     	$generate_ids[$id] = false;
@@ -547,12 +524,10 @@ class cjoGenerate {
      */
     public static function copyArticle($id, $target_id, $process_all=true) {
 
-        global $CJO, $I18N;
-
-    	if (!$CJO['USER']->hasPerm("copyArticle[]") ||
-    	    !$CJO['USER']->hasCatPermWrite($id,false) ||
-    	    $CJO['USER']->hasPerm('editContentOnly[]')) {
-    	    cjoMessage::addError($I18N->msg('msg_no_rights'));
+    	if (!cjoProp::getUser()->hasPerm("copyArticle[]") ||
+    	    !cjoProp::getUser()->hasCatPermWrite($id,false) ||
+    	    cjoProp::getUser()->hasPerm('editContentOnly[]')) {
+    	    cjoMessage::addError(cjoI18N::translate('msg_no_rights'));
     	    return false;
     	}
 
@@ -564,17 +539,17 @@ class cjoGenerate {
 
     	if (!OOArticle::isValid($article) || (
     	    $target_id != 0 && !OOArticle::isValid($target))) {
-    	    cjoMessage::addError($I18N->msg('msg_error_move_article'));
+    	    cjoMessage::addError(cjoI18N::translate('msg_error_move_article'));
     	    return false;
     	}
 
-        if (!$CJO['USER']->hasCatPermWrite($target_id)) {
-            cjoMessage::addError($I18N->msg('msg_no_target_rights'));
+        if (!cjoProp::getUser()->hasCatPermWrite($target_id)) {
+            cjoMessage::addError(cjoI18N::translate('msg_no_target_rights'));
     	    return false;
     	}
 
         $target_path = ($target_id != 0) ?  $target->getPath().$target_id.'|' : "|";
-        $target_name = ($target_id != 0) ?  $target->getName() : $I18N->msg('root');
+        $target_name = ($target_id != 0) ?  $target->getName() : cjoI18N::translate('root');
     	$parent_id = $article->getValue('re_id');
 
     	$dont_copy = array ('id',
@@ -588,12 +563,12 @@ class cjoGenerate {
 							'startpage' );
     	$new_id = false;
 
-    	foreach ($CJO['CLANG'] as $clang => $clang_name) {
+    	foreach(cjoProp::getClangs() as $clang_id) {
 
-            $article = OOArticle::getArticleById($id, $clang);
+            $article = OOArticle::getArticleById($id, $clang_id);
 
     		$target_sql = new cjoSql();
-    		$qry = "SELECT * FROM ".TBL_ARTICLES." WHERE clang='".$clang."' AND id='".$to_id."'";
+    		$qry = "SELECT * FROM ".TBL_ARTICLES." WHERE clang='".$clang_id."' AND id='".$to_id."'";
     		$target_sql->setQuery($qry);
 
     		$insert = new cjoSql();
@@ -608,7 +583,7 @@ class cjoGenerate {
     		$new_name = $article->getName();
 
     		$sql = new cjoSql();
-    		$qry = "SELECT * FROM ".TBL_ARTICLES." WHERE clang='".$clang."' AND re_id='".$target_id."' AND name LIKE '".$new_name."' LIMIT 1";
+    		$qry = "SELECT * FROM ".TBL_ARTICLES." WHERE clang='".$clang_id."' AND re_id='".$target_id."' AND name LIKE '".$new_name."' LIMIT 1";
     		$sql->setQuery($qry);
 
     		if ($sql->getRows() != 0) $new_name .= '_copy';
@@ -620,12 +595,12 @@ class cjoGenerate {
             $insert->setValue('name', $new_name);
     		$insert->setValue('prior', time());
     		$insert->setValue('status', 0);
-    		$insert->setValue("clang", $clang);
+    		$insert->setValue("clang", $clang_id);
     		$insert->addGlobalCreateFields();
-    		$insert->Insert($I18N->msg("msg_content_article_copied", $article->getName(), $target_name));
+    		$insert->Insert(cjoI18N::translate("msg_content_article_copied", $article->getName(), $target_name));
 
         	cjoExtension::registerExtensionPoint('ARTICLE_ADDED', array("id" => $new_id,
-                                                                        "clang" => $clang,
+                                                                        "clang" => $clang_id,
                                                                         "name" => $article->getName().'_copy',
                                                                         "re_id" => $target_id,
                                                                         "path" => $target_path,
@@ -633,12 +608,12 @@ class cjoGenerate {
                                                                         "type_id" => $article->getValue('type_id'),
                                                                         "online_from" => $article->getValue('online_from'),
             															"online_to" => $article->getValue('online_to'),
-                                                                        "user" => $CJO['USER']->getValue("name")
+                                                                        "user" => cjoProp::getUser()->getValue("name")
             															),
             													   true);
 
-    		self::copyContent($id, $new_id, $clang, $clang);
-    		self::newPrio($target_id, $clang, 1, 0);
+    		self::copyContent($id, $new_id, $clang_id, $clang);
+    		self::newPrio($target_id, $clang_id, 1, 0);
 
     		$generate_ids[$new_id] = false;
     	}
@@ -664,14 +639,14 @@ class cjoGenerate {
      */
     public static function copyArticleRecrusive($id, $target_id, $level = 0) {
 
-    	global $CJO, $I18N, $generate_ids;
+    	global $generate_ids;
 
     	if ($level > 10) return false;
 
-        if (!$CJO['USER']->hasPerm("copyArticle[]") ||
-    	    !$CJO['USER']->hasCatPermWrite($id,false) ||
-    	    $CJO['USER']->hasPerm('editContentOnly[]')) {
-    	    cjoMessage::addError($I18N->msg('msg_no_rights'));
+        if (!cjoProp::getUser()->hasPerm("copyArticle[]") ||
+    	    !cjoProp::getUser()->hasCatPermWrite($id,false) ||
+    	    cjoProp::getUser()->hasPerm('editContentOnly[]')) {
+    	    cjoMessage::addError(cjoI18N::translate('msg_no_rights'));
     	    return false;
     	}
 
@@ -688,7 +663,7 @@ class cjoGenerate {
 
     	    if (!OOArticle::isValid($article) || (
         	    $target_id != 0 && !OOArticle::isValid($target))) {
-        	    cjoMessage::addError($I18N->msg('msg_error_copy_article'));
+        	    cjoMessage::addError(cjoI18N::translate('msg_error_copy_article'));
         	    return false;
         	}
 
@@ -726,13 +701,13 @@ class cjoGenerate {
     	    }
     	    self::generateArticles($generate_ids);
 
-            $target_name = ($target_id > 0) ?  $target->getName() : $I18N->msg('root');
+            $target_name = ($target_id > 0) ?  $target->getName() : cjoI18N::translate('root');
 
     	}
 
     	cjoMessage::flushSuccesses();
     	if(!cjoMessage::hasErrors())
-    	    cjoMessage::addSuccess($I18N->msg("msg_content_article_rcopied", $article->getName(), $target_name));
+    	    cjoMessage::addSuccess(cjoI18N::translate("msg_content_article_rcopied", $article->getName(), $target_name));
 
     	return true;
     }
@@ -749,10 +724,8 @@ class cjoGenerate {
      */
     public static function copyContent($id, $target_id, $clang=0, $target_clang=0, $ctype=-1, $re_id=0) {
 
-    	global $CJO, $I18N;
-
         if ($id == $target_id && $clang == $target_clang) {
-            cjoMessage::addError($I18N->msg('msg_error_copy_content_self'));
+            cjoMessage::addError(cjoI18N::translate('msg_error_copy_content_self'));
             return false;
         }
     	
@@ -760,34 +733,32 @@ class cjoGenerate {
     	$target_id = (int) $target_id;
     
         if ($id == $target_id && $clang == $target_clang) {
-            cjoMessage::addError($I18N->msg('msg_error_copy_content_self'));
+            cjoMessage::addError(cjoI18N::translate('msg_error_copy_content_self'));
             return false;
         }
     	
-	    $article = OOArticle::getArticleById($id, $clang);
-    	$target = OOArticle::getArticleById($target_id, $target_clang);
-    	$limit_ctype = isset($CJO['CTYPE'][$ctype]) ? true : false;
+	    $article = OOArticle::getArticleById($id);
+    	$target = OOArticle::getArticleById($target_id);
+    	$limit_ctype = cjoProp::isCtype($ctype);
 
     	if (!OOArticle::isValid($article) ||
     	    !OOArticle::isValid($target)) {
-    	    cjoMessage::addError($I18N->msg('msg_error_copy_content'));
+    	    cjoMessage::addError(cjoI18N::translate('msg_error_copy_content'));
     	    return false;
     	}
-    	
-    	
 
         if ($article->getTemplateId() != $target->getTemplateId()) {
-            cjoMessage::addError($I18N->msg('msg_error_copy_content_template_mismatch'));
+            cjoMessage::addError(cjoI18N::translate('msg_error_copy_content_template_mismatch'));
             return false;
         }
 
-        if (!$CJO['USER']->hasCatPermWrite($id)) {
-	        cjoMessage::addError($I18N->msg('msg_no_rights').$id);
+        if (!cjoProp::getUser()->hasCatPermWrite($id)) {
+	        cjoMessage::addError(cjoI18N::translate('msg_no_rights').$id);
     	    return false;
     	}
 
-        if (!$CJO['USER']->hasCatPermWrite($target_id,true)) {
-            cjoMessage::addError($I18N->msg('msg_no_target_rights'));
+        if (!cjoProp::getUser()->hasCatPermWrite($target_id,true)) {
+            cjoMessage::addError(cjoI18N::translate('msg_no_target_rights'));
     	    return false;
     	}
     	
@@ -851,10 +822,10 @@ class cjoGenerate {
     	self::generateArticle($target_id);
     	
     	if (!$limit_ctype) {
-    	   cjoMessage::addSuccess($I18N->msg("msg_copy_content", $article->getName(), $target->getName()));
+    	   cjoMessage::addSuccess(cjoI18N::translate("msg_copy_content", $article->getName(), $target->getName()));
     	}
     	else {
-           cjoMessage::addSuccess($I18N->msg("msg_copy_content_ctype", $article->getName(), $target->getName(), $CJO['CTYPE'][$ctype]));
+           cjoMessage::addSuccess(cjoI18N::translate("msg_copy_content_ctype", $article->getName(), $target->getName(), cjoProp::getCtypeName($ctype)));
     	}
     	return true;
     }
@@ -867,8 +838,6 @@ class cjoGenerate {
      */
     public static function deleteCLang($id = 0) {
 
-    	global $CJO, $I18N;
-
     	if ($id == 0) return false;
 
     	$status = true;
@@ -878,17 +847,8 @@ class cjoGenerate {
 
     	if ($sql->getRows() < 1) return false;
 
-    	$new_content = "// --- DYN\r\n";
-    	for ($i = 0; $i < $sql->getRows(); $i++) {
-    		$new_content .= "\r\n\$CJO['CLANG']['".$sql->getValue("id")."'] = \"".$sql->getValue("name")."\";";
-    		$new_content .= "\r\n\$CJO['CLANG_ISO']['".$sql->getValue("id")."'] = \"".$sql->getValue("iso")."\";";
-    		$sql->next();
-    	}
-    	$new_content .= "\r\n// --- /DYN";
 
-    	$status = self::replaceFileContents($CJO['FILE_CONFIG_LANGS'], $new_content);
-
-    	foreach (cjoAssistance::toArray(glob($CJO['FOLDER_GENERATED_ARTICLES']."/*.".$id.".*")) as $filename) {
+    	foreach (cjoAssistance::toArray(glob(cjoPath::generated('articles')."*.".$id.".*")) as $filename) {
     	    @ unlink($filename);
     	}
 
@@ -898,17 +858,16 @@ class cjoGenerate {
     	}
     	if ($status) {
         	$sql->flush();
-        	$status = $sql->setQuery("DELETE FROM ".TBL_ARTICLES." WHERE clang='".$id."'");
-    	}
-    	if ($status) {
+        	$sql->setQuery("DELETE FROM ".TBL_ARTICLES." WHERE clang='".$id."'");
+ 
         	$sql->flush();
-        	$status = $sql->setQuery("DELETE FROM ".TBL_ARTICLES_SLICE." WHERE clang='".$id."'");
-    	}
-    	if ($status) {
-    		cjoMessage::addSuccess($I18N->msg("msg_clang_deleted"));
-    	    unset ($CJO['CLANG'][$id]);
-        	// ----- EXTENSION POINT
+        	$sql->setQuery("DELETE FROM ".TBL_ARTICLES_SLICE." WHERE clang='".$id."'");
+
+    		cjoMessage::addSuccess(cjoI18N::translate("msg_langs_deleted"));
+            
+            self::generateClangs();
         	cjoExtension::registerExtensionPoint('CLANG_DELETED', array ('id' => $id));
+            self::generateAll();            
     	}
     	return $status;
     }
@@ -921,8 +880,6 @@ class cjoGenerate {
      */
     public static function addCLang($id, $name, $iso) {
 
-    	global $CJO, $I18N;
-
     	$status = true;
 
     	$sql = new cjoSql();
@@ -930,35 +887,26 @@ class cjoGenerate {
 
     	if ($sql->getRows() > 0) return false;
 
-    	$sql->flush();
-    	$sql->setQuery("SELECT * FROM ".TBL_CLANGS." ORDER BY id");
+        $insert = new cjoSql();
+        $insert->setTable(TBL_CLANGS);
+        $insert->setValue('id', $id);
+        $insert->setValue('name', $name);
+        $insert->setValue('iso', $iso);
 
-    	$new_content = "// --- DYN\r\n";
-    	for ($i = 0; $i < $sql->getRows(); $i++) {
-    		$new_content .= "\r\n\$CJO['CLANG']['".$sql->getValue("id")."'] = \"".$sql->getValue("name")."\";";
-    		$new_content .= "\r\n\$CJO['CLANG_ISO']['".$sql->getValue("id")."'] = \"".$sql->getValue("iso")."\";\r\n";
-    		$sql->next();
-    	}
-    	$new_content .= "\r\n\$CJO['CLANG']['".$id."'] = \"".$name."\";";
-    	$new_content .= "\r\n\$CJO['CLANG_ISO']['".$id."'] = \"".$iso."\";";
-    	$new_content .= "\r\n// --- /DYN";
+        if ($insert->Insert(cjoI18N::translate("msg_langs_added"))) {
 
-    	$status = self::replaceFileContents($CJO['FILE_CONFIG_LANGS'], $new_content);
-
-    	$sql->flush();
-    	$sql->setQuery("SELECT * FROM ".TBL_ARTICLES." WHERE clang='0'");
-
-    	if ($status) {
-
+        	$sql->flush();
+        	$sql->setQuery("SELECT * FROM ".TBL_ARTICLES." WHERE clang='0'");
+    
             $fields = cjoSql::getFieldNames(TBL_ARTICLES);
             
-        	$insert = new cjoSql();
+            $insert->flush();
         	for ($i = 0; $i < $sql->getRows(); $i++) {
-
+    
         		$insert->flush();
         		$insert->setTable(TBL_ARTICLES);
         		foreach($fields as $key=>$value ) {
-
+    
         			if ($value == "pid") {
         			    continue;
         			}
@@ -975,25 +923,12 @@ class cjoGenerate {
         		$insert->Insert();
         		$sql->next();
         	}
-
-        	$insert->flush();
-        	$insert->setTable(TBL_CLANGS);
-        	$insert->setValue('id', $id);
-        	$insert->setValue('name', $name);
-        	$insert->setValue('iso', $iso);
-        	$status = $insert->Insert();
-    	}
-    	if (!$status) {
-    		$sql->flush();
-    		$sql->setQuery("DELETE FROM ".TBL_ARTICLES." WHERE clang='".$id."'");
-    	}
-    	else {
-    	    cjoMessage::addSuccess($I18N->msg("msg_clang_saved"));
-
-        	cjoExtension::registerExtensionPoint('CLANG_ADDED', array ('id' => $id,'name' => $name));
-        	self::generateAll();
-    	}
-    	return $status;
+            self::generateClangs();
+            cjoExtension::registerExtensionPoint('CLANG_ADDED', array('id'=>$id,'name'=>$name,'iso'=>$iso));
+            self::generateAll();
+            return true; 
+        }         
+        return false;  
     }
 
     /**
@@ -1004,58 +939,39 @@ class cjoGenerate {
      */
     public static function editCLang($id, $name, $iso) {
 
-    	global $CJO, $I18N;
-
-    	$status = true;
-
-    	$sql = new cjoSql();
-    	$sql->setQuery("SELECT * FROM ".TBL_CLANGS." WHERE id='".$id."'");
-    	if ($sql->getRows() != 1) return false;
-
-    	$sql->flush();
-    	$sql->setQuery("SELECT * FROM ".TBL_CLANGS." ORDER BY id");
-
-    	$new_content = "// --- DYN\r\n";
-    	for ($i = 0; $i < $sql->getRows(); $i++) {
-    		$new_content .= "\r\n\$CJO['CLANG']['".$sql->getValue("id")."'] = \"".$sql->getValue("name")."\";";
-    		$new_content .= "\r\n\$CJO['CLANG_ISO']['".$sql->getValue("id")."'] = \"".$sql->getValue("iso")."\";\r\n";
-    		$sql->next();
-    	}
-    	$new_content .= "\r\n// --- /DYN";
-
-    	$status = self::replaceFileContents($CJO['FILE_CONFIG_LANGS'], $new_content);
-
-    	if ($status) {
-
-    	    $update = $sql;
+    	    $update = new cjoSql();
         	$update->setTable(TBL_CLANGS);
         	$update->setWhere("id='".$id."'");
         	$update->setValue('name', $name);
         	$update->setValue('iso', $iso);
-        	$update->Update($I18N->msg("msg_clang_updated"));
+        	if ($update->Update(cjoI18N::translate("msg_langs_updated"))) {
 
-        	cjoExtension::registerExtensionPoint('CLANG_UPDATED', array('id' => $id,
-                                                            			'name' => $name,
-                                                            			'iso' => $iso));
-        	self::generateAll();
-    	}
-    	return $status;
+                self::generateClangs();
+            	cjoExtension::registerExtensionPoint('CLANG_UPDATED', array('id'=>$id,'name'=>$name,'iso'=>$iso));
+                self::generateAll();     
+                return true; 
+            }         
+            return false;  
     }
 
     public static function generateClangs() {
 
-        global $CJO, $I18N;
-
         $sql = new cjoSql();
-    	$sql->setQuery("SELECT * FROM ".TBL_CLANGS." ORDER BY id");
-    	$new_content = "// --- DYN\r\n";
-    	for ($i = 0; $i < $sql->getRows(); $i++) {
-    		$new_content .= "\r\n\$CJO['CLANG']['".$sql->getValue("id")."'] = \"".$sql->getValue("name")."\";";
-    		$new_content .= "\r\n\$CJO['CLANG_ISO']['".$sql->getValue("id")."'] = \"".$sql->getValue("iso")."\";";
-    		$sql->next();
-    	}
-    	$new_content .= "\r\n// --- /DYN";
-    	self::replaceFileContents($CJO['FILE_CONFIG_LANGS'], $new_content);
+        $results = $sql->getArray("SELECT * FROM ".TBL_CLANGS." ORDER BY id");
+        
+        $clang = array();
+        $iso = array();        
+        
+        foreach($results as $result) {
+            $clang[(string) $result['id']] = $result['name'];
+            $iso[(string) $result['id']] = $result['iso'];
+        }
+        
+        if (!empty($clang) && !empty($iso)) {
+            cjoProp::set('CLANG', $clang);
+            cjoProp::set('CLANG_ISO', $iso);
+            cjoProp::saveToFile(cjoPath::pageConfig('clangs'));
+        }
     }
     
     public static function syncCLang($id, $sync_master, $params=array()) {
@@ -1085,48 +1001,6 @@ class cjoGenerate {
             }
             $update->Update();
         }
-    }
-
-    /**
-     * Schreibt Addoneigenschaften in die Datei $CJO['FILE_CONFIG_ADDONS']
-     * @param array Array mit den Namen der Addons aus dem Verzeichnis addons/
-     */
-    public static function generateAddons($ADDONS, $debug = false) {
-
-    	global $CJO;
-    	natsort($ADDONS);
-
-    	$new_content = "// --- DYN\r\n\r\n";
-    	foreach ($ADDONS as $cur) {
-
-    		$CJO['ADDON']['menu'][$cur] = str_replace('"','',$CJO['ADDON']['menu'][$cur]);
-
-    		if (!OOAddon :: isInstalled($cur)) {
-    			$CJO['ADDON']['install'][$cur] = 0;
-    		}
-    		if (!OOAddon :: isActivated($cur)) {
-    			$CJO['ADDON']['status'][$cur] = 0;
-    		}
-    		if ($CJO['ADDON']['menu'][$cur] == '')
-    			$CJO['ADDON']['menu'][$cur] = 0;
-
-    		if (strlen($CJO['ADDON']['menu'][$cur]) > 1 ||
-    			!is_numeric($CJO['ADDON']['menu'][$cur]))
-    			$CJO['ADDON']['menu'][$cur] = '"'.$CJO['ADDON']['menu'][$cur].'"';
-
-    		$new_content .= "\$CJO['ADDON']['install']['$cur'] = ".$CJO['ADDON']['install'][$cur].";\r\n".
-    						"\$CJO['ADDON']['status']['$cur'] = ".$CJO['ADDON']['status'][$cur].";\r\n".
-    						"\$CJO['ADDON']['menu']['$cur'] = ".$CJO['ADDON']['menu'][$cur].";\r\n\r\n";
-    	}
-    	$new_content .= "// --- /DYN";
-
-    	if (!cjoAssistance::isReadable($CJO['FILE_CONFIG_ADDONS'])) {
-            return false;
-        }
-    	if (!cjoAssistance::isWritable($CJO['FILE_CONFIG_ADDONS'])) {
-    	    return false;
-        }
-    	return self::replaceFileContents($CJO['FILE_CONFIG_ADDONS'], $new_content);
     }
 
 	/**
@@ -1175,51 +1049,24 @@ class cjoGenerate {
     }
 
     public static function putFileContents($filename, $new_content) {
-
-        global $CJO;
-
-        if (file_exists($filename)) {
-            if (!cjoAssistance::isWritable($filename)) return false;
-        }
-        elseif (is_dir($filename.'../')) {
-            if (!cjoAssistance::isWritable($filename.'../')) return false;
-        }
-
-    	$temp_file = $filename.'.'.@getmypid();
-    	$state = file_put_contents($temp_file, $new_content);
-    	@chmod($temp_file, $CJO['FILEPERM']);
-
-
-    	if ($state != false) {
-    		@unlink($filename);
-    		@rename($temp_file, $filename);
-    	    @chmod($temp_file, $CJO['FILEPERM']);    		
-    		return true;
-    	}
-    	else{
-    		return false;
-    	}
+        return cjoFile::put($filename, $new_content);
     }
 
     public static function processImage($process_image = false) {
 
-        global $CJO;
-
-        $mypage = 'image_processor';
+        $addon = 'image_processor';
 
         if (!$process_image) {
-            $process_image = cjo_get('process_image', 'string',
-                                     $CJO['ADDON']['settings'][$mypage]['error_img'],
-                                     true);
+            $process_image = cjo_get('process_image', 'string', cjoAddon::getParameter('error_img', $addon), true);
         }
         
     	$set = array();
 
-    	if (is_readable($CJO['MEDIAFOLDER']."/".$process_image)) {
-    		$process_image = $CJO['MEDIAFOLDER']."/".$process_image;
+    	if (is_readable(cjoPath::media($process_image))) {
+    		$process_image = cjoPath::media($process_image);
     	}
     	else if (!is_readable($process_image)) {
-    	    $process_image = $CJO['MEDIAFOLDER']."/".$CJO['ADDON']['settings'][$mypage]['error_img'];
+    	    $process_image = cjoPath::media(cjoAddon::getParameter('error_img', $addon));
     	}
 
         $file_size = getimagesize($process_image);
@@ -1253,7 +1100,7 @@ class cjoGenerate {
     	if (cjo_get('jpg-quality', 'bool'))
     	    $set['jpg_quality'] = "jpg-quality=".cjo_get('jpg-quality' ,'int' ,'', true);
 
-    	$filename = imageProcessor_getImg($set['imagefile'],
+    	$filename = cjoImageProcessor::getImg($set['imagefile'],
                                           $set['x'],
                                           $set['y'],
                                           $set['resize'],

@@ -34,7 +34,7 @@ if ($function == 'status') {
     $update->setWhere("id='".$oid."'");
     $update->setValue("status", $status);  
     $update->addGlobalUpdateFields();
-    $update->Update($I18N_23->msg("msg_channel_updated"));
+    $update->Update(cjoAddon::translate(23,"msg_channel_updated"));
     unset($function);
 }
 
@@ -42,7 +42,7 @@ if ($function == 'status') {
 if ($function == 'delete') {
 	$sql = new cjoSql();
     $qry = "DELETE FROM ".TBL_TV_CHANNELS." WHERE id='".$oid."'";
-    $sql->statusQuery($qry,$I18N_23->msg("msg_channel_deleted"));
+    $sql->statusQuery($qry,cjoAddon::translate(23,"msg_channel_deleted"));
     unset($function);
 }
 
@@ -55,16 +55,16 @@ if ($function == "add" || $function == "edit" ) {
     //$form->debug = true;
 
     //Fields
-    $fields['name'] = new textField('name', $I18N_23->msg('label_channel_name'), $readonly);
-    $fields['name']->addValidator('notEmpty', $I18N_23->msg('msg_channel_name_notEmpty'), false, false);    
+    $fields['name'] = new textField('name', cjoAddon::translate(23,'label_channel_name'), $readonly);
+    $fields['name']->addValidator('notEmpty', cjoAddon::translate(23,'msg_channel_name_notEmpty'), false, false);    
     $fields['name']->setNote('<div class="channel_preview_small"></div>'); 
     $fields['name']->needFullColumn(true);
     
-    $fields['short_name'] = new textField('short_name', $I18N_23->msg('label_channel_short_name'), $readonly);
-    $fields['short_name']->addValidator('notEmpty', $I18N_23->msg('msg_channel_short_name_notEmpty'), false, false); 
+    $fields['short_name'] = new textField('short_name', cjoAddon::translate(23,'label_channel_short_name'), $readonly);
+    $fields['short_name']->addValidator('notEmpty', cjoAddon::translate(23,'msg_channel_short_name_notEmpty'), false, false); 
     $fields['short_name']->needFullColumn(true);
     
-    $fields['online_from'] = new datepickerField('online_from', $I18N->msg('label_from_to'), '', array('online_from','online_to'));
+    $fields['online_from'] = new datepickerField('online_from', cjoI18N::translate('label_from_to'), '', array('online_from','online_to'));
     $fields['online_from']->addSettings("defaultDate: 'd', buttonImage: 'img/silk_icons/calendar_begin.png'");
     $fields['online_from']->setDefault(time());
     
@@ -74,19 +74,19 @@ if ($function == "add" || $function == "edit" ) {
     $fields['online_to']->needFullColumn(true);
     
 	$fields['pay'] = new checkboxField('pay', '&nbsp;',  array('style' => 'width: auto;'));
-	$fields['pay']->addBox($I18N_23->msg("label_pay_tv"), '1');    
+	$fields['pay']->addBox(cjoAddon::translate(23,"label_pay_tv"), '1');    
     $fields['pay']->needFullColumn(true);
 	
 	$fields['hd'] = new checkboxField('hd', '&nbsp;',  array('style' => 'width: auto;'));
-	$fields['hd']->addBox($I18N_23->msg("label_hd"), '1');    	
+	$fields['hd']->addBox(cjoAddon::translate(23,"label_hd"), '1');    	
     $fields['hd']->needFullColumn(true);
 	
-    $fields['description'] = new cjoWYMeditorField('description', $I18N_23->msg('label_description'));
+    $fields['description'] = new cjoWYMeditorField('description', cjoAddon::translate(23,'label_description'));
     $fields['description']->setWidth('650');
     $fields['description']->setHeight('200');
     $fields['description']->needFullColumn(true);
     
-    $fields['video1'] = new cjoMediaButtonField('video1', $I18N_23->msg('label_connected_video').' 1', array('preview' => array('disabled' => false)));
+    $fields['video1'] = new cjoMediaButtonField('video1', cjoAddon::translate(23,'label_connected_video').' 1', array('preview' => array('disabled' => false)));
     
     $fields['video1_online_from'] = new datepickerField('video1_online_from', '', '', array('video1_online_from','video1_online_to'));
     $fields['video1_online_from']->addSettings("defaultDate: 'd', buttonImage: 'img/silk_icons/calendar_begin.png'");
@@ -96,7 +96,7 @@ if ($function == "add" || $function == "edit" ) {
     $fields['video1_online_to']->addSettings("defaultDate: new Date(2020, 1 - 1, 1), buttonImage: 'img/silk_icons/calendar_end.png'");
     $fields['video1_online_to']->setDefault(mktime(0, 0, 0, 1, 1, 2020));
     
-    $fields['video2'] = new cjoMediaButtonField('video2', $I18N_23->msg('label_connected_video').' 2', array('preview' => array('disabled' => false)));
+    $fields['video2'] = new cjoMediaButtonField('video2', cjoAddon::translate(23,'label_connected_video').' 2', array('preview' => array('disabled' => false)));
     
     $fields['video2_online_from'] = new datepickerField('video2_online_from', '', '', array('video2_online_from','video2_online_to'));
     $fields['video2_online_from']->addSettings("defaultDate: 'd', buttonImage: 'img/silk_icons/calendar_begin.png'");
@@ -107,17 +107,17 @@ if ($function == "add" || $function == "edit" ) {
     $fields['video2_online_to']->setDefault(mktime(0, 0, 0, 1, 1, 2020)); 
     
     
-    $fields['medialist'] = new cjoMediaListField('medialist', $I18N_23->msg('label_connected_medialist'), array('style'=>'width:334px;'));  
+    $fields['medialist'] = new cjoMediaListField('medialist', cjoAddon::translate(23,'label_connected_medialist'), array('style'=>'width:334px;'));  
     $fields['medialist']->needFullColumn(true);
            
-    $fields['packages'] = new selectField('packages', $I18N_23->msg('label_packages'));
+    $fields['packages'] = new selectField('packages', cjoAddon::translate(23,'label_packages'));
     $fields['packages']->addSqlOptions("SELECT name, id FROM ".TBL_CHANNELPACKAGES." WHERE selectable=1 ORDER BY prior");
     $fields['packages']->addAttribute('size', 10);
     $fields['packages']->setMultiple(true);
     $fields['packages']->needFullColumn(true);
     
     //Add Fields:
-    $section = new cjoFormSection(TBL_TV_CHANNELS, $I18N_23->msg($function."_channels"), array ('id' => $oid),array('576px','135px','183px'));
+    $section = new cjoFormSection(TBL_TV_CHANNELS, cjoAddon::translate(23,$function."_channels"), array ('id' => $oid),array('576px','135px','183px'));
     
     $section->addFields($fields);
     $form->addSection($section);
@@ -145,7 +145,7 @@ if ($function == "add" || $function == "edit" ) {
     	$update->Update();
     	
         if (cjo_post('cjoform_update_button', 'bool') && !cjoMessage::hasErrors()) {
-    		cjoAssistance::redirectBE(array('oid'=>$oid, 'function'=>'edit','msg' => 'msg_data_saved'));
+    		cjoUrl::redirectBE(array('oid'=>$oid, 'function'=>'edit','msg' => 'msg_data_saved'));
     	}
 		if (cjo_post('cjoform_save_button','bool')) {
 			unset($function);
@@ -161,77 +161,77 @@ $list = new cjolist($sql, 'prior', 'ASC', 'name', 50);
 $list->setName('CHANNEL_LIST');
 $list->setAttributes('id="channel_list"');
 
-$add_button = cjoAssistance::createBELink(
-						    '<img src="img/silk_icons/add.png" alt="'.$I18N->msg("button_add").'" />',
+$add_button = cjoUrl::createBELink(
+						    '<img src="img/silk_icons/add.png" alt="'.cjoI18N::translate("button_add").'" />',
 							array('function' => 'add'),
 							$list->getGlobalParams(),
-							'title="'.$I18N->msg("button_add").'"');
+							'title="'.cjoI18N::translate("button_add").'"');
 
 $cols['id'] = new resultColumn('id', $add_button);
 $cols['id']->setHeadAttributes('class="icon"');
 $cols['id']->setBodyAttributes('class="icon"');
 $cols['id']->delOption(OPT_ALL);
 
-$cols['icon'] = new resultColumn('icon', $I18N_23->msg('label_channel_icon'), 'call_user_func', array('cjoChannelList::formatIcon',array('%s','id')));
+$cols['icon'] = new resultColumn('icon', cjoAddon::translate(23,'label_channel_icon'), 'call_user_func', array('cjoChannelList::formatIcon',array('%s','id')));
 $cols['icon']->setBodyAttributes('class="channel_preview_small"');
 $cols['icon']->delOption(OPT_ALL);
 
-$cols['name'] = new resultColumn('name', $I18N_23->msg('label_channel_name'));
+$cols['name'] = new resultColumn('name', cjoAddon::translate(23,'label_channel_name'));
 $cols['name']->setBodyAttributes('width="20%"');
 
-$cols['short_name'] = new resultColumn('short_name', $I18N_23->msg('label_channel_short_name'));
+$cols['short_name'] = new resultColumn('short_name', cjoAddon::translate(23,'label_channel_short_name'));
 $cols['short_name']->setBodyAttributes('width="10%"');
 
-$cols['packages'] = new resultColumn('packages', $I18N_23->msg('label_packages'), 'call_user_func', array('cjoChannelList::formatPackages',array('%s','packages')));
+$cols['packages'] = new resultColumn('packages', cjoAddon::translate(23,'label_packages'), 'call_user_func', array('cjoChannelList::formatPackages',array('%s','packages')));
 $cols['packages']->setBodyAttributes('width="15%"');
 $cols['packages']->setOptions(OPT_SEARCH);
 
-$cols['prio'] = new resultColumn('prior', $I18N->msg('label_prio'));
+$cols['prio'] = new resultColumn('prior', cjoI18N::translate('label_prio'));
 $cols['prio']->setHeadAttributes('class="icon"');
 $cols['prio']->setBodyAttributes('class="icon dragHandle tablednd"');
-$cols['prio']->setBodyAttributes('title="'.$I18N->msg("label_change_prio").'"');
+$cols['prio']->setBodyAttributes('title="'.cjoI18N::translate("label_change_prio").'"');
 $cols['prio']->addCondition('prior', array('!=', ''), '<strong>%s</strong>');
 
 
-$cols['video'] = new resultColumn('video', $I18N_23->msg('label_connected_video'));
-$cols['video']->addCondition('video', array('!=', ''), '<img src="img/silk_icons/accept.png" alt="true" title="'.$I18N_23->msg("label_connected_video").'" />');
+$cols['video'] = new resultColumn('video', cjoAddon::translate(23,'label_connected_video'));
+$cols['video']->addCondition('video', array('!=', ''), '<img src="img/silk_icons/accept.png" alt="true" title="'.cjoAddon::translate(23,"label_connected_video").'" />');
 $cols['video']->setBodyAttributes('class="icon"');
 $cols['video']->setOptions(OPT_SORT);
 
-$cols['medialist'] = new resultColumn('medialist', $I18N_23->msg('label_connected_medialist'));
-$cols['medialist']->addCondition('medialist', array('!=', ''), '<img src="img/silk_icons/accept.png" alt="true" title="'.$I18N_23->msg("label_connected_medialist").'" />');
+$cols['medialist'] = new resultColumn('medialist', cjoAddon::translate(23,'label_connected_medialist'));
+$cols['medialist']->addCondition('medialist', array('!=', ''), '<img src="img/silk_icons/accept.png" alt="true" title="'.cjoAddon::translate(23,"label_connected_medialist").'" />');
 $cols['medialist']->setBodyAttributes('class="icon"');
 $cols['medialist']->setOptions(OPT_SORT);
 
-$cols['pay'] = new resultColumn('pay', $I18N_23->msg('label_pay_tv'));
-$cols['pay']->addCondition('pay', '1', '<img src="img/silk_icons/accept.png" alt="true" title="'.$I18N_23->msg("label_pay_tv").'" />');
+$cols['pay'] = new resultColumn('pay', cjoAddon::translate(23,'label_pay_tv'));
+$cols['pay']->addCondition('pay', '1', '<img src="img/silk_icons/accept.png" alt="true" title="'.cjoAddon::translate(23,"label_pay_tv").'" />');
 $cols['pay']->addCondition('pay', '0', '&nbsp;');
 $cols['pay']->setBodyAttributes('class="icon"');
 $cols['pay']->setOptions(OPT_SORT);
 
-$cols['hd'] = new resultColumn('hd', $I18N_23->msg('label_hd'));
-$cols['hd']->addCondition('hd', '1', '<img src="img/silk_icons/accept.png" alt="true" title="'.$I18N_23->msg("label_hd").'" />');
+$cols['hd'] = new resultColumn('hd', cjoAddon::translate(23,'label_hd'));
+$cols['hd']->addCondition('hd', '1', '<img src="img/silk_icons/accept.png" alt="true" title="'.cjoAddon::translate(23,"label_hd").'" />');
 $cols['hd']->addCondition('hd', '0', '&nbsp;');
 $cols['hd']->setBodyAttributes('class="icon"');
 $cols['hd']->setOptions(OPT_SORT);
 
 // Bearbeiten link
-$img = '<img src="img/silk_icons/page_white_edit.png" title="'.$I18N->msg("button_edit").'" alt="'.$I18N->msg("button_edit").'" />';
-$cols['edit'] = new staticColumn($img, $I18N->msg("label_functions"));
+$img = '<img src="img/silk_icons/page_white_edit.png" title="'.cjoI18N::translate("button_edit").'" alt="'.cjoI18N::translate("button_edit").'" />';
+$cols['edit'] = new staticColumn($img, cjoI18N::translate("label_functions"));
 $cols['edit']->setBodyAttributes('width="16"');
 $cols['edit']->setParams(array ('function' => 'edit', 'clang' => $clang, 'oid' => '%id%'));
 $cols['edit']->setHeadAttributes('colspan="3"');
 
 // Status link
-$aktiv = '<img class="cjo_status" src="img/silk_icons/eye.png" title="'.$I18N->msg("label_status_do_false").'" alt="'.$I18N->msg("label_status_true").'" />';
-$inaktiv = '<img class="cjo_status" src="img/silk_icons/eye_off.png" title="'.$I18N->msg("label_status_do_false").'" alt="'.$I18N->msg("label_status_false").'" />';
+$aktiv = '<img class="cjo_status" src="img/silk_icons/eye.png" title="'.cjoI18N::translate("label_status_do_false").'" alt="'.cjoI18N::translate("label_status_true").'" />';
+$inaktiv = '<img class="cjo_status" src="img/silk_icons/eye_off.png" title="'.cjoI18N::translate("label_status_do_false").'" alt="'.cjoI18N::translate("label_status_false").'" />';
 
 $cols['status'] = new staticColumn('status', NULL);
 $cols['status']->setBodyAttributes('width="16"');
 $cols['status']->addCondition('status', '1', $aktiv, array ('function' => 'status', 'oid' => '%id%'));
 $cols['status']->addCondition('status', '0', $inaktiv, array ('function' => 'status', 'oid' => '%id%'));
 
-$img = '<img src="img/silk_icons/bin.png" title="'.$I18N->msg("button_delete").'" alt="'.$I18N->msg("button_delete").'" />';
+$img = '<img src="img/silk_icons/bin.png" title="'.cjoI18N::translate("button_delete").'" alt="'.cjoI18N::translate("button_delete").'" />';
 $cols['delete'] = new staticColumn($img, NULL);
 $cols['delete']->setBodyAttributes('width="60"');
 $cols['delete']->setBodyAttributes('class="cjo_delete"');
@@ -318,11 +318,11 @@ $list->show();
 
 				$(jdialog).dialog({
         			buttons: {
-        				'<?php echo $I18N->msg('label_ok'); ?>': function() {
+        				'<?php echo cjoI18N::translate('label_ok'); ?>': function() {
         					$(this).dialog('close');
         					confirm_action();
         				},
-        				'<?php echo $I18N->msg('label_cancel'); ?>': function() {
+        				'<?php echo cjoI18N::translate('label_cancel'); ?>': function() {
         					$(this).dialog('close');
         					location.reload();
         				}

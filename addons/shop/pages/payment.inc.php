@@ -25,20 +25,19 @@
 
 
 global $CJO;
-$mypage = 'shop';
-
+$addon = 'shop';
 
 // get available moduls and language extensions pay method costs
-$pay_methods_path = $CJO['ADDON']['settings'][$mypage]['PAY_METHODS_PATH'];
+$pay_methods_path = cjoPath::addon($addon, cjoAddon::getParameter('PAY_METHODS_PATH', $addon));
 $dir_content = cjoAssistance::parseDir($pay_methods_path, array(), false, 2, 1, '/.*/i', '', '');
-$pay_methods = explode('|', $CJO['ADDON']['settings'][$mypage]['PAY_METHODS']);
+$pay_methods = cjoAssistance::toArray(cjoAddon::getParameter('PAY_METHODS', $addon));
 
 // get costs for all pay methods
 $costs = cjoShopPayMethod::getAllCosts();
 
 
 // are we coming from this page
-if (cjo_post('cjo_form_name','string') == $mypage.'_'.$subpage.'_form') {
+if (cjo_post('cjo_form_name','string') == $addon.'_'.$subpage.'_form') {
 	$dataset = $_POST;
 } else {
 	$dataset['set_active'] = cjoAssistance::toArray($pay_methods);
@@ -49,20 +48,20 @@ $form = new cjoForm();
 $form->setEditMode(true);
 
 // select field for all available pay methods
-$fields['set_active'] = new selectField('set_active', $I18N_21->msg('shop_activate_pay_method'));
+$fields['set_active'] = new selectField('set_active', cjoAddon::translate(21,'shop_activate_pay_method'));
 $fields['set_active']->setMultiple(true);
 $fields['set_active']->addAttribute('size', '5');
-$fields['set_active']->addValidator('notEmpty', $I18N->msg("msg_pay_method_notEmpty"), false, false);
+$fields['set_active']->addValidator('notEmpty', cjoI18N::translate("msg_pay_method_notEmpty"), false, false);
 
 /*
 * all yet possible combinations for 'shop_'.$key (see line 77, 82)
-* this lets i18n.php php find all texts that need to be
+* this lets cjoI18N.php php find all texts that need to be
 * translated
 *
-* $I18N_21->msg('shop_bank_account');
-* $I18N_21->msg('shop_credit_card');
-* $I18N_21->msg('shop_invoice');
-* $I18N_21->msg('shop_pre_payment');
+* cjoAddon::translate(21,'shop_bank_account');
+* cjoAddon::translate(21,'shop_credit_card');
+* cjoAddon::translate(21,'shop_invoice');
+* cjoAddon::translate(21,'shop_pre_payment');
 */
 
 // add available pay methods
@@ -70,29 +69,27 @@ foreach($dir_content as $key => $dir) {
 	if (is_readable($dir.'/config.inc.php')) {
     	include_once $dir.'/config.inc.php';
 	}
-    $fields['set_active']->addOption($I18N_21->msg('shop_'.$key),$key);
+    $fields['set_active']->addOption(cjoAddon::translate(21,'shop_'.$key),$key);
 }
 
 // headline for business terms
-$fields['headline1'] = new readOnlyField('headline1', '', array('class' => 'formheadline'));
-$fields['headline1']->setValue($I18N_21->msg('shop_payment_costs'));
+$fields['headline1'] = new headlineField(cjoAddon::translate(21,'shop_payment_costs'));
 
 // get activated pay methods
 foreach($dir_content as $key => $pay_method) {
 
-	$fields[$key] = new textField($key, $I18N_21->msg('shop_'.$key));
+	$fields[$key] = new textField($key, cjoAddon::translate(21,'shop_'.$key));
 	$fields[$key]->setValue($costs[$key]);
-	$fields[$key]->setNote($CJO['ADDON']['settings'][$mypage]['CURRENCY']['DEFAULT_SIGN']);
+	$fields[$key]->setNote($CJO['ADDON']['settings'][$addon]['CURRENCY']['DEFAULT_SIGN']);
 	$fields[$key]->setFormat('call_user_func', array('cjoShopPrice::toCurrency', array('%s', true)));
 }
 
 $fields['update_button'] = new buttonField();
-$fields['update_button']->addButton('cjoform_update_button',$I18N->msg("button_update"), true, 'img/silk_icons/tick.png');
+$fields['update_button']->addButton('cjoform_update_button',cjoI18N::translate("button_update"), true, 'img/silk_icons/tick.png');
 $fields['update_button']->setButtonAttributes('cjoform_update_button', 'id="cjoform_update_button1"');
 
 // build formular
-$section = new cjoFormSection('', $I18N_21->msg("shop_payment_settings"), array());
-$section->dataset = $dataset;
+$section = new cjoFormSection($dataset, cjoAddon::translate(21,"shop_payment_settings"), array());
 $section->addFields($fields);
 $form->addSection($section);
 $form->show(false);
@@ -116,7 +113,7 @@ if ($form->validate()) {
 
 	$msg = 'msg_data_saved';
 
-	$config_file = $CJO['ADDON']['settings'][$mypage]['SETTINGS'];
+	$config_file = $CJO['ADDON']['settings'][$addon]['SETTINGS'];
 	$config_data = file_get_contents($config_file);
 
 	// rewrite settings file
@@ -129,6 +126,6 @@ if ($form->validate()) {
 
 	cjoGenerate::putFileContents($config_file, $config_data);
 
-	cjoAssistance::redirectBE( array('msg' => $msg));
+	cjoUrl::redirectBE( array('msg' => $msg));
 
 }

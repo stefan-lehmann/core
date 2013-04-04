@@ -1,0 +1,87 @@
+[%TEMPLATE%]
+
+<div class="form ec_filter">
+    <a name="ec_filter" class="hidden_anchor"></a>
+    <form id="ec_filter" action="[[URL]]#ec_filter" method="post">
+        <fieldset>
+
+        	<legend class="hide_me">[[FORM_LEGEND_TEXT]]</legend>
+
+			IF([[DATE_INPUT_ENABLED]]){%
+
+				<div class="qfrow odd">
+		            <label class="qflabel" for="ec_filter_datefrom">[[DATEFROM_TEXT]]</label>
+		            <div class="qfelement">
+		                <input type="text" name="event_calendar[datefrom]"
+						value="[[DATEFROM]]" title="[translate: datefrom]"
+		                id="ec_filter_datefrom" maxlength="10" />
+		            </div>
+		        </div>
+				<div class="qfrow even">
+					<label class="qflabel" for="ec_filter_dateto">[[DATETO_TEXT]]</label>
+		            <div class="qfelement">
+		                <input type="text" name="event_calendar[dateto]"
+						value="[[DATETO]]" title="[translate: datefrom]"
+		                id="ec_filter_dateto" maxlength="10" />
+		            </div>
+		        </div>
+
+    		%}ENDIF
+
+			<%FORM_SELECTS%>
+
+		    IF([[SEARCH_AVAILABLE]]){%
+
+				<div class="qfrow odd">
+		            <label class="qflabel" for="ec_filter_search">[[SEARCH_TEXT]]</label>
+		            <div class="qfelement form_col1">
+		                <input type="text" name="event_calendar[search]"
+						value="[[SEARCH]]" title="[translate: ec_filter_search]"
+		                id="ec_filter_datefrom" class="" />
+		            </div>
+		        </div>
+				<div class="qfrow even">
+		            <label class="qflabel" for="ec_search_key">[[SEARCH_KEY_TEXT]]</label>
+		            <div class="qfelement">
+		                [[SEARCH_KEY_OUT]]
+		            </div>
+		        </div>
+
+			%}ENDIF
+
+		    IF([[COOKIE_ENABLED]]){%
+
+		        <div class="qfrow odd">
+		            <label class="qflabel" for="ec_cookie_enabled">&nbsp;</label>
+
+		            <div class="qfelement checkbox">
+		                <input type="checkbox" name="event_calendar[save_cookie]" value="1"
+		                title="[translate: ec_cookie_enabled]" id="ec_cookie_enabled"
+						class="checkbox cookie_enabled" [[COOKIE_ENABLED_CHECKED]] />
+						[[COOKIE_ENABLED_TEXT]]
+		            </div>
+		        </div>
+
+		    %}ENDIF
+
+        </fieldset>
+        <fieldset class="hidden">
+            <div class="qfrow">
+                <label for="submit" class="qflabel">&nbsp;</label>
+                <div class="qfelement">
+                    <span class="button"><input type="submit" name="event_calendar[submit]" value="[[SUBMIT_BUTTON_TEXT]]" id="event_calendar_submit" /></span>
+                </div>
+            </div>
+        </fieldset>
+    </form>
+</div>
+
+
+[%FORM_SELECTS%]
+
+<div class="qfrow[[ODD_EVEN]]">
+    <label class="qflabel" for="[[ELEMENT_ID]]">[[ELEMENT_LABEL]]</label>
+    <div class="qfelement">
+        [[ELEMENT_SELECT_OUT]]
+    </div>
+</div>

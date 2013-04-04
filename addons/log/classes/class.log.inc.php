@@ -25,17 +25,17 @@
 
 class cjoLog {
     
-    private static $mypage = 'log';
+    private static $addon = 'log';
     private static $cleaned = false;
     
     public static function writeLog($extension, $params) {
 
         global $CJO;
 
-        if (!$CJO['CONTEJO']) return false;
+        if (!cjoProp::isBackend()) return false;
                 
-        $incl = $CJO['ADDON']['settings'][self::$mypage]['SETTINGS']['INCL_EXTENSIONS'];
-        $excl = $CJO['ADDON']['settings'][self::$mypage]['SETTINGS']['EXCL_EXTENSIONS'];
+        $incl = $CJO['ADDON']['settings'][self::$addon]['SETTINGS']['INCL_EXTENSIONS'];
+        $excl = $CJO['ADDON']['settings'][self::$addon]['SETTINGS']['EXCL_EXTENSIONS'];
 
         if (!preg_match('/'.$incl.'/', $extension, $matches1) ||
              preg_match('/'.$excl.'/', $extension, $matches2)) {
@@ -43,7 +43,7 @@ class cjoLog {
         }
         
         if (is_object($CJO['USER'])) {
-            $user_id = $CJO['USER']->getValue('user_id');
+            $user_id = cjoProp::getUser()->getValue('user_id');
         } else if (isset($params['user_id'])) {
             $user_id = $params['user_id'];
         } else {
@@ -72,12 +72,12 @@ class cjoLog {
 
         global $CJO;
         
-        if ($clang === false) $clang = $CJO['CUR_CLANG'];
+        if ($clang === false) $clang = cjoProp::getClang();
         
         self::cleanUpLog();
         
         if (is_object($CJO['USER'])) {
-            $user_id = $CJO['USER']->getValue('user_id');
+            $user_id = cjoProp::getUser()->getValue('user_id');
         } else if (isset($params['user_id'])) {
             $user_id = $params['user_id'];
         } else {
@@ -108,7 +108,7 @@ class cjoLog {
         
         global $CJO, $I18N;
         
-        $key = md5($I18N->msg('msg_edit_by_other_user_redirected'));
+        $key = md5(cjoI18N::translate('msg_edit_by_other_user_redirected'));
         
 
         if (!isset($CJO['MESSAGES']->errors[$key])) return;
@@ -117,19 +117,19 @@ class cjoLog {
         
         if (empty($user['name'])) return;
         
-        $CJO['MESSAGES']->errors[$key] = $I18N->msg('msg_edit_by_user_redirected', $user['name']);
+        $CJO['MESSAGES']->errors[$key] = cjoI18N::translate('msg_edit_by_user_redirected', $user['name']);
     }
     
     public static function isArticleLockedByUser($article_id, $clang = false) {
 
         global $CJO;
         
-        if ($clang === false) $clang = $CJO['CUR_CLANG'];
+        if ($clang === false) $clang = cjoProp::getClang();
         
         if (!isset($CJO['ART'][$article_id]['locked'][$clang]))  {
         
             if (is_object($CJO['USER'])) {
-                $user_id = $CJO['USER']->getValue('user_id');
+                $user_id = cjoProp::getUser()->getValue('user_id');
             } else if (isset($params['user_id'])) {
                 $user_id = $params['user_id'];
             } else {
@@ -156,7 +156,7 @@ class cjoLog {
         
         if (self::$cleaned) return;
         
-        $lifetime = time() - ((int) $CJO['ADDON']['settings'][self::$mypage]['SETTINGS']['LOG_LIFETIME'] * 3600);
+        $lifetime = time() - ((int) $CJO['ADDON']['settings'][self::$addon]['SETTINGS']['LOG_LIFETIME'] * 3600);
         
         $delete = new cjoSql();
         $delete->setTable(TBL_27_LOG);

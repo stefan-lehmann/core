@@ -235,12 +235,156 @@ class select extends cjoSelect {
         return parent::get();
     }
 }
+/**
+ * @deprecated
+ */
+class cjoRewrite {
+
+    public static function parseArticleName($name) {
+        return cjo_url_friendly_string($name);
+    }
+
+    public static function getUrl($article_id = 0, $clang = false, $query_params = '', $hash = '') {
+        return cjoUrl::getUrl($article_id, $clange, $query_params, $hash);
+    }
+    
+    public static function setRewriteUrl($params){
+        return cjoUrl::setRewriteUrl($params);
+    }
+    
+    public static function setServerUri($forward = true, $return_array = true){
+        return cjoUrl::setServerUri($forward, $return_array);
+    }
+}
+
+class I18N {
+    public $locales;
+    public $path;
+    public $locale;
+    public $text;
+    public $fallback;
+    public function __construct($locale=false, $path = false, $fallback_locale = 'de') {
+
+        global $CJO;
+
+        if ($path === false)  $path = $CJO['INCLUDE_PATH']."/lang";
+
+        $this->path       = $path;
+        $this->text       = array ();
+        $this->locale     = $locale;
+        $this->fallback   = $fallback_locale;
+        $this->locales    = array ();
+        $this->extendFromFile($path);
+    }
+    
+    public function extendFromFile($path, $local=false) {
+
+        if ($local === false) $local = $this->locale;
+
+        $filename = $path."/".$local.".lang";
+
+        if (!is_readable($filename)) {
+            $local = $this->fallback;
+            $filename   = $path."/".$local.".lang";
+            if (!is_readable($filename)) return false;
+        }
+
+        $f = fopen($filename, "r");
+        while (!feof($f)) {
+            $buffer = fgets($f, 4096);
+            if (preg_match("/^\s*(\w*)\s*=\s*(.*)$/", $buffer, $matches)) {
+                if (!empty($this->text[trim($matches[1])])) continue;
+                $this->text[trim($matches[1])] = trim($matches[2]);
+            }
+        }
+        fclose($f);
+    }
+    public function msg($key, $p0 = '', $p1 = '', $p2 = '', $p3 = '', $p4 = '', $p5 = '', $p6 = '', $p7 = '', $p8 = '', $p9 = '') {
+        global $CJO;
+
+        $msg = (isset ($this->text[$key])) ? $this->text[$key] : '[translate: '.$key.']';
+
+        $patterns = array ('/\{0\}/', '/\{1\}/',
+                           '/\{2\}/', '/\{3\}/',
+                           '/\{4\}/', '/\{5\}/',
+                           '/\{6\}/', '/\{7\}/',
+                           '/\{8\}/', '/\{9\}/');
+
+        $replacements = array ($p0, $p1, $p2, $p3, $p4, $p5, $p6, $p7, $p8, $p9);
+
+        return preg_replace($patterns, $replacements, $msg);
+    }
+    public function extend($replace_vars = array()) {
+
+        if (!is_array($replace_vars[$this->locale])) return;
+        foreach($replace_vars[$this->locale] as $key=>$value){
+            if($this->text[$key] != '') continue;
+            $this->text[$key] = $value;
+        }
+    }
+
+    public function getLocales($path = false) {
+
+        if ($path === false)  $path = $this->path;
+
+        if (empty ($this->locales) && is_readable($path)) {
+            $this->locales = array ();
+
+            $handle = opendir($path);
+            while ($file = readdir($handle)) {
+                if ($file != "." && $file != ".." && $file != ".svn") {
+                    if (preg_match("/^(\w+)\.lang$/", $file, $matches)) {
+                        $this->locales[] = $matches[1];
+                    }
+                }
+            }
+            closedir($handle);
+        }
+        return $this->locales;
+    }
+
+    public static function searchAndTranslate($params) {
+
+        global $CJO, $I18N;
+
+        $var_I18N = 'I18N';
+        $search = 'translate';
+
+        $content = (is_array($params)) ? $params['subject'] : $params;
+
+        if ($CJO['CONTEJO']) list($content, $textareas) = cjoOutput::textareasToPlaceholders($content);
+
+        if (!is_object($I18N)) $I18N = new cjoI18N($CJO['LANG']);
+
+        preg_match_all('/\[translate_*(\d*)\s*\:\s*([^\]]*)\]/', $content, $matches, PREG_SET_ORDER);
+
+        foreach($matches as $key=>$value) {
+
+            if (!is_array($value)) continue;
+            $cur_I18N = (!empty($value[1])) ? $var_I18N.'_'.$value[1] : $var_I18N;
+            global $$cur_I18N;
+
+            if (!is_object($$cur_I18N)) continue;
+            $replace = $$cur_I18N->msg($value[2]);
+            $content = str_replace($value[0], $replace, $content);
+        }
+
+        return ($CJO['CONTEJO']) ? cjoOutput::placeholdersToTextareas($content, $textareas) : $content;
+    }
+}
+
+/**
+ * @deprecated
+ */
+class OOAddon extends cjoAddon {
+    
+}
 
 /**
  * @deprecated
  */
 function cjo_getUrl($id = '', $clang = false, $params = '', $hash_string = '') {
-    return cjoRewrite::getUrl($id, $clang, $params, $hash_string);
+    return cjoUrl::getUrl($id, $clang, $params, $hash_string);
 }
 
 /**
@@ -295,22 +439,29 @@ function cjo_input_check_disabled($value, $values = array(), $bool = true) {
 /**
  * @deprecated
  */
+function cjo_a22_getDefaultGlobalParams() {
+    return cjoUrl::getDefaultGlobalParams();
+}
+
+/**
+ * @deprecated
+ */
 function cjo_create_link($value, $global_params = array (), $local_params = array (), $tags = '') {
-    return cjoAssistance::createBELink($value, $local_params, $global_params, $tags);
+    return cjoUrl::createBELink($value, $local_params, $global_params, $tags);
 }
 
 /**
  * @deprecated
  */
 function cjo_create_url($global_params = array (), $local_params = array ()) {
-    return cjoAssistance::createBEUrl($global_params, $local_params);
+    return cjoUrl::createBEUrl($global_params, $local_params);
 }
 
 /**
  * @deprecated
  */
 function cjo_copyDir($srcdir, $dstdir, $offset = '', $verbose = false) {
-    return cjoAssistance::copyDir($srcdir, $dstdir, $offset, $verbose);
+    return cjoFile::copyDir($srcdir, $dstdir, $offset, $verbose);
 }
 
 /**
@@ -497,10 +648,76 @@ function cjo_uninstallAddon($file, $debug = false) {
     return cjoInstall::installDump($file, $debug);
 }
 
+function imageProcessor_getImg($filename,
+                                $x = null,
+                                $y = null,
+                                $resize = null,
+                                $aspectratio = null,
+                                $brand_on_off = null,
+                                $brandimg = null,
+                                $jpg_quality = null,
+                                $crop_x = null,
+                                $crop_y = null,
+                                $crop_w = null,
+                                $crop_h = null,
+                                $shadow = null,
+                                $fullpath = '') {
+   return cjoImageProcessor::getImg ($filename,
+                                    $x,
+                                    $y,
+                                    $resize,
+                                    $aspectratio,
+                                    $brand_on_off,
+                                    $brandimg,
+                                    $jpg_quality,
+                                    $crop_x,
+                                    $crop_y,
+                                    $crop_w,
+                                    $crop_h,
+                                    $shadow,
+                                    $fullpath);              
+}
+
+function cjo_json_encode_utf8($arr) {
+        
+    if (version_compare(PHP_VERSION, '5.4.0') >= 0) return json_encode($arr, JSON_UNESCAPED_UNICODE);
+    
+    //convmap since 0x80 char codes so it takes all multibyte codes (above ASCII 127). So such characters are being "hidden" from normal json_encoding
+    array_walk_recursive($arr, function (&$item, $key) { if (is_string($item)) $item = mb_encode_numericentity($item, array (0x80, 0xffff, 0, 0xffff), 'UTF-8'); });
+    return mb_decode_numericentity(json_encode($arr), array (0x80, 0xffff, 0, 0xffff), 'UTF-8');
+}
+
+function convertAddOnSettings() {
+        
+    $addons = file_get_contents(cjoProp::get('FILE_CONFIG_ADDONS'));
+    $pattern = '/^(.*)(\/\/.---.DYN.*\/\/.---.\/DYN)(.*)$/sU';
+    $settings = preg_match($pattern,$addons,$matches);
+    
+    if (!empty($matches[2])) {
+        eval($matches[2]);
+    }
+    cjoProp::saveToFile(cjoPath::pageData('addons'), $CJO);
+    cjoProp::loadFromFile(cjoPath::pageData('addons'));
+    unlink(cjoProp::get('FILE_CONFIG_ADDONS'));
+}
+
+global $I18N, $CJO;
+$I18N = new I18N();
+$CJO = & cjoProp::$properties;
+
+if (cjoProp::isBackend()) {
+    cjoSelectArticle::init();
+    $CJO['SEL_ARTICLE'] = & cjoSelectArticle::$sel_article;
+    cjoSelectMediaCat::init();
+    $CJO['SEL_MEDIA']   = & cjoSelectMediaCat::$sel_media;
+    cjoSelectLang::init();
+    $CJO['SEL_LANG']    = & cjoSelectLang::$sel_lang;
+}
+/*
 $CJO_USER                          = &$CJO["USER"];
 $CJO_LOGIN                         = &$CJO["LOGIN"];
 $article_id                        = &$CJO['ARTICLE_ID'];
-$clang                             = &$CJO['CUR_CLANG'];
+$clang                             = cjoProp::getClang();
 $CJO['SERVERDOMAIN']               = &$CJO['SERVER'];
 
 $CJO['SETTINGS']['TMPL_FILE_TYPE'] = &$CJO['TMPL_FILE_TYPE'];
@@ -520,10 +737,10 @@ $CJO['IMG_SET']['GALLERY_LINK']    = &$CJO['IMAGE_LIST_BUTTON']['GALLERY_LINK'];
 $CJO['IMG_SET']['INT_LINK']        = &$CJO['IMAGE_LIST_BUTTON']['INT_LINK'];
 $CJO['IMG_SET']['EXT_LINK']        = &$CJO['IMAGE_LIST_BUTTON']['EXT_LINK'];
 $CJO['IMG_SET']['STYLE']           = &$CJO['IMAGE_LIST_BUTTON']['STYLE'];
-$CJO['MODUL_SET'][1]['FRONTEND']   = &$CJO['CONTEJO'];
+$CJO['MODUL_SET'][1]['FRONTEND']   = cjoProp::isBackend();
 
-if (!isset($CJO['CACHEFOLDER'])) {
-    $CJO['CACHEFOLDER']            = $CJO['MEDIAFOLDER'];
+if (!cjoProp::get('CACHEFOLDER')) {
+    cjoProp::set('CACHEFOLDER', 'cache');
 }
 
 if (!isset($CJO['MODREWRITE']['LINK_REDIRECT']) && isset($CJO['MODREWRITE']['LINK_ALIAS'])) {
@@ -539,3 +756,4 @@ if (!isset($CJO['MODREWRITE']['ENABLED'])) {
         $CJO['MODREWRITE']['ENABLED'] = false;
     }
 }
+*/

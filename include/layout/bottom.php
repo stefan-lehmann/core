@@ -25,14 +25,14 @@
 
 $footer = '';
 
-if (empty($cur_page['hide_footer'])) {
+if (!cjoProp::get('PAGE_HIDE_FOOTER')) {
 
 	$footer =  '<div id="cjo_footer">'."\n\r".
 	           '	<div id="cjo_footer_right">'."\n\r".
-	           '		'.cjoTime::showScriptTime().' sec | '.utf8_encode(strftime($I18N->msg("adateformat"))).' '."\n\r".
+	           '		'.cjoTime::showScriptTime().' sec | '.utf8_encode(strftime(cjoI18N::translate("adateformat"))).' '."\n\r".
 	           '	</div>'."\n\r".
 		       '	<div>'."\n\r".
-	           '		<a href="http://contejo.com">CONTEJO</a> '.$CJO['VERSION'].'.'.$CJO['RELEASE']."\n\r".
+	           '		<a href="http://contejo.com">CONTEJO</a> '.cjoProp::getVersion()."\n\r".
 	           '	</div>'."\n\r".
 	      	   '</div>';
 }

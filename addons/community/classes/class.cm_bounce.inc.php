@@ -23,14 +23,11 @@
  * @filesource
  */
 
-if (!$CJO['CONTEJO']) return false;
-
-require_once $CJO['ADDON_PATH'].'/community/bounce/class.phpmailer-bmh.php';
-require_once $CJO['ADDON_PATH'].'/community/bounce/phpmailer-bmh_rules.php';
+if (!cjoProp::isBackend()) return false;
 
 class cjoCommunityBounce extends BounceMailHandler   {
 
-    static  $mypage        = 'community';
+    static  $addon        = 'community';
     static  $soft_turns    = 6;
     private $bmh;
     private $succes_msg    = '';
@@ -38,26 +35,25 @@ class cjoCommunityBounce extends BounceMailHandler   {
     
     public static function bounce($start=false,$mail_account=false,$move=true) {
         
-        global $CJO, $I18N_10;
 
         if ($start != true && !self::hasSession()) return false;
 
-        if (!isset($CJO['ADDON']['settings'][self::$mypage]['BOUNCE'])) {
+        if (!cjoAddon::getParameter('BOUNCE', self::$addon)) {
             $this->removeSession();
             return false;
         }
         
         if (!function_exists('imap_open')) {
-            cjoMessage::addError($I18N_10->msg('msg_no_imap_open'));
+            cjoMessage::addError(cjoAddon::translate(10,'msg_no_imap_open'));
             self::removeSession();
             return false; 
         }
         
         $mail = new cjoPHPMailer();
-        $mail->setAccount($CJO['ADDON']['settings'][self::$mypage]['BOUNCE_MAIL_ACCOUNT']);
+        $mail->setAccount(cjoAddon::getParameter('BOUNCE_MAIL_ACCOUNT', self::$addon));
 
         if (empty($mail->Username) || empty($mail->Password)) {
-            cjoMessage::addError($I18N_10->msg('msg_no_vaild_mail_account'));
+            cjoMessage::addError(cjoAddon::translate(10,'msg_no_vaild_mail_account'));
             self::removeSession();
             return false;
         }
@@ -160,26 +156,6 @@ class cjoCommunityBounce extends BounceMailHandler   {
         return true;
     }
     
-    public static function updateUserTable() {
-        
-        global $CJO, $I18N_10;
-        
-        $sql = new cjoSql();
-
-        if ($sql->setDirectQuery("ALTER TABLE `".TBL_COMMUNITY_USER."` ADD `bounce` TINYINT( 1 ) NOT NULL AFTER `activation_key`")) {
-
-            $settings_file = $CJO['ADDON']['settings'][self::$mypage]['SETTINGS'];
-            $content = file_get_contents($settings_file);
-            $content = str_replace("// --- /DYN","$"."CJO['ADDON']['settings'][$"."mypage]['BOUNCE'] = \"1\";\r\n// --- /DYN", $content);
-            $content = str_replace("// --- /DYN","$"."CJO['ADDON']['settings'][$"."mypage]['BOUNCE_MAIL_ACCOUNT'] = \"0\";\r\n\r\n// --- /DYN", $content);
-            cjoGenerate::putFileContents($settings_file, $content);
-            $CJO['ADDON']['settings'][self::$mypage] = "1";
-        }
-        else {
-            cjoMessage::addWarning($I18N_10->msg('msg_bounce_install_incomplete'));
-        }
-    }    
-    
     public function processMailbox($max=false) {
         $result = parent::processMailbox($max);
         if (!empty($this->succes_msg)) {
@@ -217,14 +193,11 @@ class cjoCommunityBounce extends BounceMailHandler   {
     
     private static function generateLogFile() {
         
-        global $CJO;
-        
-        $path = $CJO['ADDON']['settings'][self::$mypage]['BOUNCED_PATH'];
+        $path = cjoAddon::getParameter('BOUNCED_PATH', self::$addon);
         $date = strftime('%Y-%m-%d_%H-%M-%S', time());
         
         if (!file_exists($path)){
-            @mkdir($path);
-            @chmod($path, $CJO['FILEPERM']);
+            @mkdir($path, cjoProp::getDirPerm());
         }
         
         $sql = new cjoSql();
@@ -255,7 +228,7 @@ class cjoCommunityBounce extends BounceMailHandler   {
         $params['subpage']  = 'user'; 
         
         if ($finished) $params['finished'] =  $finished;
-        $url = cjoAssistance::createBEUrl($params);
+        $url = cjoUrl::createBEUrl($params);
         
         echo '<script type="text/javascript">/* <![CDATA[ */ $(function(){ cm_automateScript(\''.$url.'\'); }); /* ]]> */</script>';
     }

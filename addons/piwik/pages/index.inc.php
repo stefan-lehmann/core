@@ -23,12 +23,8 @@
  * @filesource
  */
 
-$mypage    = 'piwik';
+$addon    = 'piwik';
 
-// register subpages
-$subpages = new cjoSubPages($subpage, $mypage);
-$subpages->addPage( array('settings', 'title' => $I18N_25->msg('label_settings')));
+cjoSubPages::addPage( array('settings', 'title' => cjoAddon::translate(25,'label_settings')));
 
-require_once $CJO['INCLUDE_PATH'].'/layout/top.php';
-require_once $subpages->getPage();
-require_once $CJO['INCLUDE_PATH'].'/layout/bottom.php';
+require_once cjoSubPages::getPagePath();

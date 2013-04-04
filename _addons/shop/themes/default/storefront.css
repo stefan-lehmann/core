@@ -1,0 +1,73 @@
+@media all {
+  .shop_product_added {
+        overflow: hidden;
+} .shop_product_added .shop_button.goto {
+        float: right;
+} .shop_product_added p {
+        margin-bottom: .5em;
+} .shop_store_front .shop_left_col,
+  .shop_store_front .shop_right_col {
+        width: 49.9%;
+        float: left;
+        padding:0;
+        margin:0;
+}  .shop_store_front .shop_left_col {
+        clear: both;
+} .shop_store_front p {
+        margin: 0 0 .3em 0;
+} .shop_store_front .shop_label {
+        display: block;
+        float: left;
+        min-width: 80px;
+        margin-right: 5px;
+} .shop_store_front select {
+        width: auto;
+        min-width: 220px;
+        max-width: 250px;
+} .shop_store_front .shop_order_amount select {
+        min-width: 50px;
+} .shop_store_front .shop_final_price {
+        line-height: 240%;
+        vertical-align: baseline;
+        margin-bottom: 20px;
+} .shop_store_front .shop_final_price .shop_final_price_pre_value,
+  .shop_store_front .shop_final_price .shop_separator,
+  .shop_store_front .shop_final_price .shop_final_price_post_value,
+  .shop_store_front .shop_final_price .shop_final_price_currency {
+        font-weight: bold;
+        font-size: 210%;
+        color: #009ee0;
+} .shop_store_front .shop_final_price .shop_final_price_pre_value,
+  .shop_store_front .shop_final_price .shop_separator {
+        font-size: 300%;
+} .shop_store_front .shop_final_price .shop_final_price_post_value {
+        vertical-align: super;
+} .shop_store_front .shop_final_price .shop_final_price_currency {
+        font-weigth: bold;
+        color: #009ee0;
+} .shop_store_front p.shop_taxes,
+  .shop_store_front p.shop_discount,
+  .shop_store_front p.shop_delivery {
+        font-size: 85%;
+        margin: 0 0 .10em 0;
+        padding: 0;
+} .shop_store_front p.shop_taxes *,
+  .shop_store_front p.shop_discount *,
+  .shop_store_front p.shop_delivery * {
+        font-size: 100%;
+        margin: 0;
+        padding: 0;
+} .shop_info_basket_link {
+        margin: 10px 0 -10px 0;
+        display: block;
+        text-align: right;
+} .shop_add_to_basket_button .shop_button {
+        margin-top: 10px;
+} .shop_currency_select select {
+        width: 96%;
+} .shop_store_front span.shop_strike,
+  .shop_store_front span.shop_strike .shop_brutto_price_value {
+        color: red;
+        text-decoration: line-through!important
+}
+}

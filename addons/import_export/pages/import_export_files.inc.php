@@ -48,7 +48,7 @@ if (!cjo_request('expname', 'bool')) {
 if ($function == "delete") {
 	// ------------------------------ FUNC DELETE
 	if (@unlink($CJO['ADDON']['settings'][$mypage]['folder']."/".$impname));
-	cjoMessage::addSuccess($I18N_3->msg("msg_file_deleted", $impname));
+	cjoMessage::addSuccess(cjoAddon::translate(3,"msg_file_deleted", $impname));
 
 }
 elseif ($function == "dbimport") {
@@ -56,7 +56,7 @@ elseif ($function == "dbimport") {
 	if (isset ($_FILES['FORM']) &&
 	    $_FILES['FORM']['size']['importfile'] < 1 &&
 	    $impname == "") {
-		cjoMessage::addError($I18N_3->msg("err_no_import_file_chosen_or_wrong_version"));
+		cjoMessage::addError(cjoAddon::translate(3,"err_no_import_file_chosen_or_wrong_version"));
 	}
 	else {
 		if ($impname != "") {
@@ -74,8 +74,8 @@ elseif ($function == "dbimport") {
 			if ($impname == "") @unlink($file_temp);
 		}
 		else {
-			cjoMessage::addError($I18N_3->msg("err_file_could_not_be_uploaded")." ".
-			                     $I18N_3->msg("err_you_have_no_write_permission_in",
+			cjoMessage::addError(cjoAddon::translate(3,"err_file_could_not_be_uploaded")." ".
+			                     cjoAddon::translate(3,"err_you_have_no_write_permission_in",
 			                     $CJO['ADDON']['settings'][$mypage]['folder']));
 		}
 	}
@@ -84,7 +84,7 @@ elseif ($function == "fileimport") {
 	if (isset($_FILES['FORM']) &&
 	    $_FILES['FORM']['size']['importfile'] < 1 &&
 	    $impname == "") {
-		cjoMessage::addError($I18N_3->msg("err_no_import_file_chosen"));
+		cjoMessage::addError(cjoAddon::translate(3,"err_no_import_file_chosen"));
 	}
 	else {
 
@@ -103,8 +103,8 @@ elseif ($function == "fileimport") {
 			if ($impname == "") @unlink($file_temp);
 		}
 		else {
-			cjoMessage::addError( $I18N_3->msg("err_file_could_not_be_uploaded")." ".
-			                      $I18N_3->msg("err_you_have_no_write_permission_in",
+			cjoMessage::addError( cjoAddon::translate(3,"err_file_could_not_be_uploaded")." ".
+			                      cjoAddon::translate(3,"err_you_have_no_write_permission_in",
 			                      $CJO['ADDON']['settings'][$mypage]['folder']));
 		}
 	}
@@ -116,7 +116,7 @@ elseif ($function == "export") {
 	$filename = preg_replace("/[^\.a-z0-9_\-]/", "", $expname);
 
 	if ($filename != $expname){
-		cjoMessage::addSuccess($I18N_3->msg("msg_filename_updated"));
+		cjoMessage::addSuccess(cjoAddon::translate(3,"msg_filename_updated"));
 		$expname = $filename;
 	}
 	else {
@@ -132,7 +132,7 @@ elseif ($function == "export") {
 			$ext = ".tar.gz";
 
 			if ($expdirs == "") {
-				cjoMessage::addError($I18N_3->msg("err_please_choose_folder"));
+				cjoMessage::addError(cjoAddon::translate(3,"err_please_choose_folder"));
 			}
 			else {
 				$content = cjoImportExport::generateTarExport($expdirs, $filename);
@@ -168,12 +168,12 @@ elseif ($function == "export") {
 			}
 
 			if (is_writable($dir_filename) && file_put_contents($filename, $content)) {
-				@chmod($filename, $CJO['FILEPERM']);
-				cjoMessage::addSuccess($I18N_3->msg('msg_file_generated_in', $filename));
+				@chmod($filename, cjoProp::getFilePerm());
+				cjoMessage::addSuccess(cjoAddon::translate(3,'msg_file_generated_in', $filename));
 			}
 			else {
-				cjoMessage::addError( $I18N_3->msg('err_file_could_not_be_generated').' '.
-				                      $I18N_3->msg('err_check_rights_in_directory', $dir_filename));
+				cjoMessage::addError( cjoAddon::translate(3,'err_file_could_not_be_generated').' '.
+				                      cjoAddon::translate(3,'err_check_rights_in_directory', $dir_filename));
 			}
 		}
 	}
@@ -200,16 +200,16 @@ if (count($folder) > 0) {
 					  '	<td>'.$filec.'</td>'.
 					  '	<td class="icon">'.
 					  '		<a href="index.php?page='.$mypage.'&function=dbimport&impname='.$file.'" '.
-					  '		   title="'.$I18N_3->msg('label_import_sql', $file).'<br/><br/>'.$I18N_3->msg('msg_proceed_sql_import').'" class="cjo_confirm">'.
-					  '			 <img src="img/silk_icons/database_go.png" alt="'.$I18N_3->msg('button_import').'" '.
-					  '				  title="'.$I18N_3->msg('label_import_sql', $file).'" />'.
+					  '		   title="'.cjoAddon::translate(3,'label_import_sql', $file).'<br/><br/>'.cjoAddon::translate(3,'msg_proceed_sql_import').'" class="cjo_confirm">'.
+					  '			 <img src="img/silk_icons/database_go.png" alt="'.cjoAddon::translate(3,'button_import').'" '.
+					  '				  title="'.cjoAddon::translate(3,'label_import_sql', $file).'" />'.
 					  '		</a>'.
 					  '	</td>'.
 					  '	<td class="icon">'.
 					  '		<a href="index.php?page='.$mypage.'&function=delete&impname='.$file.'" '.
-					  '		   title="'.$I18N_3->msg('label_delete_sql', $file).'" class="cjo_confirm">'.
-					  '			<img src="img/silk_icons/bin.png" alt="'.$I18N_3->msg("button_delete").'" '.
-					  '		         title="'.$I18N_3->msg("label_delete_sql", $file).'" />'.
+					  '		   title="'.cjoAddon::translate(3,'label_delete_sql', $file).'" class="cjo_confirm">'.
+					  '			<img src="img/silk_icons/bin.png" alt="'.cjoAddon::translate(3,"button_delete").'" '.
+					  '		         title="'.cjoAddon::translate(3,"label_delete_sql", $file).'" />'.
 					  '		</a>'.
 					  '	</td>'.
 					  '</tr>';
@@ -241,16 +241,16 @@ if(count($folder) > 0) {
 					  '	<td>'.$filec.'</td>'.
 					  '	<td class="icon">'.
 					  '		<a href="index.php?page='.$mypage.'&function=fileimport&impname='.$file.'" '.
-					  '		   title="'.$I18N_3->msg('label_import_tar', $file).'" class="cjo_confirm">'.
-					  '			 <img src="img/silk_icons/page_white_go.png" alt="'.$I18N_3->msg('button_import').'" '.
-					  '				  title="'.$I18N_3->msg('label_import_tar', $file).'" />'.
+					  '		   title="'.cjoAddon::translate(3,'label_import_tar', $file).'" class="cjo_confirm">'.
+					  '			 <img src="img/silk_icons/page_white_go.png" alt="'.cjoAddon::translate(3,'button_import').'" '.
+					  '				  title="'.cjoAddon::translate(3,'label_import_tar', $file).'" />'.
 					  '		</a>'.
 					  '	</td>'.
 					  '	<td class="icon">'.
 					  '		<a href="index.php?page='.$mypage.'&function=delete&impname='.$file.'"'.
-					  '	       title="'.$I18N_3->msg('label_delete_tar', $file).'<br/><br/>'.$I18N_3->msg('msg_proceed_tar_import').'" class="cjo_confirm">'.
-					  '			<img src="img/silk_icons/bin.png" alt="'.$I18N_3->msg("button_delete").'" '.
-					  '				 title="'.$I18N_3->msg("label_delete_tar", $file).'" />'.
+					  '	       title="'.cjoAddon::translate(3,'label_delete_tar', $file).'<br/><br/>'.cjoAddon::translate(3,'msg_proceed_tar_import').'" class="cjo_confirm">'.
+					  '			<img src="img/silk_icons/bin.png" alt="'.cjoAddon::translate(3,"button_delete").'" '.
+					  '				 title="'.cjoAddon::translate(3,"label_delete_tar", $file).'" />'.
 					  '		</a>'.
 					  '	</td>'.
 					  '</tr>';
@@ -281,7 +281,7 @@ foreach ($folders as $file) {
 }
 
 $buttons = new buttonField();
-$buttons->addButton('cjoform_submit_button',$I18N_3->msg('label_start_export'), true, 'img/silk_icons/disk.png');
+$buttons->addButton('cjoform_submit_button',cjoAddon::translate(3,'label_start_export'), true, 'img/silk_icons/disk.png');
 $buttons->setButtonAttributes('cjoform_submit_button','style="margin: 10px 0 10px 28px;"');
 
 
@@ -291,19 +291,19 @@ echo '<div class="a22-cjolist">'.
 	 '		<table class="cjo no_hover" cellspacing="0" cellpadding="0" border="0">'.
  	 '      <thead>'.
 	 '		<tr>'.
-	 '			<th>'.$I18N_3->msg('label_import').'</th>'.
-	 '			<th>'.$I18N_3->msg('label_export').'</th>'.
+	 '			<th>'.cjoAddon::translate(3,'label_import').'</th>'.
+	 '			<th>'.cjoAddon::translate(3,'label_export').'</th>'.
 	 '		</tr>'.
  	 '      </thead>'.
  	 '      <tbody>'.
 	 '		<tr>'.
 	 '			<td valign="top" width="50%">'.
-     '				<p>'.$I18N_3->msg("msg_intro_import").'</p>'.
+     '				<p>'.cjoAddon::translate(3,"msg_intro_import").'</p>'.
      '				<form action="index.php" name="import1" method="post" enctype="multipart/form-data">'.
      '					<input type="hidden" name="page" value="'.$mypage.'" />'.
      '					<table cellspacing="0" cellpadding="0" border="0">'.
  	 '       			<thead>'.
-     '						<tr><th align="left" colspan="2">'.$I18N_3->msg("label_database").'</th></tr>'.
+     '						<tr><th align="left" colspan="2">'.cjoAddon::translate(3,"label_database").'</th></tr>'.
  	 '      			</thead>'.
  	 '      			<tbody>'.
      '						<tr>'.
@@ -311,9 +311,9 @@ echo '<div class="a22-cjolist">'.
      '							<td class="icon">'.
      '								<input type="image" class="cjo_confirm" '.
      '									   name="function" value="dbimport" '.
-     '									   title="'.$I18N_3->msg("label_selected_file").' '.$I18N_3->msg('label_import_sql').'" '.
+     '									   title="'.cjoAddon::translate(3,"label_selected_file").' '.cjoAddon::translate(3,'label_import_sql').'" '.
      '									   src="img/silk_icons/database_go.png" '.
-     '									   alt="'.$I18N_3->msg('label_import_sql').'" />'.
+     '									   alt="'.cjoAddon::translate(3,'label_import_sql').'" />'.
      '							</td>'.
      '							</tr>'.
  	 '      			</tbody>'.
@@ -322,9 +322,9 @@ echo '<div class="a22-cjolist">'.
 	 '				<table cellspacing="0" cellpadding="0" border="0">'.
  	 '       		<thead>'.
 	 '		 		<tr>'.
-	 '    				<th align="left">'.$I18N_3->msg("label_filename").'</th>'.
-	 '    				<th width="110">'.$I18N_3->msg("label_createdate").'</th>'.
-	 '    				<th width="60" colspan="2">'.$I18N->msg("label_functions").'</th>'.
+	 '    				<th align="left">'.cjoAddon::translate(3,"label_filename").'</th>'.
+	 '    				<th width="110">'.cjoAddon::translate(3,"label_createdate").'</th>'.
+	 '    				<th width="60" colspan="2">'.cjoI18N::translate("label_functions").'</th>'.
 	 '  			</tr>'.
  	 '      		</thead>'.
  	 '      		<tbody>'.
@@ -336,7 +336,7 @@ echo '<div class="a22-cjolist">'.
      '					<input type="hidden" name="page" value="'.$mypage.'" />'.
      '					<table cellspacing="0" cellpadding="0" border="0">'.
  	 '       			<thead>'.
-     '						<tr><th align="left" colspan="2">'.$I18N_3->msg("label_files").'</th></tr>'.
+     '						<tr><th align="left" colspan="2">'.cjoAddon::translate(3,"label_files").'</th></tr>'.
  	 '      			</thead>'.
  	 '      			<tbody>'.
      '						<tr>'.
@@ -344,9 +344,9 @@ echo '<div class="a22-cjolist">'.
      '							<td class="icon">'.
      '								<input type="image" class="cjo_confirm" '.
      '									   name="function" value="fileimport" '.
-     '									   title="'.$I18N_3->msg("label_selected_file").' '.$I18N_3->msg('label_import_tar').'" '.
+     '									   title="'.cjoAddon::translate(3,"label_selected_file").' '.cjoAddon::translate(3,'label_import_tar').'" '.
      '									   src="img/silk_icons/page_white_go.png" '.
-     '									   alt="'.$I18N_3->msg('label_import_tar').'" />'.
+     '									   alt="'.cjoAddon::translate(3,'label_import_tar').'" />'.
      '							</td>'.
      '							</tr>'.
  	 '      			</tbody>'.
@@ -355,9 +355,9 @@ echo '<div class="a22-cjolist">'.
 	 '				<table cellspacing="0" cellpadding="0" border="0">'.
  	 '       		<thead>'.
 	 '		 			<tr>'.
-	 '    					<th align="left">'.$I18N_3->msg("label_filename").'</th>'.
-	 '    					<th width="110">'.$I18N_3->msg("label_createdate").'</th>'.
-	 '    					<th width="60" colspan="2">'.$I18N->msg("label_functions").'</th>'.
+	 '    					<th align="left">'.cjoAddon::translate(3,"label_filename").'</th>'.
+	 '    					<th width="110">'.cjoAddon::translate(3,"label_createdate").'</th>'.
+	 '    					<th width="60" colspan="2">'.cjoI18N::translate("label_functions").'</th>'.
 	 '  				</tr>'.
  	 '      		</thead>'.
  	 '      		<tbody>'.
@@ -366,22 +366,22 @@ echo '<div class="a22-cjolist">'.
  	 '      		</table>'.
 	 '			</td>'.
 	 '			<td valign="top" width="50%">'.
-     '				<p>'.$I18N_3->msg("label_intro_export").'</p>'.
+     '				<p>'.cjoAddon::translate(3,"label_intro_export").'</p>'.
 	 '				<form action="index.php" method="post" enctype="multipart/form-data">'.
 	 '				<input type="hidden" name="page" value="'.$mypage.'" />'.
 	 '				<input type="hidden" name="function" value="export" />'.
 	 '				<table  cellspacing="0" cellpadding="0" border="0">'.
  	 '       		<thead>'.
-     '					<tr><th align="left" colspan="2">'.$I18N_3->msg("label_export_settings").'</th></tr>'.
+     '					<tr><th align="left" colspan="2">'.cjoAddon::translate(3,"label_export_settings").'</th></tr>'.
  	 '      		</thead>'.
  	 '      		<tbody>'.
 	 '				<tr>'.
 	 '					<td width="10"><input type="radio" id="exptype_sql" name="exptype" value="sql"'.cjoAssistance::setChecked($exptype, array('files'), false).'/></td>'.
-	 '					<td><label for="exptype_sql">'.$I18N_3->msg("label_database_export").'</label></td>'.
+	 '					<td><label for="exptype_sql">'.cjoAddon::translate(3,"label_database_export").'</label></td>'.
 	 '				</tr>'.
 	 '				<tr>'.
 	 '					<td><input type="radio" id="exptype_files" name="exptype" value="files"'.cjoAssistance::setChecked($exptype, array('files')).'/></td>'.
-	 '					<td><label for="exptype_files">'.$I18N_3->msg("label_file_export").'</label></td>'.
+	 '					<td><label for="exptype_files">'.cjoAddon::translate(3,"label_file_export").'</label></td>'.
 	 '				</tr>'.
 	 '				<tr>'.
 	 '					<td>&nbsp;</td>'.
@@ -389,11 +389,11 @@ echo '<div class="a22-cjolist">'.
 	 '				</tr>'.
 	 '				<tr>'.
 	 '					<td><input type="radio" id="expdown_server" name="expdown" value="0"'.cjoAssistance::setChecked($expdown, array(1),false).'/></td>'.
-	 '					<td><label for="expdown_server">'.$I18N_3->msg('label_save_on_server').'</label></td>'.
+	 '					<td><label for="expdown_server">'.cjoAddon::translate(3,'label_save_on_server').'</label></td>'.
 	 '				</tr>'.
 	 '				<tr>'.
 	 '					<td><input type="radio" id="expdown_download" name="expdown" value="1"'.cjoAssistance::setChecked($exptype, array(1)).'/></td>'.
-	 '					<td><label for="expdown_download">'.$I18N_3->msg('label_save_as_file').'</label></td>'.
+	 '					<td><label for="expdown_download">'.cjoAddon::translate(3,'label_save_as_file').'</label></td>'.
 	 '				</tr>'.
 	 '				<tr>'.
 	 '					<td></td>'.

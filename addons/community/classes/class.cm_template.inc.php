@@ -25,11 +25,11 @@
 
 class cjoCommunityTemplate {
 
-    static $mypage = 'community';
+    static $addon = 'community';
     
     public static function loginUserDefaults() {
         global $CJO;
-        $default_values = array('clang' => $CJO['CUR_CLANG']);
+        $default_values = array('clang' => cjoProp::getClang());
         $equal_values   = array();
         return array($equal_values, $default_values);  
     }    
@@ -50,9 +50,9 @@ class cjoCommunityTemplate {
 
             $article = OOArticle::getArticleById($re_id);
 
-            if (!OOArticle::isValid($article)) $re_id = $CJO['START_ARTICLE_ID'];
+            if (!OOArticle::isValid($article)) $re_id = cjoProp::get('START_ARTICLE_ID');
 
-            cjoAssistance::redirectFE($re_id);
+            cjoUrl::redirectFE($re_id);
         }
     }
     
@@ -64,7 +64,7 @@ class cjoCommunityTemplate {
         $akey    = cjo_get('akey', 'int', 0, true);
         
         if (!$akey) {
-            return $I18N_10->msg('msg_no_activation_key');             
+            return cjoAddon::translate(10,'msg_no_activation_key');             
         }
     
         $sql = new cjoSql();
@@ -73,7 +73,7 @@ class cjoCommunityTemplate {
         $data = $data[0];
 
         if ($sql->getRows() == 0) {
-            return $I18N_10->msg('msg_user_not_found');             
+            return cjoAddon::translate(10,'msg_user_not_found');             
         }
         
         if ($data['activation'] == '0') {
@@ -82,7 +82,7 @@ class cjoCommunityTemplate {
             $update->setTable(TBL_COMMUNITY_USER);
             $update->setWhere("activation_key='".$akey."'");
     
-            if (!empty($CJO['ADDON']['settings'][self::$mypage]['VERIFY_REGISTRATION'])) {
+            if (cjoAddon::getParameter('VERIFY_REGISTRATION', self::$addon)) {
             	$update->setValue("status", '0');
             	$update->setValue("activation", '-1');
             }
@@ -95,9 +95,9 @@ class cjoCommunityTemplate {
                 return $update->getError();     
             }
         }
-        if (!empty($CJO['ADDON']['settings'][self::$mypage]['VERIFY_REGISTRATION'])) {
+        if (cjoAddon::getParameter('VERIFY_REGISTRATION', self::$addon)) {
     
-    		$link =  cjoRewrite::getUrl(null, $CJO['CUR_CLANG'], array('page' => 'community',
+    		$link =  cjoUrl::getUrl(null, cjoProp::getClang(), array('page' => 'community',
     			        	  										   'subpage' => 'user',
     			        	  										   'function' => 'edit',
     			        	  										   'oid'=> $data['id'])) ;
@@ -119,7 +119,7 @@ class cjoCommunityTemplate {
 	        		
 	        	if ($field == 'gender') $data[$field] = cjoCommunityUser::getTitle($data[$field]);	        		
 
-	        	$userdata .= $I18N_10->msg('label_'.$field).': '.$data[$field]."\r\n";
+	        	$userdata .= cjoAddon::translate(10,'label_'.$field).': '.$data[$field]."\r\n";
 	        }
 
 	        $replace['%userdata%'] = $userdata;
@@ -186,7 +186,7 @@ class cjoCommunityTemplate {
             $sql->setQuery($qry);	
     
             if ($sql->getRows() != 1) {
-                $return['message'] = '<p class="error">'.$I18N_10->msg('msg_user_not_found').'</p>';
+                $return['message'] = '<p class="error">'.cjoAddon::translate(10,'msg_user_not_found').'</p>';
                 $return['is_valid'] = false;
                 return;
             }
@@ -264,7 +264,7 @@ class cjoCommunityTemplate {
             if ($sql_data['password'] &&  
                 $sql_data['username'] && 
                 $sql_data['status'] == 1) {
-                cjoMessage::addError($I18N_10->msg('msg_login_allready_enabled'));
+                cjoMessage::addError(cjoAddon::translate(10,'msg_login_allready_enabled'));
                 return false;               
                 
             } 	            
@@ -297,7 +297,7 @@ class cjoCommunityTemplate {
 		$data['password']	= md5($password);
 		$data['createuser']	= 'Register User';
 		$data['createdate']	= time();
-		$data['clang'] 		= $CJO['CUR_CLANG'];
+		$data['clang'] 		= cjoProp::getClang();
 		$data['groups'] 	= $posted['groups'];
 		$data['activation_key'] = crc32($data['email'].$data['firstname']);
 
@@ -311,8 +311,8 @@ class cjoCommunityTemplate {
         $return['mail_replace']['%name%'] 	   = $data['name'];
         $return['mail_replace']['%password%']  = $password;
 
-        $return['mail_replace']['%confirm_link%'] = cjoRewrite::getUrl($CJO['ADDON']['settings'][self::$mypage]['ACTIVATE_USER'],
-        												          $CJO['CUR_CLANG'],
+        $return['mail_replace']['%confirm_link%'] = cjoUrl::getUrl($CJO['ADDON']['settings'][self::$addon]['ACTIVATE_USER'],
+        												          cjoProp::getClang(),
         												          array('akey' => $data['activation_key'], 'uid' => $user_id)
         												          );
 		$return['mail_replace']['%confirm_link%'] = str_replace('&amp;', '&', $return['mail_replace']['%confirm_link%']);
@@ -331,7 +331,7 @@ class cjoCommunityTemplate {
         $sql->setQuery($qry);
 
         if ($sql->getRows() == 1) {
-            cjoAssistance::redirectFE($CJO['ADDON']['settings'][self::$mypage]['MANAGE_ACCOUNT']);
+            cjoUrl::redirectFE($CJO['ADDON']['settings'][self::$addon]['MANAGE_ACCOUNT']);
         }
         
         $default_values = array();
@@ -344,7 +344,7 @@ class cjoCommunityTemplate {
         global $CJO;
         
         $return = array();
-        self::$mypage = 'community';
+        self::$addon = 'community';
 		$posted = cjo_post($form_name, 'array');
 
 		$posted['email']	  = strtolower($posted['sender_email']);
@@ -362,8 +362,8 @@ class cjoCommunityTemplate {
             return $return;
         }
         
-        $confirm_link = cjoRewrite::getUrl($CJO['ADDON']['settings'][self::$mypage]['NL_CONFIRM'],
-        								   $CJO['CUR_CLANG'],
+        $confirm_link = cjoUrl::getUrl($CJO['ADDON']['settings'][self::$addon]['NL_CONFIRM'],
+        								   cjoProp::getClang(),
         								   array('akey' => $posted['activation_key'], 'uid' => $user_id));
 
 	    $return['mail_replace']['%title%']        = cjoCommunityUser::getTitle($posted['gender']);
@@ -382,7 +382,7 @@ class cjoCommunityTemplate {
         
         self::signInNewsletterDefaults();
         
-        $inst = (int) preg_replace('/\D/', '', $CJO['INSTNAME']);  
+        $inst = cjoProp::getUniqueNumber();  
         $user_id = cjo_get('UID' ,'string');
         $user_key = cjo_get('USR' ,'string');         
         
@@ -422,7 +422,7 @@ class cjoCommunityTemplate {
         if ($sql->getRows() == 0) {
             $return['is_valid'] = false;
             $return['has_errors'] = true;            
-            $return['errors'][md5($error)] = $I18N_10->msg('msg_user_not_found');
+            $return['errors'][md5($error)] = cjoAddon::translate(10,'msg_user_not_found');
             return $return;
         }
 
@@ -475,7 +475,7 @@ class cjoCommunityTemplate {
 
         $id    = cjo_get('file', 'string');
         $inst  = cjo_session('INST', 'int', $CJO['USER']['ID']);
-        if (!$inst) $inst = (int) preg_replace('/\D/i','', $CJO['INSTNAME']);
+        if (!$inst) $inst = (int) cjoProp::getUniqueNumber();
         $media = OOMedia::getMediaById($id/$inst);
 
         if (!OOMedia::isValid($media)) return false;

@@ -22,12 +22,11 @@
  *  details.
  * @filesource
  */
+return;
+if (cjoProp::isBackend() || !cjoProp::getArticleId()) return;
 
-if ($CJO['CONTEJO'] || !isset($CJO['ARTICLE_ID'])) return;
-
-if (cjo_session('UID', 'bool', false, md5($CJO['INSTNAME'])) &&
-    (cjo_session('ST', 'string', false, md5($CJO['INSTNAME'])) + $CJO['SESSIONTIME'] > time())) {
-        $CJO['ONLINE_FROM_TO_ENABLED'] = false;
+if (cjoLogin::isBackendLogin()) {
+        cjoProp::set('ONLINE_FROM_TO_ENABLED',false);
         cjoGenerate::deleteGeneratedArticles(array('alist','aspath','article')); 
         cjoGenerate::generateTemplates();       
 }
@@ -37,7 +36,7 @@ $LOGIN['password'] = (isset($_POST['LOGIN']['password'])) ? (string) $_POST['LOG
 
 $CJO['USER'] = array('LOGIN' => false, 'BACKEND' => false);
 
-if ($CJO['ADDON']['status']['community'] && (
+if (cjoAddon::isActivated('community') && (
     cjo_session('UID', 'int') ||
     $LOGIN['username'] != "" ||
     $LOGIN['password'] != "")) {

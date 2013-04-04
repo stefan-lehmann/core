@@ -37,20 +37,20 @@ $sql = "SELECT
 
 $list = new cjolist($sql, 'event_id', 'ASC', '', 100);
 
-$cols['code'] = new resultColumn('code', $I18N_17->msg("label_code"), 'sprintf', '<span>%s</span>');
+$cols['code'] = new resultColumn('code', cjoAddon::translate(17,"label_code"), 'sprintf', '<span>%s</span>');
 $cols['code']->setHeadAttributes('class="icon"');
 $cols['code']->setBodyAttributes('class="icon cjo_id"');
 $cols['code']->delOption(OPT_ALL);
-$cols['event'] = new resultColumn('event', $I18N_17->msg('label_event'));
+$cols['event'] = new resultColumn('event', cjoAddon::translate(17,'label_event'));
 $cols['event']->setParams(array ('page' => 'event_calendar','subpage'=>'events','clang' => $clang,'function' => 'edit','id' => '%event_id%'));
-$cols['firstname'] = new resultColumn('firstname', $I18N_17->msg('label_firstname'));
-$cols['name'] = new resultColumn('name', $I18N->msg('label_name'));
-$cols['email'] = new resultColumn('email', $I18N_17->msg('label_email'), 'email');
+$cols['firstname'] = new resultColumn('firstname', cjoAddon::translate(17,'label_firstname'));
+$cols['name'] = new resultColumn('name', cjoI18N::translate('label_name'));
+$cols['email'] = new resultColumn('email', cjoAddon::translate(17,'label_email'), 'email');
 
 
 // Lösch link
-$cond['delete'] = '<img src="img/silk_icons/bin.png" title="'.$I18N_17->msg("label_delete_voucher").'" alt="'.$I18N_17->msg("label_delete_voucher").'" />';
-$cols['delete'] = new staticColumn($cond['delete'], $I18N->msg("label_functions"));
+$cond['delete'] = '<img src="img/silk_icons/bin.png" title="'.cjoAddon::translate(17,"label_delete_voucher").'" alt="'.cjoAddon::translate(17,"label_delete_voucher").'" />';
+$cols['delete'] = new staticColumn($cond['delete'], cjoI18N::translate("label_functions"));
 $cols['delete']->setBodyAttributes('width="60"');
 $cols['delete']->setBodyAttributes('class="cjo_delete"');
 

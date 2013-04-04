@@ -30,24 +30,24 @@ if (cjo_post('cjoform_export_button', 'bool')) {
 if (cjo_post('cjoform_delete_all_button', 'bool') &&
 	$CJO_USER->isAdmin()) {
     $sql = new cjoSql();
-    $sql->statusQuery("TRUNCATE TABLE ".TBL_17_VOUCHER, $I18N_17->msg('msg_all_db_deleted'));
+    $sql->statusQuery("TRUNCATE TABLE ".TBL_17_VOUCHER, cjoAddon::translate(17,'msg_all_db_deleted'));
 }
 
 // IMPORT
 $form = new cjoForm($mypage.'_'.$subpage.'_import');
 $form->setEnctype('multipart/form-data');
 
-$fields['codes'] = new textAreaField('codes', $I18N_17->msg('label_codes'));
+$fields['codes'] = new textAreaField('codes', cjoAddon::translate(17,'label_codes'));
 $fields['codes']->addAttribute('rows', '5');
 $fields['codes']->addAttribute('cols', '10');
-$fields['codes']->addValidator('notEmpty', $I18N_17->msg("msg_err_codes_notEmpty"), false, false);
-$fields['codes']->setNote($I18N_17->msg("note_separate_by_new_line"));
+$fields['codes']->addValidator('notEmpty', cjoAddon::translate(17,"msg_err_codes_notEmpty"), false, false);
+$fields['codes']->setNote(cjoAddon::translate(17,"note_separate_by_new_line"));
 
 $fields['button'] = new buttonField();
-$fields['button']->addButton('cjoform_import_button',$I18N_17->msg('button_import'), true, 'img/silk_icons/database_go.png');
+$fields['button']->addButton('cjoform_import_button',cjoAddon::translate(17,'button_import'), true, 'img/silk_icons/database_go.png');
 
 //Add Fields:
-$section= new cjoFormSection('', $I18N_17->msg('section_import'), array());
+$section= new cjoFormSection('', cjoAddon::translate(17,'section_import'), array());
 
 $section->addFields($fields);
 $form->addSection($section);
@@ -75,15 +75,15 @@ $qry = "SELECT
 		 WHERE (ev.start_date - UNIX_TIMESTAMP(now())) > -86000
 		 ORDER BY start_date";
 
-$fields['event'] = new selectField('event_id', $I18N_17->msg("label_event"));
+$fields['event'] = new selectField('event_id', cjoAddon::translate(17,"label_event"));
 $fields['event']->addSqlOptions($qry);
 $fields['event']->addAttribute('size', '1');
 
 $fields['button'] = new buttonField();
-$fields['button']->addButton('cjoform_export_button',$I18N_17->msg('button_export'), true, 'img/silk_icons/disk.png');
+$fields['button']->addButton('cjoform_export_button',cjoAddon::translate(17,'button_export'), true, 'img/silk_icons/disk.png');
 
 //Add Fields:
-$section= new cjoFormSection('', $I18N_17->msg('section_export'), array());
+$section= new cjoFormSection('', cjoAddon::translate(17,'section_export'), array());
 $section->addFields($fields);
 $form->addSection($section);
 
@@ -98,11 +98,11 @@ if ($CJO_USER->isAdmin()) {
     $form->setEnctype('multipart/form-data');
 
     $fields['button'] = new buttonField();
-    $fields['button']->addButton('cjoform_delete_all_button',$I18N_17->msg('delete_all'), true, 'img/silk_icons/bin.png');
+    $fields['button']->addButton('cjoform_delete_all_button',cjoAddon::translate(17,'delete_all'), true, 'img/silk_icons/bin.png');
     $fields['button']->setButtonAttributes('cjoform_delete_all_button', 'class="confirm"');
 
     //Add Fields:
-    $section= new cjoFormSection('', $I18N_17->msg('section_delete_all'), array());
+    $section= new cjoFormSection('', cjoAddon::translate(17,'section_delete_all'), array());
     $section->addField($fields['button']);
     $form->addSection($section);
 

@@ -25,12 +25,15 @@ $mypage    = 'channellist';
 $oid       = cjo_request('oid', 'int', '');
 $function  = cjo_request('function', 'string');
 
-$subpages = new cjoSubPages($subpage, $mypage);
-$subpages->addPage( array('tv', 'title' => $I18N_23->msg('tv_channels')));
-$subpages->addPage( array('radio', 'title' => $I18N_23->msg('radio_channels')));
-$subpages->addPage( array('packages', 'title' => $I18N_23->msg('packages')));
-$subpages->addPage( array('settings', 'title' => $I18N_23->msg('settings')));
+cjoSubPages::addPages( array(
+                        array('tv', 
+                              'title' => cjoAddon::translate(23,'tv_channels')),
+                        array('radio', 
+                              'title' => cjoAddon::translate(23,'radio_channels')),
+                        array('packages', 
+                              'title' => cjoAddon::translate(23,'packages')),
+                        array('settings', 
+                              'title' => cjoAddon::translate(23,'settings'))
+                      ));
 
-require_once $CJO['INCLUDE_PATH'].'/layout/top.php';
-require_once $subpages->getPage();
-require_once $CJO['INCLUDE_PATH'].'/layout/bottom.php';
+require_once cjoSubPages::getPagePath();

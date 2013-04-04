@@ -23,21 +23,12 @@
  * @filesource
  */
 
-error_reporting(E_ALL & ~E_STRICT & ~E_NOTICE);
+error_reporting(E_ALL ^ E_NOTICE);
 // ----- caching start für output filter
 
 ob_start();
 
-// ----------------- MAGIC QUOTES CHECK
-require_once "./include/functions/function.cjo_mquotes.inc.php";
-
-// ----- CJO UNSET
-unset($CJO);
-
-$CJO['HTDOCS_PATH'] = '../';
-$CJO['CONTEJO']     = true;
-$cur_page           = array();
-
+$CJO = array('HTDOCS_PATH' => '../', 'CONTEJO' => true);
 require_once "include/master.inc.php";
 
 $function = cjo_request('function', 'string', '');
@@ -63,7 +54,6 @@ foreach ($vars as $var){
 
 if ($function) {
     $call = '$data = '.$function.'('.$values.');';
-    //cjo_debug($call);
     eval($call);
 }
 

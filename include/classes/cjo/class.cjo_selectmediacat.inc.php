@@ -23,7 +23,7 @@
  * @filesource
  */
 
-if (!$CJO['CONTEJO']) return false;
+if (!cjoProp::isBackend()) return false;
 
 /**
  * cjoSelectMediaCat class
@@ -36,18 +36,22 @@ if (!$CJO['CONTEJO']) return false;
  * @subpackage 	core
  */
 class cjoSelectMediaCat extends cjoSelect {
-
+    
+    /**
+     * global cjoSelectLang var
+     * @var object
+     */
+    public static $sel_media;
+    
     /**
      * Constructor.
      * @return void
      */
     function __construct() {
 
-        global $CJO, $I18N, $media_category;
+        if (!cjoProp::isBackend() || !cjoProp::getUser()) return false;
 
-        if (!$CJO['CONTEJO'] || !$CJO['USER']) return false;
-
-        parent :: __construct();
+        parent :: __construct($media_category = false);
 
         if (empty($media_category) && $media_category !== 0) {
             $media_category = cjo_request('media_category',
@@ -60,7 +64,7 @@ class cjoSelectMediaCat extends cjoSelect {
         $this->setName('custom_select');
         $this->setStyle('class="custom_select"');
         $this->setStyle('width: 928px');
-        $this->showRoot($I18N->msg('label_media_root'), 'root');
+        $this->showRoot(cjoI18N::translate('label_media_root'), 'root');
         $this->setSize(1);
         $this->setSelected($this->getCurrMediaCategory());
         $this->setSelectedPath(OOMediaCategory::getPath($media_category));
@@ -76,7 +80,7 @@ class cjoSelectMediaCat extends cjoSelect {
                   ORDER BY name";
 
         if ($this->addSqlOptions($query)) {
-            $CJO['SEL_MEDIA'] = $this;
+            self::$sel_media = $this;
         }
     }
 
@@ -87,8 +91,6 @@ class cjoSelectMediaCat extends cjoSelect {
      * @return booelan|string on success returns true, if a sql error occurs the error message is returned
      */
     public function addSqlOptions($query, $sqldebug = false) {
-
-        global $CJO;
 
         $sql = new cjoSql();
         $result = $sql->getArray($query, PDO::FETCH_NUM);
@@ -105,7 +107,7 @@ class cjoSelectMediaCat extends cjoSelect {
 
         foreach ($result as $value) {
 
-            if (!$CJO['USER']->hasMediaPerm($value[1])) {
+            if (!cjoProp::getUser()->hasMediaPerm($value[1])) {
             	$value[4]	.= '_locked';
             }
 
@@ -132,9 +134,7 @@ class cjoSelectMediaCat extends cjoSelect {
      */
     function getCurrMediaCategory() {
 
-    	global $CJO, $media_category;
-
-    	if (cjo_get('category_id', 'bool')) $media_category = cjo_request('category_id', 'int');
+    	if (cjo_request('category_id', 'bool')) $media_category = cjo_request('category_id', 'cjo-mediacategory-id', 0);
 
     	if ($media_category) {
     		$sql = new cjoSql();
@@ -146,22 +146,6 @@ class cjoSelectMediaCat extends cjoSelect {
     	else {
     		$media_category = 0;
     	}
-
-//    	if (!$CJO['USER']->hasMediaPerm($media_category)) {
-//
-//    		$media_category = -1;
-//
-//    		$sql = new cjoSql();
-//    		$sql->setQuery("SELECT id FROM ".TBL_FILE_CATEGORIES." ORDER BY path");
-//
-//    		for ($i = 0; $i < $sql->getRows(); $i++) {
-//    			if ( $CJO['USER']->hasMediaPerm($sql->getValue('id'))) {
-//    				$media_category = $sql->getValue('id');
-//    				break;
-//    			}
-//    			$sql->next();
-//    		}
-//    	}
         
     	if ($media_category) {
    	        cjo_set_session('MEDIA_CATEGORY', $media_category);
@@ -173,15 +157,13 @@ class cjoSelectMediaCat extends cjoSelect {
     }
 
     /**
-     * Writes the generated $CJO['SEL_MEDIA'] object.
+     * Writes the generated cjoSelectMediaCat::$sel_media object.
      * @param boolean $render
      * @return void|string
      */
     public function get($render=false){
 
-        global $CJO, $subpage;
-
-        $s  = $CJO['SEL_MEDIA']->_get();
+        $s  = self::$sel_media->_get();
 
         if ($this->getSelectId() == 'custom_select') {
 
@@ -189,11 +171,11 @@ class cjoSelectMediaCat extends cjoSelect {
               '/* <![CDATA[ */'."\r\n".
               '	$(function() {'."\r\n".
               '    $(\'#custom_select\').selectpath({'."\r\n".
-              '			action : {root   	  			: "location.href=\'index.php?page=media&subpage='.$subpage.'&media_category=0\'",'."\r\n".
-              '					  categories 			: "location.href=\'index.php?page=media&subpage='.$subpage.'&media_category=\'+id",'."\r\n".
-              '					  category 	 			: "location.href=\'index.php?page=media&subpage='.$subpage.'&media_category=\'+id",'."\r\n".
-              '					  \'categories locked\' : "location.href=\'index.php?page=media&subpage='.$subpage.'&media_category=\'+id",'."\r\n".
-              '					  \'category locked\'   : "location.href=\'index.php?page=media&subpage='.$subpage.'&media_category=\'+id"'."\r\n".
+              '			action : {root   	  			: "location.href=\'index.php?page=media&subpage='.cjoProp::getSubpage().'&media_category=0\'",'."\r\n".
+              '					  categories 			: "location.href=\'index.php?page=media&subpage='.cjoProp::getSubpage().'&media_category=\'+id",'."\r\n".
+              '					  category 	 			: "location.href=\'index.php?page=media&subpage='.cjoProp::getSubpage().'&media_category=\'+id",'."\r\n".
+              '					  \'categories locked\' : "location.href=\'index.php?page=media&subpage='.cjoProp::getSubpage().'&media_category=\'+id",'."\r\n".
+              '					  \'category locked\'   : "location.href=\'index.php?page=media&subpage='.cjoProp::getSubpage().'&media_category=\'+id"'."\r\n".
               '				      },'."\r\n".
               '			types  : {root	 		: \'root\','."\r\n".
               '					  folder 		: \'categories\','."\r\n".
@@ -216,5 +198,13 @@ class cjoSelectMediaCat extends cjoSelect {
 
     public function _get(){
         return parent::get();
+    }
+        
+    public static function init($media_category = false) {
+        self::$sel_media = new cjoSelectMediaCat($media_category);
+    }
+    
+    public static function getOutput($render=false) {
+        return self::$sel_media->get($render);
     }
 }

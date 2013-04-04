@@ -23,39 +23,36 @@
  * @filesource
  */
 
-error_reporting(E_ALL & ~E_STRICT & ~E_NOTICE);
+error_reporting(E_ALL ^ E_NOTICE);
 // ----- caching start für output filter
 
 ob_start();
 
-$CJO                = array();
-$CJO['HTDOCS_PATH'] = '../';
-$CJO['CONTEJO']     = true;
-$cur_page           = array();
+$CJO = array('HTDOCS_PATH' => '../', 'CONTEJO' => true);
 
-require_once "./include/functions/function.cjo_mquotes.inc.php";
 require_once 'include/master.inc.php';
 
 $mode           = cjo_request('mode', 'string', '');
 $filename       = cjo_request('filename', 'string', '');
-$media_category = cjo_request('media_category','int', cjo_session('MEDIA_CATEGORY', 'cjo-mediacategory-id'));
+$media_category = cjo_request('media_category','int', cjo_session('MEDIA_CATEGORY'));
 $filenames      = cjoAssistance::toArray($filename, ',');
 $media          = '';
 $cjo_tbx_cur_id = '';
 
-if (!empty($filenames[0]) && !isset($_GET['media_category'])){
+if (!empty($filenames[0]) && !cjo_get('media_category', 'cjo-media-category-id', false)){
     $media_obj = OOMedia::getMediaByFileName($filenames[0]);
 
     if (OOMedia::isValid($media_obj)) {
         $media_category = $media_obj->getCategoryId();
     }
 }
-new cjoSelectMediaCat();
-$CJO['SEL_MEDIA']->setName("category_id");
-$CJO['SEL_MEDIA']->setStyle("width:760px;");
 
-$CJO['SEL_MEDIA']->setSelected($media_category);
-$CJO['SEL_MEDIA']->setSelectedPath(OOMediaCategory::getPath($media_category));
+cjoSelectMediaCat::init($media_category);
+cjoSelectMediaCat::$sel_media->setName("category_id");
+cjoSelectMediaCat::$sel_media->setStyle("width:760px;");
+
+cjoSelectMediaCat::$sel_media->setSelected($media_category);
+cjoSelectMediaCat::$sel_media->setSelectedPath(OOMediaCategory::getPath($media_category));
 
 ob_end_clean();
 
@@ -73,9 +70,9 @@ foreach($media_objs as $val=>$media_obj) {
 			$media_obj->getType().'|'.
 			$media_obj->_getFormattedSize().'|'.
 			$size.'|'.
-			$media_obj->getCreateDate($I18N->msg("datetimeformat")).'|'.
+			$media_obj->getCreateDate(cjoI18N::translate("datetimeformat")).'|'.
 			$media_obj->getCreateUser().'|'.
-			$media_obj->getUpdateDate($I18N->msg("datetimeformat")).'|'.
+			$media_obj->getUpdateDate(cjoI18N::translate("datetimeformat")).'|'.
 			$media_obj->getUpdateUser();
 
 	$params = array('width'=>80,'height'=>80,'rel'=>$rel,'title'=>$media_obj->getTitle());
@@ -85,16 +82,16 @@ foreach($media_objs as $val=>$media_obj) {
 	$media .= cjoMedia::getMediaContainer($media_obj->getFileName(), $media_obj->getFullPath(), false, $params);
 }
 
-if ($media == '') $media = '<div class="warning centered">'.$I18N->msg('msg_media_in_this_category').'</div>';
+if ($media == '') $media = '<div class="warning centered">'.cjoI18N::translate('msg_media_in_this_category').'</div>';
 
 $button = new popupButtonField();
-$button->addButton($I18N->msg('button_close'), '$.fancybox.close(); return false;', 'img/silk_icons/cross_sw.png', 'class="small" id="cjo_connectmedia_close"');
+$button->addButton(cjoI18N::translate('button_close'), '$.fancybox.close(); return false;', 'img/silk_icons/cross_sw.png', 'class="small" id="cjo_connectmedia_close"');
 
 $url = 'connectmedia.php?mode='.$mode.'&filename='.$filename;
 ?>
 
 <div id="cjo_connectmedia_top"><?php
-	echo $CJO['SEL_MEDIA']->get(true);
+	echo cjoSelectMediaCat::getOutput(true);
 	echo $button->getButtons();
 ?></div>
 <div id="cjo_connectmedia_middle">
@@ -105,21 +102,21 @@ $url = 'connectmedia.php?mode='.$mode.'&filename='.$filename;
 <h3></h3>
 <span
 	style="background-image: url(img/mini_icons/page_white.png); clear: left;"
-	title="<?php echo $I18N->msg('label_filename'); ?>"></span> <span
+	title="<?php echo cjoI18N::translate('label_filename'); ?>"></span> <span
 	style="background-image: url(img/mini_icons/flag_blue.png)"
-	title="<?php echo $I18N->msg('label_filetype'); ?>"></span> <span
+	title="<?php echo cjoI18N::translate('label_filetype'); ?>"></span> <span
 	style="background-image: url(img/mini_icons/drive.png)"
-	title="<?php echo $I18N->msg('label_filesize'); ?>"></span> <span
+	title="<?php echo cjoI18N::translate('label_filesize'); ?>"></span> <span
 	style="background-image: url(img/mini_icons/shape_handles.png)"
-	title="<?php echo $I18N->msg('label_filesize'); ?>"></span> <span
+	title="<?php echo cjoI18N::translate('label_filesize'); ?>"></span> <span
 	style="background-image: url(img/mini_icons/time.png); clear: left;"
-	title="<?php echo $I18N->msg('label_createdate'); ?>"></span> <span
+	title="<?php echo cjoI18N::translate('label_createdate'); ?>"></span> <span
 	style="background-image: url(img/mini_icons/user.png)"
-	title="<?php echo $I18N->msg('label_createuser'); ?>"></span> <span
+	title="<?php echo cjoI18N::translate('label_createuser'); ?>"></span> <span
 	style="background-image: url(img/mini_icons/time.png)"
-	title="<?php echo $I18N->msg('label_updatedate'); ?>"></span> <span
+	title="<?php echo cjoI18N::translate('label_updatedate'); ?>"></span> <span
 	style="background-image: url(img/mini_icons/user.png)"
-	title="<?php echo $I18N->msg('label_updateuser'); ?>"></span></div>
+	title="<?php echo cjoI18N::translate('label_updateuser'); ?>"></span></div>
 </div>
 
 <script type="text/javascript">

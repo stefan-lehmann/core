@@ -26,6 +26,7 @@ $(function() {
 
 	cjo.showScripttime('STANDARD_BEGIN');
 	cjo.conf.form = $('#CJO_FORM');
+    cjo.scrollToPos();
 	cjo.toggleStatusMessage();
 	cjo.initQuickLinks();
 	cjo.initMultiLinks();
@@ -33,16 +34,8 @@ $(function() {
 	cjo.initEditContent();	
 	cjo.initDialogHelp();
     cjo.initSelectButtons();
+    cjo.initA22Elements();
 
-    $('.a22-cjoform span.slide').each(function(i){
-    	var $this = $(this);
-    	$this.append('<span></span>');
-    	cjo.toggleFormSection($this, true, 0);
-        $this.click(function(){
-            var hide = ($this.parent().parent().next().css('display') != 'none') ? true : false;
-            cjo.toggleFormSection($this, hide, 300);
-        });
-    });
 
     $('.info_icons h5').click(function() {
     	var $this = $(this);
@@ -82,6 +75,16 @@ $(function() {
 	
 	$('#cjo.conf.form').find('input[type=text]:not(:input[readonly]), select, textarea:not(textarea[readonly])').eq(0).focus();
 	
+	// $('a.cjo_ajax:not(.cjo_confirm)').click(function() {
+        // var el = $(this);
+        // var href = el.attr('href');       
+        // if(el.parent().is('.cjo_confirm')) return false;
+        // cjo.processAjaxCall(href, el);
+        // return false;
+	// });
+	
+ 
+	
 //	$(window).unload(function() {
 //	  alert('Handler for .unload() called.');
 //	});
@@ -97,6 +100,68 @@ var cjo = {
 	'jdialog':			 '<div id="cjo_jdialog" class="hide_me">%MESSAGE%</div>',
 	'curr_media_button': '',
 	'timeout': 			 null
+},
+'initA22Elements' : function() {
+    
+    $('.a22-cjoform span.slide').each(function(i){
+        var $this = $(this);
+        $this.append('<span></span>');
+        cjo.toggleFormSection($this, true, 0);
+        $this.click(function(){
+            var hide = ($this.parent().parent().next().css('display') != 'none') ? true : false;
+            cjo.toggleFormSection($this, hide, 300);
+        });
+    });
+   $('.a22-cjolist-data').each(function() {
+       var $this = $(this);
+       $this.find('.checkbox.get_all:not(:disabled)').click(function(){
+            if ($('.a22-cjolist-data .checkbox.get_all:checked').length > 0 ||
+                $(this).is(':checked')) {
+                $this.find('.update_selection').removeAttr('disabled');
+                $('.toolbar_ext .hidden_container')
+                    .fadeIn('slow');
+            } else {
+                $this.find('.update_selection')
+                    .attr('disabled', 'disabled')
+                    .find('option')
+                    .removeAttr('selected');
+                $this.find('.update_selection')
+                    .nextAll('span')
+                    .addClass('hide_me');
+                $('.toolbar_ext .hidden_container')
+                    .fadeOut('slow');
+            }
+        });
+                
+        $this.find('.check_all').click(function(){
+                if($(this).is(':checked')){
+                    $this.find('.checkbox.get_all:not(:disabled)')
+                        .attr('checked','checked');
+                    $('.update_selection')
+                        .removeAttr('disabled');
+                }
+                else {
+                    $this.find('.checkbox.get_all')
+                        .removeAttr('checked');
+                    $this.find('.update_selection')
+                        .attr('disabled', 'disabled')
+                        .find('option')
+                        .removeAttr('selected');
+    
+                    $this.find('update_selection')
+                        .nextAll('span')
+                        .addClass('hide_me');
+                }
+        });
+    }); 
+    
+    $('.a22-cjolist-data .preview a').click(function(){
+        var href = $(this).attr('href');
+        var filename = href.replace(/^.*filename=/gi,'');
+        var url = '../files/'+filename;
+        cjo.openPopUp('Preview', url, 0, 0);
+        return false;
+    }); 
 },
 
 'toggleFormSection': function(el, hide, duration) {
@@ -645,24 +710,30 @@ var cjo = {
 
 'initJConfirmByClass': function() {
 	
-    $('.cjo_confirm, .cjo_delete a').click(function() {
+    $('.cjo_confirm, .cjo_confirm a, .cjo_delete a').click(function() {
 
         var $this = $(this);    	
 
         var message = $this.attr('title');
-        if (typeof message == 'undefined' || message == '') message = $this.find('img').eq(0).attr('title');
+        if (typeof message == 'undefined' || message == '') message = $this.find('img:first').attr('title');
 
         if ($this.is('a')) {
             var href = $this.attr('href');
-            cjo.jconfirm(message, 'cjo.changeLocation', [href]);
+            cjo.jconfirm(message, 'cjo.changeLocation', [href,$this]);
             return false;
         }
-        if ($this.is('button, input')) {
+        else if ($this.is('button, input')) {
             cjo.jconfirm(message, 'cjo.submitForm', [$this]);
             return false;
         }
         return false;
     });
+    
+    $('select.cjo_ajax').change(function() {
+       var el = $(this);
+       cjo.processAjaxCall(el.find(':selected:first').val(), el);
+       return false; 
+    }); 
 },
 
 'initDialogHelp': function() {
@@ -911,7 +982,32 @@ var cjo = {
 	}
 	window.setInterval(function(){ writeLog(); }, interval);
 },
+'updatePage': function() {
+    cjo.saveScrollPos();
+    location.href=location.href;
+},
+'scrollToPos': function() {
+ 
+    if (!$.cookies.get('cjo_scroll')) return false;
 
+    window.scroll(0, $.cookies.get('cjo_scroll'));
+    $.cookies.del('cjo_scroll');
+ 
+},
+'saveScrollPos':function() {
+
+    var yScroll;
+    if (self.pageYOffset) {
+        yScroll = self.pageYOffset;
+    } else if (document.documentElement && document.documentElement.scrollTop) {
+        yScroll = document.documentElement.scrollTop;
+    } else if (document.body) {
+        yScroll = document.body.scrollTop;
+    }
+    if (yScroll > 0) {
+        $.cookies.set('cjo_scroll', yScroll);
+    }
+},
 'toggleOnOff': function(el) {
 
 	var img = $(el).find('img');
@@ -1002,16 +1098,95 @@ var cjo = {
     cjo.popups.win[cjo.popups.count] = new cjo.createWindow(name, link, posx, posy, width, height, extra);
 },
 
-'changeLocation': function(url) {
-	location.href = url.replace(/\&amp;/g,'&');
+'changeLocation': function(url,el) {
+    if (!url.match(/ajax.php\?/)) {
+        location.href = url.replace(/\&amp;/g,'&');
+    }
+    cjo.processAjaxCall(url,el)
+},
+
+'processAjaxCall': function(url, el, callback) {
+    
+    el = $(el);  
+    
+    el.hide().before(cjo.conf.ajax_loader);
+    
+    $.get(url, {}, function(message) {
+        if (cjo.setStatusMessage(message) && !message.match(/class="error"/)) {
+            if (el.is('.cjo_delete') || el.parent().is('.cjo_delete')) {
+            	var table = el.parentsUntil('table').parent();
+                el.parentsUntil('tr').parent().remove();
+                cjo.updatePrio(table);
+                return;
+            }
+            if (el.is('.cjo_status') || el.parent().is('.cjo_status')) {
+
+                var image = el.find('img');
+                var src = image.attr('src');
+                src = (src.match(/_off\.png/)) 
+                    ? src.replace(/_off\.png/, '.png') 
+                    : src.replace(/\.png/, '_off.png');
+   
+                image.attr('src', src);
+            }    
+        
+            if (typeof callback != 'undefined' && typeof callback == 'function') {
+                callback();
+                return;
+            } 
+            else if (el.data('callback') ) {
+                eval(el.data('callback'));
+                return;
+            }
+        }
+        el.prev().remove();
+        el.show();
+    });
+},
+
+'updatePrio': function(table) {
+	table.find('td.tablednd strong').each(function(i) {
+		console.log(i+1);
+		$(this).html(i+1);
+	})
+	
+	
 },
 
 'openShortPopup': function(url) {
 	window.open(url.replace(/\&amp;/g,'&'));
 	return false;
+},
+
+//parseUri 1.2.2
+//(c) Steven Levithan <stevenlevithan.com>
+//MIT License
+
+'parseUri': function (str) {
+    var o   = {
+            strictMode: false,
+            key: ["source","protocol","authority","userInfo","user","password","host","port","relative","path","directory","file","query","anchor"],
+            q:   {
+                name:   "queryKey",
+                parser: /(?:^|&)([^&=]*)=?([^&]*)/g
+            },
+            parser: {
+                strict: /^(?:([^:\/?#]+):)?(?:\/\/((?:(([^:@]*)(?::([^:@]*))?)?@)?([^:\/?#]*)(?::(\d*))?))?((((?:[^?#\/]*\/)*)([^?#]*))(?:\?([^#]*))?(?:#(.*))?)/,
+                loose:  /^(?:(?![^:@]+:[^:@\/]*@)([^:\/?#.]+):)?(?:\/\/)?((?:(([^:@]*)(?::([^:@]*))?)?@)?([^:\/?#]*)(?::(\d*))?)(((\/(?:[^?#](?![^?#\/]*\.[^?#\/.]+(?:[?#]|$)))*\/?)?([^?#\/]*))(?:\?([^#]*))?(?:#(.*))?)/
+            }};
+    var m   = o.parser[o.strictMode ? "strict" : "loose"].exec(str),
+        uri = {},
+        i   = 14;
+
+    while (i--) uri[o.key[i]] = m[i] || "";
+
+    uri[o.q.name] = {};
+    uri[o.key[12]].replace(o.q.parser, function ($0, $1, $2) {
+        if ($1) uri[o.q.name][$1] = $2;
+    });
+
+    return uri;
 }
-
-
 
 
 }

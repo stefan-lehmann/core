@@ -1,0 +1,61 @@
+[%TEMPLATE%]
+<!DOCTYPE html>
+<html>
+<head>
+<title>[[TITLE]] | CJO_SERVERNAME</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="keywords" content="" />
+<meta name="description" content="" />
+<meta name="audience" content="All" />
+<meta name="copyright" content="" />
+<meta name="Robots" content="index,follow" />
+<script src="[[ADDON_PATH]]/video.js" type="text/javascript" charset="utf-8"></script>
+<link rel="stylesheet" href="[[ADDON_PATH]]/video-js.css" type="text/css" media="screen" title="Video JS">
+<%ERROR%>
+</head>
+<body>
+<div class="video-js-box" style="width:[[WIDTH]]px!important;height:[[HEIGHT]]px!important">
+  <video style="width:100%!important;height:100%!important" class="video-js" 
+     width="[[WIDTH]]" height="[[HEIGHT]]" [[AUTOPLAY]] [[CONTROLS]] [[PRELOAD]] [[POSTER]]>
+        <%SOURCES%>
+        <!-- Flash Fallback. Use any flash video player here. Make sure to keep the vjs-flash-fallback class. -->
+          <object class="vjs-flash-fallback" width="[[WIDTH]]" height="[[HEIGHT]]" type="application/x-shockwave-flash"
+            data="[[ADDON_PATH]]/flowplayer-3.2.7.swf">
+            <param name="movie" value="[[ADDON_PATH]]/flowplayer-3.2.7.swf" />
+            <param name="allowfullscreen" value="true" />
+            <param name="wmode" value="transparent" />        
+            <param name="flashvars" value='config={"playlist":[
+                                                  IF([[POSTER]]){% "[[POSTER]]", %}ENDIF
+                                                  {"url": "[[FALLBACK_URL]]", 
+                                                  IF([[AUTOPLAY]]){% "autoPlay":false, %}ENDIF
+                                                  "autoBuffering":true}]}' />
+          </object>
+    </video>        
+    IF([[POSTER]]){%  
+        <img src="[[POSTER]]" width="[[WIDTH]]" height="[[HEIGHT]]" alt="[[TITLE]]"
+             title="[[COPYRIGHT]]" />
+    %}ENDIF 
+</div>
+<script type="text/javascript">
+/*<![CDATA[*/
+  VideoJS.setupAllWhenReady({
+    controlsBelow: false, // Display control bar below video instead of in front of
+    controlsHiding: true, // Hide controls when mouse is not over the video
+    defaultVolume: 0.85, // Will be overridden by user's last volume if available
+    flashVersion: 9, // Required flash version for fallback
+    linksHiding: true // Hide download links when video is supported
+  });
+/*]]>*/
+</script>
+</body>
+</html>
+
+[%SOURCES%]
+<source src="[[PATH]]" type='[[TYPE]]' />
+
+[%ERROR%]
+<script type="text/javascript">
+/*<![CDATA[*/
+    top.location.href = '[[NOT_FOUND_LOCATION]]';
+/*]]>*/
+</script>

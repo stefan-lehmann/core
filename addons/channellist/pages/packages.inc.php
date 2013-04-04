@@ -25,7 +25,7 @@
 if ($function == 'delete') {
 	$sql = new cjoSql();
     $qry = "DELETE FROM ".TBL_CHANNELPACKAGES." WHERE id='".$oid."'";
-    $sql->statusQuery($qry,$I18N_23->msg("msg_package_deleted"));
+    $sql->statusQuery($qry,cjoAddon::translate(23,"msg_package_deleted"));
     unset($function);
 }
 
@@ -38,23 +38,23 @@ if ($function == "add" || $function == "edit" ) {
     //$form->debug = true;
 
     //Fields
-    $fields['name'] = new textField('name', $I18N_23->msg('label_package_name'), $readonly);
-    $fields['name']->addValidator('notEmpty', $I18N_23->msg('msg_package_name_notEmpty'), false, false);    
+    $fields['name'] = new textField('name', cjoAddon::translate(23,'label_package_name'), $readonly);
+    $fields['name']->addValidator('notEmpty', cjoAddon::translate(23,'msg_package_name_notEmpty'), false, false);    
     
-    $fields['symbol'] = new textField('symbol', $I18N_23->msg('label_package_symbol'), $readonly);
-    $fields['symbol']->addValidator('notEmpty', $I18N_23->msg('msg_package_symbol_notEmpty'), false, false);       
+    $fields['symbol'] = new textField('symbol', cjoAddon::translate(23,'label_package_symbol'), $readonly);
+    $fields['symbol']->addValidator('notEmpty', cjoAddon::translate(23,'msg_package_symbol_notEmpty'), false, false);       
    
 	$fields['selectable'] = new checkboxField('selectable', '&nbsp;',  array('style' => 'width: auto;'));
-	$fields['selectable']->addBox($I18N_23->msg("label_selectable"), '1');    
+	$fields['selectable']->addBox(cjoAddon::translate(23,"label_selectable"), '1');    
 	
-    $fields['description'] = new cjoWYMeditorField('description', $I18N_23->msg('label_description'));
+    $fields['description'] = new cjoWYMeditorField('description', cjoAddon::translate(23,'label_description'));
     $fields['description']->setWidth('650');
     $fields['description']->setHeight('200');    
     
-    $fields['media'] = new cjoMediaButtonField('media', $I18N_23->msg('label_connected_media'), array('preview' => array('disabled' => false))); 
+    $fields['media'] = new cjoMediaButtonField('media', cjoAddon::translate(23,'label_connected_media'), array('preview' => array('disabled' => false))); 
         
     //Add Fields:
-    $section = new cjoFormSection(TBL_CHANNELPACKAGES, $I18N_23->msg($function."_packages"), array ('id' => $oid));
+    $section = new cjoFormSection(TBL_CHANNELPACKAGES, cjoAddon::translate(23,$function."_packages"), array ('id' => $oid));
     
     $section->addFields($fields);
     $form->addSection($section);
@@ -82,7 +82,7 @@ if ($function == "add" || $function == "edit" ) {
     	$update->Update();
     	
         if (cjo_post('cjoform_update_button', 'bool') && !cjoMessage::hasErrors()) {
-    		cjoAssistance::redirectBE(array('oid'=>$oid, 'function'=>'edit','msg' => 'msg_data_saved'));
+    		cjoUrl::redirectBE(array('oid'=>$oid, 'function'=>'edit','msg' => 'msg_data_saved'));
     	}
 		if (cjo_post('cjoform_save_button','bool')) {
 			unset($function);
@@ -98,11 +98,11 @@ $list = new cjolist($sql, 'prior', 'ASC', 'name', 50);
 $list->setName('CHANNELPACKAGES');
 $list->setAttributes('id="packages_list"');
 
-$add_button = cjoAssistance::createBELink(
-						    '<img src="img/silk_icons/add.png" alt="'.$I18N->msg("button_add").'" />',
+$add_button = cjoUrl::createBELink(
+						    '<img src="img/silk_icons/add.png" alt="'.cjoI18N::translate("button_add").'" />',
 							array('function' => 'add'),
 							$list->getGlobalParams(),
-							'title="'.$I18N->msg("button_add").'"');
+							'title="'.cjoI18N::translate("button_add").'"');
 
 $cols['id'] = new resultColumn('id', $add_button);
 $cols['id']->setHeadAttributes('class="icon"');
@@ -111,37 +111,37 @@ $cols['id']->delOption(OPT_ALL);
 
 
 
-$cols['icon'] = new resultColumn('media', $I18N_23->msg('label_package_icon'), 'call_user_func', array('OOMedia::toThumbnail',array('%s')));
+$cols['icon'] = new resultColumn('media', cjoAddon::translate(23,'label_package_icon'), 'call_user_func', array('OOMedia::toThumbnail',array('%s')));
 $cols['icon']->delOption(OPT_ALL);
 $cols['icon']->setHeadAttributes('class="icon"');
 $cols['icon']->setBodyAttributes('class="icon"');
 
-$cols['name'] = new resultColumn('name', $I18N_23->msg('label_package_name'));
+$cols['name'] = new resultColumn('name', cjoAddon::translate(23,'label_package_name'));
 
-$cols['symbol'] = new resultColumn('symbol', $I18N_23->msg('label_package_symbol'));
+$cols['symbol'] = new resultColumn('symbol', cjoAddon::translate(23,'label_package_symbol'));
 $cols['symbol']->setBodyAttributes('width="25%"');
 
-$cols['prio'] = new resultColumn('prior', $I18N->msg('label_prio'));
+$cols['prio'] = new resultColumn('prior', cjoI18N::translate('label_prio'));
 $cols['prio']->setHeadAttributes('class="icon"');
 $cols['prio']->setBodyAttributes('class="icon dragHandle tablednd"');
-$cols['prio']->setBodyAttributes('title="'.$I18N->msg("label_change_prio").'"');
+$cols['prio']->setBodyAttributes('title="'.cjoI18N::translate("label_change_prio").'"');
 $cols['prio']->addCondition('prior', array('!=', ''), '<strong>%s</strong>');
 
-$cols['selectable'] = new resultColumn('selectable', $I18N_23->msg('label_selectable'));
-$cols['selectable']->addCondition('selectable', '1', '<img src="img/silk_icons/accept.png" alt="true" title="'.$I18N_23->msg("label_selectable").'" />');
+$cols['selectable'] = new resultColumn('selectable', cjoAddon::translate(23,'label_selectable'));
+$cols['selectable']->addCondition('selectable', '1', '<img src="img/silk_icons/accept.png" alt="true" title="'.cjoAddon::translate(23,"label_selectable").'" />');
 $cols['selectable']->addCondition('selectable', '0', '&nbsp;');
 $cols['selectable']->setHeadAttributes('class="icon"');
 $cols['selectable']->setBodyAttributes('class="icon"');
 $cols['selectable']->setOptions(OPT_SORT);
 
 // Bearbeiten link
-$img = '<img src="img/silk_icons/page_white_edit.png" title="'.$I18N->msg("button_edit").'" alt="'.$I18N->msg("button_edit").'" />';
-$cols['edit'] = new staticColumn($img, $I18N->msg("label_functions"));
+$img = '<img src="img/silk_icons/page_white_edit.png" title="'.cjoI18N::translate("button_edit").'" alt="'.cjoI18N::translate("button_edit").'" />';
+$cols['edit'] = new staticColumn($img, cjoI18N::translate("label_functions"));
 $cols['edit']->setBodyAttributes('width="16"');
 $cols['edit']->setParams(array ('function' => 'edit', 'clang' => $clang, 'oid' => '%id%'));
 $cols['edit']->setHeadAttributes('colspan="2"');
 
-$img = '<img src="img/silk_icons/bin.png" title="'.$I18N->msg("button_delete").'" alt="'.$I18N->msg("button_delete").'" />';
+$img = '<img src="img/silk_icons/bin.png" title="'.cjoI18N::translate("button_delete").'" alt="'.cjoI18N::translate("button_delete").'" />';
 $cols['delete'] = new staticColumn($img, NULL);
 $cols['delete']->setBodyAttributes('width="60"');
 $cols['delete']->setBodyAttributes('class="cjo_delete"');
@@ -228,11 +228,11 @@ $list->show();
 
 				$(jdialog).dialog({
         			buttons: {
-        				'<?php echo $I18N->msg('label_ok'); ?>': function() {
+        				'<?php echo cjoI18N::translate('label_ok'); ?>': function() {
         					$(this).dialog('close');
         					confirm_action();
         				},
-        				'<?php echo $I18N->msg('label_cancel'); ?>': function() {
+        				'<?php echo cjoI18N::translate('label_cancel'); ?>': function() {
         					$(this).dialog('close');
         					location.reload();
         				}

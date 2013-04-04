@@ -27,20 +27,20 @@ $cjo_header      = '';
 $cjo_popup_class = '';
 $login_status    = '';
 
-if (empty($cur_page['popup'])) {
+if (!cjoProp::get('POPUP_PAGE')) {
 
-    if ($CJO['USER']) {
+    if (cjoProp::getUser()) {
 
         /*     User-Info und Logout zusammenstellen     */
         $login_status = '<ul class="buttonmenu">
                             <li class="first">
                                 <a href="index.php?logout=1">
-                                    <span class="left"><img src="img/silk_icons/user.png" alt="'.$CJO['USER']->getValue('name').'" /></span>
+                                    <span class="left"><img src="img/silk_icons/user.png" alt="'.cjoProp::getUser()->getValue('name').'" /></span>
                                     <span>
-                                        '.$CJO['USER']->getValue('name').'
+                                        '.cjoProp::getUser()->getValue('name').'
                                     </span>
                                     <span class="rot">
-                                        '.$I18N->msg('label_logout').'
+                                        '.cjoI18N::translate('label_logout').'
                                     </span>
                                     <span class="right"></span>
                                 </a>
@@ -49,69 +49,69 @@ if (empty($cur_page['popup'])) {
 
 
         /*     Menü zusammenstellen     */
-        $cjo_mainmenu['items']['edit'] = cjoAssistance::createBELink($I18N->msg('title_edit'), array('clang' => $clang), array('page'=>'edit'));
+        $cjo_mainmenu['items']['edit'] = cjoUrl::createBELink(cjoI18N::translate('title_edit'), array('clang' => $clang), array('page'=>'edit'));
 
-        if ($CJO['USER']->isAdmin() || $CJO['USER']->isValueOf("rights",'media[')) {
-            $cjo_mainmenu['items']['media'] = cjoAssistance::createBELink($I18N->msg('title_media'), array('clang' => $clang), array('page'=>'media'));
+        if (cjoProp::getUser()->isAdmin() || cjoProp::getUser()->isValueOf("rights",'media[')) {
+            $cjo_mainmenu['items']['media'] = cjoUrl::createBELink(cjoI18N::translate('title_media'), array('clang' => $clang), array('page'=>'media'));
         }
-        if ($CJO['USER']->hasPerm('tools[')) {
-            $cjo_mainmenu['items']['tools'] = cjoAssistance::createBELink($I18N->msg('title_tools'), array('clang' => $clang), array('page'=>'tools'));
+        if (cjoProp::getUser()->hasPerm('tools[')) {
+            $cjo_mainmenu['items']['tools'] = cjoUrl::createBELink(cjoI18N::translate('title_tools'), array('clang' => $clang), array('page'=>'tools'));
         }
-        if ($CJO['USER']->hasPerm('users[]')) {
-            $cjo_mainmenu['items']['users'] = cjoAssistance::createBELink($I18N->msg('title_users'), array('clang' => $clang), array('page'=>'users'));
+        if (cjoProp::getUser()->hasPerm('users[]')) {
+            $cjo_mainmenu['items']['users'] = cjoUrl::createBELink(cjoI18N::translate('title_users'), array('clang' => $clang), array('page'=>'users'));
         }
-        elseif ($CJO['USER']->hasPerm('users[password]')) {
-            $cjo_mainmenu['items']['users'] = cjoAssistance::createBELink($I18N->msg('title_my_account'), array('clang' => $clang), array('page'=>'users'));
+        elseif (cjoProp::getUser()->hasPerm('users[password]')) {
+            $cjo_mainmenu['items']['users'] = cjoUrl::createBELink(cjoI18N::translate('title_my_account'), array('clang' => $clang), array('page'=>'users'));
         }
-        if ($CJO['USER']->hasPerm('specials[')) {
-            $cjo_mainmenu['items']['specials'] = cjoAssistance::createBELink($I18N->msg('title_specials'), array('clang' => $clang), array('page'=>'specials'));
+        if (cjoProp::getUser()->hasPerm('specials[')) {
+            $cjo_mainmenu['items']['specials'] = cjoUrl::createBELink(cjoI18N::translate('title_specials'), array('clang' => $clang), array('page'=>'specials'));
         }
-        if ($CJO['USER']->hasPerm('addons[]')) {
-            $cjo_mainmenu['items']['addons'] = cjoAssistance::createBELink($I18N->msg('title_addons'), array('clang' => $clang), array('page'=>'addons'), ' id="addon"');
+        if (cjoProp::getUser()->hasPerm('addons[]')) {
+            $cjo_mainmenu['items']['addons'] = cjoUrl::createBELink(cjoI18N::translate('title_addons'), array('clang' => $clang), array('page'=>'addons'), ' id="addon"');
         }
 
-        foreach ($CJO['ADDON']['status'] as $key => $status)
-        {
-            $name  = (isset($CJO['ADDON']['name'][$key]))  ? $CJO['ADDON']['name'][$key]  : false;
-            $popup = (isset($CJO['ADDON']['popup'][$key])) ? $CJO['ADDON']['popup'][$key] : false;
+        foreach (cjoAddon::getProperty('status') as $addon => $status) {
+            
+            
+            $name  = cjoAddon::getProperty('name',$addon, false);
+            $popup = cjoAddon::getProperty('popup',$addon, false);
 
+            if (cjoAddon::isActivated($addon) && $name && cjoProp::getUser()->hasAddonPerm($addon,true)) {
 
-            if ($CJO['ADDON']['status'][$key] && $name && $CJO['USER']->hasAddonPerm($key,true)) {
-
-                $parent_page = $CJO['ADDON']['menu'][$key];
+                $parent_page = cjoAddon::getProperty('menu',$addon);
 
                 if ($parent_page === 0 || $parent_page == 'edit') {
                     continue;
                 }
                 if ($parent_page != 1 ) {
 
-                    $match = array_search($parent_page,$CJO['ADDON']['page']);
+                    $match = array_search($parent_page, cjoAddon::getProperty('page'));
 
-                    if ($match !== false && $CJO['USER']->hasAddonPerm($match,true)) {
+                    if ($match !== false && cjoProp::getUser()->hasAddonPerm($match,true)) {
                         continue;
                     }
-                    else if ($CJO['USER']->hasPerm($parent_page.'[')) {
+                    else if (cjoProp::getUser()->hasPerm($parent_page.'[')) {
                         continue;
                     }
                 }
-                else if (!$CJO['USER']->hasAddonPerm($key,true)) {
+                else if (!cjoProp::getUser()->hasAddonPerm($addon,true)) {
                     continue;
                 }
 
                 if ($popup) {
-                    $item = '<a href="#" onclick="cjo.openPopUp(\''.$name.'\',\'index.php?page='.$key.'&clang='.$clang.'\'); return false;">'.$name.'</a>'."\r\n";
+                    $item = '<a href="#" onclick="cjo.openPopUp(\''.$name.'\',\'index.php?page='.$addon.'&clang='.$clang.'\'); return false;">'.$name.'</a>'."\r\n";
                 } elseif (!$popup) {
-                    $item =  '<a href="index.php?page='.$key.'&clang='.$clang.'">'.$name.'</a>'."\r\n";
+                    $item =  '<a href="index.php?page='.$addon.'&clang='.$clang.'">'.$name.'</a>'."\r\n";
                 } else {
                     $item =  '<a href="#" onclick="'.$popup.'"; reurn false;">'.$name.'</a>'."\r\n";
                 }
-                $cjo_mainmenu['items'][$key] = $item;
+                $cjo_mainmenu['items'][$addon] = $item;
             }
         }
 
         foreach ($cjo_mainmenu['items'] as $key => $item) {
 
-            $current = ($key == $cur_page['page']) ? ' class="current"' : '';
+            $current = ($key == cjoProp::getPage()) ? ' class="current"' : '';
             $pattern = '/<(a.*href\="?\S+"[^>]*)>(.+)(<\/a>)/';
             $replace = '<$1'.$current.'><span class="left"></span>'."\r\n".
                        '<span>$2</span>'."\r\n".
@@ -142,23 +142,22 @@ else{
     $cjo_popup_class = ' class="cjo_popup"';
 }
 
-$main_style = $CJO['CLANG'] > 2 ? ' style="min-height:'.(100+count($CJO['CLANG'])*24).'px"' : '';
 
 ?>
 <!DOCTYPE html>
 <html>
 <head>
 
-<title>CJO | <?php echo $CJO['SERVERNAME'] ?></title>
-<meta http-equiv="Content-Type" content="text/html; charset=<?php echo $I18N->msg("htmlcharset"); ?>" />
-<meta http-equiv="Content-Language" content="<?php echo $I18N->msg("htmllang"); ?>" />
+<title>CJO | <?php echo cjoProp::get('SERVERNAME') ?></title>
+<meta http-equiv="Content-Type" content="text/html; charset=<?php echo cjoI18N::translate("htmlcharset"); ?>" />
+<meta http-equiv="Content-Language" content="<?php echo cjoI18N::translate("htmllang"); ?>" />
 <meta http-equiv="Pragma" content="no-cache" />
 <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-<link rel="shortcut icon" type="image/x-icon" href="<?php echo $CJO['FAVICON'] ?>" />
+<link rel="shortcut icon" type="image/x-icon" href="<?php echo cjoProp::get('FAVICON') ?>" />
 <link rel="stylesheet" type="text/css" href="css/contejo.css" />
 <link href="js/swfupload/swfupload.css" rel="stylesheet" type="text/css" />
 <link href="js/Jcrop/css/jquery.Jcrop.css" rel="stylesheet" type="text/css" />
-<?php require_once($CJO['INCLUDE_PATH']."/../js/js.inc.php") ?>
+<?php require_once cjoPath::backend('js/js.inc.php'); ?>
 <!--[if gt IE 6]><link rel="stylesheet" href="css/ie.css" type="text/css" media="screen" /><![endif]-->
 </head>
 <body>

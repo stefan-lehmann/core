@@ -32,16 +32,10 @@
  */
 
 class cjoTime {
-
-    function __construct(){
-        global $CJO;
-        $CJO['SCRIPT_START_TIME'] = $this->getCurrentTime();
-    }
-
+    
     public static function showScriptTime($render = false, $pre = '') {
 
-        global $CJO;
-        $time = intval((self::getCurrentTime() - $CJO['SCRIPT_START_TIME']) * 1000) / 1000;
+        $time = intval((self::getCurrentTime() - cjoProp::get('SCRIPT_START_TIME')) * 1000) / 1000;
 
         if (!$render) return $time;
 
@@ -84,5 +78,3 @@ class cjoTime {
     	}
     }
 }
-
-new cjoTime();

@@ -23,40 +23,33 @@
  * @filesource
  */
 
-$dataset = $CJO['ADDON']['settings'][$mypage];
 
 //create formular
 $form = new cjoForm();
 $form->setEditMode(true);
 
-$fields['url'] = new textField('URL', $I18N_25->msg('label_url'));
-$fields['url']->addValidator('notEmpty', $I18N_25->msg('err_empty_url'), false);
-$fields['url']->addValidator('isUrl', $I18N_25->msg('err_no_url'), false);
+$fields['url'] = new textField('URL', cjoAddon::translate(25,'label_url'));
+$fields['url']->addValidator('notEmpty', cjoAddon::translate(25,'err_empty_url'), false);
+$fields['url']->addValidator('isUrl', cjoAddon::translate(25,'err_no_url'), false);
 
-$fields['idsite'] = new textField('IDSITE', $I18N_25->msg('label_idsite'));
-$fields['idsite']->addValidator('notEmptyOrNull', $I18N_25->msg('err_empty_idsite'));
-$fields['idsite']->addValidator('isNumber', $I18N_25->msg('err_no_number_idsite'));
+$fields['idsite'] = new textField('IDSITE', cjoAddon::translate(25,'label_idsite'));
+$fields['idsite']->addValidator('notEmptyOrNull', cjoAddon::translate(25,'err_empty_idsite'));
+$fields['idsite']->addValidator('isNumber', cjoAddon::translate(25,'err_no_number_idsite'));
 $fields['idsite']->addAttribute('style', 'width: 50px;');
 $fields['idsite']->addAttribute('maxlength', '3');
 
-$fields['track_as_downloads'] = new textField('TRACK_AS_DOWNLOADS', $I18N_25->msg('label_track_as_downloads'));
+$fields['track_as_downloads'] = new textField('TRACK_AS_DOWNLOADS', cjoAddon::translate(25,'label_track_as_downloads'));
 
-$fields['download_class'] = new textField('DOWNLOAD_CLASS', $I18N_25->msg('label_download_class'));
+$fields['download_class'] = new textField('DOWNLOAD_CLASS', cjoAddon::translate(25,'label_download_class'));
 
-$fields['email_campaign_prefix'] = new textField('EMAIL_CAMPAIGN_PREFIX', $I18N_25->msg('label_email_campaign_prefix'));
-$fields['email_campaign_prefix']->addValidator('notEmpty', $I18N_25->msg('err_empty_email_campaign_prefix'));
+$fields['email_campaign_prefix'] = new textField('EMAIL_CAMPAIGN_PREFIX', cjoAddon::translate(25,'label_email_campaign_prefix'));
+$fields['email_campaign_prefix']->addValidator('notEmpty', cjoAddon::translate(25,'err_empty_email_campaign_prefix'));
 
-$fields['email_campaign_filename'] = new textField('EMAIL_CAMPAIGN_FILENAME', $I18N_25->msg('label_email_campaign_filename'));
-$fields['email_campaign_filename']->addValidator('notEmpty', $I18N_25->msg('err_empty_email_campaign_filename'));
+$fields['email_campaign_filename'] = new textField('EMAIL_CAMPAIGN_FILENAME', cjoAddon::translate(25,'label_email_campaign_filename'));
+$fields['email_campaign_filename']->addValidator('notEmpty', cjoAddon::translate(25,'err_empty_email_campaign_filename'));
 
-$section = new cjoFormSection($dataset, $I18N->msg('title_edit_settings'));
+$section = new cjoFormSection($addon, cjoI18N::translate('title_edit_settings'));
 
 $section->addFields($fields);
 $form->addSection($section);
 $form->show(true);
-
-if ($form->validate()) {
-	if (!cjoGenerate::updateSettingsFile($CJO['ADDON']['settings'][$mypage]['SETTINGS'])) {
-		cjoMessage::addError($I18N_25->msg('err_saving_settings'));
-	}
-}

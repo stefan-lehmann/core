@@ -194,7 +194,7 @@ class cjoSql implements Iterator{
                 $localhosts = explode(',',$CJO['LOCALHOST']);
                 $dbid = cjoAssistance::isLocalhost() ? 'LOCAL' : 1;
             }
-            $db = $CJO['DB'][$dbid];
+            $db = cjoProp::getDB($dbid);
         }
         else {
             $dbid = md5(implode('',$db));
@@ -254,6 +254,17 @@ class cjoSql implements Iterator{
     public function getTable() {
         return $this->table;
     }
+    
+    /**
+     * Returns the table name.
+     * @return string
+     * @access public
+     */
+    public function getTableNameByColumn($column=0) {
+        $data = !empty($this->stmt) ? $this->stmt->getColumnMeta($column) : array();
+        return (isset($data['table'])) ? $data['table'] : NULL;
+    }       
+        
     
     /**
      * Sets the value of a column.
@@ -503,11 +514,13 @@ class cjoSql implements Iterator{
     protected function buildPreparedValues() {
         
         $query = array();
-        
+        $new_values = array();
         if (is_array($this->values)) {
             foreach ($this->values as $fieldname => $value) {
-                $query[] = '`'. $fieldname . '` = :'. $fieldname;
+                $new_values['set_'. $fieldname] = $value;
+                $query[] = '`'. $fieldname . '` = :set_'. $fieldname;
             }
+            $this->values = $new_values;
         }
 
         if (empty($query)) {
@@ -845,12 +858,11 @@ class cjoSql implements Iterator{
     public function Insert($success_message = false) {
         
         $table  = $this->getTable();
-        $values = $this->values;
         $ignore = (bool) $this->ignore ? 'IGNORE ' : '';
         
         $state = $this->preparedStatusQuery(
         				'INSERT '.$ignore.'INTO `'.$this->getTable().'` SET '.$this->buildPreparedValues(),
-                        $values,
+                        $this->values,
                         $success_message);
     
         $this->last_insert_id =  $this->getLastId();
@@ -1071,8 +1083,15 @@ class cjoSql implements Iterator{
      * @access public
      */
     public function getError() {
-        global $I18N;
-        return ($this->hasError()) ? '<b>'.$I18N->msg("msg_db_error").':</b> '.$this->errorInfo() : false;
+
+        $backtrace = debug_backtrace();
+        if (isset($backtrace[2]['function'])) {            
+            $info .= isset($backtrace[4]['class']) ? 'in <b>'.$backtrace[4]['class'].'::' : 'in <b>';
+            $info .= $backtrace[4]['function'].'()</b> ';     
+            $info .= $backtrace[3]['file'].' at Line <b>'.$backtrace[3]['line'].'</b>'; 
+        }     
+
+        return ($this->hasError()) ? '<b>'.cjoI18N::translate("msg_db_error").':</b> '.$this->errorInfo() .'<br/><br/>'.$this->query.'<br/><br/>'.$info : false;
     }
     
     /**
@@ -1254,8 +1273,6 @@ class cjoSql implements Iterator{
      */
     public static function showTables($DBID=1, $table_prefix=null) {
 
-        global $CJO;
-
         $query = 'SHOW TABLES';
         if($table_prefix != null) {
             // replace LIKE wildcards
@@ -1278,17 +1295,15 @@ class cjoSql implements Iterator{
      * @access protected
      */
     protected function noDBConnection() {
-
-        global $CJO, $I18N;
         
-        if (!$CJO['SETUP']) {
+        if (!cjoProp::isSetup()) {
             echo '<div style="color:red; font-family:verdana,arial; font-size:11px;">
                 CONTEJO Content Management Class SQL | Database down. | Please contact
                 <a href="mailto:'.$CJO['ERROR_EMAIL'].'">'.$CJO['ERROR_EMAIL'].'</a> |
                 Thank you!</div>';
                 exit;
         } 
-        $this->error = $I18N->msg('msg_no_db_connection');   
+        $this->error = cjoI18N::translate('msg_no_db_connection');   
     }
 
     /**
@@ -1299,9 +1314,7 @@ class cjoSql implements Iterator{
      */
     public function addGlobalUpdateFields($user = false) {
 
-        global $CJO;
-
-        if ($user === false) $user = $CJO['USER']->getValue('name');
+        if ($user === false) $user = cjoProp::getUser()->getValue('name');
 
         $this->setValue('updatedate', time());
         $this->setValue('updateuser', $user);
@@ -1315,9 +1328,7 @@ class cjoSql implements Iterator{
      */
     public function addGlobalCreateFields($user = false) {
 
-        global $CJO;
-
-        if ($user === false) $user = $CJO['USER']->getValue('name');
+        if ($user === false) $user = cjoProp::getUser()->getValue('name');
 
         $this->setValue('createdate', time());
         $this->setValue('createuser', $user);
@@ -1370,21 +1381,21 @@ class cjoSql implements Iterator{
                             return true;
                         }
                         // unable to create db
-                        cjoMessage::addError($I18N->msg('msg_cannot_create_db'));
+                        cjoMessage::addError(cjoI18N::translate('msg_cannot_create_db'));
                     }
                     catch (PDOException $e) {
                         // unable to find database
-                        cjoMessage::addError($I18N->msg('msg_cannot_find_db'));
+                        cjoMessage::addError(cjoI18N::translate('msg_cannot_find_db'));
                     }
                 }
                 else {
                     // unable to find database
-                    cjoMessage::addError($I18N->msg('msg_cannot_find_db'));
+                    cjoMessage::addError(cjoI18N::translate('msg_cannot_find_db'));
                 }
             }
             else if(strpos($e->getMessage(), 'SQLSTATE[28000]') !== false) {
                 // unable to connect
-                cjoMessage::addError($I18N->msg('msg_no_db_connection'));
+                cjoMessage::addError(cjoI18N::translate('msg_no_db_connection'));
             }
             else {
                 // we didn't expected this error, so rethrow it to show it to the admin/end-user

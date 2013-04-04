@@ -26,9 +26,9 @@
 $cjo_form_name = cjo_post('cjo_form_name', 'string');
 
 if (!cjo_post('cjo_form_name', 'bool')) {
-    $dataset = $CJO['ADDON']['settings'][$mypage];
+    $dataset = $CJO['ADDON']['settings'][$addon];
 } else{
-    $dataset = array_merge($CJO['ADDON']['settings'][$mypage], $_POST);
+    $dataset = array_merge($CJO['ADDON']['settings'][$addon], $_POST);
 }
 
 //Form
@@ -36,50 +36,49 @@ $form = new cjoForm();
 
 for ($i=1;$i<=10;$i++) {
 
-    $slide = ($i != 1 && $dataset['attribute_typ'.$i] == '') ? ' slide' : '';
+    $slide = ($i != 1 && $dataset['attribute_typ'.$i] == '');
 
-    $fields['headline_attr'.$i] = new readOnlyField('headline_attr'.$i, '', array('class' => 'formheadline'.$slide));
-    $fields['headline_attr'.$i]->setValue($I18N_16->msg('label_attribute', $i));
+    $fields['headline_attr'.$i] = new headlineField(cjoAddon::translate(16,'label_attribute', $i), $slide);
 
-    $fields['attribute_typ'.$i] = new selectField('attribute_typ'.$i, $I18N_16->msg('label_attribute_typ'), array('onchange'=>$form->getName().'.submit()'));
-    $fields['attribute_typ'.$i]->addOptions($CJO['ADDON']['settings'][$mypage]['list_types']);
+    $fields['attribute_typ'.$i] = new selectField('attribute_typ'.$i, cjoAddon::translate(16,'label_attribute_typ'), array('onchange'=>$form->getName().'.submit()'));
+    $fields['attribute_typ'.$i]->addOptions($CJO['ADDON']['settings'][$addon]['list_types']);
     $fields['attribute_typ'.$i]->addAttribute('size', 1);
 
     if ($dataset['attribute_typ'.$i] != ''){
 
-        $fields['attribute_title'.$i] = new textField('attribute_title'.$i, $I18N_16->msg('label_attribute_title'));
+        $fields['attribute_title'.$i] = new textField('attribute_title'.$i, cjoAddon::translate(16,'label_attribute_title'));
 
         if ($dataset['attribute_typ'.$i] == 'select'){
-            $fields['attribute_values'.$i] = new textAreaField('attribute_values'.$i, $I18N_16->msg('label_attribute_values'));
+            $fields['attribute_values'.$i] = new textAreaField('attribute_values'.$i, cjoAddon::translate(16,'label_attribute_values'));
             $fields['attribute_values'.$i]->addAttribute('rows', '5');
             $fields['attribute_values'.$i]->addAttribute('cols', '10');
-            $fields['attribute_values'.$i]->setNote($I18N_16->msg("note_separate_by_new_line"));
+            $fields['attribute_values'.$i]->setNote(cjoAddon::translate(16,"note_separate_by_new_line"));
         }
 
         if ($dataset['attribute_typ'.$i] == 'media'){
-            $fields['attribute_crop_num'.$i] = new selectField('attribute_crop_num'.$i, $I18N_16->msg('label_crop_num'));
+            $fields['attribute_crop_num'.$i] = new selectField('attribute_crop_num'.$i, cjoAddon::translate(16,'label_crop_num'));
             $fields['attribute_crop_num'.$i]->addSQLOptions("SELECT name, id FROM ".TBL_IMG_CROP." WHERE status!=0 ORDER BY status, id");
-            $fields['attribute_crop_num'.$i]->addOption('&nbsp;'.$I18N->msg('label_use_original_size'), '-');
+            $fields['attribute_crop_num'.$i]->addOption('&nbsp;'.cjoI18N::translate('label_use_original_size'), '-');
             $fields['attribute_crop_num'.$i]->addAttribute('size', '1');
         }
 
         if ($dataset['attribute_typ'.$i] == 'datepicker'){
-            $fields['attribute_date_format'.$i] = new selectField('attribute_date_format'.$i, $I18N_16->msg('label_date_output_format'));
-            $fields['attribute_date_format'.$i]->addOptions($CJO['ADDON']['settings'][$mypage]['date_output_formats']);
+            $fields['attribute_date_format'.$i] = new selectField('attribute_date_format'.$i, cjoAddon::translate(16,'label_date_output_format'));
+            $fields['attribute_date_format'.$i]->addOptions($CJO['ADDON']['settings'][$addon]['date_output_formats']);
             $fields['attribute_date_format'.$i]->addAttribute('size', 1);
         }
         $fields['attribute_display_hidden'.$i] = new hiddenField('attribute_display'.$i);
         $fields['attribute_display_hidden'.$i]->setValue('0');
-        $fields['attribute_display'.$i] = new checkboxField('attribute_display'.$i, $I18N_16->msg('label_attribute_display'),  array('style' => 'width: auto;'));
-        $fields['attribute_display'.$i]->addBox($I18N_16->msg("label_display"), '1');
+        $fields['attribute_display'.$i] = new checkboxField('attribute_display'.$i, cjoAddon::translate(16,'label_attribute_display'),  array('style' => 'width: auto;'));
+        $fields['attribute_display'.$i]->addBox(cjoAddon::translate(16,"label_display"), '1');
     }
 }
 
 $fields['buttons'] = new buttonField();
-$fields['buttons']->addButton('cjoform_update_button2',$I18N->msg("button_update"), true, 'img/silk_icons/tick.png');
+$fields['buttons']->addButton('cjoform_update_button2',cjoI18N::translate("button_update"), true, 'img/silk_icons/tick.png');
 
 //Add Fields
-$section = new cjoFormSection($dataset, $I18N_16->msg("label_attribute_settings"), array());
+$section = new cjoFormSection($dataset, cjoAddon::translate(16,"label_attribute_settings"), array());
 
 $section->addFields($fields);
 $form->addSection($section);
@@ -91,14 +90,14 @@ if ($form->validate()){
 
         if ($_POST['attribute_typ'.$i] != '' &&
             $_POST['attribute_title'.$i] == '') {
-            cjoMessage::addError($I18N_16->msg("msg_err_attribute_title_notEmpty", $i));
+            cjoMessage::addError(cjoAddon::translate(16,"msg_err_attribute_title_notEmpty", $i));
             $fields['attribute_title'.$i]->addAttribute('class', 'invalid');
             $form->valid_master = false;
         }
 
         if ($_POST['attribute_typ'.$i] == 'select' &&
             $_POST['attribute_values'.$i] == '') {
-            cjoMessage::addError($I18N_16->msg("msg_err_attribute_values_notEmpty", $i));    
+            cjoMessage::addError(cjoAddon::translate(16,"msg_err_attribute_values_notEmpty", $i));    
             $fields['attribute_values'.$i]->addAttribute('class', 'invalid');
             $form->valid_master = false;
         }
@@ -106,16 +105,16 @@ if ($form->validate()){
 
     if ($form->valid_master == true) {
 
-        $config_file = $CJO['ADDON']['settings'][$mypage]['CLANG_CONF'];
+        $config_file = $CJO['ADDON']['settings'][$addon]['CLANG_CONF'];
         
         if (cjoGenerate::updateSettingsFile($config_file)) {
-            cjoAssistance::redirectBE(array('msg' => 'msg_data_saved'));
+            cjoUrl::redirectBE(array('msg' => 'msg_data_saved'));
         }
         else {
             $form->valid_master = false;
-            cjoMessage::addError($I18N->msg("msg_data_not_saved"));
-            cjoMessage::addError($I18N->msg("msg_file_no_chmod",
-                                 cjoAssistance::absPath($config_file)));
+            cjoMessage::addError(cjoI18N::translate("msg_data_not_saved"));
+            cjoMessage::addError(cjoI18N::translate("msg_file_no_chmod",
+                                 cjoFile::absPath($config_file)));
         }
     }
 }

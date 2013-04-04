@@ -23,12 +23,8 @@
  * @filesource
  */
 
-// Classes
-require_once $CJO['INCLUDE_PATH'].'/classes/afc/classes/list/class.cjo_listComponent.inc.php';
-require_once $CJO['INCLUDE_PATH'].'/classes/afc/classes/list/class.cjo_listColumn.inc.php';
-require_once $CJO['INCLUDE_PATH'].'/classes/afc/classes/list/class.cjo_listToolbar.inc.php';
-require_once $CJO['INCLUDE_PATH'].'/classes/afc/classes/class.cjo_formatter.inc.php';
-require_once $CJO['INCLUDE_PATH'].'/classes/afc/classes/class.oosql.inc.php';
+if (!cjoProp::isBackend()) return false;
+
 
 /**
  * Platzhalter: Erscheint, wenn die Liste keine Datensätze enthält
@@ -106,6 +102,10 @@ define('LIST_VAR_NO_DATA', 11);
  * - ein/ausblenden von ToolBars
  * - Elemente pro Seite von User einstellbar
  */
+
+ 
+           // $extension_point = 'CJO_LIST_'.strtoupper($this->getName()).'_ROW_ATTR';
+ 
 class cjoList {
 
     // Status-Meldungen
@@ -116,7 +116,7 @@ class cjoList {
      * @var array
      * @access private
      */
-    var $steps;
+    public $steps;
 
     /**
      * Anzahl Datensätze pro Seite
@@ -274,6 +274,8 @@ class cjoList {
      */
     public $layoutVars;
 
+    public $prio_column;
+
     /**
      * Debugflag
      * @var bool
@@ -281,7 +283,7 @@ class cjoList {
      */
     public $debug;
 
-    public function cjoList($qry = '', $default_order_col = '', $default_order_type = '', $default_search_col = '', $default_stepping = '', $attributes = '') {
+    public function __construct($qry = '', $default_order_col = '', $default_order_type = '', $default_search_col = '', $default_stepping = '', $attributes = '') {
         
         global $order_col, $order_type;
 
@@ -309,6 +311,8 @@ class cjoList {
         $this->def_order_type = $default_order_type;
         $this->def_search_col = $default_search_col;
         $this->search_result = true;
+        
+        $this->prio_column = false;
 
         $this->layoutVars = array ();
 
@@ -416,16 +420,44 @@ class cjoList {
         $this->setVar(LIST_VAR_BOTTOM, $header);
     }
 
-    public function setAttributes($attributes) {
-        if ($attributes != '' && !startsWith($attributes, ' ')) {
-            $attributes = ' '.$attributes;
+    public function setAttributes($attribute, $value=NULL) {
+        
+        if ($value === NULL) list($attribute,$value) = $this->splitAtributeString($attribute);
+        
+        if (is_array($attribute)) {
+            foreach($attribute as $key=>$attr) {
+                $this->attributes[$attribute[$key]] = $value[$key];
+            }
         }
-        $this->attributes = $attributes;
+        else {
+            $this->attributes[$attribute] = $value;
+        }
     }
-
+    
+    private function splitAtributeString($attribute) {
+        preg_match_all ("/(^|\s)([a-z]+)\s*=\s*\"?([^\"]+)/i", $attribute, $matches, PREG_SET_ORDER); 
+        
+        $result = array(array(),array());
+        foreach($matches as $match) {
+            $result[0][] = $match[2];
+            $result[1][] = $match[3];
+        }
+        return $result;
+    }
+    
     public function getAttributes() {
-        return $this->attributes;
+        return $this->prepareAtributeString($this->attributes);
     }
+    
+    private function prepareAtributeString($attributes) {
+        
+        $result = array();
+        foreach($attributes as $key=>$attribute) {
+            $result[] =  $key.'="'.$attribute.'"';
+        }
+        return ' '.implode(' ', $result);
+    }    
+        
     /**
      * Setzt die Bezeichnung der Liste
      *
@@ -485,6 +517,26 @@ class cjoList {
     public function getName() {
         return $this->name;
     }
+    
+    public function addUpLinkRow($params, $condition=true) {
+    
+        $up_link  = '            <tr onclick="location.href=\''.cjoUrl::createBEUrl($params).'\';"'."\r\n".
+                    '                valign="middle" class="cat_uplink nodrop" '."\r\n".
+                    '                title="'.cjoI18N::translate("label_level_up").'">'."\r\n".
+                    '              <td class="icon" height="20">&nbsp;</td>'."\r\n".
+                    '              <td colspan="'.(count($this->columns)-1).'" height="20">'."\r\n".
+                    '               <img src="img/silk_icons/level_up.png" alt="up" />'."\r\n".
+                    '              </td>'."\r\n".
+                    '            </tr>'."\r\n";
+    
+        if ($condition) {
+            if ($this->numRows() != 0 ) {
+                $this->setVar(LIST_VAR_BEFORE_DATA, $up_link);
+            } else {
+                $this->setVar(LIST_VAR_NO_DATA, $up_link);
+            }
+        }
+    }
 
     /**
      * Fügt der Liste eine Spalte hinzu.
@@ -494,7 +546,7 @@ class cjoList {
      */
     public function addColumn(& $column) {
         if (!cjoListColumn :: isValid($column)) {
-            trigger_error('cjoList: Unexpected type "'.gettype($column).'" for $column! Expecting "cjolistcolumn"-object.', E_USER_ERROR);
+            throw new cjoException('cjoList: Unexpected type "'.gettype($column).'" for $column! Expecting "cjolistcolumn"-object.', E_USER_ERROR);
         }
         $column->cjolist = & $this;
         $this->columns[] = & $column;
@@ -508,9 +560,11 @@ class cjoList {
      */
     public function addColumns(& $columns) {
         if (!is_array($columns)) {
-            trigger_error('cjoList: Unexpected type "'.gettype($columns).'" for $columns! Expecting an Array!.', E_USER_ERROR);
+            throw new cjoException('cjoList: Unexpected type "'.gettype($columns).'" for $columns! Expecting an Array!.', E_USER_ERROR);
         }
+        
         foreach ($columns as $key => $column) {
+            if (is_a($column, 'prioColumn'))  $this->prio_column = true;
             $this->addColumn($columns[$key]);
         }
     }
@@ -525,13 +579,13 @@ class cjoList {
      */
     public function addToolbar(& $toolbar, $direction = 'top', $mode = 'full') {
         if (!in_array($direction, array('top', 'bottom'))) {
-            trigger_error('cjoList: Unexpected direction "'.$direction.'"!', E_USER_ERROR);
+            throw new cjoException('cjoList: Unexpected direction "'.$direction.'"!', E_USER_ERROR);
         }
         if (!in_array($mode, array('full', 'half'))) {
-            trigger_error('cjoList: Unexpected mode "'.$mode.'"!', E_USER_ERROR);
+            throw new cjoException('cjoList: Unexpected mode "'.$mode.'"!', E_USER_ERROR);
         }
         if (!cjoListToolbar :: isValid($toolbar)) {
-            trigger_error('cjoList: Unexpected type "'.gettype($toolbar).'" for $column! Expecting "cjolisttoolbar"-object.', E_USER_ERROR);
+            throw new cjoException('cjoList: Unexpected type "'.gettype($toolbar).'" for $column! Expecting "cjolisttoolbar"-object.', E_USER_ERROR);
         }
 
         $toolbar->cjolist = & $this;
@@ -573,7 +627,7 @@ class cjoList {
      */
     public function link($value, $params = array (), $tags = '') {
         if ($value == '&nbsp;' || $value == ' ') return ''; // Hack Stefan Lehmann
-        return cjoAssistance::createBELink($value, $params, $this->params, $tags);
+        return cjoUrl::createBELink($value, $params, $this->params, $tags);
     }
 
     /**
@@ -587,7 +641,6 @@ class cjoList {
      * @access protected
      */
     public function getSteps() {
-        global $CJO;
 
         if (empty ($this->steps)) {
              
@@ -661,7 +714,6 @@ class cjoList {
     public function getRows() {
             
         if (empty($this->rows)) {
-            //$this->sql->setQuery($this->qry);
             $this->rows = $this->sql->getArray($this->qry);
         }
         return $this->rows;
@@ -675,15 +727,23 @@ class cjoList {
      * @access protected
      */
     public function numRows() {
+
         if ($this->num_rows == '') {
-            $listsql = $this->listsql;
-            $toolbars = $this->getToolbars();
-            
-            if (isset($toolbars['searchBar'])) {
-                $toolbars['searchBar']->prepareQuery($listsql);
-            }
-            $this->sql->setQuery($listsql->getQry());
-            $this->num_rows = $this->sql->getRows();
+            $this->num_rows = count($this->getRows());
+            /*
+             // SQL_CALC_FOUND_ROWS & FOUND_ROWS() ist ab MySQL 4.0 möglich
+             if (substr($CJO['MYSQL_VERSION'], 0, 1) == '4')
+             {
+             $this->sql->setQuery('SELECT FOUND_ROWS() AS FOUND');
+             $res = $this->sql->getArray();
+             $this->num_rows = $res[0]['FOUND'];
+             }
+             else
+             {
+             $this->sql->setQuery($this->qry);
+             $this->num_rows = $this->getRows();
+             }
+             */
         }
         return $this->num_rows;
     }
@@ -711,18 +771,18 @@ class cjoList {
      */
     public function getCurrentRows() {
 
-        global $I18N;
-
-        if ($this->curr_rows == '') {
+        if ($this->curr_rows == '' && !empty($this->listsql->qry)) {
             $listsql = & $this->listsql;
             $toolbars = $this->getToolbars();
-            
+
             foreach($toolbars as $key=>$toolbar) {
                 $toolbars[$key]->prepareQuery($listsql);
             }
+                
             $this->_generateToolbars($toolbars);
             $this->prepareQuery($listsql);
-            $this->curr_rows = $this->sql->getArray($listsql->getQry());
+            $this->sql->setQuery($listsql->getQry());
+            $this->setListData($this->sql->getArray());
 
             if ($this->curr_rows == '' && !empty($listsql->where)) {
                 $this->search_result = false;
@@ -735,6 +795,10 @@ class cjoList {
         }
         
         return $this->curr_rows;
+    }
+    
+    public function setListData($data) {
+        $this->curr_rows = $data;
     }
 
     /**
@@ -768,7 +832,6 @@ class cjoList {
      * @access protected
      */
     public function prepareQuery(& $listsql) {
-        global $CJO;
 
         $order_col = cjo_request('order_col', 'string', $this->def_order_col);
         $order_type = cjo_request('order_type', 'string', $this->def_order_type);
@@ -832,8 +895,6 @@ class cjoList {
      */
     public function get($addDefaultToolbars = true) {
 
-        global $CJO, $I18N;
-
         $s = '';
         // Show Messages
         $s .= $this->formatMessages();
@@ -892,6 +953,11 @@ class cjoList {
         }
         // ------------ Tabellenkopf
 
+        
+        if (!isset($this->attributes['id'])) {
+            $this->setAttributes('id', 'list'.$this->name);
+        }
+
         $s .= '        <table cellspacing="0" cellpadding="0" border="0" '.$this->getAttributes().'>'."\r\n";
         $s .= $this->_getColGroup();
 
@@ -934,8 +1000,8 @@ class cjoList {
             $temp    = $this->getVar(LIST_VAR_NO_DATA);
             if (empty($temp)) {
                 $def_message = $this->search_result == false
-                ? $I18N->msg('msg_af_no_found')
-                : $I18N->msg('msg_af_empty');
+                ? cjoI18N::translate('msg_af_no_found')
+                : cjoI18N::translate('msg_af_empty');
             }
             else {
                 $def_message = $this->getVar(LIST_VAR_NO_DATA);
@@ -1089,6 +1155,9 @@ class cjoList {
      */
     public function show($addDefaultToolbars = true) {
         echo $this->get($addDefaultToolbars);
+        if ($this->prio_column) {
+            prioColumn::writeTabledndJS($this->attributes['id'], $this->sql->getTableNameByColumn());
+        }
     }
 
     public function & getMessages() {
@@ -1199,7 +1268,7 @@ class cjoList {
      * @access public
      */
     public function setColGroup($colgroup) {
-        cjo_valid_type($colgroup, 'array', __FILE__, __LINE__);
+        cjoProp::isValidType($colgroup, 'array', __FILE__, __LINE__);
         $this->colgroup = $colgroup;
     }
 

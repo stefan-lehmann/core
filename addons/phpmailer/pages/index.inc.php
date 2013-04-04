@@ -23,17 +23,15 @@
  * @filesource
  */
 
-cjoAssistance::resetAfcVars();
-
 $mypage    = 'phpmailer';
 $oid       = cjo_request('oid', 'int', '');
 $function  = cjo_request('function', 'string');
 $mode      = cjo_request('mode', 'string');
 
-$subpages = new cjoSubPages($subpage, $mypage);
-$subpages->addPage(array('settings'));
-$subpages->addPage(array('archiv', 'title' => $I18N_20->msg('subtitle_archiv')));
+cjoSubPages::addPages(array(
+                        array('settings'),
+                        array('archiv', 
+                              'title' => cjoAddon::translate(20,'subtitle_archiv'))
+                     ));
 
-require_once $CJO['INCLUDE_PATH'].'/layout/top.php';
-require_once $subpages->getPage();
-require_once $CJO['INCLUDE_PATH'].'/layout/bottom.php';
+require_once cjoSubPages::getPagePath();

@@ -23,16 +23,12 @@
  * @filesource
  */
 
-error_reporting(E_ALL & ~E_STRICT & ~E_NOTICE);
+error_reporting(E_ALL ^ E_NOTICE);
 // ----- caching start für output filter
 
 ob_start();
 
-$CJO                   = array();
-$CJO['HTDOCS_PATH']    = '../';
-$CJO['CONTEJO']        = false;
-$CJO['ONLY_FUNCTIONS'] = true;
-$cur_page              = array();
+$CJO = array('HTDOCS_PATH' => '../', 'CONTEJO' => true, 'ONLY_FUNCTIONS' => true);
 
 require_once "include/master.inc.php";
 
@@ -40,8 +36,8 @@ $filename  = rawurldecode(cjo_get('file', 'string', $filename, false));
 
 if (parse_url($filename,PHP_URL_SCHEME)) return false;
 
-$extension = substr(strrchr($filename, "."), 1);
+$ext = cjoFile::getExtension($filename);
 
-if ($extension == 'css' || $extension == 'js' || $extension == 'sql' || $extension == 'gz') {
+if ($ext == 'css' || $ext == 'js' || $ext == 'sql' || $ext == 'gz') {
     cjoClientCache::sendFile($filename, false, 'backend');
 }

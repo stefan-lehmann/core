@@ -1,0 +1,20 @@
+shop_bank_account = Debit Note
+bank_account = Debit Note
+
+##./addons/shop/include/pay_methods/bank_account/index.inc.php 
+msg_no_bank_name = Specify the name of the bank please.
+msg_no_bank_owner_name = Specify the name please.
+shop_get_bank_account_id = Account ID
+shop_get_bank_code = Bank Code
+shop_get_bank_name = Name of the Bank
+shop_get_bank_owner_firstname = Firstname 
+shop_get_bank_owner_name = Name 
+
+##./addons/shop/include/pay_methods/bank_account/class.shop_bank_account.inc.php 
+shop_bank_account_costs = Charge
+shop_bank_account_id = Account-Id 
+shop_bank_account_owner = Bank Account Owner
+shop_bank_code = Bank Code 
+shop_bank_name = Name of the Bank 
+
+

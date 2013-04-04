@@ -23,16 +23,9 @@
  * @filesource
  */
 
-cjoAssistance::resetAfcVars();
+cjoSubPages::addPage( array('manage', 'title' => cjoI18N::translate('title_users'), 'rights' => array('users[]')));
 
-$mypage        = $cur_page['page'];
-$oid           = cjo_request('oid', 'int');
-$function      = cjo_request('function', 'string');
-$mode          = cjo_request('mode', 'string');
-
-$subpages = new cjoSubPages($subpage, $mypage);
-$subpages->addPage( array('manage', 'title' => $I18N->msg('title_users'), 'rights' => array('users[]')));
-if (!$CJO['USER']->hasPerm('users[]'))
-$subpages->addPage( array('my_account', 'title' => $I18N->msg('title_my_account'), 'rights' => array('users[password]')));
-
-require_once $subpages->getPage();
+if (!cjoProp::getUser()->hasPerm('users[]'))
+    cjoSubPages::addPage( array('my_account', 'title' => cjoI18N::translate('title_my_account'), 'rights' => array('users[password]')));
+    
+//require_once cjoSubPages::getPagePath();

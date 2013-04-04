@@ -25,21 +25,18 @@
 
 class cjoArchive {
     
-    private static $mypage = 'archive';
+    private static $addon = 'archive';
     
     
     public static function archiveArticles() {
         
-        global $CJO;
+        if (!cjoAddon::getParameter('CATEGORIES', self::$addon) || 
+            cjoAddon::getParameter('DISABLED', self::$addon))  return false;
         
-        if (empty($CJO['ADDON']['settings'][self::$mypage]['CATEGORIES']) || 
-            !empty($CJO['ADDON']['settings'][self::$mypage]['DISABLED']))  return false;
-        
-        $cats     = cjoAssistance::toArray($CJO['ADDON']['settings'][self::$mypage]['CATEGORIES']);
-        $duration = (int) $CJO['ADDON']['settings'][self::$mypage]['DURATION'];        
+        $cats     = cjoAssistance::toArray(cjoAddon::getParameter('CATEGORIES', self::$addon));
+        $duration = (int) cjoAddon::getParameter('DURATION', self::$addon, 120*60*60*24);        
         $now      = time();
         $add_sql  = array();
-        $clangs   = count($CJO['CLANG']);
         
         foreach($cats as $cat) {
             $add_sql[] = "(path LIKE '%|".$cat."|%' OR re_id='".$cat."')";
@@ -55,7 +52,7 @@ class cjoArchive {
         $results = $sql->getArray($qry);
 
         foreach($results as $result) {
-            if ($result['count'] != $clangs) continue;
+            if ($result['count'] != cjoProp::countClangs()) continue;
             self::archive($result);
         }
 
@@ -111,8 +108,6 @@ class cjoArchive {
     
     public static function restore($id, $target) {
         
-        global $CJO;
-        
         $sql = new cjoSql();
         $sql->setQuery("INSERT IGNORE INTO `".TBL_ARTICLES."` (SELECT * FROM `".TBL_28_ARCHIVE_ARTICLES."` WHERE id='".$id."')");
         $sql->flush();
@@ -126,7 +121,7 @@ class cjoArchive {
         
         cjoGenerate::moveArticle($id, $target);
         
-        foreach($CJO['CLANG'] as $clang_id=>$clang_name) {
+        foreach(cjoProp::getClangs() as $clang_id) {
             cjoGenerate::newPrio($target, $clang_id, 0, 1);
             cjoGenerate::toggleStartpageArticle($clang_id, $target);
         }

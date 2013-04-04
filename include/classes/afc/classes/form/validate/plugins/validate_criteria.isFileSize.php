@@ -43,12 +43,12 @@ function smarty_validate_criteria_isFileSize($value, $empty, &$params, &$formvar
     if ($_FILES[$_field]['error'] == 4) return $empty;
 
     if (!isset($_max)) {
-        trigger_error("SmartyValidate: [isFileSize] 'max' attribute is missing.");
+        throw new cjoException("SmartyValidate: [isFileSize] 'max' attribute is missing.");
         return false;
     }
 
     if (!preg_match('!^(\d+)([bkmg](b)?)?$!i', $_max, $_match)) {
-        trigger_error("SmartyValidate: [isFileSize] 'max' attribute is invalid.");
+        throw new cjoException("SmartyValidate: [isFileSize] 'max' attribute is invalid.");
         return false;
     }
 

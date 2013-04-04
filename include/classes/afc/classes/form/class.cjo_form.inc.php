@@ -23,14 +23,8 @@
  * @filesource
  */
 
-// Form Komponenten einbinden
-require_once $CJO['INCLUDE_PATH'].'/classes/afc/classes/form/class.cjo_fieldContainer.inc.php';
-require_once $CJO['INCLUDE_PATH'].'/classes/afc/classes/form/class.cjo_fieldController.inc.php';
-require_once $CJO['INCLUDE_PATH'].'/classes/afc/classes/form/class.cjo_formSection.inc.php';
-require_once $CJO['INCLUDE_PATH'].'/classes/afc/classes/form/class.cjo_formField.inc.php';
-require_once $CJO['INCLUDE_PATH'].'/classes/afc/functions/function_cjo_form.inc.php';
-require_once $CJO['INCLUDE_PATH'].'/classes/afc/classes/class.cjo_formatter.inc.php';
 
+if (!cjoProp::isBackend()) return false;
 
 define('FORM_INFO_MSG'   , 'success');
 define('FORM_WARNING_MSG', 'warning');
@@ -65,12 +59,12 @@ class cjoForm extends cjoFieldContainer {
     public $enctype;
     public $valid_master;
     public $validated;  
+    public $success_message;  
 
     public function cjoForm($name = '') {
         
-        global $mypage, $subpage;
+        $this->setName($name);
         
-        $this->name         = !$name ? $mypage.'_'.$subpage.'_form' : $name;
         $this->messages     = array();
         $this->redirect     = array();
         $this->enctype      = '';
@@ -83,8 +77,16 @@ class cjoForm extends cjoFieldContainer {
 
         $this->sql          = new cjoSql();
         $this->debug        = & $this->sql->debugsql;
-        
-        cjoAssistance::resetAfcVars();
+
+        $this->success_message  = 'msg_data_saved';  
+    }
+    
+    protected function setName($name) {
+        if (empty($name)) {
+            $name = 'cjo_form_'.cjoProp::getPage().'_'.cjoProp::getSubpage();
+            $name = preg_replace('/_+$/', '', $name);
+        }
+        $this->name = $name;
     }
 
     public function applyRedirect($action, $params) {
@@ -95,19 +97,39 @@ class cjoForm extends cjoFieldContainer {
         $this->applyRedirect('cancel', $params);
     }
     
-    public function applyRedirectOnSave($params) {
-        $this->applyRedirect('save', $params);
+    public function applyRedirectOnSave($params=array()) {
+        $this->applyRedirect('save', array_merge(array('msg' => $this->success_message, 'function'=>'','oid'=>''), $params));
     }
     
-    public function applyRedirectOnUpdate($params) {
-        $this->applyRedirect('update', $params);
+    public function applyRedirectOnUpdate($params=array()) {
+        $this->applyRedirect('update', array_merge(array('msg' => $this->success_message), $params));
     }    
 
     public function setEnctype($enctype = 'multipart/form-data') {
         if ($enctype != '') {
-            $this->enctype = ' enctype="' . $enctype . '"';
+            $this->enctype = ' enctype="'.$enctype.'"';
         }
     }
+    
+    public function applyAutoRefresh($params=array()) {
+        
+        cjoProp::isValidType($params, 'array');
+        
+        $params = array_merge(cjoUrl::getDefaultGlobalParams(),$params);
+        $params['msg'] = $this->success_message;
+        
+        if (!isset($this->redirect['cancel'])) {
+            if (!isset($params['oid'])) unset($params['oid']);
+            $this->applyRedirect('cancel', $params);
+        }
+        if (!isset($this->redirect['save'])) {
+            if (!isset($params['oid'])) unset($params['oid']);
+            $this->applyRedirect('save', $params);
+        }
+        if (!isset($this->redirect['update'])) {
+            $this->applyRedirect('update', $params);
+        }
+    }    
 
     /**
      * Versetzt das Formular in den Editier-Modus.
@@ -123,12 +145,19 @@ class cjoForm extends cjoFieldContainer {
     }
 
     public function isValid($form) {
-
         return is_object($form) && is_a($form, 'cjoform');
     }
 
     public function & getValidator() {
         return $this->validator;
+    }
+
+    public function setSuccessMessage($message) {
+        $this->success_message = (string) $message;
+    }
+    
+    public function getSuccessMessage() {
+        return cjoI18N::translate($this->success_message);
     }
 
     public function getMessages() {
@@ -178,7 +207,7 @@ class cjoForm extends cjoFieldContainer {
 
     public function addSection(& $section) {
         if (!cjoFormSection :: isValid($section)) {
-            cjoForm :: triggerError('Unexpected type "' . gettype($section) . '" for $section! Expecting type string or cjoFormSection-Object!');
+            throw new cjoException('Unexpected type "'.gettype($section).'" for $section! Expecting type string or cjoFormSection-Object!');
         }
 
         $section->cjoform = & $this;
@@ -193,6 +222,41 @@ class cjoForm extends cjoFieldContainer {
             $this->addSection($sections[$key]);
         }
     }
+    
+    public function onIsValid($function) {
+        cjoProp::isValidType($function, 'callable');
+        cjoExtension::registerExtension(strtoupper($this->name).'_IS_VALID', $function);
+    }
+    
+    public function onIsInvalid($function) {
+        cjoProp::isValidType($function, 'callable');
+        cjoExtension::registerExtension(strtoupper($this->name).'_IS_INVALID', $function);
+    }    
+    
+    public function onSaveOrUpdate($function) {        
+        cjoProp::isValidType($function, 'callable');
+        cjoExtension::registerExtension(strtoupper($this->name).'_UPDATED', $function);
+        cjoExtension::registerExtension(strtoupper($this->name).'_SAVED', $function);
+    }    
+    
+    public function onSave($function) {
+        cjoProp::isValidType($function, 'callable');
+        cjoExtension::registerExtension(strtoupper($this->name).'_SAVED', $function);
+    }  
+    
+    public function onUpdate($function) {
+        cjoProp::isValidType($function, 'callable');
+        cjoExtension::registerExtension(strtoupper($this->name).'_UPDATED', $function);
+    } 
+
+    public function onCancel($function) {
+        cjoProp::isValidType($function, 'callable');
+        cjoExtension::registerExtension(strtoupper($this->name).'_CANCELED', $function);
+    } 
+    public function onDelete($function) {
+        cjoProp::isValidType($function, 'callable');
+        cjoExtension::registerExtension(strtoupper($this->name).'_DELETED', $function);
+    }
 
     public function & getSection() {
         return $this->section;
@@ -204,10 +268,6 @@ class cjoForm extends cjoFieldContainer {
 
     public function numSections() {
         return count($this->getSections());
-    }
-
-    public function triggerError($message, $message_type = E_USER_ERROR) {
-        trigger_error('cjoForm: ' . $message, $message_type);
     }
 
     public function registerValidators() {
@@ -231,7 +291,7 @@ class cjoForm extends cjoFieldContainer {
             $sections[$i]->delete();
         }
         // trigger extensions point
-        cjoExtension::registerExtensionPoint('CJO_FORM_' . strtoupper($this->getName()) . '_DELETE', array (
+        cjoExtension::registerExtensionPoint(strtoupper($this->name).'_DELETED', array (
             'form' => $this
         ));
     }
@@ -240,50 +300,40 @@ class cjoForm extends cjoFieldContainer {
         $sections = $this->getSections();
         $messages = array();
         for ($i = 0; $i < count($sections); $i++) {
-            $sql_error = $sections[$i]->save();
-            if ($sql_error) {
-                $messages[md5($sql_error)] = $sql_error;
+            $error = $sections[$i]->save();
+            if ($error) {
+                $messages[md5($error)] = $error;
             }
-        }
-        // trigger extensions point
-        if (empty($messages)) {
-            cjoExtension::registerExtensionPoint('CJO_FORM_' . strtoupper($this->getName()) . '_SAVE', array (
-                'form' => $this
-            ));
         }
 
         return $messages;
     }
 
-    public function _get($addDefaultFields = true) {
-        
-        global $I18N;
+    public function _get($default_fields = true) {
 
-        if ($addDefaultFields) {
+        if ($default_fields) {
             $section = $this->getSection();
             $section->addField(new cjoSaveField());
         }
 
-        if ($this->enctype == '') {
-            $this->setEnctype();
-        }
-
+        if ($this->enctype == '') $this->setEnctype();
+        
         $s = '';
-        $s .= '<!-- cjoForm start -->' . "\r\n";
-        $s .= '<div class="a22-cjoform">' . "\r\n";
-        $s .= '  <form action="index.php" id="'. $this->name.'" name="'. $this->name.'" method="post"' . $this->enctype . ' accept-charset="' . $I18N->msg("htmlcharset") . '">' . "\r\n";
-        $s .= 		cjoExtension::registerExtensionPoint('CJO_FORM_' . strtoupper($this->getName()) . '_START', array ('form' => $this));
-        $s .= '    <div class="a22-cjoform-hidden">' . "\r\n";
-        $s .= '    	<input type="hidden" value="' . $this->name . '" name="cjo_form_name" />' . "\r\n";
+        $s .= '<!-- cjoForm start -->'."\r\n";
+        $s .= '<div class="a22-cjoform">'."\r\n";
+        $s .= '  <form action="'.cjo_server('REQUEST_URI', 'string').'" id="'. $this->name.'" name="'. $this->name.'" method="post"'.$this->enctype.' accept-charset="'.cjoI18N::translate("htmlcharset").'">'."\r\n";
+        $s .= 		cjoExtension::registerExtensionPoint(strtoupper($this->name).'_START', array ('form' => $this));
+        $s .= '    <div class="a22-cjoform-hidden">'."\r\n";
+        $s .= '    	<input type="hidden" value="'.$this->name.'" name="cjo_form_name" />'."\r\n";
 
-        $def_params = cjo_a22_getDefaultGlobalParams();
+       /* $def_params = cjoUrl::getDefaultGlobalParams();
         if (is_array($def_params)) {
             foreach ($def_params as $name => $value) {
                 $field = new hiddenField($name);
                 $field->setValue($value);
-                $s .= '      ' . $field->get() . "\r\n";
+                $s .= '      '.$field->get()."\r\n";
             }
-        }
+        }*/
 
         // Show Hidden fields
         $fields = $this->getFields();
@@ -291,11 +341,11 @@ class cjoForm extends cjoFieldContainer {
         if (is_array($fields)) {
             foreach ($fields as $key => $field) {
                 if (is_a($field, 'hiddenfield')) {
-                    $s .= '      ' . $field->get() . "\r\n";
+                    $s .= '      '.$field->get()."\r\n";
                 }
             }
         }
-        $s .= '    </div>' . "\r\n";
+        $s .= '    </div>'."\r\n";
 
         // Show Sections
         $sections = $this->getSections();
@@ -313,18 +363,16 @@ class cjoForm extends cjoFieldContainer {
         }
 
         $s .= $s_sections;
-        $s .= 		cjoExtension::registerExtensionPoint('CJO_FORM_' . strtoupper($this->getName()) . '_END', array ('form' => $this));
-        $s .= '  </form>' . "\r\n";
-        $s .= '</div>' . "\r\n";
-        $s .= '<!-- cjoForm end -->' . "\r\n";
+        $s .= 		cjoExtension::registerExtensionPoint(strtoupper($this->name).'_END', array ('form' => $this));
+        $s .= '  </form>'."\r\n";
+        $s .= '</div>'."\r\n";
+        $s .= '<!-- cjoForm end -->'."\r\n";
 
         return str_replace('id=""','',$s);
     }
 
 
     public function validate() {
-        
-        global $SMARTY_VALIDATE;
         
         if ($this->validated) return $this->valid_master;
         
@@ -338,64 +386,79 @@ class cjoForm extends cjoFieldContainer {
             $this->valid_master = false;
         }
         else {
-            $this->valid_master = cjoValidateEngine :: is_valid($_POST, $this->getName());
+            $this->valid_master = cjoValidateEngine::is_valid($_POST, $this->getName());
+            
+            $extension_point = ($this->valid_master)
+                             ? strtoupper($this->name).'_IS_VALID'
+                             : strtoupper($this->name).'_IS_INVALID';
+            
+            $status = cjoExtension::registerExtensionPoint($extension_point,array('form' => $this));
+            
+            if (is_bool($status)) $this->valid_master = $status;
         }
-        
         $this->validated = true;
-        
         return $this->valid_master;
     }
     
-    public function get($addDefaultFields = true) {
-
-        global $CJO, $I18N, $SMARTY_VALIDATE;
+    public function get($default_fields = true) {
         
         $this->validate();
 
         if (cjo_post('cjoform_cancel_button','bool')) {
+            cjoExtension::registerExtensionPoint(strtoupper($this->name).'_CANCELED', array (
+                'form' => $this
+            ));            
             $this->redirectCancel();
             return false;
         }
 
         // Nur auf buttons reagieren, die von cjo_form sind
-        if (cjo_post('cjoform_save_button','bool') ||
-            cjo_post('cjoform_update_button','bool')) {
-             
+        if (cjo_post('cjoform_save_button','bool', false) ||
+            cjo_post('cjoform_update_button','bool', false)) {
+
             if ($this->valid_master) {
                 
                 $messages = $this->save();
 
                 if (empty($messages)) {
-                    $this->setMessage($I18N->msg('msg_data_saved'), FORM_INFO_MSG);
-                    
+                    $this->setMessage($this->getSuccessMessage(), FORM_INFO_MSG);
+
                     if (cjo_post('cjoform_save_button','bool')) {
-                        // Speichern Button wurde gedrückt
+                         cjoExtension::registerExtensionPoint(strtoupper($this->name).'_SAVED', array (
+                            'form' => $this
+                        ));       
+                        $this->applyRedirectOnSave();
                         $this->redirectSave();
                         return;
                     }
                     if (cjo_post('cjoform_update_button','bool')) {
+                        cjoExtension::registerExtensionPoint(strtoupper($this->name).'_UPDATED', array (
+                            'form' => $this
+                        ));                        
                         $this->redirectUpdate();
                     }
                 }
-                else {
-                    $this->setMessage($I18N->msg('msg_data_not_saved'), FORM_ERROR_MSG);
+                else {                   
+                    $this->setMessage(cjoI18N::translate('msg_data_not_saved'), FORM_ERROR_MSG);
                     foreach($messages as $message){
                         $this->setMessage($message, FORM_ERROR_MSG);
                     }
                 }
             }
             else {
-                $this->setMessage($I18N->msg('msg_data_not_saved'), FORM_ERROR_MSG);
+                $this->setMessage(cjoI18N::translate('msg_data_not_saved'), FORM_ERROR_MSG);
             }
         }
-        return $this->_get($addDefaultFields);
+        return $this->_get($default_fields);
     }
 
-    public function show($addDefaultFields = true, $render = true) {
+    public function show($default_fields = true, $render = true) {
         if ($render){
-            echo $this->get($addDefaultFields);
+            $content = $this->get($default_fields);
+            echo $content;
+            return !empty($content);
         } else {
-            return $this->get($addDefaultFields);
+            return $this->get($default_fields);
         }
     }
 
@@ -420,15 +483,15 @@ class cjoForm extends cjoFieldContainer {
         $params = $this->redirect[$type];
 
         if (empty($params)) return false;
-        
+
         if (is_string($params)) {
-            if ($this->debug) exit ('<hr />Redirect to:' . $params);
-            cjoAssistance::redirectBE($params);
+            if ($this->debug) exit ('<hr />Redirect to:'.$params);
+            cjoUrl::redirectBE($params);
         }
         
         if (is_array($params)) {
-            if ($this->debug) exit ('<hr />Redirect to:' . cjoAssistance::createBEUrl($params));
-            cjoAssistance::redirectBE($params);
+            if ($this->debug) exit ('<hr />Redirect to:'.cjoUrl::createBEUrl($params));
+            cjoUrl::redirectBE($params);
         }
     }
     
@@ -443,6 +506,7 @@ class cjoForm extends cjoFieldContainer {
     public function redirectUpdate() {
         $this->redirectForm('update');
     }    
+    
     /**
      * Durchsucht das Formular nach einem Feld
      * @param string Name des Feldes, wonach gesucht werden soll
@@ -468,6 +532,6 @@ class cjoForm extends cjoFieldContainer {
     }
 
     public function toString() {
-        return 'cjoForm: name: "' . $this->getName() . '", edit_mode: "' . ($this->isEditMode() ? 'true' : 'false') . '", sections: "' . $this->numSections() . '"';
+        return 'cjoForm: name: "'.$this->getName().'", edit_mode: "'.($this->isEditMode() ? 'true' : 'false').'", sections: "'.$this->numSections().'"';
     }
 }

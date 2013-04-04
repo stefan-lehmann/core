@@ -23,7 +23,7 @@
  * @filesource
  */
 
-if (!$CJO['CONTEJO']) return false;
+if (!cjoProp::isBackend()) return false;
 
 class cjoInstall {
 
@@ -33,98 +33,118 @@ class cjoInstall {
 	private $setup_path;
 	private $sql;
 
-    public  $error          = '';
-  	public  $install_ids    = array();
-    public  $has_components = false;
-	public  $components     = array('actions'   => false,
+    private $error          = '';
+  	private $install_ids    = array();
+    private $copy           = array();
+    private $has_components = false;
+    private $components     = array('actions'   => false,
         							'modules'   => false,
         							'html'      => false,
         							'templates' => false,
-        							'articles'  => false,
-        							'settings'  => false);
+        							'articles'  => false);
 
-    public function __construct($page){
-
-        global $CJO;
+    public function __construct($addon){
 
         $this->page        = $page;
-        $this->page_path   = $CJO['ADDON_PATH'].'/'.$page;
-        $this->setup_path  = $CJO['ADDON_PATH'].'/'.$page.'/setup';
-        $this->config_path = $CJO['ADDON_CONFIG_PATH'].'/'.$page;
+        $this->page_path   = cjoPath::addon($addon);
+        $this->config_path = cjoPath::addonAssets($addon);
+        if (!file_exists($this->page_path) || !is_dir($this->page_path)) 
+            $this->page_path = $this->config_path;
+        $this->setup_path  =  $this->page_path.'setup';
         $this->sql         = new cjoSql();
     }
 
-    public function installResource($debug = false) {
+    public static function installResource($addon, $debug = false) {
 
-        global $CJO;
+        $install = new cjoInstall($addon);
 
-        if (!cjoAssistance::isReadable($this->config_path) ||
-            !cjoAssistance::isWritable($this->config_path)) return false;
+        foreach(glob($install->setup_path.'/*') as $filepath) {
 
-        foreach(glob($this->setup_path.'/*') as $filepath) {
-
-            if (!is_dir($filepath)) continue;
+            if (!is_dir($filepath) && is_file($filepath)) {
+                $filename = pathinfo($filepath, PATHINFO_BASENAME);
+                if ($filename == 'install.sql' || 
+                    $filename == 'uninstall.sql' ||
+                    $filename == 'installed.inc.php'  ||
+                    $filename == 'uninstalled.inc.php') continue;
+                $install->copy[$filename] = $filepath;
+            }
             $dir = pathinfo($filepath, PATHINFO_BASENAME);
-            if ($this->components[$dir] !== false) continue;
-            $this->components[$dir] = true;
-            $this->has_components = true;
+            if ($install->components[$dir] !== false) continue;
+            $install->components[$dir] = $filepath;
+            $install->has_components = true;
         }
 
-        $install_sql = $this->setup_path.'/install.sql';
 
         if (cjoMessage::hasErrors()) return false;
 
-        if ($this->has_components) {
+        if ($install->has_components) {
 
-            foreach($this->components as $key => $component) {
+            foreach($install->components as $key => $component) {
 
                 if ($component !== true) continue;
 
                 switch ($key) {
-                      case 'actions'  : $this->installActions();      break;
-                      case 'modules'  : $this->installModules();      break;
-                      case 'html'     : $this->installHtml('input');
-                                        $this->installHtml('output'); break;
-                      case 'templates': $this->installTemplates();    break;
-                      case 'articles' : $this->installArticles();     break;
-                      case 'settings' : $this->installSettings();     break;
+                      case 'actions'  : $install->installActions();      break;
+                      case 'modules'  : $install->installModules();      break;
+                      case 'html'     : $install->installHtml('input');
+                                        $install->installHtml('output'); break;
+                      case 'templates': $install->installTemplates();    break;
+                      case 'articles' : $install->installArticles();     break;
+                      case 'settings' : $install->installSettings();     break;
+                      default:          $install->copy[$key] = $component;
                 }
             }
         }
+  
+        $install->copySettings();
 
-        if (file_exists($install_sql)) {
-            if (!cjoAssistance::isReadable($install_sql)) return false;
-    	    if (!self::installDump($install_sql, $debug)) return false;
+        $sql = $install->setup_path.'/install.sql';
+        
+        if (file_exists($sql)) {
+            if (!cjoFile::isReadable($sql)) return false;
+    	    if (!self::installDump($sql, $debug)) return false;
+        }
+        
+        $php = $install->setup_path.'/install.inc.php';
+        if (file_exists($php)) {
+            if (!cjoFile::isReadable($php)) return false;
+            require_once $php;
         }
 
-	    $ext_name = 'ADDON_INSTALLED_'.strtoupper($this->page);
-
-	    cjoExtension::registerExtensionPoint($ext_name, array("addon"          => $this->page,
-                                                              "addon_path"     => $this->page_path,
-                                                              "config_path"    => $this->config_path,
-                                                              "setup_path"     => $this->setup_path,
-                                                              "install_ids"    => $this->install_ids,
-                                                              "has_components" => $this->has_components,
-            												  "components"     => $this->components));
-	    return true;
+	    $ext_name = 'ADDON_INSTALLED_'.strtoupper($addon);
+        
+	    return cjoExtension::registerExtensionPoint($ext_name, array("addon"          => $install->page,
+                                                                     "addon_path"     => $install->page_path,
+                                                                     "config_path"    => $install->config_path,
+                                                                     "setup_path"     => $install->setup_path,
+                                                                     "install_ids"    => $install->install_ids,
+                                                                     "has_components" => $install->has_components,
+                    												 "components"     => $install->components,
+                                                                     "subject"        => true));
     }
 
-    public function uninstallResource($debug = false) {
+    public function uninstallResource($addon, $debug = false) {
+        
+        $install = new cjoInstall($addon);
 
-        global $CJO;
+	    $sql = $install->setup_path.'/uninstall.sql';
 
-	    $un_install_sql = $this->setup_path.'/uninstall.sql';
-
-        if (file_exists($un_install_sql)) {
-            if (!cjoAssistance::isReadable($un_install_sql)) return false;
-    	    if (!self::installDump($un_install_sql, $debug)) return false;
+        if (file_exists($sql)) {
+            if (!cjoFile::isReadable($sql)) return false;
+    	    if (!self::installDump($sql, $debug)) return false;
+        }
+        
+        $php = $addon->setup_path.'/uninstalled.inc.php';
+        if (file_exists($php)) {
+            if (!cjoFile::isReadable($php)) return false;
+            require_once $php;
         }
 
-        $ext_name = 'ADDON_UNINSTALLED_'.strtoupper($this->page);
+        $ext_name = 'ADDON_UNINSTALLED_'.strtoupper($addon);
 
-	    cjoExtension::registerExtensionPoint($ext_name, array("addon"          => $this->page,
-                                                              "addon_path"     => $this->page_path,
-                                                              "config_path"    => $this->config_path));
+	    cjoExtension::registerExtensionPoint($ext_name, array("addon"          => $install->page,
+                                                              "addon_path"     => $install->page_path,
+                                                              "config_path"    => $install->config_path));
         return true;
     }
 
@@ -132,7 +152,7 @@ class cjoInstall {
 
         $settings = $this->setup_path.'/actions/settings.php';
 
-        if (!file_exists($settings) || !cjoAssistance::isReadable($settings)) return false;
+        if (!file_exists($settings) || !cjoFile::isReadable($settings)) return false;
 
 	    include_once $settings;
 
@@ -190,7 +210,7 @@ class cjoInstall {
 
         $settings = $this->setup_path.'/modules/settings.php';
 
-        if (!file_exists($settings) || !cjoAssistance::isReadable($settings)) return false;
+        if (!file_exists($settings) || !cjoFile::isReadable($settings)) return false;
 
 	    include_once $settings;
 
@@ -288,11 +308,9 @@ class cjoInstall {
 
 	public function installHtml($type){
 
-	    global $CJO;
-
 	    $path = $this->setup_path.'/html';
-	    $ext  = $CJO['TMPL_FILE_TYPE'];
-	    $dir  = $CJO['ADDON']['settings']['developer']['edit_path'].'/'.$ext.'/'.$type;
+	    $ext  = liveEdit::getTmplExtension();
+	    $dir  = cjoPath::page('tmpl/'.$ext.'/'.$type);
 
 	    foreach(glob($path.'/'.$type.'/*.'.$ext) as $filepath) {
 
@@ -310,7 +328,7 @@ class cjoInstall {
 	        }
 	        
 	        $dest = $dir.'/'.$name;
-	        cjoAssistance::copyFile($filepath, $dest);
+	        cjoFile::copyFile($filepath, $dest);
 	    }
 	}
 
@@ -318,7 +336,7 @@ class cjoInstall {
 
         $settings = $this->setup_path.'/templates/settings.php';
 
-        if (!file_exists($settings) || !cjoAssistance::isReadable($settings)) return false;
+        if (!file_exists($settings) || !cjoFile::isReadable($settings)) return false;
 
 	    include_once $settings;
 
@@ -361,10 +379,10 @@ class cjoInstall {
 
         $path = $this->setup_path.'/articles';
 
-        if (!cjoAssistance::isReadable($path)) return false;
+        if (!cjoFile::isReadable($path)) return false;
 
         foreach(glob($path.'/*.article.php') as $filepath){
-            if (!cjoAssistance::isReadable($filepath)) continue;
+            if (!cjoFile::isReadable($filepath)) continue;
 
             $id = preg_replace('#(.*/)(\S+)(\.article\.php)#', '\2', $filepath);
 
@@ -408,7 +426,7 @@ class cjoInstall {
 	        return true;
 	    }
 		else {
-	        cjoMessage::addError($I18N->msg('msg_template_not_found'), $article['template_id']);
+	        cjoMessage::addError(cjoI18N::translate('msg_template_not_found'), $article['template_id']);
 	        return false;
 	    }
 	}
@@ -428,27 +446,33 @@ class cjoInstall {
 	        return true;
 	    }
 		else {
-	        cjoMessage::addError($I18N->msg('msg_module_not_found'), $slice['modultyp_id']);
+	        cjoMessage::addError(cjoI18N::translate('msg_module_not_found'), $slice['modultyp_id']);
 	        return false;
 	    }
 	}
 
-	public function installSettings(){
+	public function copySettings(){
 
-	    $path = $this->setup_path.'/settings';
+        if (empty($this->copy)) return false;
 
-        if (!cjoAssistance::isReadable($path)) return false;
+        if (!is_dir($this->config_path)) {
+            mkdir($this->config_path, cjoProp::getDirPerm());
+        }
 
-	    foreach(glob($path.'/*') as $filepath) {
+        if (!cjoFile::isReadable($this->config_path) ||
+            !cjoFile::isWritable($this->config_path)) {
+                return false;
+        }    
+
+	    foreach($this->copy as $filename=>$filepath) {
 
 	        $filename = pathinfo($filepath, PATHINFO_BASENAME);
-
 	        $dest = $this->config_path.'/'.$filename;
 
 	        if (is_dir($filepath)){
-                cjoAssistance::copyDir($filepath, $dest);
+                cjoFile::copyDir($filepath, $dest);
 	        } else {
-	            cjoAssistance::copyFile($filepath, $dest);
+	            cjoFile::copyFile($filepath, $dest);
 	        }
 	    }
 	}
@@ -471,7 +495,7 @@ class cjoInstall {
 
     public static function readSqlFile($file) {
 
-        if (!cjoAssistance::isReadable($file)) return array();
+        if (!cjoFile::isReadable($file)) return array();
 
         $ret = array ();
         $sqlsplit = '';
@@ -497,9 +521,7 @@ class cjoInstall {
 
     public static function splitSqlFile(&$ret, $sql, $release) {
 
-        global $CJO;
-
-        $sql = str_replace('`cjo_', '`' . $CJO['TABLE_PREFIX'], $sql);
+        $sql = str_replace('`cjo_', '`' . cjoProp::getTablePrefix(), $sql);
 
         // do not trim, see bug #1030644
         //$sql          = trim($sql);

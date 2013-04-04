@@ -23,12 +23,10 @@
  * @filesource
  */
 
-$mypage  = 'image_processor';
-
-$subpages = new cjoSubPages($subpage, $mypage);
-$subpages->addPage( array('crop_settings', 'title' => $I18N_8->msg('subtitle_crop_settings')));
-$subpages->addPage( array('basic_settings', 'title' => $I18N_8->msg('subtitle_basic_settings')));
-
-require_once $CJO['INCLUDE_PATH'].'/layout/top.php';
-require_once $subpages->getPage();
-require_once $CJO['INCLUDE_PATH'].'/layout/bottom.php';
+$addon = 'image_processor';
+cjoSubPages::addPages( array(
+                        array('crop_settings', 
+                              'title' => cjoAddon::translate(8,'subtitle_crop_settings')),
+                        array('basic_settings', 
+                              'title' => cjoAddon::translate(8,'subtitle_basic_settings'))
+                     ));

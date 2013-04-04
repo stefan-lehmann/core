@@ -23,7 +23,7 @@
  * @filesource
  */
 
-if (!$CJO['CONTEJO']) return false;
+if (!cjoProp::isBackend()) return false;
 
 /**
  * cjoSlice class
@@ -36,12 +36,10 @@ class cjoSlice {
 
     public static function addSlice($slice){
 
-        global $CJO, $I18N;
-
-        if (!$CJO['CONTEJO'] ||
-            $CJO['USER']->hasPerm('editContentOnly[]') ||
-            !$CJO['USER']->hasCatPermWrite($slice['article_id'])) {
-            cjoMessage::addError($I18N->msg("msg_no_permissions"));
+        if (!cjoProp::isBackend() ||
+            cjoProp::getUser()->hasPerm('editContentOnly[]') ||
+            !cjoProp::getUser()->hasCatPermWrite($slice['article_id'])) {
+            cjoMessage::addError(cjoI18N::translate("msg_no_permissions"));
             return false;
         }
 
@@ -50,7 +48,7 @@ class cjoSlice {
         $article = OOArticle::getArticleById($slice['article_id'], $slice['clang']);
 
         if (!OOArticle::isValid($article)) {
-            cjoMessage::addError($I18N->msg("msg_no_such_article"));
+            cjoMessage::addError(cjoI18N::translate("msg_no_such_article"));
             return false;
         }
 
@@ -98,20 +96,18 @@ class cjoSlice {
                           "article_id='".$slice['article_id']."' AND " .
                           "clang='".$slice['clang']."'");
         $update->setValue("re_article_slice_id",$slice['slice_id']);
-        $update->Update($I18N->msg('msg_block_of_type_added', $article->getName(), $modul_name));
+        $update->Update(cjoI18N::translate('msg_block_of_type_added', $article->getName(), $modul_name));
                 
         cjoExtension::registerExtensionPoint('ARTICLE_UPDATED', array ('action' => 'SLICE_ADDED', 
                                                                        'id' => $slice['article_id'], 
-                                                                       'clang' => $CJO['CUR_CLANG'],
+                                                                       'clang' => cjoProp::getClang(),
                                                                        'slice' => $slice));         
         
         return $slice['slice_id'];
     }
 
     public static function getLastSliceId($article_id, $clang) {
-
-        global $I18N;
-
+        
         $sql = new cjoSql();
         $sql->setDirectQuery("SELECT  
                                 r1.id AS `r1.id`, 
@@ -129,18 +125,19 @@ class cjoSlice {
 
     public static function getTableColumns(){
 
-        global $CJO;
-
-        if (empty($CJO['ARTICLES_SLICE_COLUMNS'])) {
+        if (!cjoProp::get('ARTICLES_SLICE_COLUMNS', false)) {
 
             $sql = new cjoSql();
-            $columns = $sql->showColumns(TBL_ARTICLES_SLICE);
-
-            foreach($columns as $column) {
-                $CJO['ARTICLES_SLICE_COLUMNS'][$column['name']] = $column['name'];
+            $results = $sql->showColumns(TBL_ARTICLES_SLICE);
+            
+            $columns = array();
+            foreach($results as $result) {
+                $columns[$result['name']] = $result['name'];
             }
+            cjoProp::set('ARTICLES_SLICE_COLUMNS', $columns);
+            return $columns;
         }
-        return $CJO['ARTICLES_SLICE_COLUMNS'];
+        return cjoProp::set('ARTICLES_SLICE_COLUMNS');
     }
 
     public static function moveSliceUp($slice_id, $clang) {
@@ -166,10 +163,8 @@ class cjoSlice {
      */
     public static function moveSlice($slice_id, $clang, $direction) {
 
-        global $CJO, $I18N;
-
-        if (!$CJO['USER']->hasPerm("moveSlice[]")) {
-            cjoMessage::addError($I18N->msg('msg_no_rights_to_this_function'));
+        if (!cjoProp::getUser()->hasPerm("moveSlice[]")) {
+            cjoMessage::addError(cjoI18N::translate('msg_no_rights_to_this_function'));
             return false;
         }
 
@@ -189,13 +184,13 @@ class cjoSlice {
 
         if ($sql->getRows() != 1) {
             // ------------- START: MODUL IST NICHT VORHANDEN
-            cjoMessage::addError($I18N->msg('msg_module_not_found'));
+            cjoMessage::addError(cjoI18N::translate('msg_module_not_found'));
             return false;
         }
 
-        if (!$CJO['USER']->hasPerm("module[".$slice['modultyp_id']."]") &&
-            !$CJO['USER']->hasPerm("module[0]")) {
-            cjoMessage::addError($I18N->msg('msg_no_rights_to_this_function'));
+        if (!cjoProp::getUser()->hasPerm("module[".$slice['modultyp_id']."]") &&
+            !cjoProp::getUser()->hasPerm("module[0]")) {
+            cjoMessage::addError(cjoI18N::translate('msg_no_rights_to_this_function'));
             return false;
         }
 
@@ -216,7 +211,7 @@ class cjoSlice {
         $results = $sql->getArray($qry);
 
         if ($sql->getRows() == 0) {
-            cjoMessage::addError($I18N->msg('msg_module_not_found'));
+            cjoMessage::addError(cjoI18N::translate('msg_module_not_found'));
             return false;
         }
         
@@ -269,7 +264,7 @@ class cjoSlice {
             $re['target']['id'] = $re['effected'][$slice_id]['next'];
             
         } else {
-            cjoMessage::addError($I18N->msg('msg_slice_moved_error'));
+            cjoMessage::addError(cjoI18N::translate('msg_slice_moved_error'));
             return false;
         }       
 
@@ -309,12 +304,12 @@ class cjoSlice {
             $update->Update();
         }               
 
-        cjoMessage::addSuccess($I18N->msg('msg_slice_moved'));
+        cjoMessage::addSuccess(cjoI18N::translate('msg_slice_moved'));
         cjoGenerate::generateArticle($slice['article_id']);
         
         cjoExtension::registerExtensionPoint('ARTICLE_UPDATED', array ('action' => 'SLICE_MOVED', 
                                                                        'id' => $slice['article_id'], 
-                                                                       'clang' => $CJO['CUR_CLANG'],
+                                                                       'clang' => cjoProp::getClang(),
                                                                        'slice' => $slice));   
         return true;
     }
@@ -354,11 +349,11 @@ class cjoSlice {
                 ".TBL_ARTICLES_SLICE."
                 WHERE id='".$slice_id."'";
 
-        if ($sql->statusQuery($qry, $I18N->msg('msg_block_deleted'))) {
+        if ($sql->statusQuery($qry, cjoI18N::translate('msg_block_deleted'))) {
             
             cjoExtension::registerExtensionPoint('ARTICLE_UPDATED', array ('action' => 'SLICE_DELETED', 
                                                                            'id' => $slice['article_id'], 
-                                                                           'clang' => $CJO['CUR_CLANG'],
+                                                                           'clang' => cjoProp::getClang(),
                                                                            'slice' => $slice));   
             return true;
         }
@@ -376,8 +371,6 @@ class cjoSlice {
      */
     public static function execPreSaveAction($module_id, $function, $CJO_ACTION) {
 
-        global $CJO, $I18N;
-
         $sql = new cjoSql();
         $qry = "SELECT 
                     ac.action AS `ac.action`
@@ -394,7 +387,7 @@ class cjoSlice {
         for ($i=0;$i<$sql->getRows();$i++) {
 
             $iaction = $sql->getValue("ac.action");
-            foreach ($CJO['VARIABLES'] as $obj) {
+            foreach (cjoProp::get('VARIABLES') as $obj) {
                 $iaction = $obj->getACOutput($CJO_ACTION, $iaction);
             }
 
@@ -412,10 +405,10 @@ class cjoSlice {
                 cjoMessage::addError($CJO_ACTION['MSG']);
             }
             elseif ($function == "delete") {
-                cjoMessage::addError($I18N->msg("msg_unable_to_delete_slice"));
+                cjoMessage::addError(cjoI18N::translate("msg_unable_to_delete_slice"));
             }
             else {
-                cjoMessage::addError($I18N->msg('msg_data_not_saved'));
+                cjoMessage::addError(cjoI18N::translate('msg_data_not_saved'));
             }
         }
         return $CJO_ACTION;
@@ -430,9 +423,7 @@ class cjoSlice {
      * @return string Eine Meldung
      */
     public static function execPostSaveAction($module_id, $function, $CJO_ACTION) {
-
-        global $CJO, $I18N;
-
+        
         $sql = new cjoSql();
         $qry = "SELECT 
                     ac.action AS `ac.action`
@@ -449,7 +440,7 @@ class cjoSlice {
         for ($i=0;$i<$sql->getRows();$i++) {
 
             $iaction = $sql->getValue("ac.action");
-            foreach ($CJO['VARIABLES'] as $obj) {
+            foreach (cjoProp::get('VARIABLES') as $obj) {
                 $CJO_ACTION = $obj->getACOutput($CJO_ACTION, $iaction);
             }
 
@@ -467,10 +458,10 @@ class cjoSlice {
                 cjoMessage::addError($CJO_ACTION['MSG']);
             }
             elseif ($function == "delete") {
-                cjoMessage::addError($I18N->msg("msg_unable_to_delete_slice"));
+                cjoMessage::addError(cjoI18N::translate("msg_unable_to_delete_slice"));
             }
             else {
-                cjoMessage::addError($I18N->msg('msg_data_not_saved'));
+                cjoMessage::addError(cjoI18N::translate('msg_data_not_saved'));
             }
         }
         return $CJO_ACTION;

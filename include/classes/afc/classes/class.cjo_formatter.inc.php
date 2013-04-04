@@ -64,8 +64,6 @@ class cjoFormatter {
      */
     public static function format($value, $format_type, $format) {
 
-        global $I18N, $CJO;
-
         if ($value === null) return '';
 
         // Stringformatierung mit sprintf()
@@ -104,6 +102,10 @@ class cjoFormatter {
         elseif ($format_type == 'cjomedia' && $value != '') {
             $value = self::_formatCjoMedia($value, $format);
         }
+        // format filesize
+        elseif ($format_type == 'filesize' && $value != '') {
+            $value = self::_formatFileSize($value, $format);
+        }
         // formatReplace
         elseif ($format_type == 'replace' && $value != '') {
             $value = self::_formatReplace($value, $format);
@@ -126,8 +128,8 @@ class cjoFormatter {
     // Stefan Lehmann
     private static function _formatPregReplace($value, $format) {
 
-        cjo_valid_type($format[0], 'string', __FILE__, __LINE__);
-        cjo_valid_type($format[1], 'string', __FILE__, __LINE__);
+        cjoProp::isValidType($format[0], 'string', __FILE__, __LINE__);
+        cjoProp::isValidType($format[1], 'string', __FILE__, __LINE__);
 
         $pattern = $format[0];
         $replace = $format[1];
@@ -138,8 +140,8 @@ class cjoFormatter {
     }
 
     private static function _formatCallUserFunc($value, $format) {
-        cjo_valid_type($format[0], 'string', __FILE__, __LINE__);
-        cjo_valid_type($format[1], 'array', __FILE__, __LINE__);
+        cjoProp::isValidType($format[0], 'string', __FILE__, __LINE__);
+        cjoProp::isValidType($format[1], 'array', __FILE__, __LINE__);
 
         $function = $format[0];
         $params = implode("' , '", $format[1]);
@@ -151,10 +153,10 @@ class cjoFormatter {
     }
 
     private static function _formatReplaceArray($value, $format) {
-        cjo_valid_type($format[0], 'array', __FILE__, __LINE__);
-        cjo_valid_type($format[1], 'string', __FILE__, __LINE__);
-        cjo_valid_type($format['delimiter_in'], 'string', __FILE__, __LINE__);
-        cjo_valid_type($format['delimiter_out'], 'string', __FILE__, __LINE__);
+        cjoProp::isValidType($format[0], 'array', __FILE__, __LINE__);
+        cjoProp::isValidType($format[1], 'string', __FILE__, __LINE__);
+        cjoProp::isValidType($format['delimiter_in'], 'string', __FILE__, __LINE__);
+        cjoProp::isValidType($format['delimiter_out'], 'string', __FILE__, __LINE__);
 
         $replace_values = $format[0];
 
@@ -177,36 +179,30 @@ class cjoFormatter {
     }
 
     private static function _formatReplace($value, $format) {
-        cjo_valid_type($format[0], 'array', __FILE__, __LINE__);
+        cjoProp::isValidType($format[0], 'array', __FILE__, __LINE__);
 
         if (!empty($format[1])){
-            cjo_valid_type($format[1], 'string', __FILE__, __LINE__);
+            cjoProp::isValidType($format[1], 'string', __FILE__, __LINE__);
 
-            if($format[0][$value] == ''){
-                return '--';
-            }
+            if($format[0][$value] == '') return '--';
         }
         return $format[0][$value];
     }
     // Stefan Lehmann
 
     private static function _formatSprintf($value, $format) {
-        cjo_valid_type($format, 'string', __FILE__, __LINE__);
+        cjoProp::isValidType($format, 'string', __FILE__, __LINE__);
 
-        if ($format == '') {
-            $format = '%s';
-        }
+        if ($format == '')  $format = '%s';
         if ($value != '') return sprintf($format, $value);
     }
 
     private static function _formatDate($value, $format) {
-        cjo_valid_type($format, 'string', __FILE__, __LINE__);
+        cjoProp::isValidType($format, 'string', __FILE__, __LINE__);
 
         if (!is_string($value) || empty($value)) return '--';
 
-        if ($format == '') {
-            $format = 'd.m.y';
-        }
+        if ($format == '')  $format = 'd.m.y'; 
 
         if (!is_numeric($value)) {
             $values = preg_split('/\D/', $value, -1, PREG_SPLIT_NO_EMPTY);
@@ -222,9 +218,7 @@ class cjoFormatter {
 
     private static function _formatStrftime($value, $format) {
 
-        global $I18N;
-
-        cjo_valid_type($format, 'string', __FILE__, __LINE__);
+        cjoProp::isValidType($format, 'string', __FILE__, __LINE__);
 
         if (empty($value) && $value !== '0' && $value !== 0) {
             return '';
@@ -232,38 +226,24 @@ class cjoFormatter {
 
         if ($format == '' || $format == 'dateformat') {
             // Default CJO-Dateformat
-            $format = $I18N->msg('dateformat');
+            $format = cjoI18N::translate('dateformat');
         }
         elseif ($format == 'datetime') {
             // Default CJO-Datetimeformat
-            $format = $I18N->msg('datetimeformat');
+            $format = cjoI18N::translate('datetimeformat');
         }
-        if ($value < (60*60*24)) {
-            return gmstrftime($format, $value);
-        }
-        else {
-            return strftime($format, $value);
-        }
+        return ($value >= 86400) ? strftime($format, $value) : gmstrftime($format, $value);
     }
 
     private static function _formatNumber($value, $format) {
 
-        if (!is_array($format)) {
-            $format = array ();
-        }
-
+        if (!is_array($format))  $format = array ();
         // Kommastellen
-        if (empty ($format[0])) {
-            $format[0] = 2;
-        }
+        if (empty ($format[0]))  $format[0] = 2;
         // Dezimal Trennzeichen
-        if (empty ($format[1])) {
-            $format[1] = ',';
-        }
+        if (empty ($format[1]))  $format[1] = ',';
         // Tausender Trennzeichen
-        if (empty ($format[2])) {
-            $format[2] = ' ';
-        }
+        if (empty ($format[2]))  $format[2] = ' ';
         return number_format($value, $format[0], $format[1], $format[2]);
     }
 
@@ -317,22 +297,14 @@ class cjoFormatter {
 
     private static function _formatTruncate($value, $format) {
 
-        if (!is_array($format)) {
-            $format = array ();
-        }
+        if (!is_array($format))  $format = array ();
 
         // String-laenge
-        if (empty ($format['length'])) {
-            $format['length'] = 80;
-        }
+        if (empty ($format['length'])) $format['length'] = 80;
         // ETC
-        if (empty ($format['etc'])) {
-            $format['etc'] = '...';
-        }
+        if (empty ($format['etc'])) $format['etc'] = '...';
         // Break-Words?
-        if (empty ($format['break_words'])) {
-            $format['break_words'] = false;
-        }
+        if (empty ($format['break_words'])) $format['break_words'] = false;
 
         return truncate($value, $format['length'], $format['etc'], $format['break_words']);
     }
@@ -358,5 +330,9 @@ class cjoFormatter {
             $file = OOMedia::toIcon($file);
         }
         return $file;
+    }
+    
+    private static function _formatFileSize($value, $format) {
+        return self::_formatSprintf(OOMedia::getFormattedSize($value), $format);
     }
 }

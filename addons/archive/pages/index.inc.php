@@ -23,16 +23,17 @@
  * @filesource
  */
 
-$mypage    = 'archive';
+$addon     = 'archive';
 $oid       = cjo_request('oid', 'int', '');
 $function  = cjo_request('function', 'string');
 
-$subpages = new cjoSubPages($subpage, $mypage);
-$subpages->addPage( array('overview', 'title' => $I18N_28->msg('title_overview')));
-$subpages->addPage( array('settings', 'title' => $I18N_28->msg('title_settings')));
 
-require_once $CJO['INCLUDE_PATH'].'/layout/top.php';
-require_once $subpages->getPage();
-require_once $CJO['INCLUDE_PATH'].'/layout/bottom.php';
+cjoSubPages::addPages( array(
+                        array('overview', 
+                              'title' => cjoAddon::translate(28,'title_overview')),
+                        array('settings', 
+                              'title' => cjoAddon::translate(28,'title_settings'))
+                      ));
+require_once cjoSubPages::getPagePath();
 
-$CJO['SEL_LANG']->get();
+cjoSelectLang::get();

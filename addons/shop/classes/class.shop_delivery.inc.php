@@ -36,7 +36,7 @@
 
 class cjoShopDelivery {
         
-    protected static $mypage = 'shop';
+    protected static $addon = 'shop';
 	private $size;
 	private $country;
 	private $method;
@@ -52,7 +52,7 @@ class cjoShopDelivery {
 
 		global $CJO;
 
-		$this->method  = $CJO['ADDON']['settings'][self::$mypage]['DELIVERY_METHOD'];
+		$this->method  = $CJO['ADDON']['settings'][self::$addon]['DELIVERY_METHOD'];
 		$this->data    = array('costs' => 0, 'taxes' => 0);
 		$this->country = $country;
 		$this->size    = 0;
@@ -169,8 +169,8 @@ class cjoShopDelivery {
 	    if ($packing_units) $packing_units = '<br/><span class="shop_packing_units">'.$packing_units.' [translate_21: shop_packing_units]</span>';
 
 	    return sprintf('<p class="shop_delivery"><a href="%s">%s</a>%s</p>',
-	                    cjoRewrite::getUrl($CJO['ADDON']['settings'][self::$mypage]['DELIVERY_ARTICLE_ID']),
-	                    $I18N_21->msg('shop_excl_delivery_cost'),
+	                    cjoUrl::getUrl($CJO['ADDON']['settings'][self::$addon]['DELIVERY_ARTICLE_ID']),
+	                    cjoAddon::translate(21,'shop_excl_delivery_cost'),
 	                    $packing_units);
 	}
 
@@ -179,7 +179,7 @@ class cjoShopDelivery {
 		global $I18N_21;
 		if ($value == '') return false;
 	    return sprintf('<p class="shop_delivery">%s</p>',
-	                    $I18N_21->msg('delivery_duration_'.$value));
+	                    cjoAddon::translate(21,'delivery_duration_'.$value));
 	}
 
 	public static function getDurationSelection($name, $selected, $class='class="inp50"') {
@@ -191,18 +191,18 @@ class cjoShopDelivery {
     	$select->setName($name);
     	$select->setSelected($selected);
     	$select->setStyle($class);
-    	$select->addOption($I18N_21->msg('delivery_duration_0'),  '0');
-    	$select->addOption($I18N_21->msg('delivery_duration_2'),  '2');
-    	$select->addOption($I18N_21->msg('delivery_duration_7'),  '7');
-    	$select->addOption($I18N_21->msg('delivery_duration_10'), '10');
-    	$select->addOption($I18N_21->msg('delivery_duration_14'), '14');
-    	$select->addOption($I18N_21->msg('delivery_duration_21'), '21');
-    	$select->addOption($I18N_21->msg('delivery_duration_28'), '28');
-    	$select->addOption($I18N_21->msg('delivery_duration_35'), '35');
-	    $select->addOption($I18N_21->msg('delivery_duration_42'), '42');
-	    $select->addOption($I18N_21->msg('delivery_duration_56'), '56');
-	    $select->addOption($I18N_21->msg('delivery_duration_ask'),'ask');
-	    $select->addOption($I18N_21->msg('delivery_duration_no'), '-1');
+    	$select->addOption(cjoAddon::translate(21,'delivery_duration_0'),  '0');
+    	$select->addOption(cjoAddon::translate(21,'delivery_duration_2'),  '2');
+    	$select->addOption(cjoAddon::translate(21,'delivery_duration_7'),  '7');
+    	$select->addOption(cjoAddon::translate(21,'delivery_duration_10'), '10');
+    	$select->addOption(cjoAddon::translate(21,'delivery_duration_14'), '14');
+    	$select->addOption(cjoAddon::translate(21,'delivery_duration_21'), '21');
+    	$select->addOption(cjoAddon::translate(21,'delivery_duration_28'), '28');
+    	$select->addOption(cjoAddon::translate(21,'delivery_duration_35'), '35');
+	    $select->addOption(cjoAddon::translate(21,'delivery_duration_42'), '42');
+	    $select->addOption(cjoAddon::translate(21,'delivery_duration_56'), '56');
+	    $select->addOption(cjoAddon::translate(21,'delivery_duration_ask'),'ask');
+	    $select->addOption(cjoAddon::translate(21,'delivery_duration_no'), '-1');
 	    return $select->get();
 	}
 
@@ -512,7 +512,7 @@ class cjoShopDelivery {
 		global $CJO, $I18N_21;
 
 		// return if delivery costs do not depend on order value
-		if ($CJO['ADDON']['settings'][self::$mypage]['DELIVERY_METHOD'] != '0') return;
+		if ($CJO['ADDON']['settings'][self::$addon]['DELIVERY_METHOD'] != '0') return;
 
 		$sql = new cjoSql();
 		$qry = "SELECT
@@ -528,7 +528,7 @@ class cjoShopDelivery {
 		$i = 0;
 		foreach($results as $result){
 
-			$return[] = $I18N_21->msg('shop_order_value_smaller_then',
+			$return[] = cjoAddon::translate(21,'shop_order_value_smaller_then',
 						cjoShopPrice::toCurrency($result['order_value']),
 						cjoShopPrice::toCurrency($result['costs']),
 						cjoShopPrice::formatNumber($result['tax'],true));
@@ -556,8 +556,8 @@ class cjoShopDelivery {
 //	    global $CJO, $I18N_21;
 //
 //	    return sprintf('<p class="shop_delivery"><a href="%s">%s</a></p>',
-//	                    cjoRewrite::getUrl($CJO['ADDON']['settings'][self::$mypage]['DELIVERY_ARTICLE_ID']),
-//	                    $I18N_21->msg('shop_excl_delivery_cost'));
+//	                    cjoUrl::getUrl($CJO['ADDON']['settings'][self::$addon]['DELIVERY_ARTICLE_ID']),
+//	                    cjoAddon::translate(21,'shop_excl_delivery_cost'));
 //	}
 //
 //	/**
@@ -574,7 +574,7 @@ class cjoShopDelivery {
 //		if ($value == '') return false;
 //
 //	    return sprintf('<p class="shop_delivery"> %s </p>',
-//	                    $I18N_21->msg('delivery_duration_'.$value));
+//	                    cjoAddon::translate(21,'delivery_duration_'.$value));
 //	}
 //
 //	/**
@@ -596,18 +596,18 @@ class cjoShopDelivery {
 //    	$select->setName($name);
 //    	$select->setSelected($selected);
 //    	$select->setStyle('class="'.$class.'"');
-//    	$select->addOption($I18N_21->msg('delivery_duration_0'),  '0');
-//    	$select->addOption($I18N_21->msg('delivery_duration_2'),  '2');
-//    	$select->addOption($I18N_21->msg('delivery_duration_7'),  '7');
-//    	$select->addOption($I18N_21->msg('delivery_duration_10'), '10');
-//    	$select->addOption($I18N_21->msg('delivery_duration_14'), '14');
-//    	$select->addOption($I18N_21->msg('delivery_duration_21'), '21');
-//    	$select->addOption($I18N_21->msg('delivery_duration_28'), '28');
-//    	$select->addOption($I18N_21->msg('delivery_duration_35'), '35');
-//	    $select->addOption($I18N_21->msg('delivery_duration_42'), '42');
-//	    $select->addOption($I18N_21->msg('delivery_duration_56'), '56');
-//	    $select->addOption($I18N_21->msg('delivery_duration_ask'),'ask');
-//	    $select->addOption($I18N_21->msg('delivery_duration_no'), '-1');
+//    	$select->addOption(cjoAddon::translate(21,'delivery_duration_0'),  '0');
+//    	$select->addOption(cjoAddon::translate(21,'delivery_duration_2'),  '2');
+//    	$select->addOption(cjoAddon::translate(21,'delivery_duration_7'),  '7');
+//    	$select->addOption(cjoAddon::translate(21,'delivery_duration_10'), '10');
+//    	$select->addOption(cjoAddon::translate(21,'delivery_duration_14'), '14');
+//    	$select->addOption(cjoAddon::translate(21,'delivery_duration_21'), '21');
+//    	$select->addOption(cjoAddon::translate(21,'delivery_duration_28'), '28');
+//    	$select->addOption(cjoAddon::translate(21,'delivery_duration_35'), '35');
+//	    $select->addOption(cjoAddon::translate(21,'delivery_duration_42'), '42');
+//	    $select->addOption(cjoAddon::translate(21,'delivery_duration_56'), '56');
+//	    $select->addOption(cjoAddon::translate(21,'delivery_duration_ask'),'ask');
+//	    $select->addOption(cjoAddon::translate(21,'delivery_duration_no'), '-1');
 //	    return $select->get();
 //	}
 

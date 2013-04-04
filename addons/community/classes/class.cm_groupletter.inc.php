@@ -47,7 +47,7 @@ class cjoGroupLetter {
     private $titletype    = '';
     private $inst         = 0;    
 
-    public static $mypage = 'community';
+    public static $addon = 'community';
     
     /**
      * Konstruktor
@@ -55,40 +55,36 @@ class cjoGroupLetter {
      */
     function __construct() {
 
-        global $CJO;
-
-        $this->clang = $CJO['CUR_CLANG'];
+        $this->clang = cjoProp::getClang();
         $this->getPreferences();
 
         $this->mail = new cjoPHPMailer();
     }
 
     private function getPreferences() {
-
-        global $CJO;
-
+        
         $sql = new cjoSql();
         $qry = "SELECT *
-                FROM ".TBL_COMMUNITY_ARCHIV."
-                WHERE
-                    status='1' AND
-                    (SELECT COUNT(*) FROM ".TBL_COMMUNITY_PREPARED.") > 0";
+        		FROM ".TBL_COMMUNITY_ARCHIV."
+        		WHERE
+        			status='1' AND
+        			(SELECT COUNT(*) FROM ".TBL_COMMUNITY_PREPARED.") > 0";
 
         $preferences = array_shift($sql->getArray($qry));
 
         $preferences['template']
             = (!$preferences['template'])
-            ? $CJO['ADDON']['settings'][self::$mypage]['TEMPLATE']
+            ? cjoAddon::getParameter('TEMPLATE', self::$addon)
             : $preferences['template'];
 
         $preferences['mail_account']
             = (!$preferences['mail_account'])
-            ? $CJO['ADDON']['settings'][self::$mypage]['MAIL_ACCOUNT']
+            ? cjoAddon::getParameter('MAIL_ACCOUNT', self::$addon)
             : $preferences['mail_account'];
 
         $preferences['atonce']
             = (!$preferences['atonce'])
-            ? $CJO['ADDON']['settings'][self::$mypage]['ATONCE']
+            ? cjoAddon::getParameter('ATONCE', self::$addon)
             : $preferences['atonce'];
             
         $this->setPreferences($preferences);
@@ -99,8 +95,6 @@ class cjoGroupLetter {
     }
 
     public function setPreferences($preferences) {
-
-        global $CJO;
 
         $preferences['clang']
             = (!isset($preferences['clang']))
@@ -122,7 +116,7 @@ class cjoGroupLetter {
         $this->send           = $preferences['send'];
         $this->errors         = $preferences['errors'];
         $this->user           = $preferences['user'];
-        $this->inst           = (int) preg_replace('/\D/', '', $CJO['INSTNAME']);       
+        $this->inst           = cjoProp::getUniqueNumber();       
 
         $this->validateMailAccount();
 
@@ -136,8 +130,6 @@ class cjoGroupLetter {
 
     private function savePreferences() {
 
-        global $CJO, $I18N_10;
-
         $insert = new cjoSql();
         $insert->setTable(TBL_COMMUNITY_ARCHIV);
         $insert->setValue("subject", $this->subject);
@@ -146,46 +138,35 @@ class cjoGroupLetter {
         $insert->setValue("content",$this->content);
         $insert->setValue("prepared", $this->prepared);
         $insert->setValue("status", 1);
-        $insert->setValue("user",  $CJO['USER']->getValue("name"));
+        $insert->setValue("user",  cjoProp::getUser("name"));
         $insert->setValue("clang", $this->clang);
         $insert->setValue("atonce", $this->atonce);
         $insert->setValue("mail_account", $this->mail_account);    
            
-        $state = $insert->Insert($I18N_10->msg('msg_recipients_prepared',$this->prepared));
+        $state = $insert->Insert(cjoAddon::translate(10,'msg_recipients_prepared',$this->prepared));     	
 
-        $clang_conf = $CJO['ADDON']['settings'][self::$mypage]['CLANG_CONF'];
-        $settings = $CJO['ADDON']['settings'][self::$mypage]['SETTINGS'];       
-
-        if ($state && cjoAssistance::isWritable($settings) && cjoAssistance::isWritable($clang_conf)) {
-
-            $config_data = file_get_contents($clang_conf);
-            $config_data = preg_replace("!(CJO\['ADDON'\]\['settings'\]\[.mypage\]\['MAIL_ACCOUNT'\].?\=.?)[^;]*!",
-                                        "\\1\"".$this->mail_account."\"",  $config_data);
-            $state = cjoGenerate::replaceFileContents($clang_conf, $config_data);
+        if ($state) {
+                               
+            $data = cjoProp::get('ADDON|settings|'.self::$addon, array());
+            unset($data['CLANG_CONF']);                       
+            $state = cjoAddon::saveParameterFile(self::$addon, $data);
             
             if (!$state) return $state;            
             
-            $config_data = file_get_contents($clang_conf);
-            $config_data = preg_replace("!(CJO\['ADDON'\]\['settings'\]\[.mypage\]\['TEMPLATE'\].?\=.?)[^;]*!",
-                                        "\\1\"".$this->template."\"", $config_data);                                        
-            $config_data = preg_replace("!(CJO\['ADDON'\]\['settings'\]\[.mypage\]\['ATONCE'\].?\=.?)[^;]*!",
-                                        "\\1\"".$this->atonce."\"", $config_data);
-            $state = cjoGenerate::replaceFileContents($clang_conf, $config_data);
-            
+            $state = cjoAddon::saveParameterFile(self::$addon, 
+                                                 cjoAddon::getParameter('CLANG_CONF',self::$addon), 
+                                                 cjoPath::addonAssets(self::$addon,cjoProp::getClang().'.clang'));
         }
         return $state;
     }
     
     private function newLogfile(){
         
-        global $CJO;
-        
-        $path = $CJO['ADDON']['settings'][self::$mypage]['LOGS_PATH'];
+        $path = cjoAddon::getParameter('LOGS_PATH',self::$addon);
         $date = strftime('%Y-%m-%d_%H-%M-%S', time());           
         
         if (!file_exists($path)){
-            @mkdir($path);
-            @chmod($path, $CJO['FILEPERM']);
+            @mkdir($path, cjoProp::getDirPerm());
         }
         
         if (file_exists($path.'/current.log')) {
@@ -196,8 +177,8 @@ class cjoGroupLetter {
     }
     
     private function logError($recipient,$error) {
-        global $CJO;
-        $path = $CJO['ADDON']['settings'][self::$mypage]['LOGS_PATH'];
+
+        $path = cjoAddon::getParameter('LOGS_PATH',self::$addon);;
         $line = strftime('%d.%m.%Y %H:%M:%S', time()).
                 "\t|\t".
                 implode("\t",$recipient).
@@ -210,20 +191,18 @@ class cjoGroupLetter {
     public function resetPreferences($status=0) {
 
         $update = new cjoSql();
-        $update->setTable(TBL_COMMUNITY_ARCHIV);
-        $update->setWhere("status='1'");
-        $update->setValue("status",$status);
-        $update->Update();
+    	$update->setTable(TBL_COMMUNITY_ARCHIV);
+    	$update->setWhere("status='1'");
+    	$update->setValue("status",$status);
+    	$update->Update();
 
-        $this->setPreferences(array());
+    	$this->setPreferences(array());
     }
 
     public function prepareGroupLetter($new_prefs){
 
-        global $CJO, $I18N_10;
-
         if (!is_array($new_prefs['groups'])) {
-            cjoMessage::addError($I18N_10->msg('err_no_groupselected'));
+            cjoMessage::addError(cjoAddon::translate(10,'err_no_groupselected'));
             return false;
         }
         
@@ -246,48 +225,45 @@ class cjoGroupLetter {
         $this->atonce       = $new_prefs['ATONCE'] < 1 ? 1 : $new_prefs['ATONCE'];
 
         foreach($new_prefs['groups'] as $id) {
-            $this->prepareGroups($id);
+        	$this->prepareGroups($id);
         }
         
         if ($this->prepared > 0) {
              return $this->savePreferences();
         }
         else {
-            cjoMessage::addError($I18N_10->msg('err_no_recipients_selected'));
-            return false;
+        	cjoMessage::addError(cjoAddon::translate(10,'err_no_recipients_selected'));
+        	return false;
         }
         return false;
     }
 
     private function prepareGroups($re_id){
 
-        $this->prepareRecipients($re_id);
+    	$this->prepareRecipients($re_id);
    
-        $sql = new cjoSql();
-        $qry = "SELECT id FROM ".TBL_COMMUNITY_GROUPS." WHERE re_id='".$re_id."'";
+    	$sql = new cjoSql();
+    	$qry = "SELECT id FROM ".TBL_COMMUNITY_GROUPS." WHERE re_id='".$re_id."'";
         $groups = $sql->getArray($qry);
 
-        foreach ($groups as $group) {
-            if ($group['id'] == $re_id) continue;
-            $this->prepareGroups($group['id']);
-        }   
+    	foreach ($groups as $group) {
+    		if ($group['id'] == $re_id) continue;
+    		$this->prepareGroups($group['id']);
+    	} 	
     }
     
     public function resetprepearedRecipients(){
-        
-        global $CJO, $I18N_10; 
 
-        $path = $CJO['ADDON']['settings'][self::$mypage]['PREPARED_PATH'];
+        $path = cjoAddon::getParameter('PREPARED_PATH',self::$addon);
         $date = strftime('%Y-%m-%d_%H-%M-%S', time());
         $content = cjoImportExport::generateSqlExport(array(TBL_COMMUNITY_PREPARED));
         
         if (!file_exists($path)){
-            @mkdir($path);
-            @chmod($path, $CJO['FILEPERM']);
+            @mkdir($path, cjoProp::getDirPerm());
         }
         
         if (!cjoGenerate::putFileContents($path.'/'.$date.'.sql',$content)) {
-            cjoMessage::addError($I18N_10->msg("msg_err_get_prepared_recipients"));
+            cjoMessage::addError(cjoAddon::translate(10,"msg_err_get_prepared_recipients"));
             return false;
         }
 
@@ -295,15 +271,13 @@ class cjoGroupLetter {
         $sql->setDirectQuery("TRUNCATE TABLE ".TBL_COMMUNITY_PREPARED);
         
         if ($sql->getError() != '') {
-            cjoMessage::addError($I18N_10->msg("msg_err_get_prepared_recipients").'<br/>'.$sql->getError());
+            cjoMessage::addError(cjoAddon::translate(10,"msg_err_get_prepared_recipients").'<br/>'.$sql->getError());
             return false;
         }
         return true;
     }
 
     private function prepareRecipients($group_id) {
-
-        global $CJO;
         
         $sql = new cjoSql();
                 
@@ -324,7 +298,7 @@ class cjoGroupLetter {
 
         foreach($recipients as $recipient) {
 
-            $insert->flush();
+    		$insert->flush();
             $insert->setTable(TBL_COMMUNITY_PREPARED);
             $insert->setValue('user_id', $recipient['user_id']);
             $insert->setValue('article_id', $this->article_id);
@@ -338,54 +312,52 @@ class cjoGroupLetter {
 
     public function sendPrepared(){
 
-        global $CJO, $I18N, $I18N_10;
-
         if (!$this->hasContent()) {
-            cjoMessage::addError($I18N_10->msg("msg_err_no_content"));
-            return false;
+     		cjoMessage::addError(cjoAddon::translate(10,"msg_err_no_content"));
+	        return false;
         }
 
         $sql = new cjoSql();
         $qry = "SELECT
-                    us.id AS user_id,
-                    gender,
-                    firstname,
-                    name,
-                    email,
-                    bounce,
-                    us.activation_key AS activation_key
-                FROM
-                    ".TBL_COMMUNITY_PREPARED." pr
-                LEFT JOIN
-                    ".TBL_COMMUNITY_USER." us
-                ON
-                    pr.user_id=us.id
-                WHERE
-                    pr.clang='".$this->clang."' AND
-                    pr.status = '1' AND
-                    us.status = '1' AND
-                    us.newsletter = '1'
-                    LIMIT ".$this->atonce ;
+        	        us.id AS user_id,
+        			gender,
+        			firstname,
+        			name,
+        			email,
+        			bounce,
+        			us.activation_key AS activation_key
+	            FROM
+	            	".TBL_COMMUNITY_PREPARED." pr
+	            LEFT JOIN
+	            	".TBL_COMMUNITY_USER." us
+	            ON
+	            	pr.user_id=us.id
+	            WHERE
+	            	pr.clang='".$this->clang."' AND
+	            	pr.status = '1' AND
+	            	us.status = '1' AND
+	            	us.newsletter = '1'
+	            	LIMIT ".$this->atonce ;
 
         $recipients = $sql->getArray($qry);
 
         if ($sql->getError() != '') {
-            cjoMessage::addError($I18N_10->msg("msg_err_get_prepared_recipients").'<br/>'.$sql->getError());
-            return false;
+        	cjoMessage::addError(cjoAddon::translate(10,"msg_err_get_prepared_recipients").'<br/>'.$sql->getError());
+        	return false;
         }
 
         if (count($recipients) == 0) {
 
-            cjoMessage::addSuccess($I18N_10->msg("msg_all_gl_send",
-                                                 $this->send,
-                                                 $this->prepared,
-                                                 $this->errors));
-            if ($this->errors > 0) {
-                $this->resetPreferences(0);
-            } else {
+        	cjoMessage::addSuccess(cjoAddon::translate(10,"msg_all_gl_send",
+        	                                     $this->send,
+        	                                     $this->prepared,
+        	                                     $this->errors));
+        	if ($this->errors > 0) {
+        		$this->resetPreferences(0);
+        	} else {
                 $this->resetPreferences(2);
             }
-            return false;
+	        return false;
         }
         
         $this->embedImages();
@@ -397,13 +369,13 @@ class cjoGroupLetter {
         foreach ($recipients as $recipient) {
 
             $update->flush();
-            $update->setTable(TBL_COMMUNITY_PREPARED);
-            $update->setWhere('user_id='.$recipient['user_id'].' LIMIT 1');
+           	$update->setTable(TBL_COMMUNITY_PREPARED);
+			$update->setWhere('user_id='.$recipient['user_id'].' LIMIT 1');
 
             $this->setRecipient($recipient);
 
             if ($this->sendGroupletter()) {
-                $update->setValue("status", '0');
+            	$update->setValue("status", '0');
                 $this->send++;
                 
                 $recipient['bounce'] = (int) $recipient['bounce'];
@@ -430,8 +402,8 @@ class cjoGroupLetter {
             if (!empty($this->user))
                 $temp[] = $this->user;
 
-            if (strpos($this->user, $CJO['USER']->getValue('name')) === false)
-                $temp[] = $CJO['USER']->getValue('name');
+            if (strpos($this->user, cjoProp::getUser('name')) === false)
+                $temp[] = cjoProp::getUser('name');
 
             $this->user = implode(', ',$temp);
 
@@ -440,7 +412,7 @@ class cjoGroupLetter {
             $update->setValue("send",$this->send);
             $update->setValue("error",$this->errors);
             if (!$this->firstsenddate)
-                $update->setValue("firstsenddate", time());
+            	$update->setValue("firstsenddate", time());
             $update->setValue("lastsenddate", time());
             $update->setValue("user", $this->user);
             $update->setWhere('status=1');
@@ -449,18 +421,21 @@ class cjoGroupLetter {
 
         $this->mail->SmtpClose();
 
-        if (($this->send+$this->errors) == $this->prepared){
-            if (!$this->sendPrepared()) return false;
-        }
-        return true;
+		if (($this->send+$this->errors) == $this->prepared){
+			if (!$this->sendPrepared()) return false;
+		}
+		// else {
+			// $CJO['ADDON']['settings'][self::$addon]['reload'] = true;
+        	// cjoMessage::addSuccess(cjoAddon::translate(10,"msg_gl_send", $this->send, $this->prepared, $this->errors));
+		    // cjoMessage::addSuccess(cjoAddon::translate(10,"msg_pease_wait"));
+		// }
+		return true;
     }
 
     /**
      * Object: Text personalisieren
      */
     private function personalize($optin=false) {
-
-        global $CJO;
 
         $email     = $this->recipient['email'];
         $name      = $this->recipient['name'];
@@ -474,13 +449,13 @@ class cjoGroupLetter {
         $html      = $this->html;
         $text      = $this->text;
 
-        $signout_id = $CJO['ADDON']['settings'][self::$mypage]['NL_SIGNOUT'];
+        $signout_id = cjoAddon::getParameter('NL_SIGNOUT',self::$addon);
 
         if (OOArticle::isOnline($signout_id)) {
             $param = array("UID" => $user_id+$this->inst,"USR" => $activation_key);
             $linktext = ($optin) ? '[translate: subscribe_newsletter]' : '[translate: unsubscribe_newsletter]';
             $linktext = cjoOpfLang::translate($linktext);
-            $url = cjoRewrite::getUrl($signout_id, $clang, $param);
+            $url = cjoUrl::getUrl($signout_id, $clang, $param);
             $link = '<a href="'.$url.'">'.$linktext.'</a>';
         }
 
@@ -488,46 +463,32 @@ class cjoGroupLetter {
         $this->mail->AddAddress($email, $firstname.' '.$name);
 
         if ($subject != "") {
-            $subject = str_replace("%25", "%", $subject); 
             $subject = str_replace("%email%", $email, $subject);
             $subject = str_replace("%name%", ' '.$name, $subject);
             $subject = str_replace("%firstname%", ' '.$firstname , $subject);
-            $subject = str_replace("%user_id%", $user_id, $subject);
-            $subject = str_replace("%group_id%", $group_id , $subject);
-            $subject = str_replace("%clang%", $clang, $subject);
             $subject = preg_replace_callback("#%([^<^>^%]+)%#imsU",array(&$this, "replaceTitleType"), $subject);
             $this->mail->Subject = $subject;
         }
 
         if ($this->article_id != -1) {
-            $html = str_replace("%25", "%", $html); 
             $html = str_replace("%email%", $email, $html);
             $html = str_replace("%name%", ' '.$name, $html);
             $html = str_replace("%firstname%", ' '.$firstname, $html);
             $html = str_replace("%link_url%", $url, $html);
-            $html = str_replace("%user_id%", $user_id, $html);
-            $html = str_replace("%group_id%", $group_id, $html);
-            $html = str_replace("%clang%", $clang, $html);
-            
             if ($url != "") {
                 $html = str_replace("%link%", $link, $html);
             }
             $html = preg_replace_callback( "#%([^<^>^%]+)%#imsU",array(&$this, "replaceTitleType"),$html);
         }
 
-        $text = str_replace("%25", "%", $text); 
         $text = str_replace("%email%", $email, $text);
         $text = str_replace("%name%", $name, $text);
         $text = str_replace("%firstname%", $firstname, $text);
-        $text = str_replace("%link_url%", $url, $text);
-        $text = str_replace("%user_id%", $user_id, $text);
-        $text = str_replace("%group_id%", $group_id, $text);
-        $text = str_replace("%clang%", $clang, $text);
-        
+        $html = str_replace("%link_url%", $url, $html);
         if ($url != "") {
             $text = str_replace("%link%", $url, $text);
         }
- 
+        
         $text = preg_replace_callback( "#%([^<^>^%]+)%#imsU",array(&$this, "replaceTitleType"),$text);
 
         if ($this->article_id == -1){
@@ -541,7 +502,7 @@ class cjoGroupLetter {
 
     /**
      * Object: Newsletter erstellen und senden. Der Newsletter wird auch gleich personalisiert.
-     */
+	 */
     function sendGroupletter($optin = false) {
 
         if (!$this->hasContent()) return false;
@@ -565,9 +526,8 @@ class cjoGroupLetter {
      * @return Ausgewählter Text
      */
     public function replaceTitleType($m) {
-        if (rawurldecode($m[0]) != $m[0]) return $m[0];
         $gender = $this->recipient['gender'];
-        preg_match('/(?<=\|'.$gender.'\=|^'.$gender.'\=).*?(?=\||$)/', trim($m[1]), $matches);
+    	preg_match('/(?<=\|'.$gender.'\=|^'.$gender.'\=).*?(?=\||$)/', trim($m[1]), $matches);
         return $matches[0];
     }
 
@@ -645,55 +605,47 @@ class cjoGroupLetter {
 
     public function getArticle($article_id, $clang=false, $template_id, $ctype=-1) {
 
-        global $CJO, $I18N_10;
-
         if ($clang === false) {
-            $clang = $CJO['CUR_CLANG'];
+            $clang = cjoProp::getClang();
         }
 
         if (!OOArticle::isOnline($article_id)) {
-            cjoMessage::addError($I18N_10->msg('label_defaultletter_offline'));
+            cjoMessage::addError(cjoAddon::translate(10,'label_defaultletter_offline'));
             return false;
         }
 
-        cjoExtension::registerExtension('GENERATE_URL', 'cjoCommunityExtension::changeNewsletterUrls');
-
         cjoGenerate::deleteGeneratedArticle($article_id);
-        $CJO['CONTEJO'] = false;
-        $CJO['ARTICLE_ID'] = $article_id;
+        cjoProp::isBackend() = false;
+        cjoProp::set('ARTICLE_ID',$article_id);
 
         $article = new cjoArticle();
         $article->setArticleId($article_id);
         $article->setClang($clang);
-        $article->setTemplateId($template_id, true);
+        $article->setTemplateId($template_id);
         $content = $article->getArticleTemplate(); 
         $content = cjoOutput::replaceLinks($content);
         $content = cjoOpfLang::translate($content);
         $content = cjoOutput::prettifyOutput($content);        
-        $CJO['CONTEJO'] = true;
+        cjoProp::isBackend() = true;
 
-        $base  = cjoRewrite::setServerUri(true, false);
-        $base .= cjoRewrite::setServerPath();
-
+        $base  = cjoUrl::setServerUri(true, false);
+        $base .= cjoUrl::setServerPath();
+  
         $content = str_replace(array('"../','"./'), '"'.$base, $content);
-        $content = str_replace(array('(../','(./'), '('.$base, $content);
-
         $content = cjoExtension::registerExtensionPoint('OUTPUT_FILTER', array('subject' => $content, 'environment' => 'frontend'));
-
         return $content;
     }
     
     private function validateMailAccount() {
         
-        global $CJO;
-        $default_account = $CJO['ADDON']['settings'][self::$mypage]['MAIL_ACCOUNT'];
+        $default_account = cjoAddon::getParameter('MAIL_ACCOUNT',self::$addon);
         
         if ($this->mail_account == $default_account) return true;
         
         $sql = new cjoSql();
         $qry = "SELECT id
-                FROM ".TBL_20_MAIL_SETTINGS."
-                WHERE id='".$this->mail_account."'";
+        		FROM ".TBL_20_MAIL_SETTINGS."
+        		WHERE id='".$this->mail_account."'";
         $sql->setQuery($qry);
         
         if ($sql->getRows() == 1) return true;
@@ -706,11 +658,9 @@ class cjoGroupLetter {
     }
     
     public static function currentNumbers(){
-            
-        global $I18N;
                
-        $dec_point = trim($I18N->msg('dec_point'));
-        $thousands_sep = trim($I18N->msg('thousands_sep'));
+        $setlocal_dec_point = trim(cjoI18N::translate('setlocal_dec_point'));
+        $setlocal_thousands_sep = trim(cjoI18N::translate('setlocal_thousands_sep'));
         
         $sql = new cjoSql();
         $qry = "SELECT status, count(*) AS number FROM ".TBL_COMMUNITY_PREPARED." GROUP BY status";
@@ -720,7 +670,7 @@ class cjoGroupLetter {
         
         if ($sql->getRows() > 0) {
             foreach($temp as $key=>$val) {
-                $number = number_format($val['number'], 0, $dec_point, $thousands_sep);
+                $number = number_format($val['number'], 0, $setlocal_dec_point, $setlocal_thousands_sep);
                 switch($val['status']) {
                     case -1: $results['errors'] = $number; break;
                     case 0: $results['send'] = $number; break;
@@ -728,6 +678,7 @@ class cjoGroupLetter {
                 }
             }
         }
+        
         return json_encode($results);
     }
     

@@ -1,0 +1,25 @@
+##./contejo/include/addons/multidomain/pages/index.inc.php =
+multidomain = Multidomain
+
+##./contejo/include/addons/multidomain/pages/multidomain.inc.php =
+label_add_multidomain = Domain hinzufügen
+label_edit_multidomain = Domain bearbeiten
+label_domain = Domain
+label_root_article_id = ROOT-Artikel
+label_start_article_id = Start-Artikel
+msg_err_domain_notEmpty = Bitte die Domain angeben!
+msg_err_double_domain = Die Domain '{0}' ist bereits vorhanden!
+msg_err_double_servername = Die Serverbezeichnung '{0}' ist bereits vorhanden!
+msg_err_double_root_article_id = Der ROOT-Artikel '{0}' wird bereits verwendet!
+msg_err_error_email_notEmail = Die Fehler E-Mailadresse hat kein gültiges Format!
+msg_err_error_email_notEmpty = Bitte eine Fehler E-Mailadresse angeben!
+msg_err_servername_notEmpty = Bitte eine Serverbezeichnung angeben!
+msg_err_notfound_article_id = Der gewählte 'Nicht gefunden'-Artikel existiert nicht oder liegt nicht im Pfad des ROOT-Artikels!
+msg_err_notfound_article_id_notEmpty = Bitte einen 'Nicht gefunden'-Artikel auswählen!
+msg_err_root_article_id = Der gewählte ROOT-Artikel existiert nicht oder liegt nicht in der ROOT-Ebene!
+msg_err_root_article_id_notEmpty = Bitte einen ROOT-Artikel auswählen!
+msg_err_start_article_id = Der gewählte Start-Artikel der Domain existiert nicht oder liegt nicht im Pfad des ROOT-Artikels!
+msg_err_start_article_id_notEmpty = Bitte einen Start-Artikel auswählen!
+msg_item_deleted = Die Domain wurde gelöscht!
+msg_item_saved = Die Domain wurde hinzugefügt!
+msg_item_updated = Die Domain wurde aktualisiert!

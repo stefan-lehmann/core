@@ -53,12 +53,10 @@ class cjoLogin {
      */
     public function __construct() {
 
-        global $CJO;
-
         $this->DB = 1;
         $this->logout = false;
         $this->setSysID(cjo_get_sys_id());
-        $this->setSessiontime($CJO['SESSIONTIME']);
+        $this->setSessiontime(cjoProp::getSessionTime());
         $this->setPasswordFunction('md5');
     }
 
@@ -133,7 +131,7 @@ class cjoLogin {
      * @access public
      * @example
      *
-     * 		$CJO['LOGIN']->setLoginquery("SELECT *
+     * 		cjoProp::get('LOGIN')->setLoginquery("SELECT *
      *					 	      	  FROM ".TBL_USER."
      *						          WHERE user_id='USR_UID'");
      */
@@ -148,12 +146,12 @@ class cjoLogin {
      * @access public
      * @example
      *
-     * 		$CJO['LOGIN']->setLoginquery("SELECT *
+     * 		cjoProp::get('LOGIN')->setLoginquery("SELECT *
      *				  				   FROM ".TBL_USER."
      *					  			   WHERE login = '%USR_LOGIN%'
      *				  				   psw = '%USR_PSW%' AND
-     *                       		       lasttrydate <'".(time()-$CJO['RELOGINDELAY'])."' AND
-     *                      		      (login_tries <= '".$CJO['MAXLOGINS']."' OR
+     *                       		       lasttrydate <'".(time()-cjoProp::get('RELOGINDELAY'))."' AND
+     *                      		      (login_tries <= '".cjoProp::get('MAXLOGINS')."' OR
      * 								   lasttrydate <'".(time()- (12 * 60 * 60))."')");
      */
     public function setLoginQuery($login_query) {
@@ -192,11 +190,8 @@ class cjoLogin {
      */
     public function checkLogin() {
 
-        global $CJO, $I18N;
-
-        $is_login = false;
+        $logged_in = false;
         $error = '';
-         
         if (!$this->logout) {
             
             if ($this->usr_login != '') {
@@ -211,16 +206,15 @@ class cjoLogin {
                 if ($this->USER->getRows() == 1) {
                     
                     if ((int) $this->USER->getValue('status') == 0) {
-                        $error = $I18N->msg("msg_user_disabled");
+                        $error = cjoI18N::translate("msg_user_disabled");
                     }
-                    elseif (!$CJO['USER']['BACKEND'] &&
+                    elseif (!cjoProp::isBackend() &&
                             (int) $this->USER->getValue('activation') != 1) {
-                        $error = $I18N->msg("msg_user_not_activated");
+                        $error = cjoI18N::translate("msg_user_not_activated");
                     }
                     else {
-                        
                         cjo_regenerate_session(); 
-                        $is_login = true;
+                        $logged_in = true;
                         cjo_set_session('UID', $this->USER->getValue($this->uid));
                         cjoExtension::registerExtensionPoint('USER_LOGGED_IN',
                                                              array ("user_id" => $this->USER->getValue($this->uid)));                          
@@ -236,63 +230,60 @@ class cjoLogin {
                     if ($this->USER->getError() != '') {
                         $this->USER->flush();
                         $this->USER->setQuery("SELECT login_tries, lasttrydate
-                                             FROM ".$this->user_table."
-                                             WHERE login='".$this->usr_login."'");
+                                              FROM ".$this->user_table."
+                                              WHERE login='".$this->usr_login."'");
                     }
 
-                    if ($this->USER->getValue('login_tries') >= $CJO['MAXLOGINS'] &&
+                    if ($this->USER->getValue('login_tries') >= cjoProp::get('MAXLOGINS') &&
                         $this->USER->getValue('lasttrydate') > (time()- (2 * 60 *60))) {
-                        $error = $I18N->msg("msg_maxlogins", $CJO['MAXLOGINS']); //$this->text[32];
+                        $error = cjoI18N::translate("msg_maxlogins", cjoProp::get('MAXLOGINS')); //$this->text[32];
                     }
-                    elseif ($this->USER->getValue('lasttrydate') > (time()-$CJO['RELOGINDELAY'])) {
-                        $error = $I18N->msg("msg_relogindelay", $CJO['RELOGINDELAY']); //$this->text[31];
+                    elseif ($this->USER->getValue('lasttrydate') > (time()-cjoProp::get('RELOGINDELAY'))) {
+                        $error = cjoI18N::translate("msg_relogindelay", cjoProp::get('RELOGINDELAY')); //$this->text[31];
                     }
                     else {
-                        $error = $I18N->msg("msg_login_incorrect"); //$this->text[30];
+                        $error = cjoI18N::translate("msg_login_incorrect"); //$this->text[30];
                     }
                 }
             }
             elseif (cjo_session('UID', 'bool')) {
-
+                
                 $this->USER = new cjoLoginSQL($this->DB);
                 $query = str_replace("%USR_UID%", cjo_session('UID', 'int'), $this->user_query);
 
                 $this->USER->setQuery($query);
-
                 if ($this->USER->getRows() == 1) {
                     if ((cjo_session('ST', 'int') + $this->session_duration) > time()) {
-                        $is_login = true;
+                        $logged_in = true;
                         cjo_set_session('UID', $this->USER->getValue($this->uid));
                         cjo_set_session('INST', $this->USER->getValue($this->uid));                        
                     }
                     else {
-                        $error = $I18N->msg("msg_session_over"); //$this->text[10];
+                        $error = cjoI18N::translate("msg_session_over"); //$this->text[10];
                     }
                 }
                 else {
-                    $error = $I18N->msg("msg_user_id_not_found"); //$this->text[20];
+                    $error = cjoI18N::translate("msg_user_id_not_found"); //$this->text[20];
                 }
             }
             else {
-                $error = $I18N->msg("msg_please_login"); //$this->text[40];
+                $error = cjoI18N::translate("msg_please_login"); //$this->text[40];
             }
         }
         else {
-            $error = $I18N->msg("msg_you_logged_out"); //$this->text[50];
+            $error = cjoI18N::translate("msg_you_logged_out"); //$this->text[50];
         }
 
-        if ($is_login) {
+        if ($logged_in) {
             cjo_set_session('ST', time());
         }
         else {         
             cjoMessage::flushAllMessages();
             cjoMessage::addError($error);
             cjo_unset_session('UID'); 
-            cjo_unset_session('ST');
-            
-            //cjo_regenerate_session();             
+            cjo_unset_session('ST');           
         }
-        return $is_login;
+        return $logged_in;
     }
 
     /**
@@ -321,9 +312,7 @@ class cjoLogin {
      */
     public static function getAtypes() {
 
-        global $CJO;
-
-        if(isset($CJO['ATYPES'])) return true;
+        if (cjoProp::get('ATYPES')) return true;
 
         $sql = new cjoSql();
         $sql->setQuery("SELECT type_id, groups FROM ".TBL_ARTICLES_TYPE);
@@ -331,7 +320,7 @@ class cjoLogin {
         for ($i = 0; $i < $sql->getRows(); $i++) {
             $type_id = $sql->getValue('type_id');
             $groups = explode('|',$sql->getValue('groups'));
-            $CJO['ATYPES'][$type_id] = $groups;
+            cjoProp::set('ATYPES|'.$type_id, $groups);
             $sql->next();
         }
     }
@@ -369,8 +358,13 @@ class cjoLogin {
         $qry = "SELECT *  FROM ".TBL_USER." WHERE user_id='".$user_id."' LIMIT 1";
         $results = $sql->getArray($qry);
         return (isset($results[0])) ? $results[0] : $results;
-    }    
-
+    }   
+    
+    public static function isBackendLogin() {
+        return (cjo_session('UID', 'bool', false, cjo_get_sys_id(true)) && 
+               (cjo_session('ST', 'string', false, cjo_get_sys_id(true))) + cjoProp::getSessionTime() > time());
+    }
+    
 	/**
      * Returns a string representation of this object
      * for debugging purposes.

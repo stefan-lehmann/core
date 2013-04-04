@@ -23,20 +23,21 @@
  * @filesource
  */
 
-$mypage  = 'event_calendar';
+$addon     = 'event_calendar';
 $oid       = cjo_request('oid', 'int', '');
 $function  = cjo_request('function', 'string');
 $group_id  = cjo_request('group_id', 'int', 0);
 
-$subpages = new cjoSubPages($subpage, $mypage);
-$subpages->addPage( array('events', 'title' => $I18N_16->msg('subtitle_events')));
-$subpages->addPage( array('attributes', 'title' => $I18N_16->msg('subtitle_attributes')));
-$subpages->addPage( array('imexport', 'title' => $I18N_16->msg('subtitle_import_export')));
-$subpages->addPage( array('settings'));
+cjoSubPages::addPage(array(
+                        array('events', 
+                              'title' => cjoAddon::translate(16,'subtitle_events')),
+                        array('attributes', 
+                              'title' => cjoAddon::translate(16,'subtitle_attributes')),
+                        array('imexport', 
+                              'title' => cjoAddon::translate(16,'subtitle_import_export')),
+                        array('settings')
+                    ));
 
+require_once cjoSubPages::getPagePath();
 
-require_once $CJO['INCLUDE_PATH'].'/layout/top.php';
-require_once $subpages->getPage();
-require_once $CJO['INCLUDE_PATH'].'/layout/bottom.php';
-
-$CJO['SEL_LANG']->get();
+cjoSelectLang::get();

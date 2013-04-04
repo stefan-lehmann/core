@@ -4,7 +4,7 @@ $anchor_nav = '';
 $box = '';
 $process_next_slice = true;
 
-if (!$CJO['CONTEJO']) {
+if (!cjoProp::isBackend()) {
     $slice = OOArticleSlice::getArticleSliceById($slice_id);
     $next_slice = $slice; // nächstes Slice ermitteln
 
@@ -49,7 +49,7 @@ cjoModulTemplate::addVars('TEMPLATE',
                         'ANCHOR_LINK'        => OONavigation::getAnchorLinkText("CJO_VALUE[4]"),
                         'HAS_DOWNLOADS'      => trim("CJO_MEDIALIST[1]") != "",
                         'BOX'                => $box,
-                        'DISPLAY_BOX'        => !empty($box) AND !$CJO['CONTEJO'],
+                        'DISPLAY_BOX'        => !empty($box) AND !cjoProp::isBackend(),
                         'DISPLAY_NEW'        => $CJO_EXT_VALUE['show_new_updated'] == 'on',
                         'ARTICLE_INFOS'      => OOArticle::getArticleInfos("CJO_ARTICLE_ID", $CJO_EXT_VALUE),
                         'DISPLAY_ANCHOR_NAV' => !empty($anchor_nav)

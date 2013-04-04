@@ -28,9 +28,8 @@
  *
  * Falls die Variable nicht vorhanden ist, wird $default zurückgegeben
  */
-function cjo_get($varname, $vartype = 'string', $default = '', $secure = NULL, $function = NULL) {
-    global $CJO;
-    $secure = $secure === NULL && !$CJO['CONTEJO'] ? true : $secure;    
+function cjo_get($varname, $vartype = '', $default = '', $secure = NULL, $function = NULL) {
+    $secure = $secure === NULL && !cjoProp::isBackend() ? true : $secure;    
     $data =  _cjo_array_key_cast($_GET, $varname, $vartype, $default);
     $data = $secure == true ? cjoAssistance::cleanInput($data) : $data;
 	return $function = NULL ? $data : _cjo_call_user_func($function, $data);
@@ -41,9 +40,8 @@ function cjo_get($varname, $vartype = 'string', $default = '', $secure = NULL, $
  *
  * Falls die Variable nicht vorhanden ist, wird $default zurückgegeben
  */
-function cjo_post($varname, $vartype = 'string', $default = '', $secure = NULL, $function = NULL) {
-    global $CJO;
-    $secure = $secure === NULL && !$CJO['CONTEJO'] ? true : $secure;
+function cjo_post($varname, $vartype = '', $default = '', $secure = NULL, $function = NULL) {
+    $secure = $secure === NULL && !cjoProp::isBackend() ? true : $secure;
     $data =  _cjo_array_key_cast($_POST, $varname, $vartype, $default);
     $data = $secure == true ? cjoAssistance::cleanInput($data) : $data;
     return $function = NULL ? $data : _cjo_call_user_func($function, $data);
@@ -54,9 +52,8 @@ function cjo_post($varname, $vartype = 'string', $default = '', $secure = NULL, 
  *
  * Falls die Variable nicht vorhanden ist, wird $default zurückgegeben
  */
-function cjo_request($varname, $vartype = 'string', $default = '', $secure = NULL, $function = NULL) {
-    global $CJO;
-    $secure = $secure === NULL && !$CJO['CONTEJO'] ? true : $secure;    
+function cjo_request($varname, $vartype = '', $default = '', $secure = NULL, $function = NULL) {
+    $secure = $secure === NULL && !cjoProp::isBackend() ? true : $secure;    
     $data =  _cjo_array_key_cast($_REQUEST, $varname, $vartype, $default);
     $data = $secure == true ? cjoAssistance::cleanInput($data) : $data;
 	return $function = NULL ? $data : _cjo_call_user_func($function, $data);
@@ -67,16 +64,15 @@ function cjo_request($varname, $vartype = 'string', $default = '', $secure = NUL
  *
  * Falls die Variable nicht vorhanden ist, wird $default zurückgegeben
  */
-function cjo_server($varname, $vartype = 'string', $default = '') {
+function cjo_server($varname, $vartype = '', $default = '') {
     return _cjo_array_key_cast($_SERVER, $varname, $vartype, $default);
 }
 
 /**
  * Gibt unterschiedliche System-Ids für Frontend und Backend zurück
  */
-function cjo_get_sys_id() {
-    global $CJO;
-    return $CJO['CONTEJO'] ? md5($CJO['INSTNAME']) : md5($CJO['SERVERNAME']);
+function cjo_get_sys_id($backend=false) {
+    return cjoProp::isBackend() || $backend ? md5(cjoProp::getInstname()) : md5(cjoProp::getServerName());
 }
 
 /**
@@ -84,7 +80,7 @@ function cjo_get_sys_id() {
  *
  * Falls die Variable nicht vorhanden ist, wird $default zurückgegeben
  */
-function cjo_session($varname, $vartype = 'string', $default = '', $sys_id = false) {
+function cjo_session($varname, $vartype = '', $default = '', $sys_id = false) {
     if (!$sys_id) $sys_id = cjo_get_sys_id();   
     if (isset ($_SESSION[$sys_id][$varname])) {
         return _cjo_cast_var($_SESSION[$sys_id][$varname], $vartype, $default);
@@ -124,14 +120,12 @@ function cjo_unset_session($varname, $sys_id = false) {
  *
  */
 function cjo_regenerate_session() {
-    
-    global $CJO;
 
-    $sys = !$CJO['CONTEJO'] ? $CJO['INSTNAME'] : $CJO['SERVERNAME'];
-    $temp = $_SESSION[md5($sys)];
+    $sys_id = cjo_get_sys_id();
+    $temp = $_SESSION[$sys_id];
     session_unset();
     session_regenerate_id();
-    $_SESSION[md5($sys)] = $temp;
+    $_SESSION[$sys_id] = $temp;
     //unset($temp);
 }    
 
@@ -147,7 +141,7 @@ function cjo_destroy_session() {
  *
  * Falls die Variable nicht vorhanden ist, wird $default zurückgegeben
  */
-function cjo_cookie($varname, $vartype = 'string', $default = '') {
+function cjo_cookie($varname, $vartype = '', $default = '') {
     return _cjo_array_key_cast($_COOKIE, $varname, $vartype, $default);
 }
 
@@ -156,7 +150,7 @@ function cjo_cookie($varname, $vartype = 'string', $default = '') {
  *
  * Falls die Variable nicht vorhanden ist, wird $default zurückgegeben
  */
-function cjo_files($varname, $vartype = 'string', $default = '') {
+function cjo_files($varname, $vartype = '', $default = '') {
     return _cjo_array_key_cast($_FILES, $varname, $vartype, $default);
 }
 
@@ -165,7 +159,7 @@ function cjo_files($varname, $vartype = 'string', $default = '') {
  *
  * Falls die Variable nicht vorhanden ist, wird $default zurückgegeben
  */
-function cjo_env($varname, $vartype = 'string', $default = '') {
+function cjo_env($varname, $vartype = '', $default = '') {
     return _cjo_array_key_cast($_ENV, $varname, $vartype, $default);
 }
 
@@ -182,12 +176,12 @@ function cjo_env($varname, $vartype = 'string', $default = '') {
 function _cjo_array_key_cast($haystack, $needle, $vartype, $default = '') {
 
     if (!is_array($haystack)) {
-        trigger_error('Array expected for $haystack in _cjo_array_key_cast()!', E_USER_ERROR);
+        throw new cjoException('Array expected for $haystack in _cjo_array_key_cast()!', E_USER_ERROR);
         exit();
     }
 
     if (!is_scalar($needle)) {
-        trigger_error('Scalar expected for $needle in _cjo_array_key_cast()!', E_USER_ERROR);
+        throw new cjoException('Scalar expected for $needle in _cjo_array_key_cast()!', E_USER_ERROR);
         exit();
     }
 
@@ -219,10 +213,8 @@ function _cjo_array_key_cast($haystack, $needle, $vartype, $default = '') {
  */
 function _cjo_cast_var($var, $vartype, $default, $mode='default') {
 
-    global $CJO;
-
-    if (!is_string($vartype) || empty($vartype)) {
-        trigger_error('String expected for $vartype in _cjo_cast_var()!', E_USER_ERROR);
+    if (!is_string($vartype)) {
+        throw new cjoException('String expected for $vartype in _cjo_cast_var()!', E_USER_ERROR);
         exit();
     }
 
@@ -239,7 +231,7 @@ function _cjo_cast_var($var, $vartype, $default, $mode='default') {
         case 'cjo-clang-id':
             $var = (int) $var;
             if ($mode == 'found') {
-                if (empty($CJO['CLANG'][$var])) $var = (int) $default;
+                if (!cjoProp::getClang($var)) $var = (int) $default;
             }
             break;
         case 'cjo-template-id':
@@ -281,11 +273,25 @@ function _cjo_cast_var($var, $vartype, $default, $mode='default') {
         case ''       : break;
 
         // Evtl Typo im vartype, deshalb hier fehlermeldung!
-        default: trigger_error('Unexpected vartype "'. $vartype .'" in _cjo_cast_var()!', E_USER_ERROR); 
-        exit();
+        default: throw new cjoException('Unexpected vartype "'. $vartype .'" in _cjo_cast_var()!', E_USER_ERROR); exit();
     }
 
     return $var;
+}
+
+/**
+ * Generates an url friendly string.
+ * @param string $name
+ * @return string
+ * @access public
+ */
+function cjo_url_friendly_string($string) {
+    $string = str_replace(array(' ', ' -- ',' - ','.'), '-', trim($string));
+    $string = html_entity_decode($string);
+    $string = cjo_specialchars($string);     
+    $string = preg_replace("/[^a-zA-Z\-0-9]/", "", $string);
+    $string = preg_replace('/-{1,}/', '-', $string);   
+    return $string;
 }
 
 function cjo_specialchars($value){

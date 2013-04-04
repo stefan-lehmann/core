@@ -32,7 +32,7 @@ class countColumn extends cjoListColumn {
     public $counter;
     public $format;
 
-    public function countColumn($label, $start = '', $resetOnEachPage = '', $format = '', $options = OPT_NONE) {
+    public function __construct($label, $start = '', $resetOnEachPage = '', $format = '', $options = OPT_NONE) {
 
         $this->setSteps = $resetOnEachPage == '' ? false : $resetOnEachPage;
         $this->counter = $start == '' ? 1 : $start;

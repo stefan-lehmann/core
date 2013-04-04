@@ -24,7 +24,7 @@
  */
 
 // only include in frontend
-if ($CJO['CONTEJO']) return false;
+if (cjoProp::isBackend()) return false;
 
 
 /**
@@ -35,7 +35,7 @@ if ($CJO['CONTEJO']) return false;
 
 class cjoShopCheckout {
     
-    protected static $mypage = 'shop';
+    protected static $addon = 'shop';
     
 	/**
 	 * Calls a function to save user input, depending
@@ -86,7 +86,7 @@ class cjoShopCheckout {
 
 		// delete supply address if not posted
 		if (empty($posted['supply_address']) || 
-			$CJO['ADDON']['settings'][$mypage]['ADRESS2_ENABLED'] == '0') {
+			$CJO['ADDON']['settings'][$addon]['ADRESS2_ENABLED'] == '0') {
 			$posted['checkout']['address2'] = '';
 		}
 	}
@@ -118,7 +118,7 @@ class cjoShopCheckout {
 		$curr_method = $posted['pay_method'];
 
 		// include required files
-		$pay_methods_path = $CJO['ADDON']['settings'][self::$mypage]['PAY_METHODS_PATH'];
+		$pay_methods_path = $CJO['ADDON']['settings'][self::$addon]['PAY_METHODS_PATH'];
 		$file = $pay_methods_path.'/'.$curr_method.'/class.shop_'.$curr_method.'.inc.php';
 
 		if(is_readable($file))
@@ -182,8 +182,8 @@ class cjoShopCheckout {
 
 		global $CJO;
 
-		$pay_methods_path = $CJO['ADDON']['settings'][self::$mypage]['PAY_METHODS_PATH'];
-		$supply_address   = cjo_post('supply_address','bool') && $CJO['ADDON']['settings'][self::$mypage]['ADRESS2_ENABLED'] == '1';
+		$pay_methods_path = $CJO['ADDON']['settings'][self::$addon]['PAY_METHODS_PATH'];
+		$supply_address   = cjo_post('supply_address','bool') && $CJO['ADDON']['settings'][self::$addon]['ADRESS2_ENABLED'] == '1';
 
 		// get all data that need to be saved
 		$address1 	 	= new cjoShopSupplyAddress($posted['checkout']['address1']);

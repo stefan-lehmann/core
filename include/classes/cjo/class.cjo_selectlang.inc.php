@@ -23,7 +23,7 @@
  * @filesource
  */
 
-if (!$CJO['CONTEJO']) return false;
+if (!cjoProp::isBackend()) return false;
 
 /**
  * cjoSelectLang class
@@ -39,6 +39,12 @@ class cjoSelectLang {
      * @var string
      */
     public $items = '';
+    
+    /**
+     * global cjoSelectLang var
+     * @var object
+     */
+    public static $sel_lang;
 
 	/**
      * Constructor.
@@ -46,22 +52,19 @@ class cjoSelectLang {
      */
     public function __construct() {
 
-        global $CJO, $I18N, $page;
+        if (!cjoProp::isBackend() || !cjoProp::getUser()) return false;
 
-        if (!$CJO['CONTEJO'] || !$CJO['USER']) return false;
+        if (cjoProp::countClangs() > 1) {
+            foreach (cjoProp::getClangs() as $clang_id) {
+                if (!cjoProp::getUser()->isAdmin() &&
+                    !cjoProp::getUser()->hasPerm("developer[]") &&
+                    !cjoProp::getUser()->hasPerm("clang[all]") &&
+                    !cjoProp::getUser()->hasPerm("clang[".$clang_id."]")) {
 
-        if (count($CJO['CLANG']) > 1) {
-            foreach ($CJO['CLANG'] as $id => $name) {
-                if (is_object($CJO['USER']) &&
-                    !$CJO['USER']->isAdmin() &&
-                    !$CJO['USER']->hasPerm("developer[]") &&
-                    !$CJO['USER']->hasPerm("clang[all]") &&
-                    !$CJO['USER']->hasPerm("clang[".$id."]")) {
-
-                    if ($_REQUEST['clang'] == $id) $this->setBackButton();
+                    if (cjo_request('clang') == $clang_id) $this->setBackButton();
                 }
                 else {
-                    $this->items .= $this->addItem($id);
+                    $this->items .= $this->addItem($clang_id);
                 }
             }
         }
@@ -69,21 +72,17 @@ class cjoSelectLang {
             $clang = 0;
         }
 
-        if ($page == 'edit'){
-            $url = (!empty($CJO['ARTICLE_ID'])) ? cjoRewrite::getUrl($CJO['ARTICLE_ID'], $CJO['CUR_CLANG']) : $CJO['HTDOCS_PATH'];
+        $url = cjoUrl::getUrl(cjoProp::getArticleId(), cjoProp::getClang());
 
-            $view_frontend = $this->addItem(null,
-                                            $I18N->msg('label_article_view'),
-                                            '#',
-                                            $this->getLinkIcon('zoom','img/silk_icons', $I18N->msg('label_article_view')));
+        $view_frontend = $this->addItem(null,
+                                        cjoI18N::translate('label_article_view'),
+                                        '#',
+                                        $this->getLinkIcon('zoom','img/silk_icons', cjoI18N::translate('label_article_view')));
 
-            $replace = array('<li' => '<li id="view_frontend"',
-                             '<a' => '<a onclick="cjo.openShortPopup(\''.$url.'\').focus();"');
+        $replace = array('<li' => '<li id="view_frontend"',
+                         '<a' => '<a onclick="cjo.openShortPopup(\''.$url.'\').focus();"');
 
-            $this->items .=  str_replace(array_keys($replace), array_values($replace), $view_frontend);
-        }
-
-        $CJO['SEL_LANG'] = $this;
+        $this->items .=  str_replace(array_keys($replace), array_values($replace), $view_frontend);
     }
 
     /**
@@ -95,16 +94,14 @@ class cjoSelectLang {
      * @param string|boolean $icon link icon
      * @return string
      */
-    public function addItem($id, $name=false, $url=false, $icon=false ) {
-
-        global $CJO;
+    function addItem($id, $name=false, $url=false, $icon=false ) {
 
         $article_id = cjo_request('article_id', 'cjo-article-id');
         $ctype      = cjo_request('ctype', 'cjo-ctype-id');
 
-        if ($name === false) $name = $CJO['CLANG'][$id];
-        if ($url === false) $url = cjoAssistance::createBEUrl(array('article_id' => $article_id, 'clang' =>$id, 'ctype' =>$ctype, 'msg' => '', 'err_msg' => ''));
-        if ($icon === false) $icon = $this->getLinkIcon($CJO['CLANG_ISO'][$id]);
+        if ($name === false) $name = cjoProp::getClangName($id);
+        if ($url === false)  $url = cjoUrl::createBEUrl(array('article_id' => $article_id, 'clang' =>$id, 'ctype' =>$ctype, 'msg' => '', 'err_msg' => ''));
+        if ($icon === false) $icon = $this->getLinkIcon(cjoProp::getClangIso($id));
 
         $current = (cjo_request('clang', 'cjo-clang-id') == $id && $id !== null) ? ' class="current"' : '';
 
@@ -125,7 +122,7 @@ class cjoSelectLang {
      * @param string $ext file extension
      * @return string
      */
-    public function getLinkIcon($iso, $path = false, $alt = false, $title = false, $ext = 'png'){
+    function getLinkIcon($iso, $path = false, $alt = false, $title = false, $ext = 'png'){
 
         if ($path === false) $path = 'img/flags';
         if ($alt === false) $alt = $iso;
@@ -140,22 +137,18 @@ class cjoSelectLang {
      * the selected language.
      * @return void
      */
-    public function setBackButton() {
-        
-        global $CJO, $I18N;
-        
-        global $CJO, $I18N;
+    function setBackButton() {
         
         $back_button = new buttonField();
-		$back_button->addButton('back_button', $I18N->msg('label_go_back'), true, 'img/silk_icons/arrow_undo.png');
+		$back_button->addButton('back_button', cjoI18N::translate('label_go_back'), true, 'img/silk_icons/arrow_undo.png');
 		$back_button->setButtonAttributes('back_button', 'onclick="history.back(); return false;" style="margin-left: 10px;"');
 
 		echo '<div style="width: 960px;">'."\r\n".
-             '	<span class="warning" style="margin-top: 1em; padding: 10px 0;">'.$I18N->msg("msg_no_rights_to_edit").'</span>'."\r\n".
+             '	<span class="warning" style="margin-top: 1em; padding: 10px 0;">'.cjoI18N::translate("msg_no_rights_to_edit").'</span>'."\r\n".
              '	'.$back_button->_get()."\r\n".
              '</div>';
 		
-		require_once $CJO['INCLUDE_PATH'].'/layout/bottom.php';
+		//require_once $CJO['INCLUDE_PATH'].'/layout/bottom.php';
 		exit();
     }
 
@@ -166,8 +159,7 @@ class cjoSelectLang {
      * @return string
      */
     public static function insertLangTabs($params) {
-    	global $CJO;
-    	$tabs = '<ul class="v_tabnmenu">'.$CJO['SEL_LANG']->items.'</ul>'."\n\r";
+    	$tabs = '<ul class="v_tabnmenu">'.self::$sel_lang->items.'</ul>'."\n\r";
     	return preg_replace('/<div([^>]*)id="cjo_lang_tabs"([^>]*)>/i','$0'.$tabs,$params['subject']);
     }
 
@@ -176,7 +168,12 @@ class cjoSelectLang {
      * insert the language selection via output filter.
      * @return void;
      */
-    public function get(){
+    public static function get(){
         cjoExtension::registerExtension('OUTPUT_FILTER', 'cjoSelectLang::insertLangTabs');
     }
+
+    public static function init() {
+        self::$sel_lang = new cjoSelectLang();
+    }
+    
 }

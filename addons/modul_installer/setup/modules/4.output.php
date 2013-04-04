@@ -32,7 +32,7 @@ if ($set['truncate']['length'] == "komplett")
     $set['truncate']['length'] = 'all';
 
 // QUERYSTRING FÜR PAGINATION-LINKS IM BACKEND
-if ($CJO['CONTEJO']) {
+if (cjoProp::isBackend()) {
     $set['pagination']['query_array'] = array('page' => cjo_request('page', 'string'), 'subpage' => cjo_request('subpage', 'string'), 'article_id' => cjo_request('article_id', 'cjo-article-id'), 'function' => cjo_request('function', 'string', 'edit'), 'mode' => cjo_request('mode', 'string', 'edit'), 'clang' => cjo_request('clang', 'cjo-clang-id', 0), 'ctype' => cjo_request('ctype', 'int', 0), );
 }
 
@@ -49,7 +49,7 @@ if (!empty($CJO_EXT_VALUE['modul_ids'])) {
 }
 
 // DB-ABFRAGE AUF BESTIMMTE *SLICES* BESCHRÄNKEN
-if (count($CJO['CTYPE'] > 1)) {
+if (cjoProp::countCtypes() > 1) {
     $sql_query['ctype_ids'] = "b.ctype='" . $set['ctype']['id'] . "' AND ";
 }
 
@@ -118,8 +118,8 @@ $qry = "SELECT
             a.id = b.article_id AND
             a.status = '1' AND
            " . $online_from_to . "
-            a.clang = '" . $CJO['CUR_CLANG'] . "' AND
-            b.clang = '" . $CJO['CUR_CLANG'] . "' AND
+            a.clang = '" . cjoProp::getClang() . "' AND
+            b.clang = '" . cjoProp::getClang() . "' AND
             a.teaser = '1' AND
             a.id != '" . $CJO['ARTICLE_ID'] . "'
         ORDER BY
@@ -181,7 +181,7 @@ if (!empty($results)) {
         $output = array();
         $image = array();
 
-        $result = OOArticle::getArticleById($result_id, $CJO['CUR_CLANG']);
+        $result = OOArticle::getArticleById($result_id, cjoProp::getClang());
         // ERSTES SLICE ERMITTELN
         $slice = OOArticleSlice::getFirstSliceForArticle($result_id);
 
@@ -207,7 +207,7 @@ if (!empty($results)) {
                 $params['xpage'] = $set['pagination']['xpage'];
             }
         }
-        $output['url'] = cjoRewrite::getUrl($result_id, false, $params);
+        $output['url'] = cjoUrl::getUrl($result_id, false, $params);
 
         $output['more_link'] = '<a href="' . $output['url'] . '" ' . 'title="' . $slice -> getValue(2) . '" class="more">' . $set['more']['linktext'] . '</a>';
 
@@ -348,7 +348,7 @@ if (!empty($results)) {
         }
 
         cjoModulTemplate::addVars('RESULTS', array(
-            'CJO_ARTICLE_INFOS' => ($CJO['CONTEJO'] ? OOArticle::getArticleInfosBE($result, $set['ctype']['id']) : ''), 
+            'CJO_ARTICLE_INFOS' => (cjoProp::isBackend() ? OOArticle::getArticleInfosBE($result, $set['ctype']['id']) : ''), 
             'DETAIL_URL'        => $output['url'], 
             'HEADLINE'          => $output['headline'], 
             'SUB_HEADLINE'      => $output['sub_headline'], 
@@ -356,9 +356,9 @@ if (!empty($results)) {
             'TEASER_IMG'        => $output['img'], 
             'TEXT'              => $output['text'], 
             'BOX'               => $output['box'], 
-            'DISPLAY_NEW'       => $show['show_new_updated'] == 'on' && !$CJO['CONTEJO'], 
-            'ARTICLE_INFOS'     => (!$CJO['CONTEJO'] ? OOArticle::getArticleInfos($result_id, $show) : ''), 
-            'ARTICLE_DEVIDER'   => (!$CJO['CONTEJO'] && $set['count'] != count($results) ? '<div class="absatz"></div>' : ''), 
+            'DISPLAY_NEW'       => $show['show_new_updated'] == 'on' && !cjoProp::isBackend(), 
+            'ARTICLE_INFOS'     => (!cjoProp::isBackend() ? OOArticle::getArticleInfos($result_id, $show) : ''), 
+            'ARTICLE_DEVIDER'   => (!cjoProp::isBackend() && $set['count'] != count($results) ? '<div class="absatz"></div>' : ''), 
             'DISPLAY_BOX'   => !empty($output['box']))
             , $slice);
     }

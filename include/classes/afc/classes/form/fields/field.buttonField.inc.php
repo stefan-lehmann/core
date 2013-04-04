@@ -32,10 +32,10 @@ class buttonField extends cjoFormField {
     }
 
     public function addButton($name, $label, $status = true, $img = '') {
-        cjo_valid_type($name, 'string', __FILE__, __LINE__);
-        cjo_valid_type($label, 'string', __FILE__, __LINE__);
-        cjo_valid_type($status, 'boolean', __FILE__, __LINE__);
-        cjo_valid_type($img, 'string', __FILE__, __LINE__);
+        cjoProp::isValidType($name, 'string', __FILE__, __LINE__);
+        cjoProp::isValidType($label, 'string', __FILE__, __LINE__);
+        cjoProp::isValidType($status, 'boolean', __FILE__, __LINE__);
+        cjoProp::isValidType($img, 'string', __FILE__, __LINE__);
 
         $this->buttons[$name] = array (
             'name' => $name,
@@ -59,20 +59,20 @@ class buttonField extends cjoFormField {
     }
 
     public function setButtonStatus($name, $status) {
-        cjo_valid_type($name, 'string', __FILE__, __LINE__);
-        cjo_valid_type($status, 'boolean', __FILE__, __LINE__);
+        cjoProp::isValidType($name, 'string', __FILE__, __LINE__);
+        cjoProp::isValidType($status, 'boolean', __FILE__, __LINE__);
         $this->buttons[$name]['status'] = $status;
     }
 
     public function setButtonLabel($name, $label) {
-        cjo_valid_type($name, 'string', __FILE__, __LINE__);
-        cjo_valid_type($label, 'string', __FILE__, __LINE__);
+        cjoProp::isValidType($name, 'string', __FILE__, __LINE__);
+        cjoProp::isValidType($label, 'string', __FILE__, __LINE__);
         $this->buttons[$name]['label'] = $label;
     }
 
     public function setButtonAttributes($name, $attributes) {
-        cjo_valid_type($name, 'string', __FILE__, __LINE__);
-        cjo_valid_type($attributes, 'string', __FILE__, __LINE__);
+        cjoProp::isValidType($name, 'string', __FILE__, __LINE__);
+        cjoProp::isValidType($attributes, 'string', __FILE__, __LINE__);
         $this->buttons[$name]['attributes'] .= ' '.$attributes;
     }
 

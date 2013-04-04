@@ -85,9 +85,8 @@ class cjoFormGenerator {
     }
     
     public function setName($name) {
-        global $CJO;
         
-        if ($CJO['CONTEJO']) return false;
+        if (cjoProp::isBackend()) return false;
         
         $name = trim($name);
         
@@ -138,16 +137,14 @@ class cjoFormGenerator {
         
     public function setScriptTemplate($template_id) {
         
-        global $CJO, $I18N;
-        
         if (!$template_id) return false;
 
-        if (!file_exists($CJO['FOLDER_GENERATED_TEMPLATES'].'/'.$template_id.'.template')) {
+        if (!cjoGenerate::isTemplateGenerated($template_id)) {
             cjoGenerate::generateTemplates($template_id);
         }
         
-        if (!file_exists($CJO['FOLDER_GENERATED_TEMPLATES'].'/'.$template_id.'.template')) {
-            $this->addError($I18N->msg('msg_err_template_include', $template_id));
+        if (!cjoGenerate::isTemplateGenerated($template_id)) {
+            $this->addError(cjoI18N::translate('msg_err_template_include', $template_id));
         }
         else {
             $this->settings['template_id'] = $template_id;
@@ -187,8 +184,6 @@ class cjoFormGenerator {
     }
     
     public function processFormElements() {
-
-        global $CJO, $I18N;
 
         $form_name = & $this->name;
         $elements_out = & $this->elements_out;
@@ -402,7 +397,7 @@ class cjoFormGenerator {
                     $elements_out['mathresult'][$i]
                         = ($this->is_submit && cjo_post('antispam_label', 'bool'))
                         ? cjo_post('mathresult', 'string','',true)
-                        : $result * self::getAntispamFactor();                   
+                        : $result * cjoProp::getUniqueNumber();                   
 
                     if ($this->is_submit) {
                         $temp = self::runValidator(cjo_post('antispam', 'int'), 
@@ -448,8 +443,6 @@ class cjoFormGenerator {
     }
     
     private static function validateFormElement($elm, $send_value, $anti_spam = false) {
-
-        global $CJO;
         
         $validators = explode("|",preg_replace('/(?<!\\\)(\(|\))|\\\/ims', '', $elm['validate']));
         
@@ -486,8 +479,6 @@ class cjoFormGenerator {
      * @access public
      */
     public static function runValidator($value, $type='not_empty', $message='', $equal_value, $anti_spam = false) {
-
-        global $CJO;
 
         $message = (empty($message)) ? '&nbsp;' : $message;             
 
@@ -583,7 +574,7 @@ class cjoFormGenerator {
                 break;
             # Prüfung Spam-Aufgabe
             case 'antispam':
-                $factor   = self::getAntispamFactor();
+                $factor   = cjoProp::getUniqueNumber();
                 $antispam = cjo_post('antispam', 'float', '',true) ;
                 if (!$anti_spam || $equal_value != $antispam * $factor) return $message;
                 break;
@@ -671,11 +662,6 @@ class cjoFormGenerator {
     	}
     }
     
-    private static function getAntispamFactor() {
-    	global $CJO;
-        return (int) preg_replace('/\D/', '', $CJO['INSTNAME']);
-    }    
-    
     private function sendRecipientMail() {        
              
         if (!$this->settings['recipients']) return false;
@@ -735,8 +721,6 @@ class cjoFormGenerator {
     
     public function get(){
         
-        global $CJO;
-        
         $this->getSendData();      
         
         $this->phpmailer = new cjoPHPMailer();
@@ -748,8 +732,7 @@ class cjoFormGenerator {
         $callfunction = $this->function_name.'__'.md5($this->name);
         
         if ($this->settings['template_id']) {
-            $template = file_get_contents($CJO['FOLDER_GENERATED_TEMPLATES']."/".$this->settings['template_id'].".template");
-            $template = str_replace($this->function_name, $callfunction, $template);
+            $template = str_replace($this->function_name, $callfunction, cjoTemplate::getContent($this->settings['template_id']));
 
             if (strpos($template, '<?') === false) {
                 echo $template; 

@@ -23,21 +23,13 @@
  * @filesource
  */
 
-OOAddon :: readAddonsFolder();
-cjoAssistance::resetAfcVars();
-
-$mypage        = $cur_page['page'];
-$function      = cjo_get('function', 'string');
-$menu          = cjo_get('menu', 'string');
+cjoAddon :: readAddonsFolder();
 
 if (cjo_get('addonname', 'bool')) {
     $addonname = cjo_get('addonname', 'string');
-    if (array_search($addonname, $ADDONS) === false) {
+    if (cjoAddon::getProperty('status', $addonname) === null) {
         unset($addonname);
     }
 }
 
-$subpages = new cjoSubPages($subpage, $mypage);
-$subpages->addPage( array('manage', 'title' => $I18N->msg('title_addon_admin'), 'rights' => array('addons[]')));
-
-require_once $subpages->getPage();
+cjoSubPages::addPage( array('manage', 'title' => cjoI18N::translate('title_addon_admin'), 'rights' => array('addons[]')));

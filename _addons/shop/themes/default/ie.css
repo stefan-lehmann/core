@@ -1,0 +1,5 @@
+@media all {
+    button.shop_button {
+        min-width: 300px;
+    }
+}

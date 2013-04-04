@@ -125,7 +125,7 @@ class cjoShopAddress
 		$string 	.= 	 	" ".$this->place;
 		$string 	.= 	"\r\n".$this->country;
 		if($this->po_box != '')
-		$string 	.= 	"\r\n".$I18N_21->msg("shop_po_box")." ".$this->po_box;
+		$string 	.= 	"\r\n".cjoAddon::translate(21,"shop_po_box")." ".$this->po_box;
 		return $string;
 	}
 

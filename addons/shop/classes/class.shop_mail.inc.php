@@ -32,7 +32,7 @@
 
 class cjoShopMail {
         
-    protected static $mypage = 'shop';
+    protected static $addon = 'shop';
 
 	/**
 	 * Sends an email via php-mailer, its content is depending
@@ -53,7 +53,7 @@ class cjoShopMail {
 		global $CJO, $I18N_21, $I18N;
 
 		// get settings values
-		$settings  			= $CJO['ADDON']['settings'][self::$mypage];
+		$settings  			= cjoAddon::getProperty('settings',self::$addon);
 		$separator 			= $settings['CURRENCY']['DEFAULT_SEPARATOR'];
 		$currency  			= $settings['CURRENCY']['DEFAULT_SIGN'];
 		$pay_methods_path 	= $settings['PAY_METHODS_PATH'];
@@ -61,22 +61,22 @@ class cjoShopMail {
 		$all_pay_costs 		= cjoShopPayMethod::getAllCosts();
         $html               = false;
 
-		$clang = $CJO['CUR_CLANG'];
+		$clang = cjoProp::getClang();
 
 		// get content templates
-		include_once $CJO['ADDON_CONFIG_PATH']."/".self::$mypage."/".$clang.".clang.inc.php";
+		include_once $CJO['ADDON_CONFIG_PATH']."/".self::$addon."/".$clang.".clang.inc.php";
 
 		// get mail type to send
 		switch ($subject) {
 			// get data from $_POST
-			case 'ORDER_CONFIRM_SUBJECT' 	:   if (file_exists($CJO['ADDON_CONFIG_PATH']."/".self::$mypage."/".$clang.".confirm_mail.html")) {
-			                                        $html = file_get_contents($CJO['ADDON_CONFIG_PATH']."/".self::$mypage."/".$clang.".confirm_mail.html"); //;
+			case 'ORDER_CONFIRM_SUBJECT' 	:   if (file_exists(cjoPath::addonAssets(self::$addon, $clang.".confirm_mail.html"))) {
+			                                        $html = file_get_contents(cjoPath::addonAssets(self::$addon, $clang.".confirm_mail.html")); //;
                                                 }
                                                 $text = $settings['ORDER_CONFIRM_MAIL'];
 												break;
 			// get data from db
-			case 'ORDER_SEND_SUBJECT' 		: 	if (file_exists($CJO['ADDON_CONFIG_PATH']."/".self::$mypage."/".$clang.".send_mail.html")) {
-                                                     $html = file_get_contents($CJO['ADDON_CONFIG_PATH']."/".self::$mypage."/".$clang.".send_mail.html"); //;
+			case 'ORDER_SEND_SUBJECT' 		: 	if (file_exists(cjoPath::addonAssets(self::$addon, $clang.".send_mail.html"))) {
+                                                     $html = file_get_contents(cjoPath::addonAssets(self::$addon, $clang.".send_mail.html")); //;
                                                 }
                                                 $text = $settings['ORDER_SEND_MAIL'];
 							    				break;
@@ -116,7 +116,7 @@ class cjoShopMail {
 		$pay_object	  	 = cjoShopPayMethod::getPayObject($pay_method, $result['pay_data']);
         $pay_data        = nl2br($pay_object->out());
 		$payment_costs	 = cjoShopPrice::toCurrency($all_pay_costs[$pay_method]);
-	    $order_date		 = strftime($I18N->msg('datetimeformat'),$result['createdate']);
+	    $order_date		 = strftime(cjoI18N::translate('datetimeformat'),$result['createdate']);
 		$total_sum       = cjoShopPrice::convToFloat($order_value);
 		$delivery_costs  = cjoShopPrice::convToFloat($delivery_costs);
 		$order_value     = $total_sum - $delivery_costs - $pay_object->getCosts();
@@ -130,26 +130,26 @@ class cjoShopMail {
 								 '%product_list%' 	  => $product_list,
 								 '%product_table%'    => $product_table,
 								 '%order_value%' 	  => cjoShopPrice::toCurrency($order_value),
-								 '%pay_method%' 	  => $I18N_21->msg('shop_'.$pay_method),
+								 '%pay_method%' 	  => cjoAddon::translate(21,'shop_'.$pay_method),
 								 '%pay_data%' 		  => $pay_data,
 								 '%payment_costs%'	  => $payment_costs,
 								 '%delivery_costs%'   => cjoShopPrice::toCurrency($delivery_costs),
 								 '%delivery_method%'  => $delivery_method,
-								 '%today%' 			  => strftime($I18N->msg('dateformat_sort')),
+								 '%today%' 			  => strftime(cjoI18N::translate('dateformat_sort')),
 								 '%total_sum%' 		  => cjoShopPrice::toCurrency($total_sum),
 								 '%order_id%' 		  => $id,
 								 '%order_date%'       => $order_date,
 		                         '%order_comment%'    => empty($order_comment) ? '--' : $order_comment,
-								 '%shop_name%'		  => $CJO['SERVER'],
+								 '%shop_name%'		  => cjoProp::get('SERVER'),
                                  '%subject%'          => $settings[$subject],
-                                 'CJO_SERVERNAME'            => $CJO['SERVERNAME'],
-                                 'CJO_SERVER'                => $CJO['SERVER'],
-                                 'CJO_START_ARTICLE_ID'      => $CJO['START_ARTICLE_ID'],
-                                 'CJO_NOTFOUND_ARTICLE_ID'   => $CJO['NOTFOUND_ARTICLE_ID'],
-                                 'CJO_HTDOCS_PATH'           => $CJO['HTDOCS_PATH'],
-                                 'CJO_MEDIAFOLDER'           => $CJO['MEDIAFOLDER'],
-                                 'CJO_FRONTPAGE_PATH'        => $CJO['FRONTPAGE_PATH'],
-                                 'CJO_ADDON_CONFIG_PATH'     => $CJO['ADDON_CONFIG_PATH']);
+                                 'CJO_SERVERNAME'            => cjoProp::get('SERVERNAME'),
+                                 'CJO_SERVER'                => cjoProp::get('SERVER'),
+                                 'CJO_START_ARTICLE_ID'      => cjoProp::get('START_ARTICLE_ID'),
+                                 'CJO_NOTFOUND_ARTICLE_ID'   => cjoProp::get('NOTFOUND_ARTICLE_ID'),
+                                 'CJO_HTDOCS_PATH'           => cjoProp::get('HTDOCS_PATH'),
+                                 'CJO_MEDIAFOLDER'           => cjoProp::get('MEDIAFOLDER'),
+                                 'CJO_FRONTPAGE_PATH'        => cjoProp::get('FRONTPAGE_PATH'),
+                                 'CJO_ADDON_CONFIG_PATH'     => cjoProp::get('ADDON_CONFIG_PATH'));
 
         $text = str_replace(array_keys($replacements), $replacements, $text);   
         
@@ -187,13 +187,13 @@ class cjoShopMail {
 
 /*
 * all yet possible combinations for 'shop_'.$pay_method (see line 116)
-* this lets i18n.php php find all texts that need to be
+* this lets cjoI18N.php php find all texts that need to be
 * translated
 *
-* $I18N_21->msg('shop_bank_account');
-* $I18N_21->msg('shop_credit_card');
-* $I18N_21->msg('shop_invoice');
-* $I18N_21->msg('shop_pre_payment');
+* cjoAddon::translate(21,'shop_bank_account');
+* cjoAddon::translate(21,'shop_credit_card');
+* cjoAddon::translate(21,'shop_invoice');
+* cjoAddon::translate(21,'shop_pre_payment');
 */
 
 } // end class cjoShopMail

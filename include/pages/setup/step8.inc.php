@@ -40,11 +40,11 @@ if (cjo_post('add_no_user', 'bool') && $sql->getRows() > 0) {
         $data = preg_replace('/^(\$CJO\[\'SETUP\'\]\s*=\s*)(.*)(;.*?)$/imx', '$1false$3', $data);
 
         if (!cjoGenerate::putFileContents($CJO['FILE_CONFIG_MASTER'], $data)) {
-            cjoMessage::addError( $I18N->msg("msg_config_master_no_perm"));
+            cjoMessage::addError( cjoI18N::translate("msg_config_master_no_perm"));
         }
     }
     else {
-        cjoMessage::addError($I18N->msg("msg_config_master_does_not_exist"));
+        cjoMessage::addError(cjoI18N::translate("msg_config_master_does_not_exist"));
     }
 
     if (!cjoMessage::hasErrors()) {
@@ -66,15 +66,14 @@ $hidden['prev_subpage']->setValue('step6');
 $hidden['lang'] = new hiddenField('lang');
 $hidden['lang']->setValue($lang);
 
-$fields['headline1'] = new readOnlyField('headline1', '', array('class' => 'formheadline'));
-$fields['headline1']->setValue($I18N->msg("label_admin_settings"));
+$fields['headline1'] = new headlineField(cjoI18N::translate("label_admin_settings"));
 
-$fields['user_login'] = new textField('user_login', $I18N->msg("label_user_login"));
-$fields['user_login']->addValidator('notEmpty', $I18N->msg("msg_user_login_notEmpty"));
-$fields['user_login']->addValidator('isNot', $I18N->msg('label_user_login').' '.$I18N->msg('msg_allready_in_use'),$used_logins,true);
+$fields['user_login'] = new textField('user_login', cjoI18N::translate("label_user_login"));
+$fields['user_login']->addValidator('notEmpty', cjoI18N::translate("msg_user_login_notEmpty"));
+$fields['user_login']->addValidator('isNot', cjoI18N::translate('label_user_login').' '.cjoI18N::translate('msg_allready_in_use'),$used_logins,true);
 
-$fields['user_psw'] = new passwordField('user_psw', $I18N->msg("label_user_psw"));
-$fields['user_psw']->addValidator('notEmpty', $I18N->msg("msg_user_psw_notEmpty"));
+$fields['user_psw'] = new passwordField('user_psw', cjoI18N::translate("label_user_psw"));
+$fields['user_psw']->addValidator('notEmpty', cjoI18N::translate("msg_user_psw_notEmpty"));
 
 if (isset($_POST['user_login']))
     $fields['user_login']->setDefault($_POST['user_login']);
@@ -84,16 +83,16 @@ if (isset($_POST['user_psw']))
     
 if(count($used_logins) > 0) {
     $fields['add_no_user'] = new checkboxField('add_no_user', '&nbsp;',  array('style' => 'width: auto;'));
-    $fields['add_no_user']->addBox($I18N->msg("label_add_no_user"), '1');
+    $fields['add_no_user']->addBox(cjoI18N::translate("label_add_no_user"), '1');
 }
 
 $fields['button'] = new buttonField();
-$fields['button']->addButton('cjoform_back_button',$I18N->msg("button_back"), true, 'img/silk_icons/control_play_backwards.png');
-$fields['button']->addButton('cjoform_next_button',$I18N->msg("button_finish"), true, 'img/silk_icons/tick.png');
+$fields['button']->addButton('cjoform_back_button',cjoI18N::translate("button_back"), true, 'img/silk_icons/control_play_backwards.png');
+$fields['button']->addButton('cjoform_next_button',cjoI18N::translate("button_finish"), true, 'img/silk_icons/tick.png');
 
 $fields['button']->setButtonAttributes('cjoform_next_button', ' style="color: green"');
 //Add Fields:
-$section = new cjoFormSection('', $I18N->msg("label_setup_".$subpage."_title"), array ());
+$section = new cjoFormSection('', cjoI18N::translate("label_setup_".$subpage."_title"), array ());
 
 $section->addFields($fields);
 $form->addSection($section);
@@ -119,7 +118,7 @@ if ($form->validate()) {
         if ($insert->getError() != '') {
 
             //[translate: msg_setup_error_try_again]
-            cjoAssistance::redirectBE(array('subpage' => 'step8',
+            cjoUrl::redirectBE(array('subpage' => 'step8',
                                             'lang' => $lang,
                                             'err_msg' => 'msg_setup_error_try_again'));
         }
@@ -133,11 +132,11 @@ if ($form->validate()) {
             $data = preg_replace('/^(\$CJO\[\'SETUP\'\]\s*=\s*)(.*)(;.*?)$/imx', '$1false$3', $data);
 
             if (!cjoGenerate::putFileContents($CJO['FILE_CONFIG_MASTER'], $data)) {
-                cjoMessage::addError( $I18N->msg("msg_config_master_no_perm"));
+                cjoMessage::addError( cjoI18N::translate("msg_config_master_no_perm"));
             }
         }
         else {
-            cjoMessage::addError($I18N->msg("msg_config_master_does_not_exist"));
+            cjoMessage::addError(cjoI18N::translate("msg_config_master_does_not_exist"));
         }
     }
 

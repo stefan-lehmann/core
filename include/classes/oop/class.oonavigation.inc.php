@@ -149,8 +149,8 @@ class OONavigation {
     public function __construct($article_id = false, $clang = false) {
 
         global $CJO;
-        $this->_article_id  = (!empty($article_id)) ? $article_id : cjo_request('article_id', 'cjo-article-id', $CJO['START_ARTICLE_ID']);
-        $this->_clang       = ($clang !== false) ? $clang : $CJO['CUR_CLANG'];
+        $this->_article_id  = (!empty($article_id)) ? $article_id : cjo_request('article_id', 'cjo-article-id', cjoProp::get('START_ARTICLE_ID'));
+        $this->_clang       = ($clang !== false) ? $clang : cjoProp::getClang();
         $this->article      = OOArticle::getArticleById($this->_article_id);
         $this->_parent_tree = $this->article->getParentTree();
         $this->_curr_nav_id = $this->article->getCatGroup();
@@ -343,38 +343,34 @@ class OONavigation {
      *
      * @param int|boolean $text_length if true the language name is truncated by this value (eg. false = deutsch, 2 = de, 3 = deu)
      * @param string $navi_name name of the menu (default is 'lang')
-     * @param string $_online_only only link to online articles
      * @return void
      */
-    public function genereateLangNavi($text_length = false, $navi_name = 'lang', $_online_only=false) {
+    public function genereateLangNavi($text_length = false, $navi_name = 'lang') {
 
         global $CJO;
 
-        if (count($CJO['CLANG']) < 2) return false;
+        if (count(cjoProp::get('CLANG')) < 2) return false;
 
-        $output = array();
-        foreach ($CJO['CLANG'] as $key => $name) {
-            
-            if ($_online_only && !OOArticle::isOnline($this->_article_id, true, false, $key)) continue;
+        $output = '';
 
-            $first_css  = (count($output) == 0) ? ' class="first"' : '';
+        foreach (cjoProp::get('CLANG') as $key => $name) {
+
+            $first_css  = ($output == '') ? ' class="first"' : '';
             $current    = ($key == $this->_clang) ? ' current' : '';
             $short_name = $text_length ? self::truncateLinkText($name,$text_length) : $name;
 
-            $output[] = sprintf("\r\n\t".'<li%s><a href="%s" title="%s" class="%s %s %s%s">%s</a></li>',
+            $output .= sprintf("\r\n\t".'<li%s><a href="%s" title="%s" class="%s %s %s%s">%s</a></li>',
                                $first_css,
-                               cjoRewrite::getUrl($this->_article_id,$key),
+                               cjoUrl::getUrl($this->_article_id,$key),
                                $name,
-                               strtolower($CJO['CLANG_ISO'][$key]),
+                               strtolower(cjoProp::getClangIso($key)),
                                cjo_specialchars($name),
                                $text_length ? ' '.cjo_specialchars($short_name) : '',
                                $current,
                                $short_name);
         }
- 
-        $this->_navis[$navi_name]  = (count($output) > 1) 
-                                   ? "\r\n".'<ul class="lang_nav">'.implode('',$output)."\r\n".'</ul> '
-                                   : '';
+
+        $this->_navis[$navi_name]  = "\r\n".'<ul class="lang_nav">'.$output."\r\n".'</ul> ';
     }
 
     /**
@@ -395,13 +391,13 @@ class OONavigation {
 
         $this->_navis['breadcrumbs'] = '<div id="breadcrumb">'."\n\r".
                                        '	<strong>'.$prefix_text.'</strong>'."\n\r".
-                                	   '	<a href="'.cjoRewrite::getUrl($CJO['START_ARTICLE_ID']).'">'.$root_name.'</a>'."\n\r";
+                                	   '	<a href="'.cjoUrl::getUrl(cjoProp::get('START_ARTICLE_ID')).'">'.$root_name.'</a>'."\n\r";
 
         foreach($this->_parent_tree as $id => $article) {
 
             $count--;
 
-            if ($article->getId() == $CJO['START_ARTICLE_ID']) continue;
+            if ($article->getId() == cjoProp::get('START_ARTICLE_ID')) continue;
             if (!$article->isNaviItem()) continue;
 
             if ($article->getId() != $this->_article_id) {

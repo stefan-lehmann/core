@@ -23,6 +23,9 @@
  * @filesource
  */
 
+ 
+$function = cjo_request('function', 'string');
+
 if ($function == "setup"){
 	// REACTIVATE SETUP
 
@@ -32,16 +35,16 @@ if ($function == "setup"){
 		$data = preg_replace('/^(\$CJO\[\'SETUP\'\]\s*=\s*)(.*)(;.*?)$/imx', '$1true$3', $data);
 
 		if (!file_put_contents($CJO['FILE_CONFIG_MASTER'], $data)){
-			cjoMessage::addError($I18N->msg("msg_setup_error", cjo_absPath($CJO['FILE_CONFIG_MASTER'])));
+			cjoMessage::addError(cjoI18N::translate("msg_setup_error", cjo_absPath($CJO['FILE_CONFIG_MASTER'])));
 		}
 		else {
-			cjoMessage::addSuccess($I18N->msg("msg_setup_accept"));
+			cjoMessage::addSuccess(cjoI18N::translate("msg_setup_accept"));
             cjoExtension::registerExtensionPoint('SPECIALS_SETUP_INITIATED');   			
 		}
 	}
 	else {
-		cjoMessage::addError($I18N->msg("msg_setup_error",
-		                     cjoAssistance::absPath($CJO['FILE_CONFIG_MASTER'])));
+		cjoMessage::addError(cjoI18N::translate("msg_setup_error",
+		                     cjoFile::absPath($CJO['FILE_CONFIG_MASTER'])));
 	}
 }
 elseif ($function == "repair_media"){
@@ -61,72 +64,56 @@ elseif ($function == 'updateinfos'){
 
 	$change_lang = false;
 
-	$CJO['SERVER']           = cjo_post('new_SERVER', 'string');
-	$CJO['SERVERNAME']       = cjo_post('new_SERVERNAME', 'string');
-	$CJO['ERROR_EMAIL']      = cjo_post('new_ERROR_EMAIL', 'string');
+	cjoProp::set('SERVER',         cjo_post('new_SERVER', 'string', cjoProp::get('SERVER')));
+	cjoProp::set('SERVERNAME',     cjo_post('new_SERVERNAME', 'string', cjoProp::get('SERVERNAME')));
+	cjoProp::set('ERROR_EMAIL',    cjo_post('new_ERROR_EMAIL', 'string', cjoProp::get('ERROR_EMAIL')));
 	$new_lang                = cjo_post('new_LANG', 'string');
 	$new_start_article_id    = cjo_post('new_START_ARTICLE_ID', 'cjo-article-id');
 	$new_notfound_article_id = cjo_post('new_NOTFOUND_ARTICLE_ID', 'cjo-article-id');
 
 	if ($CJO['LANG'] != $new_lang){
-		$CJO['LANG'] = $new_lang;
+		cjoProp::set('LANG',$new_lang);
 		$change_lang = true;
 	}
 
-	if ($CJO['START_ARTICLE_ID'] != $new_start_article_id) {
+	if (cjoProp::get('START_ARTICLE_ID') != $new_start_article_id) {
 	    
 	    $article = OOArticle::getArticleById($new_start_article_id);
         
         if (OOArticle::isValid($article)) {
-			$CJO['START_ARTICLE_ID'] = $new_start_article_id;
+			cjoProp::set('START_ARTICLE_ID', $new_start_article_id);
 		}
 		else {
-			cjoMessage::addError($I18N->msg("msg_new_start_article_not_valid"));
+			cjoMessage::addError(cjoI18N::translate("msg_new_start_article_not_valid"));
 		}
 	}
 
-	if ($CJO['NOTFOUND_ARTICLE_ID'] != $new_notfound_article_id) {
+	if (cjoProp::get('NOTFOUND_ARTICLE_ID') != $new_notfound_article_id) {
 	    
 	    $article = OOArticle::getArticleById($new_notfound_article_id);
 	    
 		if (OOArticle::isValid($article)) {
-			$CJO['NOTFOUND_ARTICLE_ID'] = $new_notfound_article_id;
+			cjoProp::set('NOTFOUND_ARTICLE_ID', $new_notfound_article_id);
 		}
 		else {
-			cjoMessage::addError($I18N->msg("msg_new_notfound_article_not_valid"));
+			cjoMessage::addError(cjoI18N::translate("msg_new_notfound_article_not_valid"));
 		}
 	}
 
 	if (!cjoMessage::hasErrors()) {
 
-		$data = file_get_contents($CJO['FILE_CONFIG_MASTER']);
-		if ($data != '') {
-			$data = preg_replace('/^(\$CJO\[\'SERVER\'\]\s*=\s*")(.*)(".*?)$/imx', '$1'.$CJO['SERVER'].'$3', $data);
-			$data = preg_replace('/^(\$CJO\[\'SERVERNAME\'\]\s*=\s*")(.*)(".*?)$/imx', '$1'.$CJO['SERVERNAME'].'$3', $data);
-			$data = preg_replace('/^(\$CJO\[\'ERROR_EMAIL\'\]\s*=\s*")(.*)(".*?)$/imx', '$1'.$CJO['ERROR_EMAIL'].'$3', $data);
-			$data = preg_replace('/^(\$CJO\[\'LANG\'\]\s*=\s*")(.*)(".*?)$/imx', '$1'.$CJO['LANG'].'$3', $data);
-			$data = preg_replace('/^(\$CJO\[\'START_ARTICLE_ID\'\]\s*=\s*)(\d*)(;.*?)$/imx', '${1}'.$CJO['START_ARTICLE_ID'].'$3', $data);
-			$data = preg_replace('/^(\$CJO\[\'NOTFOUND_ARTICLE_ID\'\]\s*=\s*)(\d*)(;.*?)$/imx', '${1}'.$CJO['NOTFOUND_ARTICLE_ID'].'$3', $data);
-
-			if (!cjoGenerate::putFileContents($CJO['FILE_CONFIG_MASTER'], $data)) {
-				cjoMessage::addError($I18N->msg("msg_config_master_no_perm"));
-			}
-			else {
-				cjoMessage::addSuccess($I18N->msg("msg_data_saved"));
-                cjoExtension::registerExtensionPoint('SPECIALS_INFOS_UPDATED');
-				if ($change_lang){
-					cjoAssistance::redirectBE(array('function'=>'','msg'=>'msg_data_saved'));
-				}
-			}
-		}
-		else {
-			cjoMessage::addError($I18N->msg("msg_config_master_does_not_exist"));
-		}
+        if (cjoProp::saveToFile(cjoPath::pageConfig('page'))){
+            cjoMessage::addSuccess(cjoI18N::translate("msg_data_saved"));
+            cjoExtension::registerExtensionPoint('SPECIALS_INFOS_UPDATED');
+            if ($change_lang) {
+                cjoUrl::redirectBE(array('function'=>'','msg'=>'msg_data_saved'));
+            }
+        }
 	}
 }
 
 $buttons = new buttonField();
-$buttons->addButton('cjoform_submit_button',$I18N->msg('button_update'), true, 'img/silk_icons/tick.png');
+$buttons->addButton('cjoform_submit_button',cjoI18N::translate('button_update'), true, 'img/silk_icons/tick.png');
 $buttons->setButtonAttributes('cjoform_submit_button','style="margin: 10px 0 10px 194px;"');
 
 echo '<div class="a22-cjolist">'.
@@ -134,17 +121,17 @@ echo '<div class="a22-cjolist">'.
 	 '		<table class="cjo no_hover" cellspacing="0" cellpadding="0" border="0">'.
  	 '       <thead>'.
 	 '		 <tr>'.
-	 '			<th colspan="2">'.$I18N->msg("label_special_features").'</th>'.
+	 '			<th colspan="2">'.cjoI18N::translate("label_special_features").'</th>'.
 	 '		</tr>'.
  	 '      </thead>'.
  	 '      <tbody>'.
 	 '		<tr>'.
 	 '			<td width="50%" valign="top">'.
-	 '				<p><b><a href="index.php?page=specials&function=generate" title="'.$I18N->msg("link_regenerate_articles").'">'.$I18N->msg("link_regenerate_articles").'</a></b><br />'.$I18N->msg("text_regenerate_articles").'</p>'.
-	 '				<p><b><a href="index.php?page=specials&function=linkchecker" title="'.$I18N->msg("link_checker").'">'.$I18N->msg("link_checker").'</a></b><br />'.$I18N->msg("text_checker").'</p>'.
-	 '				<p><b><a href="index.php?page=specials&function=repair_media" class="cjo_confirm" title="'.$I18N->msg("link_repair_media").'">'.$I18N->msg("link_repair_media").'</a></b><br />'.$I18N->msg("text_repair_media").'</p>'.
-	 '				<p><b><a href="index.php?page=specials&function=repair_startpage" class="cjo_confirm" title="'.$I18N->msg("link_repair_startpage").'">'.$I18N->msg("link_repair_startpage").'</a></b><br />'.$I18N->msg("msg_repair_startpage").'</p>'.
-	 '				<p><b><a href="index.php?page=specials&function=setup" class="cjo_confirm" title="'.$I18N->msg("link_re_setup").'">'.$I18N->msg("link_re_setup").'</a></b><br />'.$I18N->msg("text_re_setup").'</p>'.
+	 '				<p><b><a href="index.php?page=specials&function=generate" title="'.cjoI18N::translate("link_regenerate_articles").'">'.cjoI18N::translate("link_regenerate_articles").'</a></b><br />'.cjoI18N::translate("text_regenerate_articles").'</p>'.
+	 '				<p><b><a href="index.php?page=specials&function=linkchecker" title="'.cjoI18N::translate("link_checker").'">'.cjoI18N::translate("link_checker").'</a></b><br />'.cjoI18N::translate("text_checker").'</p>'.
+	 '				<p><b><a href="index.php?page=specials&function=repair_media" class="cjo_confirm" title="'.cjoI18N::translate("link_repair_media").'">'.cjoI18N::translate("link_repair_media").'</a></b><br />'.cjoI18N::translate("text_repair_media").'</p>'.
+	 '				<p><b><a href="index.php?page=specials&function=repair_startpage" class="cjo_confirm" title="'.cjoI18N::translate("link_repair_startpage").'">'.cjoI18N::translate("link_repair_startpage").'</a></b><br />'.cjoI18N::translate("msg_repair_startpage").'</p>'.
+	 '				<p><b><a href="index.php?page=specials&function=setup" class="cjo_confirm" title="'.cjoI18N::translate("link_re_setup").'">'.cjoI18N::translate("link_re_setup").'</a></b><br />'.cjoI18N::translate("text_re_setup").'</p>'.
 	 '			</td>'.
 	 '			<td valign="top">'.
 	 '				<form action="index.php" method="post">'.
@@ -153,26 +140,26 @@ echo '<div class="a22-cjolist">'.
 	 '					<input type="hidden" name="neu_modrewrite" value="false" />'.
 	 '					<table class="cjo" cellspacing="0" cellpadding="0" border="0">'.
 	 '						<thead>'.
-	 '						<tr><th colspan="2"><b>'.$I18N->msg("label_general_info").'</b></th></tr>'.
+	 '						<tr><th colspan="2"><b>'.cjoI18N::translate("label_general_info").'</b></th></tr>'.
 	 '						</thead>'.
 	 '						<tbody>'.
-	 '						<tr><td width="40%">'.$I18N->msg("label_server").':</td><td><input type="text" size="5" name="new_SERVER" value="'.$CJO['SERVER'].'" class="inp100" /></td></tr>'.
-	 '						<tr><td width="40%">'.$I18N->msg("label_servername").':</td><td><input type="text" size="5" name="new_SERVERNAME" value="'.$CJO['SERVERNAME'].'" class="inp100" /></td></tr>'.
-	 '						<tr><td width="40%">'.$I18N->msg("label_error_email").':</td><td><input type="text" size="5" name="new_ERROR_EMAIL" value="'.$CJO['ERROR_EMAIL'].'" class="inp100" /></td></tr>'.
-	 '						<tr><td width="40%">'.$I18N->msg("label_contejo_version").':</td><td>'.$CJO['VERSION'].'.'.$CJO['RELEASE'].'</td></tr>'.
+	 '						<tr><td width="40%">'.cjoI18N::translate("label_server").':</td><td><input type="text" size="5" name="new_SERVER" value="'.$CJO['SERVER'].'" class="inp100" /></td></tr>'.
+	 '						<tr><td width="40%">'.cjoI18N::translate("label_servername").':</td><td><input type="text" size="5" name="new_SERVERNAME" value="'.$CJO['SERVERNAME'].'" class="inp100" /></td></tr>'.
+	 '						<tr><td width="40%">'.cjoI18N::translate("label_error_email").':</td><td><input type="text" size="5" name="new_ERROR_EMAIL" value="'.$CJO['ERROR_EMAIL'].'" class="inp100" /></td></tr>'.
+	 '						<tr><td width="40%">'.cjoI18N::translate("label_contejo_version").':</td><td>'.$CJO['VERSION'].'.'.$CJO['RELEASE'].'</td></tr>'.
 	 '						</tbody>'.
 	 '					</table><br/>'.
 	 '					<table class="cjo" cellspacing="0" cellpadding="0" border="0">'.
 	 '						<thead>'.
-	 '						<tr><th colspan="2"><b>'.$I18N->msg("label_change_db1_setup").'</b></th></tr>'.
+	 '						<tr><th colspan="2"><b>'.cjoI18N::translate("label_change_db1_setup").'</b></th></tr>'.
 	 '						</thead>'.
 	 '						<tbody>'.
-	 '						<tr><td width="40%">'.$I18N->msg("label_table_prefix").':</td><td>'.$CJO['TABLE_PREFIX'].'</td></tr>'.
+	 '						<tr><td width="40%">'.cjoI18N::translate("label_table_prefix").':</td><td>'.cjoProp::getTablePrefix().'</td></tr>'.
 	 '						<tr><td colspan="2" style="background:transparent!important"></td></tr>'.
-	 '						<tr><td width="40%">'.$I18N->msg("label_db_host").':</td><td>'.$CJO['DB']['1']['HOST'].'</td></tr>'.
-	 '						<tr><td width="40%">'.$I18N->msg("label_db_name").':</td><td>'.$CJO['DB']['1']['NAME'].'</td></tr>'.
-	 '						<tr><td width="40%">'.$I18N->msg("label_db_login").':</td><td>'.$CJO['DB']['1']['LOGIN'].'</td></tr>'.
-	 '						<tr><td width="40%">'.$I18N->msg("label_db_psw").':</td><td>'.preg_replace('/./','*',$CJO['DB']['1']['PSW']).'</td></tr>'.
+	 '						<tr><td width="40%">'.cjoI18N::translate("label_db_host").':</td><td>'.$CJO['DB']['1']['HOST'].'</td></tr>'.
+	 '						<tr><td width="40%">'.cjoI18N::translate("label_db_name").':</td><td>'.$CJO['DB']['1']['NAME'].'</td></tr>'.
+	 '						<tr><td width="40%">'.cjoI18N::translate("label_db_login").':</td><td>'.$CJO['DB']['1']['LOGIN'].'</td></tr>'.
+	 '						<tr><td width="40%">'.cjoI18N::translate("label_db_psw").':</td><td>'.preg_replace('/./','*',$CJO['DB']['1']['PSW']).'</td></tr>'.
 	 '						</tbody>'.
 	 '					</table><br/>';
 
@@ -183,31 +170,31 @@ if ($CJO['DB']['LOCAL']['HOST'] &&
 
 	echo '				<table class="cjo" cellspacing="0" cellpadding="0" border="0">'.
 		 '					<thead>'.
-		 '					<tr><th colspan="2"><b>'.$I18N->msg("label_change_dblocal_setup").'</b></th></tr>'.
+		 '					<tr><th colspan="2"><b>'.cjoI18N::translate("label_change_dblocal_setup").'</b></th></tr>'.
 		 '					</thead>'.
 	 	 '					<tbody>'.
-	 	 '					<tr><td width="40%">'.$I18N->msg("label_table_prefix").':</td><td>'.$CJO['TABLE_PREFIX'].'</td></tr>'.
+	 	 '					<tr><td width="40%">'.cjoI18N::translate("label_table_prefix").':</td><td>'.cjoProp::getTablePrefix().'</td></tr>'.
 	 	 '					<tr><td colspan="2" style="background:transparent!important"></td></tr>'.
-		 '					<tr><td width="40%">'.$I18N->msg("label_db_host").':</td><td>'.$CJO['DB']['LOCAL']['HOST'].'</td></tr>'.
-		 '					<tr><td width="40%">'.$I18N->msg("label_db_name").':</td><td>'.$CJO['DB']['LOCAL']['NAME'].'</td></tr>'.
-		 '					<tr><td width="40%">'.$I18N->msg("label_db_login").':</td><td>'.$CJO['DB']['LOCAL']['LOGIN'].'</td></tr>'.
-		 '					<tr><td width="40%">'.$I18N->msg("label_db_psw").':</td><td>'.preg_replace('/./','*',$CJO['DB']['LOCAL']['PSW']).'</td></tr>'.
+		 '					<tr><td width="40%">'.cjoI18N::translate("label_db_host").':</td><td>'.$CJO['DB']['LOCAL']['HOST'].'</td></tr>'.
+		 '					<tr><td width="40%">'.cjoI18N::translate("label_db_name").':</td><td>'.$CJO['DB']['LOCAL']['NAME'].'</td></tr>'.
+		 '					<tr><td width="40%">'.cjoI18N::translate("label_db_login").':</td><td>'.$CJO['DB']['LOCAL']['LOGIN'].'</td></tr>'.
+		 '					<tr><td width="40%">'.cjoI18N::translate("label_db_psw").':</td><td>'.preg_replace('/./','*',$CJO['DB']['LOCAL']['PSW']).'</td></tr>'.
 		 '					</tbody>'.
 		 '				</table><br/>';
 }
 
 echo '					<table class="cjo" cellspacing="0" cellpadding="0" border="0">'.
 	 '						<thead>'.
-	 '						<tr><th colspan="2"><b>'.$I18N->msg("label_specials_others").'</b></th></tr>'.
+	 '						<tr><th colspan="2"><b>'.cjoI18N::translate("label_specials_others").'</b></th></tr>'.
 	 '						</thead>'.
 	 '						<tbody>'.
-	 '							<tr><td width="40%">'.$I18N->msg("label_start_article_id").':</td><td><input type="text" class="inp10" name="new_START_ARTICLE_ID" value="'.$CJO['START_ARTICLE_ID'].'" /></td></tr>'.
-	 '							<tr><td width="40%">'.$I18N->msg("label_notfound_article_id").':</td><td><input type="text" class="inp10" name="new_NOTFOUND_ARTICLE_ID" value="'.$CJO['NOTFOUND_ARTICLE_ID'].'" /></td></tr>'.
-	 '							<tr><td width="40%">'.$I18N->msg("label_backend_language").':</td><td>'.
+	 '							<tr><td width="40%">'.cjoI18N::translate("label_start_article_id").':</td><td><input type="text" class="inp10" name="new_START_ARTICLE_ID" value="'.$CJO['START_ARTICLE_ID'].'" /></td></tr>'.
+	 '							<tr><td width="40%">'.cjoI18N::translate("label_notfound_article_id").':</td><td><input type="text" class="inp10" name="new_NOTFOUND_ARTICLE_ID" value="'.$CJO['NOTFOUND_ARTICLE_ID'].'" /></td></tr>'.
+	 '							<tr><td width="40%">'.cjoI18N::translate("label_backend_language").':</td><td>'.
 	 '								<select name="new_LANG" size="1" style="width: auto">';
-										foreach ($I18N->getLocales() as $l) {
+										foreach (cjoI18N::getLocales() as $l) {
 											$selected = ($l == $CJO['LANG'] ? 'selected="selected"' : '');
-											echo '<option value="'.$l.'" '.$selected.'>'.$I18N->msg($l).'&nbsp;&nbsp;</option>';
+											echo '<option value="'.$l.'" '.$selected.'>'.cjoI18N::translate($l).'&nbsp;&nbsp;</option>';
 										}
 echo '								</select>'.
 	 '							</td></tr>'.

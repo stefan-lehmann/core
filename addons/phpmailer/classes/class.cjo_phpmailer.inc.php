@@ -59,12 +59,10 @@ class cjoPHPMailer extends PHPMailer {
      */
     function SetLanguage($iso = null, $path = null)  {
 
-        global $CJO;
+        if ($iso == null) $iso = cjoProp::getClangIso();
+        if ($path == null) $path = cjoPath::addon('phpmailer', 'local/');
 
-        if ($iso == null) $iso = $CJO['CLANG_ISO'][$CJO['CUR_CLANG']];
-        if ($path == null) $path = $CJO['ADDON_PATH']."/phpmailer/local/";
-
-        parent :: SetLanguage($iso, $path);
+        parent::SetLanguage($iso, $path);
     }
 
     /**
@@ -122,8 +120,6 @@ class cjoPHPMailer extends PHPMailer {
 
     public function setAccount($id) {
 
-        global $CJO, $I18N_20;
-
         $this->SetLanguage();
 
         if ($this->account_id == $id) return false;
@@ -136,7 +132,7 @@ class cjoPHPMailer extends PHPMailer {
         $sql->setQuery($qry);
 
         if ( $sql->getRows() != 1) {
-            cjoMessage::addError($I18N_20->msg('err_account_is_empty'));
+            cjoMessage::addError(cjoAddon::translate(20,'err_account_is_empty'));
             return false;
         }
 
@@ -244,8 +240,6 @@ class cjoPHPMailer extends PHPMailer {
 
     public function AddMedialistAttachment($medialist) {
 
-        global $CJO;
-
         foreach(cjoAssistance::toArray($medialist, ',') as $filename) {
 
             $media_obj = OOMedia::getMediaByFileName($filename);
@@ -270,13 +264,11 @@ class cjoPHPMailer extends PHPMailer {
      */
     public function Send($archiv = null) {
 
-        global $CJO;
-
         if ($archiv !== null) {
             $this->setArchiv($archiv);
         }
 
-        $this->PluginDir = $CJO['ADDON_PATH']."/phpmailer/classes/";
+        $this->PluginDir = cjoPath::addon('phpmailer', 'classes/');
 
         if ($this->ContentType == 'text/html') {
             $this->AltBody .= "\r\n\r\n".$this->footer;
@@ -310,4 +302,47 @@ class cjoPHPMailer extends PHPMailer {
         }
         return !$this->IsError();
     }
+
+    public static function updateSettingsByForm($param){
+        
+        $form = &$param['form'];
+        $oid = !empty($form->last_insert_id) ? $form->last_insert_id : cjo_post('oid', 'int');
+        $status = cjo_post('status', 'int');
+
+        if ($status == -1 || $oid == 1) {
+            $update = new cjoSql();
+            $update->setTable(TBL_20_MAIL_SETTINGS);
+            $update->setWhere("status='-1'");
+            $update->setValue("status", "1");
+            $update->Update();
+
+            $update->flush();
+            $update->setTable(TBL_20_MAIL_SETTINGS);
+            $update->setWhere("id='".$oid."'");
+            $update->setValue("status", '-1');
+            $update->Update();
+        }
+
+    }
+
+    public static function deleteMailSetting($id) {
+        
+        $sql = new cjoSql;
+        $sql->setQuery("SELECT * FROM ".TBL_20_MAIL_SETTINGS." WHERE id='".$id."'");
+        $status = $sql->getValue('status');
+        
+        if ($status != -1) {
+           $sql->statusQuery("DELETE FROM ".TBL_20_MAIL_SETTINGS." WHERE id='".$id."'",
+                             cjoAddon::translate(20,"msg_setting_deleted"));
+        }
+    }
+    
+    public static function statusMailSetting($id, $status) {
+        $update = new cjoSql();
+        $update->setTable(TBL_20_MAIL_SETTINGS);
+        $update->setWhere("id='".$id."'");
+        $update->setValue("status",$status);
+        return $update->Update(cjoAddon::translate(20,"msg_status_updated"));
+    }
+
 }

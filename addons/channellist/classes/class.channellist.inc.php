@@ -23,7 +23,7 @@
 
 class cjoChannelList {
 
-    private static $mypage = 'channellist';
+    private static $addon = 'channellist';
     private static $current = array();    
     private static $packages = array();      
     
@@ -32,8 +32,8 @@ class cjoChannelList {
         $x = 2000; 
         $y = 2000;
         if ((int) $id > 0)
-            $x = ($CJO['ADDON']['settings'][self::$mypage]['offset_x'] * (int) $id * -1) + $CJO['ADDON']['settings'][self::$mypage]['offset_x'];
-            $y = ($CJO['ADDON']['settings'][self::$mypage]['offset_y'] * (int) $id * -1) + $CJO['ADDON']['settings'][self::$mypage]['offset_y'];
+            $x = ($CJO['ADDON']['settings'][self::$addon]['offset_x'] * (int) $id * -1) + $CJO['ADDON']['settings'][self::$addon]['offset_x'];
+            $y = ($CJO['ADDON']['settings'][self::$addon]['offset_y'] * (int) $id * -1) + $CJO['ADDON']['settings'][self::$addon]['offset_y'];
         return $x.'px '.$y.'px';
     }
     
@@ -153,9 +153,9 @@ class cjoChannelList {
 
         foreach($results as $key => $result) {
             $channels[$key]                = $result;  
-            $channels[$key]['parsed_name'] = cjoRewrite::parseArticleName($result['name']);  
-            $channels[$key]['url']         = $channels[$key]['parsed_name'].'.'.$CJO['ARTICLE_ID'].'.'.$CJO['CUR_CLANG'].'.html';
-            $channels[$key]['video']       = $channels[$key]['parsed_name'].'.'.$CJO['ARTICLE_ID'].'.'.$CJO['CUR_CLANG'].'.html';            
+            $channels[$key]['parsed_name'] = cjo_url_friendly_string($result['name']);  
+            $channels[$key]['url']         = $channels[$key]['parsed_name'].'.'.$CJO['ARTICLE_ID'].'.'.cjoProp::getClang().'.html';
+            $channels[$key]['video']       = $channels[$key]['parsed_name'].'.'.$CJO['ARTICLE_ID'].'.'.cjoProp::getClang().'.html';            
             $channels[$key]['is_package']  = false;
             
             if ($key == 0 ) {
@@ -211,7 +211,7 @@ class cjoChannelList {
         $path = pathinfo(cjo_server('REQUEST_URI','string'));
         
         $article = OOArticle :: getArticleById($CJO['ARTICLE_ID']);
-        $start_link = cjoRewrite::parseArticleName($article->getName()).'.'.$CJO['ARTICLE_ID'].'.'.$CJO['CUR_CLANG'].'.html';
+        $start_link = cjo_url_friendly_string($article->getName()).'.'.$CJO['ARTICLE_ID'].'.'.cjoProp::getClang().'.html';
 
         $select = new cjoSelect();
         $select->setMultiple(false);
@@ -225,7 +225,7 @@ class cjoChannelList {
         
         $select->addOption('[translate: filter_alles]','0:'.$start_link);
         $select->addOption('','');
-        $select->addSqlOptions("SELECT name, CONCAT(id,':',symbol,'.".$CJO['ARTICLE_ID'].".".$CJO['CUR_CLANG'].".html') AS value FROM ".TBL_CHANNELPACKAGES." 
+        $select->addSqlOptions("SELECT name, CONCAT(id,':',symbol,'.".$CJO['ARTICLE_ID'].".".cjoProp::getClang().".html') AS value FROM ".TBL_CHANNELPACKAGES." 
         						WHERE symbol 
         						NOT LIKE 'highlights'
         						AND symbol NOT LIKE '%videothek' 
@@ -302,7 +302,7 @@ class cjoChannelList {
     private static function getChannelListItemStyle(&$item, $type='sprite_small') {
         global $CJO;
         
-        $file = $CJO['MEDIAFOLDER'].'/'.$CJO['ADDON']['settings'][self::$mypage][$item['type'].'_'.$type];
+        $file = $CJO['MEDIAFOLDER'].'/'.$CJO['ADDON']['settings'][self::$addon][$item['type'].'_'.$type];
         if (!file_exists($file)) return false;
         list($width, $height, $type, $attr) = getimagesize($file);
         
@@ -420,7 +420,7 @@ class cjoChannelList {
     	$content = $params['subject'];
     	$replace = array();
 
-    	if (!$CJO['CONTEJO'] && strpos($content,'VF_CHANNELLIST[]') !== false) {
+    	if (!cjoProp::isBackend() && strpos($content,'VF_CHANNELLIST[]') !== false) {
     		$replace['VF_CHANNELLIST[]'] = self::getChannelList();
     		$replace['VF_CHANNEL_LOGO[]'] =  !self::$current['is_package'] ? self::getChannelLogo() : self::getPackageLogo();
     		$replace['VF_CHANNEL_PACKAGE[]'] = self::getChannelPackageLogo();

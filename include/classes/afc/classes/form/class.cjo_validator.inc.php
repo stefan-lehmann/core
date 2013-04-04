@@ -117,7 +117,7 @@ class cjoValidator extends Smarty {
      */
     public function _get_plugin_filepath($type, $name) {
         $_params = array ('type' => $type, 'name' => $name);
-        require_once (SMARTY_CORE_DIR.'core.assemble_plugin_filepath.php');
+        require_once SMARTY_CORE_DIR.'core.assemble_plugin_filepath.php';
         return smarty_core_assemble_plugin_filepath($_params, $this);
     }
 
@@ -144,6 +144,6 @@ class cjoValidator extends Smarty {
      * @param integer $error_type
      */
     public function trigger_error($error_msg, $error_type = E_USER_WARNING) {
-        trigger_error("Smarty error: $error_msg", $error_type);
+        throw new cjoException("Smarty error: $error_msg", $error_type);
     }
 }

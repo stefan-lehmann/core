@@ -29,7 +29,7 @@ class cjoEventImportExport {
     
         global $CJO, $I18N_16, $CJO_USER, $clang;
     
-        $mypage = 'event_calendar';
+        $addon = 'event_calendar';
     
         $message_temp = array();
         $statistic = 0;
@@ -49,7 +49,7 @@ class cjoEventImportExport {
                
         // leere Datei
         if (!is_array($csv_data[0])){
-            cjoMessage::addError($I18N_16->msg('err_empty_csv_document'));
+            cjoMessage::addError(cjoAddon::translate(16,'err_empty_csv_document'));
             return false;
         }
         else {
@@ -63,7 +63,7 @@ class cjoEventImportExport {
 
         // Falsches Trennzeichen
         if (!preg_match('/'.$divider.'(?=([^"]*"[^"]*")*(?![^"]*"))/', $csv_file)){
-            cjoMessage::addError($I18N_16->msg('err_wrong_delimiter'));
+            cjoMessage::addError(cjoAddon::translate(16,'err_wrong_delimiter'));
             return false;
         }
     
@@ -130,7 +130,7 @@ class cjoEventImportExport {
                             
                     case 'attribute':
     
-                        switch($CJO['ADDON']['settings'][$mypage]['attribute_typ'.$i]) {
+                        switch($CJO['ADDON']['settings'][$addon]['attribute_typ'.$i]) {
     
                             case 'datepicker': $insert->setValue($col.$i, strtotime($val));
     
@@ -151,7 +151,7 @@ class cjoEventImportExport {
                 }
             }
     
-            $insert->addGlobalCreateFields($CJO['USER']->getValue("name").' (Import)');
+            $insert->addGlobalCreateFields(cjoProp::getUser()->getValue("name").' (Import)');
             $insert->addGlobalUpdateFields($CJO_USER->getValue("name").' (Import)');
             if ($insert->Insert()){
                 $statistic++;
@@ -162,10 +162,10 @@ class cjoEventImportExport {
     
         }
         if ($statistic > 0) {
-            cjoMessage::addSuccess($I18N_16->msg("msg_import_done", $statistic, ($total-$statistic)));
+            cjoMessage::addSuccess(cjoAddon::translate(16,"msg_import_done", $statistic, ($total-$statistic)));
         }
         else {
-            cjoMessage::addError($I18N_16->msg("msg_import_failed"));
+            cjoMessage::addError(cjoAddon::translate(16,"msg_import_failed"));
         }
     }
 
@@ -173,7 +173,7 @@ class cjoEventImportExport {
     
         global $CJO, $I18N_16, $I18N, $clang;
     
-        $mypage = 'event_calendar';
+        $addon = 'event_calendar';
     
         $sql = new cjoSql();
         $qry = "SELECT * FROM ".TBL_16_EVENTS." WHERE clang='".$clang."' ORDER BY start_date";
@@ -197,16 +197,16 @@ class cjoEventImportExport {
                 $i = $i[0];
     
                 if ($key == 'attribute'.$i &&
-                    empty($CJO['ADDON']['settings'][$mypage]['attribute_typ'.$i])) {
+                    empty($CJO['ADDON']['settings'][$addon]['attribute_typ'.$i])) {
                         unset($line[$key]);
                 }
                 elseif (strpos($key, '_date') !== false ||
                         strpos($key, 'online_') !== false ||
                        ($key == 'attribute'.$i &&
-                        strpos($CJO['ADDON']['settings'][$mypage]['attribute_typ'.$i], 'date') !== false)) {
+                        strpos($CJO['ADDON']['settings'][$addon]['attribute_typ'.$i], 'date') !== false)) {
     
                     $line[$key] = (!empty($val))
-                                ? strftime ($CJO['ADDON']['settings'][$mypage]['date_input_format'], $val)
+                                ? strftime ($CJO['ADDON']['settings'][$addon]['date_input_format'], $val)
                                 : '';
                 }
                 else {
@@ -223,7 +223,7 @@ class cjoEventImportExport {
         ob_end_clean();
         $date_string = date("Y").'-'.date("m").'-'.date("d");
         $filename = "events_".$date_string."___".$CJO['CLANG'][$clang].".csv";
-        header("Content-type: plain/text; charset=".$I18N->msg("htmlcharset"));
+        header("Content-type: plain/text; charset=".cjoI18N::translate("htmlcharset"));
         header("Content-Disposition: attachment; filename=$filename");
         echo $output;
         exit;

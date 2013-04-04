@@ -1,0 +1,30 @@
+
+extend_meta = Extend Meta
+
+##./core/addons/extend_meta/pages/index.inc.php 
+label_settings = Einstellungen
+
+##./core/addons/extend_meta/pages/settings.inc.php 
+title_edit_settings = Meta-Felder konfigurieren
+label_compare_value = Validatorwert
+label_field = Typ
+label_field_must_not_be_empty = Inhalt erzwingen (Meta-Feld darf nicht leer sein)
+label_form_headline = {0}
+label_prior = Reihenfolge
+label_form_headline_new = Neues Meta-Feld 
+label_helptext = Hilfetext
+label_label = Label
+label_message = Fehlermeldung 
+label_name = Name
+label_remove_field = Feld entfernen
+label_validator = Validator
+note_compare_value = Vergleichende Validatoren benötigen zusätzliche Angaben. So müssen sie beispielsweise bei einem RegEx-Validator hier die RegExpression eingeben.  
+note_field = Der Hilfetext ermöglicht es, den Redakteuren zustzliche Informationen zu dem jeweiligen Meta-Feld geben zu können.
+note_validator = Mit Hilfe des Validators können Sie die Eingabemöglichkeiten für das Meta-Feld einschränken. 
+note_options = Für jeden Wert eine neue Zeile verwenden.
+note_prio = Zum Ändern der Reihenfolge den Zahlenwert anpassen.
+
+err_empty_field = Wählen Sie einen Typ für das Meta-Feld.
+err_empty_label = Geben Sie eine Bezeichnung (Label) für das Meta-Feld an.
+err_empty_name = Geben Sie einen Namen für das Meta-Feld an.
+err_name_not_unique = Die Namen der Meta-Felder müssen eindeutig sein. Bitte überprüfen Sie die Angaben. 

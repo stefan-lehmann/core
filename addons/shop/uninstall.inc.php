@@ -23,8 +23,8 @@
  * @filesource
  */
 
-$mypage = 'shop';
+$addon = 'shop';
 
-$install = new cjoInstall($mypage);
+$install = new cjoInstall($addon);
 $install->uninstallResource();
-if (!cjoMessage::hasErrors()) $CJO['ADDON']['install'][$mypage] = 0;
+if (!cjoMessage::hasErrors()) cjoAddon::setProperty('install', false, $addon);

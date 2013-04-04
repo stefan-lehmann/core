@@ -50,14 +50,15 @@ class cjoFieldController extends cjoFieldContainer {
      */
     public function cjoFieldController($tablename, $where_params) {
         
-        cjo_valid_type($tablename, 'string', __FILE__, __LINE__);
+        cjoProp::isValidType($tablename, 'string', __FILE__, __LINE__);
   
         $this->tablename = $tablename;
         $this->setWhere($where_params);
 
-        $this->mode    = null;
-        $this->dataset = null;
-        $this->errors  = null;
+        $this->mode         = null;
+        $this->prev_dataset = null;
+        $this->dataset      = null;
+        $this->errors       = null;
 
         // Parentkonstruktor aufrufen
         $this->cjoFieldContainer();
@@ -65,7 +66,7 @@ class cjoFieldController extends cjoFieldContainer {
 
     public function setWhere($where_params) {
         
-        cjo_valid_type($where_params, 'array', __FILE__, __LINE__);
+        cjoProp::isValidType($where_params, 'array', __FILE__, __LINE__);
 
         $this->where_params = $where_params;
     }
@@ -83,6 +84,7 @@ class cjoFieldController extends cjoFieldContainer {
     }
 
     public function _getMode() {
+        
         if ($this->getTableName() == '') {
             $this->dataset = $_POST;
             return $this->mode;  
@@ -111,7 +113,7 @@ class cjoFieldController extends cjoFieldContainer {
                     $this->dataset = $this->_transformDataSet($result[0]);
                     break;
                 default :
-                    cjoForm :: triggerError('Given WHERE-parameters affect more than one row!');
+                    throw new cjoException('Given WHERE-parameters affect more than one row!');
                     return;
             }
 
@@ -124,7 +126,7 @@ class cjoFieldController extends cjoFieldContainer {
             // Der Datensatz wird in _getMode() bestimmt
             $this->_getMode();
         }
-        return cjoExtension::registerExtensionPoint('CJO_FORM_' . strtoupper($this->cjoform->getName()) . '_GET_DATA_SET', array('subject' => $this->dataset));
+        return $this->dataset;
     }
 
     public function _transformDataSet($results) {
@@ -210,102 +212,108 @@ class cjoFieldController extends cjoFieldContainer {
 
     public function save() {
 
-        global $CJO;
-
-        if ($this->getTableName() == '') {
-            $mode = $this->_getMode();
-            return false;
-        }
-              
-        $mode = $this->_getMode();
         $preocessed = 0;
-        $array_values = array();
-        
-        $form = & $this->getForm();
-        $sql = & $form->sql;  
-        $sql->setTable($this->getTableName());   
+        $posted = array();
+ 
         // Set values
         $fields = & $this->getFields();
-        $table_fields = cjoSql::getFieldNames($this->getTableName());
 
         if ($this->numFields() == 0) return false;
 
         for ($i = 0; $i < $this->numFields(); $i++) {
-
-            if ($sql->hasSetValue($fields[$i]->getName())  ||
-                $fields[$i]->getName() == '' ||
-                $fields[$i]->activateSave != true) { continue; }
-
-            $field_value = $fields[$i]->getInsertValue();
-
-            if ($field_value == 'setNewId') {
-                $sql->setNewId($fields[$i]->getName());
-                $preocessed++;
-                continue;
-            }
-
-            // NULL Werte nicht speichern
-            if ($field_value === null)  continue;
-
+            
+            if ($fields[$i]->getName() == '' ||
+                $fields[$i]->activateSave != true ||
+                $fields[$i]->getInsertValue() === null ||
+                isset($posted[$fields[$i]->getName()]))  continue;            
+            
             if (strpos($fields[$i]->getName(), '[') !== false) {
-                $keys = array();
+                $key = array();
                 $n = $fields[$i]->getName();
 
                 $key[1] = substr($n, 0, strpos($n, '['));
                 $key[2] = substr($n, strpos($n, '['));
                 $key[2] = stripslashes(str_replace('"', "'", $key[2]));
+                $key[2] = stripslashes(str_replace("[", "['", $key[2]));
+                $key[2] = stripslashes(str_replace("]", "']", $key[2]));
 
-                if ($key[1] != '' || $key[2] != '') continue;
+                if ($key[1] == '' || $key[2] == '') continue;
 
-                $call = "$"."array_values['".$key[1]."']".$key[2]." = $"."_POST['".$key[1]."']".$key[2].";";
-
-                eval($call); continue;
+                $call = "$"."posted['".$key[1]."']".$key[2]." = $"."_POST['".$key[1]."']".$key[2].";";
+                eval($call);
             }
-
-            $sql->setValue($fields[$i]->getName(), $field_value);
-            $preocessed++;
-        }
-
-        if (!empty($array_values)) {
-            foreach($array_values as $key => $values) {
-                $sql->setValue($key, serialize($values));
-                $preocessed++;
+            else {
+                $posted[$fields[$i]->getName()] = $fields[$i]->getInsertValue();
             }
-        }
-
-        if ($preocessed == 0) return false;
+        }    
+        if (count($posted) == 0) return false;
         
-        switch ($mode) {
-            case CONTROLLER_INSERT_MODE :
-                if (in_array('createdate', $table_fields) &&
-                    in_array('createuser', $table_fields)) {
-                    $sql->addGlobalCreateFields();
+        
+        if ($this->type == 'sql') {
+                    
+            $form = & $this->getForm();
+            $sql = & $form->sql;  
+            $sql->setTable($this->getTableName());  
+            $table_fields = cjoSql::getFieldNames($this->getTableName());
+            
+            foreach($posted as $key=>$value) {
+            
+                if ($sql->hasSetValue($key) ||
+                    !in_array($key, $table_fields)) continue;
+                
+                if ($value == 'setNewId') {
+                    $sql->setNewId($key);
+                    continue;
                 }
-                $sql->Insert();
-                $form->last_insert_id = $sql->getLastId();
-                break;
-
-            case CONTROLLER_UPDATE_MODE :
-                if (in_array('updatedate', $table_fields) &&
-                    in_array('updateuser', $table_fields)) {
-                    $sql->addGlobalUpdateFields();
+                if (is_array($value)) {
+                    $sql->setValue($key, cjo_json_encode_utf8($value));
                 }
-
-                $sql->setWhere($this->getWhere()); 
-                $sql->setLimit(1); 
-                $sql->Update();
-                break;
-
-            default :
-                cjoForm :: triggerError('Unexpected value "' . $mode . '" for $mode !');
-                return;
+                else {
+                    $sql->setValue($key, $value);
+                }
+            }
+            
+            switch ($this->_getMode()) {
+                case CONTROLLER_INSERT_MODE :
+                    if (in_array('createdate', $table_fields) &&
+                        in_array('createuser', $table_fields)) {
+                        $sql->addGlobalCreateFields();
+                    }
+                    $sql->Insert();
+                    $form->last_insert_id = $sql->getLastId();
+                    break;
+    
+                case CONTROLLER_UPDATE_MODE :
+                    if (in_array('updatedate', $table_fields) &&
+                        in_array('updateuser', $table_fields)) {
+                        $sql->addGlobalUpdateFields();
+                    }
+    
+                    $sql->setWhere($this->getWhere()); 
+                    $sql->setLimit(1); 
+                    $sql->Update();
+                    break;
+    
+                default :
+                    throw new cjoException('Unexpected value "' . $mode . '" for $mode !');
+                    return;
+            }
+            
+            unset($this->dataset);
+            unset($this->mode);
+            $this->_getDataSet(); // Dataset neu laden
+    
+            return $sql->getError();
+        } 
+        elseif($this->type == 'array') {
+            $this->dataset = $posted;
         }
+        elseif(cjoAddon::isActivated($this->type)) {
 
-        unset($this->dataset);
-        unset($this->mode);
-        $this->_getDataSet(); // Dataset neu laden
-
-        return $sql->getError();
+            $data = array_merge(cjoAddon::getProperty('settings', $this->type), $posted);
+            cjoAddon::setProperty('settings', $data, $this->type);
+            return !cjoAddon::saveParameterFile($this->type, $data, cjoPath::addonAssets($this->type,$this->file));
+        }
     }
 
     public function toString() {

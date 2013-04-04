@@ -43,7 +43,7 @@ $qry = "SELECT *, ".
        "   ".TBL_28_ARCHIVE_ARTICLES.".clang=pa.clang ".
        "WHERE ".TBL_28_ARCHIVE_ARTICLES.".clang='".$CJO['CLANG']."'";
 
-$list = new cjolist($qry, TBL_28_ARCHIVE_ARTICLES.'.id', 'desc', 'updatedate', 50);
+$list = new cjoList($qry, TBL_28_ARCHIVE_ARTICLES.'.id', 'desc', 'updatedate', 50);
 $list->setName('ARCHIVE_ARTICLE_LIST');
 $list->setAttributes('id="archive_article_list"');
 
@@ -52,55 +52,55 @@ $cols['checkbox']->setHeadAttributes('class="icon"');
 $cols['checkbox']->setBodyAttributes('class="icon"');
 $cols['checkbox']->delOption(OPT_ALL);
 
-$cols['article_id'] = new resultColumn('article_id', $I18N_28->msg('label_article_id'));
+$cols['article_id'] = new resultColumn('article_id', cjoAddon::translate(28,'label_article_id'));
 $cols['article_id']->setHeadAttributes('class="icon"');
 $cols['article_id']->setBodyAttributes('class="icon"');
 
-$cols['name'] = new resultColumn('name', $I18N_28->msg('label_name'), 'truncate',array( 'length' => 140, 'etc' => '...', 'break_words' => true));
+$cols['name'] = new resultColumn('name', cjoAddon::translate(28,'label_name'), 'truncate',array( 'length' => 140, 'etc' => '...', 'break_words' => true));
 $cols['name']->setBodyAttributes('width="250" style="font-weight:bold;font-size:120%"');
 
-$cols['template'] = new resultColumn('template', $I18N_28->msg('label_template'), 'truncate',array( 'length' => 140, 'etc' => '...', 'break_words' => false));
+$cols['template'] = new resultColumn('template', cjoAddon::translate(28,'label_template'), 'truncate',array( 'length' => 140, 'etc' => '...', 'break_words' => false));
 
-$cols['path'] = new resultColumn('pa.path', $I18N_28->msg('label_path'),'call_user_func', array('cjoArchive::formatPath',array('%s','pa.path'))); //'preg_replace', array( '/\|/',' <br/>|&nbsp;&nbsp;&nbsp;&nbsp;&rarr;'));
+$cols['path'] = new resultColumn('pa.path', cjoAddon::translate(28,'label_path'),'call_user_func', array('cjoArchive::formatPath',array('%s','pa.path'))); //'preg_replace', array( '/\|/',' <br/>|&nbsp;&nbsp;&nbsp;&nbsp;&rarr;'));
 //$cols['path']->delOption(OPT_SEARCH);
 
-$cols['slice_count'] = new resultColumn('slice_count', $I18N_28->msg('label_slice_count'));
+$cols['slice_count'] = new resultColumn('slice_count', cjoAddon::translate(28,'label_slice_count'));
 $cols['slice_count']->setHeadAttributes('class="icon"');
 $cols['slice_count']->setBodyAttributes('class="icon"');
 $cols['slice_count']->delOption(OPT_SEARCH);
 
-$cols['createdate'] = new resultColumn('pa.createdate', $I18N_28->msg('label_createdate'), 'strftime', $I18N->msg('datetimeformat'));
+$cols['createdate'] = new resultColumn('pa.createdate', cjoAddon::translate(28,'label_createdate'), 'strftime', cjoI18N::translate('datetimeformat'));
 $cols['createdate']->setBodyAttributes('style="white-space:nowrap;"');
 $cols['createdate']->delOption(OPT_SEARCH);
 
-$img = '<img src="img/silk_icons/bin.png" alt="'.$I18N->msg("button_delete").'" title="'.$I18N->msg("button_delete").'" />';
-$cols['delete'] = new staticColumn($img, $I18N->msg("label_functions"));
+$img = '<img src="img/silk_icons/bin.png" alt="'.cjoI18N::translate("button_delete").'" title="'.cjoI18N::translate("button_delete").'" />';
+$cols['delete'] = new staticColumn($img, cjoI18N::translate("label_functions"));
 $cols['delete']->setBodyAttributes('width="60"');
 $cols['delete']->setBodyAttributes('class="cjo_delete"');
 $cols['delete']->delOption(OPT_SORT);
 
 $list->addColumns($cols);
 
-if ($list->hasRows()) {
+if ($list->numRows() != 0) {
 
     $CJO['SEL_ARTICLE']->setName("target_location");
 	$CJO['SEL_ARTICLE']->setStyle("width:250px;clear:none;");
     
 	$buttons = new popupButtonField('', '', '', '');
-	$buttons->addButton($I18N_28->msg('label_restore_articles'), false, 'img/silk_icons/tick.png', 'id="ajax_update_button"');
+	$buttons->addButton(cjoAddon::translate(28,'label_restore_articles'), false, 'img/silk_icons/tick.png', 'id="ajax_update_button"');
 
     $update_sel = new cjoSelect();
     $update_sel->setName('update_selection');
     $update_sel->setSize(1);
     $update_sel->setStyle('class="cjo_float_l" disabled="disabled"');
-    $update_sel->addOption($I18N->msg('label_update_selection'), 0);
+    $update_sel->addOption(cjoI18N::translate('label_update_selection'), 0);
     $update_sel->setSelected(0);
-    $update_sel->addOption($I18N_28->msg('label_restore_articles'), 1);
-    $update_sel->addOption($I18N_28->msg('label_delete_articles'), 2);
+    $update_sel->addOption(cjoAddon::translate(28,'label_restore_articles'), 1);
+    $update_sel->addOption(cjoAddon::translate(28,'label_delete_articles'), 2);
 	
 	$toolbar_ext = '<tr class="toolbar_ext">'."\r\n".
 				   '	<td class="icon">'.
-				   '    	<input type="checkbox" class="hidden_container check_all" title="'.$I18N->msg('label_select_deselect_all').'" />'.
+				   '    	<input type="checkbox" class="hidden_container check_all" title="'.cjoI18N::translate('label_select_deselect_all').'" />'.
 				   '	</td>'.
 				   '	<td colspan="'.(count($cols)-1).'">'.
 				   '		<div class="hidden_container">'.$update_sel->get().
@@ -191,8 +191,8 @@ $list->show();
 			var target = $('input[name="target_location"]').val() *1;
 
 			var messages 	= [];
-			 	messages[1] = '<?php echo $I18N_28->msg('msg_confirm_restore') ?>';
-			 	messages[2] = '<?php echo $I18N_28->msg('msg_confirm_rdelete') ?>';			 	
+			 	messages[1] = '<?php echo cjoAddon::translate(28,'msg_confirm_restore') ?>';
+			 	messages[2] = '<?php echo cjoAddon::translate(28,'msg_confirm_rdelete') ?>';			 	
 
 			if (cb.length < 1) return false;
 
@@ -248,11 +248,11 @@ $list->show();
 
 			$(jdialog).dialog({
     			buttons: {
-    				'<?php echo $I18N->msg('label_ok'); ?>': function() {
+    				'<?php echo cjoI18N::translate('label_ok'); ?>': function() {
     					$(this).dialog('close');
     					confirm_action();
     				},
-    				'<?php echo $I18N->msg('label_cancel'); ?>': function() {
+    				'<?php echo cjoI18N::translate('label_cancel'); ?>': function() {
     					$(this).dialog('close');
     				}
     			}
@@ -291,15 +291,15 @@ $list->show();
 			};
 
 
-			var jdialog = cjo.appendJDialog('<?php echo $I18N_28->msg('msg_confirm_delete_article'); ?>');
+			var jdialog = cjo.appendJDialog('<?php echo cjoAddon::translate(28,'msg_confirm_delete_article'); ?>');
 
 			$(jdialog).dialog({
     			buttons: {
-    				'<?php echo $I18N->msg('label_ok'); ?>': function() {
+    				'<?php echo cjoI18N::translate('label_ok'); ?>': function() {
     					$(this).dialog('close');
     					confirm_action();
     				},
-    				'<?php echo $I18N->msg('label_cancel'); ?>': function() {
+    				'<?php echo cjoI18N::translate('label_cancel'); ?>': function() {
     					$(this).dialog('close');
     				}
     			}

@@ -43,21 +43,19 @@ class browseBar extends cjoListToolbar {
 
 	public function show() {
 
-		global $I18N;
-
 		$steps = $this->cjolist->getSteps();
 		$found = $this->cjolist->num_rows;
 		$stepping = $this->cjolist->getStepping();	
         
-        $this->cjolist->addGlobalParams(cjo_a22_getDefaultGlobalParams());
+        $this->cjolist->addGlobalParams(cjoUrl::getDefaultGlobalParams());
 
 		$last = floor($found/$stepping)*$stepping;
 		
 	    if ($steps['curr'] != $steps['prev']) {
-			$first = $this->link('<img src="img/silk_icons/control_rewind.png" title="'.$I18N->msg('label_first_page').'" alt="'.$I18N->msg('label_first_page').'" />',
+			$first = $this->link('<img src="img/silk_icons/control_rewind.png" title="'.cjoI18N::translate('label_first_page').'" alt="'.cjoI18N::translate('label_first_page').'" />',
 			         array ('next' => 0, 'function' => ''));
 
-			$prev = $this->link('<img src="img/silk_icons/control_play_backwards.png" title="'.$I18N->msg('label_prev_page').'" alt="'.$I18N->msg('label_prev_page').'" />',
+			$prev = $this->link('<img src="img/silk_icons/control_play_backwards.png" title="'.cjoI18N::translate('label_prev_page').'" alt="'.cjoI18N::translate('label_prev_page').'" />',
 			        array ('next' => $steps['prev'], 'function' => ''));
 	    }
 	    else {
@@ -66,10 +64,10 @@ class browseBar extends cjoListToolbar {
 	    }
 
 	    if ($steps['curr'] <  $last) {
-			$next = $this->link('<img src="img/silk_icons/control_play.png" title="'.$I18N->msg('label_next_page').'" alt="'.$I18N->msg('label_next_page').'" />',
+			$next = $this->link('<img src="img/silk_icons/control_play.png" title="'.cjoI18N::translate('label_next_page').'" alt="'.cjoI18N::translate('label_next_page').'" />',
 			        array ('next' => $steps['next'], 'function' => ''));
 
-			$last = $this->link('<img src="img/silk_icons/control_fastforward.png" title="'.$I18N->msg('label_last_page').'" alt="'.$I18N->msg('label_last_page').'" />',
+			$last = $this->link('<img src="img/silk_icons/control_fastforward.png" title="'.cjoI18N::translate('label_last_page').'" alt="'.cjoI18N::translate('label_last_page').'" />',
 			        array ('next' => $last, 'function' => ''));
 	    }
 		else {
@@ -78,7 +76,7 @@ class browseBar extends cjoListToolbar {
 	    }
 	    
 		$add = $this->getAddButtonStatus()
-		     ? $this->link('<img src="img/silk_icons/add.png" title="'.$I18N->msg('label_add_entry').'" alt="'.$I18N->msg('label_add_entry').'" />',
+		     ? $this->link('<img src="img/silk_icons/add.png" title="'.cjoI18N::translate('label_add_entry').'" alt="'.cjoI18N::translate('label_add_entry').'" />',
 		                   $this->add_params)
 		     : '';
 

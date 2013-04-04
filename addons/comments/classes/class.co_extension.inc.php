@@ -25,7 +25,7 @@
 
 class cjoCommentsExtension {
 
-    public static $mypage = 'comments';
+    public static $addon = 'comments';
     
     public static function replaceVars($params) {
         
@@ -39,8 +39,8 @@ class cjoCommentsExtension {
         
         $content = str_replace('CM_COMMENTS[]', '', $content);
 
-        require_once $CJO['INCLUDE_PATH']."/classes/afc/functions/function_cjo_common.inc.php";
-        $content = cjo_insertJS($content, $CJO['ADDON']['settings'][self::$mypage]['comments_js']);
+        require_once cjoPath::inc('classes/afc/functions/function_cjo_common.inc.php');
+        $content = cjo_insertJS($content, $CJO['ADDON']['settings'][self::$addon]['comments_js']);
         
         return $content;
     }

@@ -23,9 +23,9 @@
  * @filesource
  */
 
-if ($CJO['CONTEJO']) return false;
+if (cjoProp::isBackend()) return false;
 
-if (OOAddon::isAvailable('community')) {
+if (cjoAddon::isAvailable('community')) {
 
     cjoCommunityTemplate::signInNewsletterDefaults();
     
@@ -35,5 +35,5 @@ if (OOAddon::isAvailable('community')) {
         }
     } 
 } else {
-    $this->addError($I18N_10->msg('msg_err_configure_settings', $CJO['BACKEND_PATH']));
+    $this->addError(cjoAddon::translate(10,'msg_err_configure_settings', $CJO['BACKEND_PATH']));
 }

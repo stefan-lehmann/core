@@ -23,15 +23,11 @@
  * @filesource
  */
 
-$mypage        = $cur_page['page'];
-$function      = cjo_request('function', 'string');
+cjoSubPages::addPage( array('settings', 'title'=> cjoI18N::translate('title_specials')));
 
-$subpages = new cjoSubPages($subpage, $mypage);
-$subpages->addPage( array('settings', 'title'=> $I18N->msg('title_specials')));
-
-require_once $subpages->getPage();
+require_once cjoSubPages::getPagePath();
 
 /**
- * Do not delete translate values for i18n collection!
+ * Do not delete translate values for cjoI18N collection!
  * [translate: title_settings]
  */

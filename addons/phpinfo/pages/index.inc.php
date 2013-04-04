@@ -23,13 +23,7 @@
  * @filesource
  */
 
-$mypage = "phpinfo";
+$addon = "phpinfo";
 
-cjoAssistance::resetAfcVars();
-
-$subpages = new cjoSubPages($subpage, $mypage);
-$subpages->addPage( array('phpinfo', 'title' => $I18N_18->msg($mypage)));
-
-require_once $CJO['INCLUDE_PATH'].'/layout/top.php';
-require_once $subpages->getPage();
-require_once $CJO['INCLUDE_PATH'].'/layout/bottom.php';
+cjoSubPages::addPage( array('phpinfo', 'title' => cjoAddon::translate(18,$addon)));
+require_once cjoSubPages::getPagePath();

@@ -33,50 +33,50 @@ $form->debug = false;
 
 //edit message displayed when product added to basket
 $fields['product_added_message'] = new cjoWYMeditorField('PRODUCT_ADDED_MESSAGE',
-														 $I18N_21->msg('label_product_added_message'));
+														 cjoAddon::translate(21,'label_product_added_message'));
 
 
 
 $fields['order_confirm_subject'] = new textField('ORDER_CONFIRM_SUBJECT',
-												 $I18N_21->msg('order_confirmation_subject'));
+												 cjoAddon::translate(21,'order_confirmation_subject'));
 $fields['order_confirm_subject']->addValidator('notEmpty',
-    										   $I18N->msg("msg_order_confirmation_subject"),
+    										   cjoI18N::translate("msg_order_confirmation_subject"),
 													false, false);
-$fields['order_confirm_subject']->setNote($I18N_21->msg('note_mail_subject'));
+$fields['order_confirm_subject']->setNote(cjoAddon::translate(21,'note_mail_subject'));
 
 // edit text of the order confirmation mail
 $fields['order_confirm_mail'] = new textAreaField('ORDER_CONFIRM_MAIL',
-												  $I18N_21->msg('label_order_confirm_mail'),
+												  cjoAddon::translate(21,'label_order_confirm_mail'),
 											   	  array('rows' => '10'));
-$fields['order_confirm_mail']->setHelp($I18N_21->msg('shop_mail_wildcards'));
+$fields['order_confirm_mail']->setHelp(cjoAddon::translate(21,'shop_mail_wildcards'));
 
 
 
 $fields['order_send_subject'] = new textField('ORDER_SEND_SUBJECT',
-											  $I18N_21->msg('products_send_subject'));
+											  cjoAddon::translate(21,'products_send_subject'));
 $fields['order_send_subject']->addValidator('notEmpty',
-    										$I18N->msg("msg_products_send_subject"),
+    										cjoI18N::translate("msg_products_send_subject"),
 											false, false);
-$fields['order_send_subject']->setNote($I18N_21->msg('note_mail_subject'));
+$fields['order_send_subject']->setNote(cjoAddon::translate(21,'note_mail_subject'));
 
 // edit text of the products delivered mail
 $fields['order_send_mail'] = new textAreaField('ORDER_SEND_MAIL',
-											   $I18N_21->msg('label_order_send_mail'),
+											   cjoAddon::translate(21,'label_order_send_mail'),
 											   array('rows' => '10'));
-$fields['order_send_mail']->setHelp($I18N_21->msg('shop_mail_wildcards'));
+$fields['order_send_mail']->setHelp(cjoAddon::translate(21,'shop_mail_wildcards'));
 
 // edit text of the products delivered mail
 $fields['order_send_mail'] = new textAreaField('ORDER_SEND_MAIL',
-                                               $I18N_21->msg('label_order_send_mail'),
+                                               cjoAddon::translate(21,'label_order_send_mail'),
                                                array('rows' => '10'));
-$fields['order_send_mail']->setHelp($I18N_21->msg('shop_mail_wildcards'));
+$fields['order_send_mail']->setHelp(cjoAddon::translate(21,'shop_mail_wildcards'));
 
 $fields['update_button'] = new buttonField();
-$fields['update_button']->addButton('cjoform_update_button',$I18N->msg("button_update"), true, 'img/silk_icons/tick.png');
+$fields['update_button']->addButton('cjoform_update_button',cjoI18N::translate("button_update"), true, 'img/silk_icons/tick.png');
 $fields['update_button']->setButtonAttributes('cjoform_update_button', 'id="cjoform_update_button1"');
 
 //Add Fields
-$section = new cjoFormSection($dataset, $I18N_21->msg('label_lang_setup'), array ());
+$section = new cjoFormSection($dataset, cjoAddon::translate(21,'label_lang_setup'), array ());
 
 $section->addFields($fields);
 $form->addSection($section);
@@ -86,8 +86,8 @@ if ($form->validate()) {
     
 	$config_file = $CJO['ADDON']['settings'][$mypage]['CLANG_CONF'];
 
-	if (!cjoAssistance::isWritable($config_file)){
-		cjoMessage::addError($I18N->msg("msg_data_not_saved"));
+	if (!cjoFile::isWritable($config_file)){
+		cjoMessage::addError(cjoI18N::translate("msg_data_not_saved"));
 		$form->valid_master = false;
 	}
 	else {
@@ -100,13 +100,13 @@ if ($form->validate()) {
 		}
 
 		if (cjoGenerate::replaceFileContents($config_file, $config_data)){
-			cjoAssistance::redirectBE(array('msg'=>'msg_data_saved'));
+			cjoUrl::redirectBE(array('msg'=>'msg_data_saved'));
 			exit;
 		}
 		else{
-			cjoMessage::addError($I18N->msg("msg_data_not_saved"));
-			cjoMessage::addError($I18N->msg("msg_file_no_chmod",
-			                     cjoAssistance::absPath($config_file)));
+			cjoMessage::addError(cjoI18N::translate("msg_data_not_saved"));
+			cjoMessage::addError(cjoI18N::translate("msg_file_no_chmod",
+			                     cjoFile::absPath($config_file)));
 		}
 	}
 }

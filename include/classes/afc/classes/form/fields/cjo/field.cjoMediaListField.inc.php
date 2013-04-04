@@ -39,7 +39,7 @@ class cjoMediaListField extends popupButtonField {
 		$this->popupButtonField($name, $label, $attributes, $id);
 
 		$this->setConnectAction("cjo.connectMediaList($(this)); return false;");
-		$this->setDisconnectAction('cjo.jconfirm(\''.$I18N->msg('label_remove_media').' ?\', \'cjo.disconnectMediaList\', [$(this)]); return false;');
+		$this->setDisconnectAction('cjo.jconfirm(\''.cjoI18N::translate('label_remove_media').' ?\', \'cjo.disconnectMediaList\', [$(this)]); return false;');
 	}
 
 	public function getInputFields() {
@@ -69,10 +69,10 @@ class cjoMediaListField extends popupButtonField {
 		$s = $list->get()."\r\n".
 			 '<input type="hidden" value="'.$this->getValue().'" name="'.$this->getName().'" />'."\r\n".
 			 '<span class="cjo_medialist_right">'."\r\n".
-			 '	<a href="javascript:cjo.moveMediaListItem(\''.$this->getId().'_sel\',\'top\');" title="'.$I18N->msg('label_move_to_top').'"><img src="img/silk_icons/move_top_green.png" alt="top" /></a>'."\r\n".
-			 '	<a href="javascript:cjo.moveMediaListItem(\''.$this->getId().'_sel\',\'up\');" title="'.$I18N->msg('label_move_up').'"><img src="img/silk_icons/move_up_green.png" alt="up" /></a>'."\r\n".
-			 '	<a href="javascript:cjo.moveMediaListItem(\''.$this->getId().'_sel\',\'down\');" title="'.$I18N->msg('label_move_down').'"><img src="img/silk_icons/move_down_green.png" alt="down" /></a>'."\r\n".
-			 '	<a href="javascript:cjo.moveMediaListItem(\''.$this->getId().'_sel\',\'bottom\');" title="'.$I18N->msg('label_move_to_bottom').'"><img src="img/silk_icons/move_bottom_green.png" alt="bottom" /></a>'."\r\n".
+			 '	<a href="javascript:cjo.moveMediaListItem(\''.$this->getId().'_sel\',\'top\');" title="'.cjoI18N::translate('label_move_to_top').'"><img src="img/silk_icons/move_top_green.png" alt="top" /></a>'."\r\n".
+			 '	<a href="javascript:cjo.moveMediaListItem(\''.$this->getId().'_sel\',\'up\');" title="'.cjoI18N::translate('label_move_up').'"><img src="img/silk_icons/move_up_green.png" alt="up" /></a>'."\r\n".
+			 '	<a href="javascript:cjo.moveMediaListItem(\''.$this->getId().'_sel\',\'down\');" title="'.cjoI18N::translate('label_move_down').'"><img src="img/silk_icons/move_down_green.png" alt="down" /></a>'."\r\n".
+			 '	<a href="javascript:cjo.moveMediaListItem(\''.$this->getId().'_sel\',\'bottom\');" title="'.cjoI18N::translate('label_move_to_bottom').'"><img src="img/silk_icons/move_bottom_green.png" alt="bottom" /></a>'."\r\n".
 			 '</span>'."\r\n";
 		return $s;
 	}
@@ -98,8 +98,8 @@ class cjoMediaListField extends popupButtonField {
 
 		global $I18N;
 
-		$this->addButton($I18N->msg('label_remove_media'), $this->getDisconnectAction(), 'img/silk_icons/cross.png', 'class="small"');
-		$this->addButton($I18N->msg('label_open_media'), $this->getConnectAction(), 'img/silk_icons/add.png', 'class="small"');
+		$this->addButton(cjoI18N::translate('label_remove_media'), $this->getDisconnectAction(), 'img/silk_icons/cross.png', 'class="small"');
+		$this->addButton(cjoI18N::translate('label_open_media'), $this->getConnectAction(), 'img/silk_icons/add.png', 'class="small"');
 		return parent::get();
 	}
 }

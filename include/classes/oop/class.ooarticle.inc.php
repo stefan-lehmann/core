@@ -45,14 +45,13 @@ class OOArticle extends OOContejo {
 
        // $article_id = (int) $article_id;
 
-        if ($clang === false) $clang = $CJO['CUR_CLANG'];
+        if ($clang === false) $clang = cjoProp::get('CUR_CLANG');
         
         if (empty($article_id)) return new OOArticle(OOContejo :: convertGeneratedArray(array(), $clang));
 
-        $article_path = $CJO['FOLDER_GENERATED_ARTICLES']."/".$article_id.".".$clang.".article";
+        $article_path = cjoPath::generated('articles', $article_id.'.'.$clang.'.article');
 
         if (!file_exists($article_path)) {
-            require_once $CJO['INCLUDE_PATH']."/classes/cjo/class.cjo_generate.inc.php";
             cjoGenerate::generateArticle($article_id, false, $clang);
         }
               
@@ -80,7 +79,7 @@ class OOArticle extends OOContejo {
 
         global $CJO;
 
-        if ($clang === false) $clang = $CJO['CUR_CLANG'];
+        if ($clang === false) $clang = cjoProp::getClang();
         $offline = $ignore_offlines ? " AND status = 1 " : "";
         $cats = '';
         if (is_array($categories)) {
@@ -119,7 +118,7 @@ class OOArticle extends OOContejo {
 
         global $CJO;
 
-        if ($clang === false) $clang = $CJO['CUR_CLANG'];
+        if ($clang === false) $clang = cjoProp::getClang();
         $offline = $ignore_offlines ? " AND status = 1 " : "";
         $artlist = array ();
 
@@ -146,8 +145,8 @@ class OOArticle extends OOContejo {
 
         global $CJO;
 
-        if ($clang === false) $clang = $CJO['CUR_CLANG'];
-        return OOArticle :: getArticleById($CJO['START_ARTICLE_ID'], $clang);
+        if ($clang === false) $clang = cjoProp::getClang();
+        return OOArticle :: getArticleById(cjoProp::get('START_ARTICLE_ID'), $clang);
     }
 
     /**
@@ -161,7 +160,7 @@ class OOArticle extends OOContejo {
 
         global $CJO;
 
-        if ($clang === false) $clang = $CJO['CUR_CLANG'];
+        if ($clang === false) $clang = cjoProp::getClang();
         if ($re_id === false) $re_id = $this->getParentId();
         return OOArticle :: getArticleById($re_id, $clang);
     }
@@ -189,15 +188,14 @@ class OOArticle extends OOContejo {
 
         global $CJO;
 
-        if ($clang === false) $clang = $CJO['CUR_CLANG'];
+        if ($clang === false) $clang = cjoProp::getClang();
 
-        $articlelist = $CJO['FOLDER_GENERATED_ARTICLES']."/".$re_id.".".$clang.".alist";
+        $articlelist = cjoPath::generated('articles', $re_id.'.'.$clang.'.alist');
         $artlist = array();
 
         if ($ignore_offlines && $re_id > 0 && !OOArticle::isOnline($re_id)) return $artlist;
         
         if (!file_exists($articlelist)) {
-            require_once $CJO['INCLUDE_PATH']."/classes/cjo/class.cjo_generate.inc.php";
             $re_id = (int) $re_id;
             cjoGenerate::generateArticle($re_id, false, $clang);
         }
@@ -256,7 +254,7 @@ class OOArticle extends OOContejo {
 
         global $CJO;
 
-        if ($clang === false) $clang = $CJO['CUR_CLANG'];
+        if ($clang === false) $clang = cjoProp::getClang();
 
         $article = OOArticle :: getArticleById($id, $clang);
         $re_id = ($is_re_id === false) ? $article->_re_id : $id;
@@ -280,7 +278,7 @@ class OOArticle extends OOContejo {
      */
     public static function getRootArticles($ignore_offlines = false, $clang = false) {
         global $CJO;
-        if ($clang === false) $clang = $CJO['CUR_CLANG'];
+        if ($clang === false) $clang = cjoProp::getClang();
         return OOArticle :: getArticlesOfCategory(0, $ignore_offlines, $clang);
     }
 
@@ -290,7 +288,7 @@ class OOArticle extends OOContejo {
      */
     public function isLocked() {        
         global $CJO;
-        if (!$CJO['CONTEJO'] || !class_exists('cjoLog')) return false;
+        if (!cjoProp::isBackend() || !class_exists('cjoLog')) return false;
         return cjoLog::isArticleLockedByUser($this->getId());
     }
     
@@ -323,8 +321,8 @@ class OOArticle extends OOContejo {
 
         $article = false;
 
-    	if ($article_id == $CJO["NOTFOUND_ARTICLE_ID"] ||
-    		$article_id == $CJO['START_ARTICLE_ID']) {
+    	if ($article_id == cjoProp::get('NOTFOUND_ARTICLE_ID') ||
+    		$article_id == cjoProp::get('START_ARTICLE_ID')) {
     		return true;
     	}
 
@@ -389,7 +387,7 @@ class OOArticle extends OOContejo {
 
         global $CJO;
             
-        if (!$CJO['ONLINE_FROM_TO_ENABLED']) return true;
+        if (!cjoProp::get('ONLINE_FROM_TO_ENABLED')) return true;
             
         if ($this->_online_from < time() && 
             $this->_online_to > time()) return true;
@@ -406,17 +404,15 @@ class OOArticle extends OOContejo {
 
     	global $CJO;
 
-    	if ($CJO['CONTEJO'] || is_object($CJO['USER'])) return true;
+    	if (cjoProp::isBackend() || cjoProp::getUser()) return true;
 
     	if ($type_id === false) $type_id = $this->getTypeId();
 
     	switch($type_id) {
-    		case 1:		return true;
-    		case 'out': return ($CJO['USER']['ID']) ? false : true;
-    		case 'in':  return ($CJO['USER']['ID']) ? true : false;
-    		case 'contejo': 
-    		    $sessiontime = cjo_session('ST', 'string', false, md5($CJO['INSTNAME'])) + $CJO['SESSIONTIME'];
-    		    return (cjo_session('UID', 'bool', false, md5($CJO['INSTNAME'])) && $sessiontime > time()) ? true : false;
+    		case 1:		    return true;
+    		case 'out':     return ($CJO['USER']['ID']) ? false : true;
+    		case 'in':      return ($CJO['USER']['ID']) ? true : false;
+    		case 'contejo': return cjoLogin::isBackendLogin();
     	}
 
     	if (!$CJO['USER']['ID']) return false;
@@ -455,9 +451,9 @@ class OOArticle extends OOContejo {
     	$article = OOArticle::getArticleById($article_id);
     	if (!OOArticle::isValid($article)) return false;
 
-    	if (OOAddon::isAvailable('comments') &&
+    	if (cjoAddon::isAvailable('comments') &&
     	    $article->getComments()) {
-    		$qry = "SELECT count(*) rowCount FROM ".TBL_COMMENTS." WHERE status='1' AND article_id='".$article_id."' AND clang=".$CJO['CUR_CLANG'];
+    		$qry = "SELECT count(*) rowCount FROM ".TBL_COMMENTS." WHERE status='1' AND article_id='".$article_id."' AND clang=".cjoProp::getClang();
     		$sql = new cjoSql();
     		$sql->setQuery($qry);
 
@@ -473,7 +469,7 @@ class OOArticle extends OOContejo {
     			case ''  : $author = '<span class="item first">[translate: label_author] '.trim($article->getValue("createuser")).'</span>'; break;
     			default  : $author = '<span class="item first">[translate: label_author] '.trim($article->getValue("author")).'</span>';
     		}
-    		$update = '<span class="item">[translate: label_article_state] '.strftime($GLOBALS['setlocal']['s_date'], $article->getValue('updatedate')).'</span>';
+    		$update = '<span class="item">[translate: label_article_state] '.strftime(cjoI18N::translate('setlocal_short_date'), $article->getValue('updatedate')).'</span>';
     	}
 
     	$left  = !empty($author) ? $author : '';
@@ -504,8 +500,8 @@ class OOArticle extends OOContejo {
     	$clang = cjo_request('clang', 'cjo-clang-id');
 
     	$article_id     = $article->getId();
-    	$datetimeformat = $I18N->msg('datetimeformat');
-    	$dateformat     = $I18N->msg('dateformat');
+    	$datetimeformat = cjoI18N::translate('datetimeformat');
+    	$dateformat     = cjoI18N::translate('dateformat');
         $local_params   = array('clang' => $clang, 'ctype' => $ctype, 'mode' => 'edit');
         $global_params1 = array('page'=>'edit', 'subpage'=>'content', 'article_id' => $article->getValue("id"));
         $global_params2 = array('page'=>'edit', 'subpage'=>'structure', 'article_id' => $article->getValue("re_id"));
@@ -515,9 +511,9 @@ class OOArticle extends OOContejo {
     	$headline1 = '<img src="./img/silk_icons/'.$icon.'" alt="" /> <b>'.$article->getValue("name").'</b> (ID='.$article->getValue("id").')';
 
     	$edit_button = new buttonField();
-    	$edit_button->addButton('slice_edit_button', $I18N->msg('label_edit_now'), true, 'img/silk_icons/page_white_edit.png');
+    	$edit_button->addButton('slice_edit_button', cjoI18N::translate('label_edit_now'), true, 'img/silk_icons/page_white_edit.png');
     	$edit_button->setButtonAttributes('slice_edit_button',
-    									  'onclick="cjo.openShortPopup(\''.cjoAssistance::createBEUrl($local_params, $global_params1, $ampersand).'\'); return false;"');
+    									  'onclick="cjo.openShortPopup(\''.cjoUrl::createBEUrl($local_params, $global_params1, $ampersand).'\'); return false;"');
 
 
     	$icons 					 = array();
@@ -526,20 +522,20 @@ class OOArticle extends OOContejo {
     	$icons['status'] 		 = ($article->getValue('status') == 1) ? 'eye.png' : 'eye_off.png';
     	$icons['teaser'] 		 = ($article->getValue('teaser') == 1) ? 'star.png' : 'star_off.png';
 
-    	if (!$CJO['ONLINE_FROM_TO_ENABLED']) unset($icons['online_from_to']);
+    	if (!cjoProp::get('ONLINE_FROM_TO_ENABLED')) unset($icons['online_from_to']);
 
         $headline2 = '';
     	foreach ($icons  as $icon) {
     		$headline2 .= ' <img src="img/silk_icons/'.$icon.'" alt="" /> ';
     	}
 
-    	$headline2 = '<a href="'.cjoAssistance::createBEUrl($local_params, $global_params2, $ampersand).'" class="structure_settings">'."\r\n".
+    	$headline2 = '<a href="'.cjoUrl::createBEUrl($local_params, $global_params2, $ampersand).'" class="structure_settings">'."\r\n".
     				 '	'.$headline2."\r\n".
     				 '</a>';
 
     	$info = '<div class="article_info" id="article_info_'.$article_id.'">
     				<p>
-    					<span class="label">'.$I18N->msg('label_from_to').': </span>
+    					<span class="label">'.cjoI18N::translate('label_from_to').': </span>
     					<span class="text">
     						<b>'.strftime($dateformat, $article->getValue("online_from")).'</b>
     						--
@@ -547,32 +543,32 @@ class OOArticle extends OOContejo {
     					</span>
     				</p>
     				 <p>
-    					<span class="label">'.$I18N->msg('label_author').': </span>
+    					<span class="label">'.cjoI18N::translate('label_author').': </span>
     					<span class="text">'.$article->getValue("author").'</span>
     				</p>
     				<p>
-    					<span class="label">'.$I18N->msg('label_title').': </span>
+    					<span class="label">'.cjoI18N::translate('label_title').': </span>
     					<span class="text">'.$article->getValue("title").'</span>
     				</p>
     				<p>
-    					<span class="label">'.$I18N->msg('label_meta_image').': </span>
+    					<span class="label">'.cjoI18N::translate('label_meta_image').': </span>
     					<span class="text">'.$article->getValue("file").'</span>
     				</p>
     				<p>
-    					<span class="label">'.$I18N->msg('label_keywords').': </span>
+    					<span class="label">'.cjoI18N::translate('label_keywords').': </span>
     					<span class="text">'.$article->getValue("keywords").'</span>
     				</p>
     				<p>
-    					<span class="label">'.$I18N->msg('label_description').': </span>
+    					<span class="label">'.cjoI18N::translate('label_description').': </span>
     					<span class="text">'.$article->getValue("description").'</span>
     				</p>
     				<p>
-    					<span class="label">'.$I18N->msg('label_createdate').': </span>
-    					<span class="text">'.$I18N->msg('msg_article_info_date_user', strftime($datetimeformat, $article->getValue("createdate")),$article->getValue("createuser")).'</span>
+    					<span class="label">'.cjoI18N::translate('label_createdate').': </span>
+    					<span class="text">'.cjoI18N::translate('msg_article_info_date_user', strftime($datetimeformat, $article->getValue("createdate")),$article->getValue("createuser")).'</span>
     				</p>
     				<p>
-    					<span class="label">'.$I18N->msg('label_updatedate').': </span>
-    					<span class="text">'.$I18N->msg('msg_article_info_date_user', strftime($datetimeformat, $article->getValue("updatedate")),$article->getValue("updateuser")).'</span>
+    					<span class="label">'.cjoI18N::translate('label_updatedate').': </span>
+    					<span class="text">'.cjoI18N::translate('msg_article_info_date_user', strftime($datetimeformat, $article->getValue("updatedate")),$article->getValue("updateuser")).'</span>
     				</p>
     				<p>
     				'.$edit_button->_get().'

@@ -25,20 +25,14 @@
 
 function cjoSetupImport($import_sql) {
 
-	global $CJO, $I18N;
-
-	$export_addon_dir = $CJO['ADDON_PATH'].'/import_export';
+	$export_addon_dir = cjoPath::addon(import_export);
 
 	if (!is_dir($export_addon_dir)) {
-		cjoMessage::addError($I18N->msg("msg_im_export_addon_missing"));
+		cjoMessage::addError(cjoI18N::translate("msg_im_export_addon_missing"));
 		return false;
 	}
 	else {
-		if (file_exists($import_sql) &&
-		   ($import_tar === null ||
-			file_exists($import_tar)))
-		{
-			require_once $export_addon_dir.'/classes/class.cjo_import_export.inc.php';
+		if (file_exists($import_sql) && ($import_tar === null || file_exists($import_tar))) {
 
 			// Set DB to UTF-8
 			$sql = new cjoSql();
@@ -46,7 +40,7 @@ function cjoSetupImport($import_sql) {
 
 			// DB Import
 			$replace_cjo = false;
-			if ($CJO['TABLE_PREFIX'] != "cjo_") $replace_cjo = true;
+			if (cjoProp::getTablePrefix() != "cjo_") $replace_cjo = true;
 			cjoImportExport::importSqlFile($import_sql, $replace_cjo);
 
 			if (cjoMessage::hasErrors()) {
@@ -54,7 +48,7 @@ function cjoSetupImport($import_sql) {
 			}
 		}
 		else {
-			cjoMessage::addError($I18N->msg("msg_no_exports_found"));
+			cjoMessage::addError(cjoI18N::translate("msg_no_exports_found"));
 			return false;
 		}
 	}

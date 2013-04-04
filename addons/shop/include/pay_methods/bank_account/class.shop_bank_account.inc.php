@@ -112,20 +112,19 @@ class cjoShopBankAccount extends cjoShopPayment {
 	 * @return string
 	 */
 	public function out() {
-		global $I18N_21, $CJO;
-		$mypage = 'shop';
-		$exchange_ratio = $CJO['ADDON']['settings'][$mypage]['CURRENCY']['CURR_RATIO'];
+
+		$exchange_ratio = cjoAddon::getParameter('CURRENCY|CURR_RATIO', self::$addon);
 
 		$string = $this->firstname." ".$this->name."\r\n";
 
-		$string .= $I18N_21->msg('shop_bank_account_id').": ".$this->account_id."\r\n";
-		$string .= $I18N_21->msg('shop_bank_code').": ".$this->bank_code."\r\n";
-		$string .= $I18N_21->msg('shop_bank_name').": ".$this->bank_name."\r\n";
+		$string .= cjoAddon::translate(21,'shop_bank_account_id').": ".$this->account_id."\r\n";
+		$string .= cjoAddon::translate(21,'shop_bank_code').": ".$this->bank_code."\r\n";
+		$string .= cjoAddon::translate(21,'shop_bank_name').": ".$this->bank_name."\r\n";
 
 		// display costs in backend if there are some
-		if ($CJO['CONTEJO'] && !empty($this->costs)) {
+		if (cjoProp::isBackend() && !empty($this->costs)) {
 			$this->costs = round($exchange_ratio * cjoShopPrice::convToFloat($this->costs), 2);
-			$string .= $I18N_21->msg('shop_bank_account_costs').": "
+			$string .= cjoAddon::translate(21,'shop_bank_account_costs').": "
 		           	   .cjoShopPrice::toCurrency($this->costs)."\r\n";
 		}
 

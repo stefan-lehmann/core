@@ -258,8 +258,6 @@ class OOArticleSlice {
      */
     public static function getArticleSliceById($id, $clang = false) {
 
-        global $CJO;
-
         $addsql = ($clang === false)? "" : " AND clang = '".$clang."'";
 
         $sql = new cjoSql();
@@ -343,9 +341,7 @@ class OOArticleSlice {
      */
     public static function getFirstSliceForArticle($article_id, $clang = false) {
 
-        global $CJO;
-
-        if ($clang === false) $clang = $CJO['CUR_CLANG'];
+        if ($clang === false) $clang = cjoProp::getClang();
 
         $sql = new cjoSql();
         $query = "SELECT * FROM ".TBL_ARTICLES_SLICE." WHERE article_id = '".$article_id."' AND re_article_slice_id = '0' AND clang = '".$clang."'";
@@ -426,10 +422,8 @@ class OOArticleSlice {
      * @access public
      */
     public static function getSlicesForArticleOfType($article_id, $moduletype_id, $clang = false) {
-
-        global $CJO;
-
-        if ($clang === false) $clang = $CJO['CUR_CLANG'];
+        
+        if ($clang === false) $clang = cjoProp::getClang();
 
         $sql = new cjoSql();
         $query = "SELECT * FROM ".TBL_ARTICLES_SLICE." WHERE article_id = ".$article_id." AND clang = ".$clang." AND modultyp_id = ".$moduletype_id;
@@ -508,7 +502,6 @@ class OOArticleSlice {
      * @access public
      */
     public function getNextSlice() {
-        global $CJO;
 
         $sql = new cjoSql();
         $query = "SELECT * FROM ".TBL_ARTICLES_SLICE." WHERE re_article_slice_id = '".$this->_id."' AND clang = '".$this->_clang."'";
@@ -675,7 +668,7 @@ class OOArticleSlice {
      * @access public
      */
     public function getUrl() {
-        return cjoRewrite::getUrl($this->getArticleId());
+        return cjoUrl::getUrl($this->getArticleId());
     }
 
     /**
@@ -696,12 +689,11 @@ class OOArticleSlice {
      * @access public
      */
     public function getFilelist($index, $strict = false) {
-
-        global $CJO;
+        
         $files_temp = explode(",",$this->_filelist[$index]);
         if ($strict) {
             foreach($files_temp as $file){
-                if (file_exists($CJO['MEDIAFOLDER'].'/'.$file))
+                if (file_exists(cjoUrl::media($file)))
                    $files[] = $file;
             }
         }
@@ -738,7 +730,7 @@ class OOArticleSlice {
      * @access public
      */
     public function getLinkUrl($index) {
-        return cjoRewrite::getUrl($this->getLink($index));
+        return cjoUrl::getUrl($this->getLink($index));
     }
 
     /**
@@ -759,8 +751,7 @@ class OOArticleSlice {
      * @access public
      */
     public function getFileUrl($index) {
-        global $CJO;
-        return $CJO['MEDIAFOLDER']."/".$this->getFile($index);
+        return cjoUrl::media($this->getFile($index));
     }
 
     /**

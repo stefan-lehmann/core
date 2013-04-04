@@ -77,9 +77,7 @@ class cjoLoginSQL extends cjoSql {
      */
     public function hasCatPerm($article_id, $type, $admin_only=false) {
 
-        global $CJO;
-
-        $article = OOArticle::getArticleById($article_id, $CJO['CUR_CLANG']);
+        $article = OOArticle::getArticleById($article_id, cjoProp::getClang());
 
         if ($this->isAdmin()) {
             if (OOArticle::isvalid($article) && $article->isLocked()){ 
@@ -167,16 +165,8 @@ class cjoLoginSQL extends cjoSql {
      */
     public function hasClangPerm($clang = false) {
 
-        global $CJO;
-
-        if ($clang === false || $clang == 'this')
-        $clang = $CJO ['CUR_CLANG'];
-
-        if ($this->isAdmin() ||
-        $this->isValueOf("rights","clang[".$clang."]"))
-        return true;
-
-        return false;
+        if ($clang === false || $clang == 'this') $clang = cjoProp::getClang();
+        return ($this->isAdmin() || $this->isValueOf("rights","clang[".$clang."]")) ? true : false;
     }
 
     /**
@@ -187,12 +177,10 @@ class cjoLoginSQL extends cjoSql {
      */
     public function hasMediaPerm($category = false) {
 
-        global $media_category;
-
         if ($this->isAdmin()) return true;
 
         if ($category === false || $category == 'this')
-            $category = $media_category;
+            $category = cjoMedia::getCategoryId();
 
         if ($this->media_perm[$category] == '')
             $this->validateMediaPerm($category);
@@ -243,8 +231,7 @@ class cjoLoginSQL extends cjoSql {
      * @access public
      */
     public function hasLoginPerm() {
-        global $CJO;
-        return ($CJO['LOGIN_ENABLED'] && ($this->isAdmin() || $this->hasPerm('setloginArticle[]')));
+        return (cjoProp::get('LOGIN_ENABLED') && ($this->isAdmin() || $this->hasPerm('setloginArticle[]')));
     }
 
     /**
@@ -254,8 +241,7 @@ class cjoLoginSQL extends cjoSql {
      * @access public
      */
     public function hasOnlineFromToPerm() {
-        global $CJO;
-        return ($CJO['ONLINE_FROM_TO_ENABLED'] && ($this->isAdmin() || !$this->hasPerm("editContentOnly[]")));
+        return (cjoProp::get('ONLINE_FROM_TO_ENABLED') && ($this->isAdmin() || !$this->hasPerm("editContentOnly[]")));
     }
 
     /**
@@ -269,19 +255,16 @@ class cjoLoginSQL extends cjoSql {
 
     /**
      * Validates permission to access an addon.
-     * @param string $name name of the addon
+     * @param string $addon name of the addon
      * @param bool $strict if false super admin has always permission
      * @return boolean
      * @access public
      */
-    public function hasAddonPerm($name, $strict = false) {
+    public function hasAddonPerm($addon, $strict = false) {
 
-        global $CJO;
+        if ((!$strict && !cjoAddon::hasPerm($addon)) || $this->isAdmin()) return true;
 
-        if ((!$strict && empty($CJO['ADDON']['perm'][$name])) ||
-        $this->isAdmin()) return true;
-
-        foreach(cjoAssistance::toArray($CJO['ADDON']['perm'][$name]) as $perm) {
+        foreach(cjoAddon::getPerm($addon) as $perm) {
             if (empty($perm)) continue;
             if ($this->hasPerm($perm) == true) {
                 return true;

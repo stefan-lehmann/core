@@ -9,7 +9,7 @@ $clang_sel->setName("VALUE[3]");
 $clang_sel->setSize(1);
 $clang_sel->setId('cjo_clang_selection');
 $clang_sel->setStyle('width: 317px');
-$clang_sel->setSelected(("CJO_VALUE[3]" == '') ? $CJO['CUR_CLANG'] : "CJO_VALUE[3]");
+$clang_sel->setSelected(("CJO_VALUE[3]" == '') ? cjoProp::getClang() : "CJO_VALUE[3]");
 
 foreach ($CJO['CLANG'] as $clang_id=>$clang_name){
    $clang_sel->addOption($clang_name, $clang_id);
@@ -22,13 +22,13 @@ $ctype_sel->setId('cjo_ctype_selection');
 $ctype_sel->setStyle('width: 317px');
 $ctype_sel->setSelected("CJO_VALUE[1]");
 
-foreach ($CJO['CTYPE'] as $ctype_id=>$ctype_name){
+foreach(cjoProp::get('CTYPE') as $ctype_id=>$ctype_name){
     $ctype_sel->addOption($ctype_name, $ctype_id);
 }
 
 if ("CJO_LINK_ID[1]" && (
     $CJO['ARTICLE_ID'] != "CJO_LINK_ID[1]" ||
-    $CJO['CUR_CLANG'] != "CJO_VALUE[3]")) {
+    cjoProp::getClang() != "CJO_VALUE[3]")) {
 
     $qry = "SELECT
                 sl.id AS `sl.id`, 
@@ -90,7 +90,7 @@ if ("CJO_LINK_ID[1]" && (
 
             $article = new cjoArticle();
             $article->setArticleId("CJO_LINK_ID[1]");
-            $article->setCLang("CJO_VALUE[3]" == "" ? $CJO['CUR_CLANG'] : "CJO_VALUE[3]");
+            $article->setCLang("CJO_VALUE[3]" == "" ? cjoProp::getClang() : "CJO_VALUE[3]");
             $article->setSliceId($result['id']);
 
             $output .= '<div class="cjo_block_selector">';

@@ -30,165 +30,65 @@ ini_set('pcre.backtrack_limit', 1000000);
 ini_set('register_globals', 'off');
 ini_set('default_charset', 'utf-8');
 
-if (!isset($CJO)) $CJO = array();
-if (empty($CJO['GG'])) $CJO['GG'] = false;
-$page = !empty($_REQUEST['page']) ? $_REQUEST['page'] : '';
+require_once dirname(__FILE__) . '/classes/cjo/class.cjo_path.inc.php';
+cjoPath::init($CJO['HTDOCS_PATH'], $CJO['CONTEJO']);
+require_once dirname(__FILE__) . '/classes/cjo/class.cjo_url.inc.php';
+cjoUrl::init($CJO['HTDOCS_PATH'], $CJO['CONTEJO']);
 
-$CJO['SETUP'] 				= true;
-$CJO['VERSION'] 			= "2.7";
-$CJO['RELEASE'] 			= "5";
-$CJO['BACKEND_PATH']        = $CJO['HTDOCS_PATH']."core";
-$CJO['INCLUDE_PATH'] 		= $CJO['BACKEND_PATH']."/include";
-$CJO['JQUERY_PATH']			= $CJO['BACKEND_PATH']."/js/jQuery";
-$CJO['ADDON_PATH'] 		    = $CJO['BACKEND_PATH']."/addons";
-$CJO['INSTALL_PATH']        = $CJO['INCLUDE_PATH']."/install";
-$CJO['FRONTPAGE_PATH']      = $CJO['HTDOCS_PATH']."page";
-$CJO['FILE_CONFIG_PATH']    = $CJO['FRONTPAGE_PATH']."/include";
-$CJO['ADDON_CONFIG_PATH'] 	= $CJO['FILE_CONFIG_PATH'];
-$CJO['FILE_CONFIG_MASTER']  = $CJO['FILE_CONFIG_PATH']."/config_master.inc.php";
-$CJO['FILEPERM']            = octdec(777); // oktaler wert
-$CJO['PHP_VERSION']			= "5.3.4";
-$CJO['SYSTEM_ADDONS']       = array('developer', 'html5video', 'image_processor', 'import_export', 'log', 'phpmailer', 'opf_lang', 'wymeditor');
+require_once cjoPath::inc('classes/cjo/class.cjo_autoload.inc.php');
 
-// ----- CONFIG FILES
-@include_once $CJO['FILE_CONFIG_MASTER'];
-@include_once $CJO['FILE_CONFIG_DB'];
-@include_once $CJO['FILE_CONFIG_CTYPES'];
-@include_once $CJO['FILE_CONFIG_LANGS'];
+cjoAutoload::register();
+cjoAutoload::addDirectory(cjoPath::inc('classes/cjo'));
+cjoAutoload::addDirectory(cjoPath::inc('classes/oop'));
+cjoAutoload::addDirectory(cjoPath::inc('classes/var'));
+cjoAutoload::addDirectory(cjoPath::inc('classes/afc'));
+cjoAutoload::addDirectory(cjoPath::inc('pages'));
 
-// ----------------- KONSTANTEN DEFINIEREN
-define('TBL_ACTIONS', 			  $CJO['TABLE_PREFIX'].'action');
-define('TBL_ARTICLES', 			  $CJO['TABLE_PREFIX'].'article');
-define('TBL_ARTICLES_CAT_GROUPS', $CJO['TABLE_PREFIX'].'article_cat_groups');
-define('TBL_ARTICLES_SLICE', 	  $CJO['TABLE_PREFIX'].'article_slice');
-define('TBL_ARTICLES_TYPE',		  $CJO['TABLE_PREFIX'].'article_type');
-define('TBL_CLANGS',			  $CJO['TABLE_PREFIX'].'clang');
-define('TBL_FILES', 			  $CJO['TABLE_PREFIX'].'file');
-define('TBL_FILE_CATEGORIES', 	  $CJO['TABLE_PREFIX'].'file_category');
-define('TBL_MODULES_ACTIONS', 	  $CJO['TABLE_PREFIX'].'module_action');
-define('TBL_MODULES', 			  $CJO['TABLE_PREFIX'].'modultyp');
-define('TBL_TEMPLATES', 		  $CJO['TABLE_PREFIX'].'template');
-define('TBL_USER', 				  $CJO['TABLE_PREFIX'].'user');
-
-// -----------------
-if (!isset($category_id) || $category_id == "") $category_id = 0;
-if (!isset($ctype) || $ctype == "") $ctype = 0;
-
-// ----------------- TIMER
-require_once $CJO['INCLUDE_PATH']."/classes/cjo/class.cjo_time.inc.php";
-
-// ----------------- CJO PERMS
-
-$CJO['PERM']['label_rights_media'] 				    = "media[]";                // [translate: label_rights_media]
-$CJO['PERM']['label_rights_media_categories'] 	    = "media[categories]";      // [translate: label_rights_media_categories]
-$CJO['PERM']['label_rights_addmedia'] 			    = "media[addmedia]";        // [translate: label_rights_addmedia]
-$CJO['PERM']['label_rights_tools'] 				    = "tools[]";                // [translate: label_rights_tools]
-$CJO['PERM']['label_rights_templates'] 			    = "tools[templates]";       // [translate: label_rights_templates]
-$CJO['PERM']['label_rights_modules'] 			    = "tools[modules]";         // [translate: label_rights_modules]
-$CJO['PERM']['label_rights_actions'] 			    = "tools[actions]";         // [translate: label_rights_actions]
-$CJO['PERM']['label_rights_ctypes'] 			    = "tools[ctypes]";          // [translate: label_rights_ctypes]
-$CJO['PERM']['label_rights_langs'] 				    = "tools[langs]";           // [translate: label_rights_langs]
-$CJO['PERM']['label_rights_catgroups'] 			    = "tools[catgroups]";       // [translate: label_rights_catgroups]
-$CJO['PERM']['label_rights_types'] 				    = "tools[types]";           // [translate: label_rights_types]
-$CJO['PERM']['label_rights_users'] 				    = "users[]";                // [translate: label_rights_users]
-$CJO['PERM']['label_rights_password']			    = "users[password]";        // [translate: label_rights_password]
-$CJO['PERM']['label_rights_addon_admin'] 		    = "addons[]";               // [translate: label_rights_addon_admin]
-$CJO['PERM']['label_rights_specials'] 			    = "specials[]";             // [translate: label_rights_specials]
-
-$CJO['EXTPERM']['label_rights_advancedmode'] 	    = "advancedMode[]";         // [translate: label_rights_advancedmode]
-$CJO['EXTPERM']['label_rights_moveslice'] 		    = "moveSlice[]";            // [translate: label_rights_moveslice]
-$CJO['EXTPERM']['label_rights_copycontent'] 	    = "copyContent[]";          // [translate: label_rights_copycontent]
-$CJO['EXTPERM']['label_rights_copyarticle'] 	    = "copyArticle[]";          // [translate: label_rights_copyarticle]
-$CJO['EXTPERM']['label_rights_movearticle']         = "moveArticle[]";          // [translate: label_rights_movearticle]
-$CJO['EXTPERM']['label_rights_deletearticle_tree']  = "deleteArticleTree[]";    // [translate: label_rights_deletearticle_tree]
-$CJO['EXTPERM']['label_rights_publisharticle'] 	    = "publishArticle[]";       // [translate: label_rights_publisharticle]
-$CJO['EXTPERM']['label_rights_setloginarticle']     = "setloginArticle[]";      // [translate: label_rights_setloginarticle]
-
-$CJO['EXTRAPERM']['label_rights_only_edit']         = "editContentOnly[]";      // [translate: label_rights_only_edit]
-
-// ----- standard variables
-$CJO['VARIABLES'] = array();
-$CJO['VARIABLES'][] = 'cjoVarValue';
-$CJO['VARIABLES'][] = 'cjoVarLink';
-$CJO['VARIABLES'][] = 'cjoVarArticle';
-$CJO['VARIABLES'][] = 'cjoVarGlobals';
-$CJO['VARIABLES'][] = 'cjoVarMedia';
-$CJO['VARIABLES'][] = 'cjoVarMeta';
-$CJO['VARIABLES'][] = 'cjoVarNavigation';
-$CJO['VARIABLES'][] = 'cjoVarTemplate';
-$CJO['VARIABLES'][] = 'cjoVarWYMeditor';
-
-// ----------------- INCLUDE FUNCTIONS
-require_once $CJO['INCLUDE_PATH']."/classes/cjo/class.cjo_client_cache.inc.php";
-require_once $CJO['INCLUDE_PATH']."/functions/function.cjo_globals.inc.php";
-
-if (isset($CJO['NOFUNCTIONS']) && $CJO['NOFUNCTIONS']) return false;
-
-// ----------------- CONTEJO INCLUDES
-require_once $CJO['INCLUDE_PATH']."/classes/oop/class.oocontejo.inc.php";
-require_once $CJO['INCLUDE_PATH']."/classes/oop/class.oonavigation.inc.php";
-require_once $CJO['INCLUDE_PATH']."/classes/oop/class.ooarticle.inc.php";
-require_once $CJO['INCLUDE_PATH']."/classes/oop/class.ooarticleslice.inc.php";
-require_once $CJO['INCLUDE_PATH']."/classes/oop/class.oomediacategory.inc.php";
-require_once $CJO['INCLUDE_PATH']."/classes/oop/class.oomedia.inc.php";
-require_once $CJO['INCLUDE_PATH']."/classes/oop/class.ooaddon.inc.php";
-
-require_once $CJO['INCLUDE_PATH']."/classes/cjo/class.cjo_article.inc.php";
-require_once $CJO['INCLUDE_PATH'].'/classes/cjo/class.cjo_htmltemplate.inc.php';
-require_once $CJO['INCLUDE_PATH'].'/classes/cjo/class.cjo_modultemplate.inc.php';
-require_once $CJO['INCLUDE_PATH']."/classes/cjo/class.cjo_install.inc.php";
-require_once $CJO['INCLUDE_PATH']."/classes/cjo/class.cjo_sql.inc.php";
-require_once $CJO['INCLUDE_PATH']."/classes/cjo/class.cjo_login.inc.php";
-require_once $CJO['INCLUDE_PATH']."/classes/cjo/class.cjo_loginsql.inc.php";
-require_once $CJO['INCLUDE_PATH']."/classes/cjo/class.cjo_assistance.inc.php";
-require_once $CJO['INCLUDE_PATH']."/classes/cjo/class.cjo_formgenerator.inc.php";
-
-require_once $CJO['INCLUDE_PATH']."/classes/cjo/class.cjo_extension.inc.php";
-require_once $CJO['INCLUDE_PATH']."/classes/cjo/class.cjo_exception.inc.php";
-require_once $CJO['INCLUDE_PATH']."/classes/cjo/class.cjo_generate.inc.php";
-require_once $CJO['INCLUDE_PATH']."/classes/cjo/class.i18n.inc.php";
-require_once $CJO['INCLUDE_PATH']."/classes/cjo/class.cjo_media.inc.php";
-require_once $CJO['INCLUDE_PATH']."/classes/cjo/class.cjo_message.inc.php";
-require_once $CJO['INCLUDE_PATH']."/classes/cjo/class.cjo_output.inc.php";
-require_once $CJO['INCLUDE_PATH']."/classes/cjo/class.cjo_rewrite.inc.php";
-require_once $CJO['INCLUDE_PATH']."/classes/cjo/class.cjo_select.inc.php";
-require_once $CJO['INCLUDE_PATH']."/classes/cjo/class.cjo_selectarticle.inc.php";
-require_once $CJO['INCLUDE_PATH']."/classes/cjo/class.cjo_selectlang.inc.php";
-require_once $CJO['INCLUDE_PATH']."/classes/cjo/class.cjo_selectmediacat.inc.php";
-require_once $CJO['INCLUDE_PATH']."/classes/cjo/class.cjo_slice.inc.php";
-require_once $CJO['INCLUDE_PATH']."/classes/cjo/class.cjo_subpages.inc.php";
-require_once $CJO['INCLUDE_PATH']."/classes/cjo/class.cjo_template.inc.php";
-require_once $CJO['INCLUDE_PATH']."/classes/cjo/class.cjo_user.inc.php";
-require_once $CJO['INCLUDE_PATH']."/classes/cjo/class.compatibility.inc.php";
-require_once $CJO['INCLUDE_PATH']."/classes/cjo/class.cjo_process.inc.php";
-
-// ----------------- CONTEJO LANGOBJEKT
-$I18N = new i18n($CJO['LANG']);
-setlocale(LC_ALL,cjoAssistance::toArray($I18N->msg('setlocale'),','));
-
-// ----- EXTRA CLASSES
-
-if ($CJO['CONTEJO']) {
-    require_once $CJO['INCLUDE_PATH']."/classes/afc/classes/form/class.cjo_form.inc.php";
-    require_once $CJO['INCLUDE_PATH']."/classes/afc/classes/list/class.cjo_list.inc.php";
-    require_once $CJO['INCLUDE_PATH']."/classes/afc/functions/function_cjo_common.inc.php";
-    require_once $CJO['INCLUDE_PATH']."/classes/afc/functions/function_cjo_string.inc.php";
+cjoI18N::init();
+    
+if (cjoProp::isBackend()) {
+    cjoMessage::init();
+    cjoAutoload::addDirectory(cjoPath::inc('classes/afc/classes/form'));
+    cjoAutoload::addDirectory(cjoPath::inc('classes/afc/classes/form/validate'));
+    cjoAutoload::addDirectory(cjoPath::inc('classes/afc/classes/form/fields'));
+    cjoAutoload::addDirectory(cjoPath::inc('classes/afc/classes/form/fields/cjo'));
+    cjoAutoload::addDirectory(cjoPath::inc('classes/afc/classes/list'));
+    cjoAutoload::addDirectory(cjoPath::inc('classes/afc/classes/list/toolbars'));
+    cjoAutoload::addDirectory(cjoPath::inc('classes/afc/classes/list/columns'));
+    require_once cjoPath::inc('classes/afc/functions/function_cjo_common.inc.php');
+    require_once cjoPath::inc('classes/afc/functions/function_cjo_string.inc.php');    
 }
 
-if (isset($CJO['ONLY_FUNCTIONS']) && $CJO['ONLY_FUNCTIONS']) return false;
+require_once cjoPath::inc('functions/function.cjo_globals.inc.php');
+require_once cjoPath::inc('classes/cjo/class.compatibility.inc.php');
 
-cjoProcess::getCurrentClangId();
+cjoProp::loadFromFile(cjoPath::inc('master'));
+cjoProp::loadFromFile(cjoPath::pageConfig('master'));
+cjoProp::loadFromFile(cjoPath::pageConfig('databases'));
+cjoProp::loadFromFile(cjoPath::pageConfig('ctypes'));
+cjoProp::loadFromFile(cjoPath::pageConfig('clangs'));
+cjoProp::loadFromFile(cjoPath::pageConfig('addons'));
 
-if (!empty($CJO['FILE_CONFIG_ADDONS'])) {
-    include_once $CJO['FILE_CONFIG_ADDONS'];
-}   
-cjoProcess::start();
+cjoProp::set('SCRIPT_START_TIME', cjoTime::getCurrentTime());
 
-require_once $CJO['INCLUDE_PATH']."/authentication.inc.php";
-require_once $CJO['INCLUDE_PATH']."/frontend_auth.inc.php";
-require_once $CJO['INCLUDE_PATH']."/local.inc.php";
+define('TBL_ACTIONS', 			  cjoProp::getTable('action'));
+define('TBL_ARTICLES', 			  cjoProp::getTable('article'));
+define('TBL_ARTICLES_CAT_GROUPS', cjoProp::getTable('article_cat_groups'));
+define('TBL_ARTICLES_SLICE', 	  cjoProp::getTable('article_slice'));
+define('TBL_ARTICLES_TYPE',		  cjoProp::getTable('article_type'));
+define('TBL_CLANGS',			  cjoProp::getTable('clang'));
+define('TBL_FILES', 			  cjoProp::getTable('file'));
+define('TBL_FILE_CATEGORIES', 	  cjoProp::getTable('file_category'));
+define('TBL_MODULES_ACTIONS', 	  cjoProp::getTable('module_action'));
+define('TBL_MODULES', 			  cjoProp::getTable('modultyp'));
+define('TBL_TEMPLATES', 		  cjoProp::getTable('template'));
+define('TBL_USER', 				  cjoProp::getTable('user'));
 
-cjoProcess::setIndividualUploadFolder();
+cjoAddon::loadAddons();
 
-// ----------------- set to default
-$CJO['NOFUNCTIONS'] = true;
+if (cjoProp::get('ONLY_FUNCTIONS')) return false;
+
+cjoProcess::init();
+
+require_once cjoPath::inc('authentication.inc.php');
+require_once cjoPath::inc('frontend_auth.inc.php');

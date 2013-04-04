@@ -25,7 +25,7 @@
 
 class cjoCommunityUser {
     
-    static $mypage = 'community';
+    static $addon = 'community';
     static $fieldnames = false;
     
     public static function activateUser($id, $akey) {
@@ -101,8 +101,8 @@ class cjoCommunityUser {
     			if ($key == 'status')       continue;
     			if ($key == 'createdate')   continue;
     			if ($key == 'updatedate')   continue;
-                if ($key == 'updateuser' && empty($val)) $val = $CJO['USER']->getValue("name");
-                if ($key == 'createuser' && empty($val)) $val = $CJO['USER']->getValue("name");
+                if ($key == 'updateuser' && empty($val)) $val = cjoProp::getUser()->getValue("name");
+                if ($key == 'createuser' && empty($val)) $val = cjoProp::getUser()->getValue("name");
     			if (strpos(self::getFieldNames(),'|'.$key.'|') === false) continue;
     			$insert->setValue($key, $val);
     		}
@@ -112,13 +112,13 @@ class cjoCommunityUser {
     		$insert->setValue('updatedate', time());
 
     		if (!$insert->Insert()) {
-    		    cjoMessage::addError($I18N_10->msg('err_user_inserted', $data['email'], $insert->getError()));
+    		    cjoMessage::addError(cjoAddon::translate(10,'err_user_inserted', $data['email'], $insert->getError()));
     			return false;
     		}
 
     		$data['id'] = $insert->getLastId();
     		
-			cjoMessage::addSuccess($I18N_10->msg('user_inserted', $data['email']));
+			cjoMessage::addSuccess(cjoAddon::translate(10,'user_inserted', $data['email']));
 			cjoCommunityGroups::updateGroups($data['id'], $data['groups']);
     	}
     	elseif ($update_type == 1) {
@@ -146,13 +146,13 @@ class cjoCommunityUser {
             $update->setValue('newsletter', $data['newsletter']);    			
     		
     		if (!$update->Update()) {
-    			cjoMessage::addError($I18N_10->msg('err_user_updated', $data['email'], $update->getError()));
+    			cjoMessage::addError(cjoAddon::translate(10,'err_user_updated', $data['email'], $update->getError()));
     			return false;
     		}
 
     		$update->flush();
 
-			cjoMessage::addSuccess($I18N_10->msg('user_updated', $data['email']));
+			cjoMessage::addSuccess(cjoAddon::translate(10,'user_updated', $data['email']));
 
 		    $sql = $update;
 			$qry = "SELECT DISTINCT group_id FROM ".TBL_COMMUNITY_UG." WHERE user_id= '".$data['id']."'";
@@ -215,12 +215,12 @@ class cjoCommunityUser {
 
     	if (!cjoMessage::hasErrors()) {
     	    cjoMessage::flushSuccesses();
-    		cjoMessage::addSuccess($I18N_10->msg('accept_user_deleted'));
+    		cjoMessage::addSuccess(cjoAddon::translate(10,'accept_user_deleted'));
     		return true;
     	}
 
         cjoMessage::flushAllMessages();
-    	cjoMessage::addError($I18N_10->msg('error_user_deleted').$error);
+    	cjoMessage::addError(cjoAddon::translate(10,'error_user_deleted').$error);
     	return false;
     }
 
@@ -247,11 +247,11 @@ class cjoCommunityUser {
 
     	if (cjoMessage::hasErrors()) {
     	    cjoMessage::flushErrors();
-    	    cjoMessage::addError($I18N_10->msg('error_user_copy'));
+    	    cjoMessage::addError(cjoAddon::translate(10,'error_user_copy'));
     	    return false;
     	}
     	else {
-    		cjoMessage::addSuccess($I18N_10->msg('accept_user_copy'));
+    		cjoMessage::addSuccess(cjoAddon::translate(10,'accept_user_copy'));
     	    return true;
     	}
     }
@@ -278,13 +278,13 @@ class cjoCommunityUser {
     	}
 
     	if (cjoMessage::hasErrors()) {
-    	    $error = $I18N_10->msg('error_user_move').'<br/>'.cjoMessage::removeLastError();
+    	    $error = cjoAddon::translate(10,'error_user_move').'<br/>'.cjoMessage::removeLastError();
     	    cjoMessage::flushErrors();
     	    cjoMessage::addError($error);
     		return false;
     	}
     	else {
-    		cjoMessage::addSuccess($I18N_10->msg('accept_user_move'));
+    		cjoMessage::addSuccess(cjoAddon::translate(10,'accept_user_move'));
     		return true;
     	}
     }
@@ -326,12 +326,12 @@ class cjoCommunityUser {
 
     	if ($update->getError() == '') {
     	    if (is_object($I18N_10))
-    		    cjoMessage::addSuccess($I18N_10->msg('accept_status'));
+    		    cjoMessage::addSuccess(cjoAddon::translate(10,'accept_status'));
     		return true;
     	}
 
         if (is_object($I18N_10))
-    	    cjoMessage::addError($I18N_10->msg('error_status'));
+    	    cjoMessage::addError(cjoAddon::translate(10,'error_status'));
 
     	return false;
     }
@@ -363,17 +363,17 @@ class cjoCommunityUser {
         } 
         
         if ($sql_data['newsletter'] == 1) {
-            cjoMessage::addError($I18N_10->msg('msg_newsletter_allready_enabled'));
+            cjoMessage::addError(cjoAddon::translate(10,'msg_newsletter_allready_enabled'));
             return false;
         }              
         
         if ($sql_data['password'] && $sql_data['username']) {
                 
-             $article = OOArticle::getArticleById($CJO['ADDON']['settings'][self::$mypage]['MANAGE_ACCOUNT']);
+             $article = OOArticle::getArticleById($CJO['ADDON']['settings'][self::$addon]['MANAGE_ACCOUNT']);
                 
-             $link = (OOArticle::isValid($article)) ? $article->toLink() : $I18N_10->msg('label_manage_account_article');
+             $link = (OOArticle::isValid($article)) ? $article->toLink() : cjoAddon::translate(10,'label_manage_account_article');
                 
-             cjoMessage::addError($I18N_10->msg('msg_my_account_newsletter_enable', $link));
+             cjoMessage::addError(cjoAddon::translate(10,'msg_my_account_newsletter_enable', $link));
              return false;    
         }
         
@@ -386,17 +386,17 @@ class cjoCommunityUser {
 
         if (!empty($data['password']) && !empty($data['username'])) {
 
-             $article = OOArticle::getArticleById($CJO['ADDON']['settings'][self::$mypage]['MANAGE_ACCOUNT']);
+             $article = OOArticle::getArticleById($CJO['ADDON']['settings'][self::$addon]['MANAGE_ACCOUNT']);
                       
              $link = (OOArticle::isValid($article)) 
                    ? $article->toLink() 
-                   : $I18N_10->msg('label_manage_account_article');
+                   : cjoAddon::translate(10,'label_manage_account_article');
                 
-             cjoMessage::addError($I18N_10->msg('msg_my_account_newsletter_enable', $link));
+             cjoMessage::addError(cjoAddon::translate(10,'msg_my_account_newsletter_enable', $link));
              return false;    
         }    
         
-        $inst = (int) preg_replace('/\D/', '', $CJO['INSTNAME']);
+        $inst = cjoProp::getUniqueNumber();
 
     	$update = new cjoSql();
         $update->setTable(TBL_COMMUNITY_USER);
@@ -492,23 +492,23 @@ class cjoCommunityUser {
         return $used;
     }
 
-    public static function sendNotification($data, $msg_type, $mypage = false){
+    public static function sendNotification($data, $msg_type, $addon = false){
 
         global $CJO, $I18N_10;
 
-        if (!$mypage) $mypage = self::$mypage;
+        if (!$addon) $addon = self::$addon;
         
         $message = array();
 
         // PHPMAILER VORBEREITEN
         $phpmailer = new cjoPHPMailer();
-        $phpmailer->setAccount($CJO['ADDON']['settings'][$mypage]['MAIL_ACCOUNT']);
-        $phpmailer->Subject = $CJO['ADDON']['settings'][$mypage]['SUBJECT'];
+        $phpmailer->setAccount($CJO['ADDON']['settings'][$addon]['MAIL_ACCOUNT']);
+        $phpmailer->Subject = $CJO['ADDON']['settings'][$addon]['SUBJECT'];
         $phpmailer->AddAddresses($data['email']);
         $phpmailer->IsHTML(false);
 
-        if ($CJO['ADDON']['settings'][$mypage]['BCC'] != '')
-            $phpmailer->AddBCC($CJO['ADDON']['settings'][$mypage]['BCC']);
+        if ($CJO['ADDON']['settings'][$addon]['BCC'] != '')
+            $phpmailer->AddBCC($CJO['ADDON']['settings'][$addon]['BCC']);
 
 
         $repl = array('%title%' 	=> cjoCommunityUser::getTitle($data['gender']),
@@ -519,8 +519,8 @@ class cjoCommunityUser {
                       '%password%' 	=> $data['new_pw'],
                       '%email%' 	=> $data['email']);
 
-        $phpmailer->Body  = str_replace(array_keys($repl), $repl, $CJO['ADDON']['settings'][$mypage][$msg_type]);
-        $phpmailer->Body .= $CJO['ADDON']['settings'][$mypage]['MAIL_FOOTER'];
+        $phpmailer->Body  = str_replace(array_keys($repl), $repl, $CJO['ADDON']['settings'][$addon][$msg_type]);
+        $phpmailer->Body .= $CJO['ADDON']['settings'][$addon]['MAIL_FOOTER'];
 
         $phpmailer->Send(true);
 
@@ -529,7 +529,7 @@ class cjoCommunityUser {
             return false;
         }
         elseif (is_object($I18N_10)) {
-            cjoMessage::addSuccess($I18N_10->msg('msg_info_mail_send', $data['email']));
+            cjoMessage::addSuccess(cjoAddon::translate(10,'msg_info_mail_send', $data['email']));
             return true;
         }
     }
@@ -555,21 +555,21 @@ class cjoCommunityUser {
         
         global $CJO;
         
-        $gender_types = $CJO['ADDON']['settings'][self::$mypage]['GENDER_TYPES'];
+        $gender_types = $CJO['ADDON']['settings'][self::$addon]['GENDER_TYPES'];
     	preg_match('/(?<='.$gender.'=).*?(?=\||$)/i', $gender_types, $match);
         return $match[0];
     }
     
-    public static function getGenderSelect($type, $name='gender', $style = '', $mypage=false) {
+    public static function getGenderSelect($type, $name='gender', $style = '', $addon=false) {
 
     	global $CJO;    	
     	
-        if (!$mypage) $mypage = self::$mypage;
+        if (!$addon) $addon = self::$addon;
 
-    	if (!is_string($CJO['ADDON']['settings'][$mypage]['GENDER_TYPES'])) return false;
+    	if (!is_string($CJO['ADDON']['settings'][$addon]['GENDER_TYPES'])) return false;
 
         preg_match_all('/(?<=^|\|)([^\|]*)=([^\|]*)(?=\||$)/',
-                       $CJO['ADDON']['settings'][$mypage]['GENDER_TYPES'],
+                       $CJO['ADDON']['settings'][$addon]['GENDER_TYPES'],
                        $gender_types,
                        PREG_SET_ORDER);
 

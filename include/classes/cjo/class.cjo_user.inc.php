@@ -31,7 +31,7 @@
  * @subpackage 	core
  */
 
-if (!$CJO['CONTEJO']) return false;
+if (!cjoProp::isBackend()) return false;
 
 class cjoUser {
 
@@ -44,9 +44,7 @@ class cjoUser {
 
     function updateUserRights($user_id, $perm_lang = false, $perm_admin = false) {
 
-        global $CJO, $I18N;
-
-        foreach (cjoAssistance::toArray(glob($CJO['FOLDER_GENERATED_ARTICLES']."/".$user_id.".*.aspath")) as $filename) {
+        foreach (cjoAssistance::toArray(glob(cjoPath::generated('articles'), $user_id.'.*.aspath')) as $filename) {
     	    @ unlink($filename);
     	}
 
@@ -79,7 +77,7 @@ class cjoUser {
             $rights = array_merge($perm_lang, $rights);
         }
         else {
-            foreach($CJO['CLANG'] as $lang_id => $name) {
+            foreach(cjoProp::get('CLANG') as $lang_id => $name) {
                 if (strpos($sql->getValue('user'), '#clang['.$lang_id.']#') !== false) {
                     $rights[] = 'clang['.$lang_id.']';
                 }
@@ -103,12 +101,10 @@ class cjoUser {
         $update->setWhere("user_id = '".$user_id."'");
         $update->setValue('rights', $rights);
 
-        $update->Update($I18N->msg("msg_editor_updated", $user_name));
+        $update->Update(cjoI18N::translate("msg_editor_updated", $user_name));
     }
 
     function updateCatReadPermissions() {
-
-        global $CJO, $I18N;
 
         $sql = new cjoSql();
         $qry = "SELECT * FROM ".TBL_USER." WHERE rights NOT LIKE '%#admin[]#%'";
@@ -122,10 +118,10 @@ class cjoUser {
             $rights  = $user['rights'];
             $perm_r  = array();
             $perm_w  = array();
-
-            foreach (cjoAssistance::toArray(glob($CJO['FOLDER_GENERATED_ARTICLES']."/".$user_id.".*.aspath")) as $filename) {
-        	    @ unlink($filename);
-        	}
+    
+            foreach (cjoAssistance::toArray(glob(cjoPath::generated('articles'), $user_id.'.*.aspath')) as $filename) {
+                @ unlink($filename);
+            }
 
             $rights = preg_replace('/#csr\[\d+\]#/', '#', $rights);
             preg_match_all('/(?<=#csw\[)\d+(?=\]#)/', $rights, $perm_w);

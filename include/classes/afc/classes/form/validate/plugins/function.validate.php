@@ -45,7 +45,7 @@ function smarty_function_validate($params, &$smarty) {
     if (!isset($_is_init)) $_is_init = $_sess['is_init'];
 
     if (!SmartyValidate::is_registered_form($_form)) {
-        trigger_error("SmartyValidate: [validate plugin] form '$_form' is not registered.");
+        throw new cjoException("SmartyValidate: [validate plugin] form '$_form' is not registered.");
         return false;
     }
 
