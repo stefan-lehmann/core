@@ -59,8 +59,8 @@ $(function(){
       var netto  = $('#shop_netto_price').val().replace(',', '.') *1;
       var tax    = $('#shop_tax').val().replace(',', '.')*1;
       var sign   = $('#shop_currency_sign').text();
-      var brutto = netto + (netto * tax / 100);
-          brutto = Math.round(brutto*100)/100
+      var brutto = netto + (Math.round(netto * tax)/ 100);
+          brutto = Math.round(brutto*100)/100;
 
       if (!isNaN(brutto)) {
           brutto = brutto.toString();

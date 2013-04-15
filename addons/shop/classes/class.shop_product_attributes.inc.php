@@ -576,11 +576,8 @@ class cjoShopProductAttributes {
                 if ($id != $attribute['id']) continue;
                 
                 $key = $attribute_format != 1 ? $attribute['attribute_id'] : 1;
-                $price = (cjoShopPrice::convToFloat($set['price']) + cjoShopPrice::convToFloat($attribute['offset'])) * $exchange_ratio;
-                $price = $price - ($exchange_ratio * $discount * $price / 100);
-                $price = $price + ($exchange_ratio * $set['taxes'] * $price / 100);
-                $price = cjoShopPrice::toCurrency($price);
-                
+                $price = new cjoShopPrice($set['price'], 0, $set['taxes'], $set['discount']);
+
                 $set['amount_sel']->resetSelected();
                 $set['amount_sel']->setName($set['form_name'].'[amount][]');
 
@@ -596,7 +593,10 @@ class cjoShopProductAttributes {
                      
                 switch($attribute_format) {
                            
-                   case 1: $temp[$key]['select']->addOption($attribute['name'].' &nbsp; &nbsp; '.$price, $attribute['id']);
+                   case 1: $temp[$key]['select']->addOption(cjoShopPrice::formatNumber($price->getValue('final_price'), 
+                                                                                                        false, 
+                                                                                                        $attribute['name'].' &nbsp; &nbsp; '), 
+                                                            $attribute['id']);
                            break;
                            
                    case 2: $set['amount_sel']->setName($set['form_name'].'[amount]['.$attribute['id'].']');
@@ -606,18 +606,15 @@ class cjoShopProductAttributes {
                                                                 <td class="shop_order_amount">%s</td>  
                                                              </tr>',
                                                              $attribute['name'],
-                                                             $price,
+                                                             cjoShopPrice::formatNumber($price->getValue('final_price')),
                                                              $set['amount_sel']->get());
                            break;                           
                          
                     default:   
-                        $price = '';
-                        if ($attribute['offset'] != 0) {
-                            $price = cjoShopPrice::convToFloat($attribute['offset']) * $exchange_ratio;
-                            $price = round($price + ($exchange_ratio * $set['taxes'] * $price / 100), 2);
-                            $price = ' &nbsp; ('.cjoShopPrice::toCurrency($price, false, true).')';
-                        }  
-                        $temp[$key]['select']->addOption($attribute['name'].$price, $attribute['id']);   
+                        $price = ($attribute['offset'] != 0)
+                               ? $attribute['name'].' &nbsp; ('.cjoShopPrice::formatNumber($price->getValue('final_price')).')'
+                               : cjoShopPrice::formatNumber($price->getValue('final_price'));
+                        $temp[$key]['select']->addOption($price, $attribute['id']);   
                 }
             }
         }

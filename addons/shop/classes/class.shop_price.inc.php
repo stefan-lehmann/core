@@ -75,7 +75,7 @@ class cjoShopPrice {
 		$this->vars['offset'] = $offset;
 
 		// format price for calculating
-		$this->vars['netto_price'] 		= $price * $this->exchange_ratio;
+		$this->vars['netto_price'] 		= self::convToFloat($price * $this->exchange_ratio);
 
 		$this->vars['taxes'] 			= self::convToFloat($taxes);
 		$this->vars['discount'] 		= self::convToFloat($discount);
@@ -266,6 +266,7 @@ class cjoShopPrice {
 		$price = str_replace(',','.', $price);
 		return explode('.', $price);
 	}
+
 
 	/**
 	 * This method outputs price, total price, taxes
