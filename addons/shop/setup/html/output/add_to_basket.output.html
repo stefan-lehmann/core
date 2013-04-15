@@ -1,16 +1,16 @@
 [%TEMPLATE%]
 
 IF([[ONLINE]]){%
-	<a name="shop_store_CJO_SLICE_ID" class="hidden_anchor"></a>
+    <a name="shop_store_CJO_SLICE_ID" class="hidden_anchor"></a>
     <div class="shop_rounded_corners">
      <div class="rounded_corners_t"><div></div></div>
      <div class="rounded_corners_c">
       <div class="rounded_corners_b"></div>
-    	<form method="POST" action="[[URL]]#shop_store_CJO_SLICE_ID">
+        <form method="post" action="[[URL]]#shop_store_CJO_SLICE_ID">
 
-    		IF([[ADDED]]){%
-    			<div class="shop_product_added">
-    			    [[PRODUCT_ADDED_MSG]]
+            IF([[ADDED]]){%
+                <div class="shop_product_added">
+                    [[PRODUCT_ADDED_MSG]]
                     <button type="submit" name="shop_goto_basket"
                         id="[[FORM_NAME]]_shop_to_basket" class="shop_button goto"
                         title="[translate_21: shop_to_basket]"  value="[translate_21: shop_to_basket]">
@@ -31,38 +31,41 @@ IF([[ONLINE]]){%
                         <span class="br"></span>
                         </span>
                     </button>
-    			</div>
-    		%}ENDIF
+                </div>
+            %}ENDIF
 
             IF([[NOT_ADDED]]){%
-    		<div class="shop_store_front">
+            <div class="shop_store_front">
 
-    		    <div class="shop_left_col">
+                <div class="shop_left_col">
                       <h3 style="display: none">[[PRODUCT_TITLE]]</h3>
-    		          IF([[DISCOUNT]]){% <span class="shop_strike">[[BRUTTO_PRICE]]</span> %}ENDIF
-    		          [[FINAL_PRICE]]
-                      [[DISCOUNT]]
-                      [[TAXES]]
-                      [[DELIVERY_LINK]]
-                      [[DELIVERY_DURATION]]
+                      IF(![[ATTRIBUTE_LIST]]){%                
+	                      IF([[DISCOUNT]]){% <span class="shop_strike">[[BRUTTO_PRICE]]</span> %}ENDIF
+	                      [[FINAL_PRICE]]
+	                  %}ENDIF
+	                      [[DISCOUNT]]
+	                      [[TAXES]]
+	                      [[DELIVERY_LINK]]
                 </div>
                 <div class="shop_right_col">
 
-    			IF([[SHOW_IN_STOCK]][[OUT_OF_STOCK]]){%
-    				<p class="shop_in_stock">
-    				   [[IN_STOCK]] [translate_21: shop_in_stock]
+                IF([[SHOW_IN_STOCK]][[OUT_OF_STOCK]]){%
+                    <p class="shop_in_stock">
+                       [[IN_STOCK]] [translate_21: shop_in_stock]
                     </p>
-    			%}ENDIF
+                %}ENDIF
 
                     <%ATTRIBUTES%>
-
-    				<p class="shop_order_amount">
-    				    <label class="shop_label">[translate_21: shop_amount]:</label>
-    				    [[PRODUCT_AMOUNT]]
+                    
+                IF(![[ATTRIBUTE_LIST]]){%
+                	<p class="shop_order_amount">
+                        <label class="shop_label">[translate_21: shop_amount]:</label>
+                        [[PRODUCT_AMOUNT]]
                     </p>
-
+                %}ENDIF
+                
                     <p class="shop_add_to_basket_button">
-    				    <input type="hidden" name="[[FORM_NAME]][slice_id]" value="CJO_SLICE_ID"/>
+                        <input type="hidden" name="[[FORM_NAME]][slice_id]" value="CJO_SLICE_ID"/>
 
                         <button type="submit" name="[[FORM_NAME]]_submit"
                             id="[[FORM_NAME]]_submit" class="shop_button IF([[OUT_OF_STOCK]]){% disabled %}ENDIF "
@@ -76,11 +79,12 @@ IF([[ONLINE]]){%
                         </button>
                     </p>
                 </div>
-    		</div>
-    		%}ENDIF
-    	</form>
+                <div class="shop_product_description">CJO_HTML_VALUE[7]</div>
+            </div>
+            %}ENDIF
+        </form>
        </div>
-	</div>
+    </div>
 %}ENDIF
 
 IF(![[ONLINE]] AND CJO_IS_VALUE[9]){%
@@ -88,8 +92,4 @@ IF(![[ONLINE]] AND CJO_IS_VALUE[9]){%
 %}ENDIF
 
 [%ATTRIBUTES%]
-
-<p class="shop_attributes">
-   <label class="shop_label">[[LABEL]]:</label>
-   [[ATTRIBUTES]]
-</p>
+[[ATTRIBUTES]]
