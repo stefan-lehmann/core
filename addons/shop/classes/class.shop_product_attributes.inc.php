@@ -576,7 +576,7 @@ class cjoShopProductAttributes {
                 if ($id != $attribute['id']) continue;
                 
                 $key = $attribute_format != 1 ? $attribute['attribute_id'] : 1;
-                $price = new cjoShopPrice($set['price'], 0, $set['taxes'], $set['discount']);
+                $price = new cjoShopPrice($set['price'], $id, $set['taxes'], $set['discount']);
 
                 $set['amount_sel']->resetSelected();
                 $set['amount_sel']->setName($set['form_name'].'[amount][]');
