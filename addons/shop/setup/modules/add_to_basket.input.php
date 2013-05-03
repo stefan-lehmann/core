@@ -4,14 +4,14 @@
  *
  * PHP Version: 5.3.1+
  *
- * @package     Addon_shop
- * @subpackage  modul
+ * @package 	Addon_shop
+ * @subpackage 	modul
  *
- * @author      Matthias Schomacker <ms@contejo.com>
- * @copyright   Copyright (c) 2008-2011 CONTEJO. All rights reserved.
- * @link        http://contejo.com
+ * @author 		Matthias Schomacker <ms@contejo.com>
+ * @copyright	Copyright (c) 2008-2011 CONTEJO. All rights reserved.
+ * @link      	http://contejo.com
  *
- * @license     http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ * @license 	http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * CONTEJO is free software. This version may have been modified pursuant to the
  * GNU General Public License, and as distributed it includes or is derivative
  * of works licensed under the GNU General Public License or other free or open
@@ -33,6 +33,7 @@ if (empty($product_name)) {
         $product_name = 'No Name';
     }
 } 
+$price = new cjoShopPrice('CJO_VALUE[2]', 0, 'CJO_VALUE[3]', 'CJO_VALUE[4]');
 ?>
 <div class="settings">
     <h2 class="no_slide">[translate_21: shop_product_settings]</h2>
@@ -71,7 +72,7 @@ if (empty($product_name)) {
         <span id="shop_currency_sign"><?php echo $CJO['ADDON']['settings']['shop']['CURRENCY']['CURR_SIGN']; ?></span>
         &nbsp; | &nbsp; [translate_21: shop_brutto]:
         <strong id="shop_brutto_price">
-            <?php echo cjoShopPrice::toCurrency(('CJO_VALUE[2]'+('CJO_VALUE[2]'*'CJO_VALUE[3]'/100)), false,  false, 2) ?>
+            <?php echo cjoShopPrice::toCurrency(($price->getValue('final_price')), false,  false, 2) ?>
         </strong>
     </div>
     <div class="formular">
@@ -103,37 +104,37 @@ if (empty($product_name)) {
 </div>
 <div class="settings">
     <h2 class="no_slide">[translate_21: shop_product_description]</h2>
-    <div class="formular">
-        <label>[translate_21: shop_product_image]</label>
-        CJO_MEDIA_BUTTON[id=1 width=326 height=300]
-    </div>
-    <div class="formular">
+	<div class="formular">
+		<label>[translate_21: shop_product_image]</label>
+		CJO_MEDIA_BUTTON[id=1 width=326 height=300]
+	</div>
+	<div class="formular">
         <label>[translate_21: shop_product_description]</label>
         CJO_WYMEDITOR[id=7 height=100]
     </div>
-    <div class="formular">
-        <label>[translate_21: shop_product_offline_message]</label>
-        CJO_WYMEDITOR[id=9 height=100]
-    </div>
+	<div class="formular">
+		<label>[translate_21: shop_product_offline_message]</label>
+		CJO_WYMEDITOR[id=9 height=100]
+	</div>
 </div>
 <div class="settings">
-    <h2>[translate_21: shop_product_statistic]
-        (<?php echo @strftime($I18N->msg('dateformat'), 'CJO_VALUE[13]').' - '.@strftime($I18N->msg('dateformat'), time()); ?>)</h2>
-    <div class="formular">
-        <input type="hidden" name="VALUE[13]" value="CJO_VALUE[13]" />
-        <input type="checkbox" name="VALUE[13]" value="0" />
-        [translate_21: shop_product_statistic_reset]
-    </div>
-    <div class="formular">
-        <label>[translate_21: shop_added_to_basket]</label>
-        <input type="text" class="inp10" name="VALUE[15]"
-               value="CJO_VALUE[15]" readonly="readonly" style="display: inline" />
-    </div>
-    <div class="formular">
-        <label>[translate_21: shop_bought_products]</label>
-        <input type="text" class="inp10" name="VALUE[14]"
-               value="CJO_VALUE[14]" readonly="readonly" style="display: inline" /> &nbsp;
-    </div>
+	<h2>[translate_21: shop_product_statistic]
+	    (<?php echo @strftime($I18N->msg('dateformat'), 'CJO_VALUE[13]').' - '.@strftime($I18N->msg('dateformat'), time()); ?>)</h2>
+	<div class="formular">
+		<input type="hidden" name="VALUE[13]" value="CJO_VALUE[13]" />
+		<input type="checkbox" name="VALUE[13]" value="0" />
+		[translate_21: shop_product_statistic_reset]
+	</div>
+	<div class="formular">
+		<label>[translate_21: shop_added_to_basket]</label>
+		<input type="text" class="inp10" name="VALUE[15]"
+			   value="CJO_VALUE[15]" readonly="readonly" style="display: inline" />
+	</div>
+	<div class="formular">
+		<label>[translate_21: shop_bought_products]</label>
+		<input type="text" class="inp10" name="VALUE[14]"
+		       value="CJO_VALUE[14]" readonly="readonly" style="display: inline" /> &nbsp;
+	</div>
 </div>
 <?php
 }

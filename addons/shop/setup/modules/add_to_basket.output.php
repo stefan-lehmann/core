@@ -47,6 +47,8 @@ if (OOAddon::isActivated('shop')) {
     	    empty($posted['product_added'])) {
     		$set['added'] = true;
     	}
+            
+        $attribute_format = $CJO['ADDON']['settings']['shop']['ATTRIBUTE_FORMAT'];
 
         $set['slice_id']         = "CJO_SLICE_ID";
         $set['product_id']       = "CJO_VALUE[12]";
@@ -56,8 +58,10 @@ if (OOAddon::isActivated('shop')) {
     	$set['product_title']    = "CJO_VALUE[8]";
     	$set['product_image']    = OOMedia::toThumbnail("CJO_MEDIA[1]");
     	// put attributes into selectbox
-    	$set['attributes']       = "CJO_VALUE[6]";
+    	$set['attributes']       = "CJO_VALUE[6]";    
     	$set['order_id']         = "CJO_VALUE[10]";
+        $set['max_amount']       = "CJO_VALUE[11]" < 1 ? 10 : (int) "CJO_VALUE[11]"; 
+        
     	// count down byed of stock
     	$set['count_down_stock'] = "CJO_VALUE[18]";
     	// disable buying if out of stock
@@ -65,25 +69,28 @@ if (OOAddon::isActivated('shop')) {
     	// show current amount of products in stock
     	$set['show_in_stock']    = "CJO_VALUE[16]";
 
+        //
+    	$sql = new cjoSql();
+    	$qry = "SELECT value1, value15 FROM ".TBL_ARTICLES_SLICE." WHERE id = '".$set['slice_id']."' LIMIT 1";
+    	$sql->setQuery($qry);
+    	$set['added_to_basket'] = (int) $sql->getValue('value15');
+        
         if ($set['count_down_stock']){
-        	$sql = new cjoSql();
-        	$qry = "SELECT value1, value15 FROM ".TBL_ARTICLES_SLICE." WHERE id = '".$set['slice_id']."' LIMIT 1";
-        	$sql->setQuery($qry);
-        	$set['amount'] = (int) $sql->getValue('value1', 0);
-        	$set['added_to_basket'] = (int) $sql->getValue('value15', 0);
+            $temp = (int) $sql->getValue('value1');
+            $set['max_amount'] = $temp < $set['max_amount'] ? $temp : $set['max_amount'];
         }
 
     	// create object to format price
-    	$shop_price = new cjoShopPrice($set['price'], 0, $set['taxes'], $set['discount']);
+    	$set['price_obj'] = new cjoShopPrice($set['price'], 0, $set['taxes'], $set['discount']);
 
     	// put count into select box
-    	$amount_sel = new cjoSelect();
-    	$amount_sel->setsize(1);
-    	$amount_sel->setName($set['form_name'].'[amount]');
-    	$amount_sel->setSelected($posted['amount']);
-
-    	for($i = 1; $i <= ($set['amount'] < 20 && $set['out_of_stock'] ? $set['amount'] : 20); $i++) {
-    		$amount_sel->addOption($i,$i);
+    	$set['amount_sel'] = new cjoSelect();
+    	$set['amount_sel']->setsize(1);
+    	$set['amount_sel']->setName($set['form_name'].'[amount]');
+    	$set['amount_sel']->setSelected($posted['amount']);
+        $set['amount_sel']->addOption('0',0);
+    	for($i = 1; $i <= ($set['amount'] < $set['max_amount'] && $set['out_of_stock'] ? $set['amount'] : $set['max_amount']); $i++) {
+    		$set['amount_sel']->addOption($i,$i);
     	}
 
         // ***  add to basket  ***//
@@ -97,20 +104,18 @@ if (OOAddon::isActivated('shop')) {
     	$trans['tax'] 		    = '[translate_21: shop_tax]';
     	$trans['discount'] 		= '[translate_21: shop_discount]';
 
-    	$set['discount'] 	    = $shop_price->getValue('discount');
+    	$set['discount'] 	    = $set['price_obj']->getValue('discount');
 
     	cjoModulTemplate::addVars('TEMPLATE', array(
     							  'FORM_NAME'			=>		$set['form_name'],
-    							  'NETTO_PRICE'			=>		$shop_price->formattedValueOut('netto_price', $trans['netto'], '', true),
-    							  'TAXES'				=>	    $shop_price->formattedValueOut('taxes', $trans['tax'], true),
-    						      'DISCOUNT'			=>		empty($set['discount']) ? ''
-    														    : $shop_price->formattedValueOut('discount', $trans['discount'], true),
+    							  'NETTO_PRICE'			=>		$set['price_obj']->formattedValueOut('netto_price', $trans['netto'], '', true),
+    							  'TAXES'				=>	    $set['price_obj']->formattedValueOut('taxes', $trans['tax'], true, ($attribute_format == 0 ? 0 : 2)),
+    						      'DISCOUNT'			=>		!empty($set['discount']) ? $set['price_obj']->formattedValueOut('discount', $trans['discount'], true, ($attribute_format == 0 ? 0 : 2)) : '',
     							  'DELIVERY_DURATION'   =>		cjoShopDelivery::getDeliveryDuration("CJO_VALUE[10]"),
                                   'DELIVERY_LINK'		=>      cjoShopDelivery::getDeliveryLink("CJO_VALUE[5]"),
-    														    'DELIVERY_LINK_ID'	=>      $CJO['ADDON']['settings'][$set['mypage']]['DELIVERY_ARTICLE_ID'],
-    							  'BRUTTO_PRICE'		=>      $shop_price->formattedValueOut('brutto_price', $trans['brutto'], false, false),
-    							  'FINAL_PRICE'			=>		$shop_price->formattedValueOut('final_price',
-    														  								  $trans['final'], '', true),
+    							  'DELIVERY_LINK_ID'	=>      $CJO['ADDON']['settings'][$set['mypage']]['DELIVERY_ARTICLE_ID'],
+    							  'BRUTTO_PRICE'		=>      $set['price_obj']->formattedValueOut('brutto_price', $trans['brutto'], false, false),
+    							  'FINAL_PRICE'			=>		$set['price_obj']->formattedValueOut('final_price', $trans['final'], '', true),
                                   'OUT_OF_STOCK'        =>      ($set['out_of_stock'] && $set['amount'] < 1),
                                   'SHOW_IN_STOCK'       =>      $set['show_in_stock'],
     							  'IN_STOCK'            =>      $set['amount'],
@@ -120,20 +125,20 @@ if (OOAddon::isActivated('shop')) {
     							  'PRODUCT_TITLE'		=>		$set['product_title'],
     							  'PRODUCT_IMAGE'		=>		$set['product_image'],
     							  'ORDER_ID'		    =>		$set['order_id'],
-    							  'PRODUCT_AMOUNT'		=>		$amount_sel->get(),
-    							  'ONLINE'				=>		1,
+    							  'PRODUCT_AMOUNT'		=>		$attribute_format < 2 ? $set['amount_sel']->get() : '',
+                                  'ATTRIBUTE_LIST'      =>      $attribute_format == 2,
+    							  'ONLINE'				=>		$set['online'],
     							  'ADDED'				=>		$set['added'],
     							  'NOT_ADDED'			=>		empty($set['added']),
     							  'PRODUCT_ADDED_MSG'	=>		$CJO['ADDON']['settings'][$set['mypage']]['PRODUCT_ADDED_MESSAGE']
     							  ));
 
-    	cjoModulTemplate::addVarsArray('ATTRIBUTES',
-    	                               cjoShopProductAttributes::getFEAttributeSelections($set));
+    	cjoModulTemplate::addVarsArray('ATTRIBUTES', cjoShopProductAttributes::getFEAttributeSelections($set));
 
 
     } // end if not empty $online
     else {
-    	cjoModulTemplate::addVars('TEMPLATE', array('PRODUCT_OFFLINE_MSG' => "CJO_VALUE[9]"));
+    	cjoModulTemplate::addVars('TEMPLATE', array());
     }
 
     cjoModulTemplate::getModul();
