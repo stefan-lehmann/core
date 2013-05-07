@@ -126,6 +126,10 @@ class cjoGenerate {
         $article->getAsQuery(true); // Content aus Datenbank holen, no cache
         $article->setEval(false); // Content nicht ausführen, damit in Cachedatei gespeichert werden kann
 
+		if ($generate_content) {
+			self::deleteGeneratedArticle($article_id);
+		}
+		
         foreach($CJO['CLANG'] as $curr_clang => $clang_name) {
 
             if ($clang !== false && $clang != $curr_clang) continue;
