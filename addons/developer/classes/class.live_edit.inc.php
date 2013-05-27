@@ -72,12 +72,13 @@ class liveEdit {
     public function getModulesFormDB(){
 
         global $CJO;
-
+        
         $sql = new cjoSql();
         $qry = "SELECT id, output, input FROM ".TBL_MODULES." ORDER BY id";
         $dbResult = $sql->getArray($qry);
 
         if (is_array($dbResult)){
+            $modules = array();
             foreach($dbResult as $var){
                 $modules[$var['id']]['input'] = $var['input'];
                 $modules[$var['id']]['output'] = $var['output'];
@@ -89,12 +90,13 @@ class liveEdit {
     public function getTemplatesFormDB(){
 
         global $CJO;
+        
         $db = new cjoSql();
-
         $sql = "SELECT id, content FROM ".TBL_TEMPLATES;
         $dbResult = $db->getArray($sql);
 
         if (is_array($dbResult)){
+            $templates = array();
             foreach($dbResult as $var){
                 $templates[$var['id']] = $var['content'];
             }
