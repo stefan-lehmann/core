@@ -88,7 +88,7 @@ require_once $CJO['ADDON_PATH'].'/'.$mypage.'/classes/class.cm_imexport.inc.php'
 require_once $CJO['ADDON_PATH'].'/'.$mypage.'/classes/class.cm_template.inc.php';
 include_once $CJO['ADDON_PATH'].'/'.$mypage.'/classes/class.cm_bounce.inc.php'; 
 
-if ($CJO['ADDON']['settings'][$mypage]['LOGOUT'] == $article_id) {
+if ($CJO['ADDON']['settings'][$mypage]['LOGOUT'] == cjo_get('article_id', 'cjo-article-id')) {
 	$CJO['LOGOUT'] = true;
 }
 
