@@ -92,6 +92,10 @@ if ($CJO['ADDON']['settings'][$mypage]['LOGOUT'] == cjo_get('article_id', 'cjo-a
 	$CJO['LOGOUT'] = true;
 }
 
+if (!$CJO['CONTEJO'] && isset($CJO['ADDON']['settings'][$mypage]['MAXLOGINS'])) {
+    $CJO['MAXLOGINS'] = $CJO['ADDON']['settings'][$mypage]['MAXLOGINS'];
+}
+
 if (!$CJO['ADDON']['settings'][$mypage]['BOUNCE']) {
     cjoCommunityBounce::updateUserTable();
 }
