@@ -57,3 +57,5 @@ $CJO['ADDON']['settings'][$mypage]['BOUNCE'] = "1";
 $CJO['ADDON']['settings'][$mypage]['BOUNCE_MAIL_ACCOUNT'] = "1";
 
 // --- /DYN
+
+$CJO['ADDON']['settings'][$mypage]['MAXLOGINS'] = "5";
