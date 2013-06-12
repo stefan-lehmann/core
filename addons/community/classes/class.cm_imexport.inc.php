@@ -133,7 +133,7 @@ class cjoCommunityImportExport {
              
             $sql->flush();
 
-            $qry = "SELECT id FROM ".$table." WHERE email = '".$curr['email']."' LIMIT 1";
+            $qry = "SELECT id, firstname FROM ".$table." WHERE email = '".$curr['email']."' LIMIT 1";
             $sql->setQuery($qry);
 
             if ($settings['ignore_updates']) {
@@ -163,8 +163,6 @@ class cjoCommunityImportExport {
                 if ($sql->getValue('firstname') != $curr['firstname']) {
                     $data['activation_key'] = crc32($curr['email'].$curr['firstname']);
                 }
-                
-                $curr['newsletter']  = $sql->getValue('newsletter');
                 
             }
             else {
@@ -246,16 +244,16 @@ class cjoCommunityImportExport {
         
         $groups[$re_id] = $re_id;
            
-    	$sql = new cjoSql();
-    	$qry = "SELECT id FROM ".TBL_COMMUNITY_GROUPS." WHERE re_id='".$re_id."'";
+        $sql = new cjoSql();
+        $qry = "SELECT id FROM ".TBL_COMMUNITY_GROUPS." WHERE re_id='".$re_id."'";
         $temp = $sql->getArray($qry);
 
-    	foreach ($temp as $group) {
-    		if ($group['id'] == $re_id) continue;
-    		self::getGroups($groups, $group['id']);
-    	} 
-    	
-        return true;	
+        foreach ($temp as $group) {
+            if ($group['id'] == $re_id) continue;
+            self::getGroups($groups, $group['id']);
+        } 
+        
+        return true;    
     }
 
     private static function createUserTempTable() {
@@ -359,15 +357,15 @@ class cjoCommunityImportExport {
         do {
             $sql->flush();
             $qry = "SELECT DISTINCT us.* 
-            		FROM ".TBL_COMMUNITY_UG." ug 
-            	    LEFT JOIN ".TBL_COMMUNITY_USER." us
-            	    ON ug.user_id=us.id
-            		WHERE 
-            			us.clang='".$CJO['CUR_CLANG']."' AND 
-            			us.id > '".$settings['last_id']."' 
+                    FROM ".TBL_COMMUNITY_UG." ug 
+                    LEFT JOIN ".TBL_COMMUNITY_USER." us
+                    ON ug.user_id=us.id
+                    WHERE 
+                        us.clang='".$CJO['CUR_CLANG']."' AND 
+                        us.id > '".$settings['last_id']."' 
                         ".$limit_where."
-            			AND (".implode(' OR ',$group_where).")
-            		LIMIT ".$limit;    
+                        AND (".implode(' OR ',$group_where).")
+                    LIMIT ".$limit;    
             $data = $sql->getArray($qry);
 
             if ($sql->getRows() > 0) {
