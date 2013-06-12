@@ -143,7 +143,9 @@ class cjoCommunityUser {
         			$update->setValue($key, $val);
         		}
     		}
-            $update->setValue('newsletter', $data['newsletter']);    			
+                
+            if (isset($data['newsletter']))
+                $update->setValue('newsletter', $data['newsletter']);    			
     		
     		if (!$update->Update()) {
     			cjoMessage::addError($I18N_10->msg('err_user_updated', $data['email'], $update->getError()));
