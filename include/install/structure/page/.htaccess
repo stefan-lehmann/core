@@ -5,7 +5,7 @@
 	Deny from all
 </FilesMatch>
 
-<FilesMatch "\.(htm|html|css|js|gif|jpg|jpeg|png|pdf|jar|swf|f4v|mp4|flv|php|xml|mp3|gz|zip|json|ttf|otf|eot)$">
+<FilesMatch "\.(htm|html|css|js|gif|jpg|jpeg|png|pdf|jar|swf|f4v|mp4|flv|php|xml|mp3|gz|zip|json|ttf|otf|eot|woff)$">
 	Order Deny,Allow
 	Allow from all
 </FilesMatch>
