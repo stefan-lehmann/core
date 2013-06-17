@@ -31,14 +31,13 @@ $destination = $CJO['ADDON_CONFIG_PATH'].'/'.$mypage;
 foreach(glob($source.'/*') as $file) {
     if (!is_dir($file)) continue;
     $dir = str_replace($source, '', $file);
-    if (file_exists($destination.$dir)) {
+    if (!file_exists($destination.$dir)) {
         mkdir($destination.$dir, $CJO['FILEPERM']);
     }
-   
     cjoAssistance::copyFile($file.'/settings.json', 
                             $destination.$dir.'/settings.json');   
 }
-        
+   
 cjoAssistance::copyFile($CJO['ADDON_PATH'].'/'.$mypage.'/oauth.js', 
                         $destination.'/oauth.js');
 
