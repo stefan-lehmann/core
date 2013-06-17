@@ -48,7 +48,7 @@ class cjoTwitter extends cjoOAuthProvider {
         
         /* Save the access tokens. Normally these would be saved in a database for future use. */
         $_SESSION['access_token'] = $access_token;
-            
+
         $me =  $this->provider->get('account/verify_credentials');
 
         $user = array(
