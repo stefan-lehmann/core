@@ -178,14 +178,14 @@ class cjoCommunityGroups {
     	$sql->flush();
     	$qry = "SELECT u.id AS userid
                FROM ".TBL_COMMUNITY_USER." u
-               LEFT JOIN ".TBL_COMMUNITY_UG." l
-               ON u.id = l.userid
-               WHERE l.groupid = ".$group_id ;
+               LEFT JOIN ".TBL_COMMUNITY_UG." ug
+               ON u.id = ug.user_id
+               WHERE ug.group_id = ".$group_id ;
     	$user_ids = $sql->getArray($qry);
 
     	foreach ($user_ids as $user_id){
     		$sql->flush();
-    		$qry = "SELECT userid FROM ".TBL_COMMUNITY_UG." WHERE groupid!=0 AND userid= '".$user_id['userid']."'";
+    		$qry = "SELECT user_id FROM ".TBL_COMMUNITY_UG." WHERE group_id!=0 AND user_id= '".$user_id['userid']."'";
     		$sql->setQuery($qry);
 
     		if ($sql->getRows() == 1) {

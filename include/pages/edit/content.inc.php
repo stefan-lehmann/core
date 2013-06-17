@@ -128,6 +128,7 @@ if ($cjo_data) {
 					$update->Update();
 
                     cjoSlice::execPostSaveAction($module_id, $function, $CJO_ACTION);
+                    cjoGenerate::deleteGeneratedArticle($article_id);                    
                     cjoGenerate::generateArticle($article_id);
                     
                     cjoExtension::registerExtensionPoint('ARTICLE_UPDATED', array('action' => 'CONTENT_UPDATED',
