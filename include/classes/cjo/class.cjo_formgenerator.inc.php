@@ -172,6 +172,7 @@ class cjoFormGenerator {
     public function getErrors($render = true) {
         if (empty($this->errors)) return false;
         $errors = '';
+
         foreach($this->errors as $error) {
            $errors .= sprintf($this->error_html, $error);
         }

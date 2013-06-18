@@ -242,7 +242,7 @@ if ($function == '') {
 	// add columns to list
 	$list->addColumns($cols);
 
-        $functions  = '<p style="text-align:center">'."\r\n".
+        $functions  = '<p style="position:absolute;margin:-30px 0 0 -150px!important;left:50%;text-align:center;width:300px;">'."\r\n".
                       '		<input type="submit" name="cjoform_export_button" value="'.$I18N_21->msg('label_cjoform_export_button').'" />'."\r\n".
                       '</p>'."\r\n";
 

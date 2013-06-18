@@ -247,7 +247,7 @@ class cjoShopCheckout {
 		// send confirmation mail (error catch not working yet)
 		if (!cjoShopMail::sendMail('ORDER_CONFIRM_SUBJECT', $insert->getLastId(), $products_available)) return -2;
 
-		return true;
+		return $insert->getLastId();
 
 	} // end function saveOrder
 

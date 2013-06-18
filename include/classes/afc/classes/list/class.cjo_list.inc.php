@@ -283,7 +283,7 @@ class cjoList {
 
     public function cjoList($qry = '', $default_order_col = '', $default_order_type = '', $default_search_col = '', $default_stepping = '', $attributes = '') {
         
-        global $order_col, $order_type;
+        global $order_col, $order_type, $CJO;
 
         $this->messages = array ();
         $this->steps = array ();
@@ -291,7 +291,7 @@ class cjoList {
 
         $this->label = '';
         $this->caption = '';
-        $this->name = 'default';
+        $this->name = $CJO['page'].'_'.$CJO['subpage'];
         $this->colgroup = array ();
         $this->params = array ();
         $this->attributes = $attributes;
@@ -834,7 +834,8 @@ class cjoList {
 
         global $CJO, $I18N;
 
-        $s = '';
+        $s = cjoExtension::registerExtensionPoint('CJO_LIST_'.strtoupper($this->getName()).'_BEFORE', array('subject' => '', 'form' => $this));
+
         // Show Messages
         $s .= $this->formatMessages();
 
@@ -1076,8 +1077,8 @@ class cjoList {
         $s .= $this->getVar(LIST_VAR_BOTTOM); // Platzhalter
         $s .= '</div>'."\r\n";
         $s .= '<!-- cjoList end -->'."\r\n";
-
-        return $s;
+        
+        return cjoExtension::registerExtensionPoint('CJO_LIST_'.strtoupper($this->getName()).'_AFTER', array('subject' => $s, 'form' => $this));
     }
 
     /**
