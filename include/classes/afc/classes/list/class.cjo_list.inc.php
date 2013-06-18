@@ -834,7 +834,7 @@ class cjoList {
 
         global $CJO, $I18N;
 
-        $s = cjoExtension::registerExtensionPoint('CJO_LIST_'.strtoupper($this->getName()).'_BEFORE', array('subject' => '', 'form' => $this));
+        $s = cjoExtension::registerExtensionPoint('CJO_LIST_'.strtoupper($this->getName()).'_BEFORE', array('subject' => '', 'list' => $this));
 
         // Show Messages
         $s .= $this->formatMessages();
@@ -1078,7 +1078,7 @@ class cjoList {
         $s .= '</div>'."\r\n";
         $s .= '<!-- cjoList end -->'."\r\n";
         
-        return cjoExtension::registerExtensionPoint('CJO_LIST_'.strtoupper($this->getName()).'_AFTER', array('subject' => $s, 'form' => $this));
+        return cjoExtension::registerExtensionPoint('CJO_LIST_'.strtoupper($this->getName()).'_AFTER', array('subject' => $s, 'list' => $this));
     }
 
     /**

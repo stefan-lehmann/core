@@ -268,7 +268,9 @@ class cjoForm extends cjoFieldContainer {
             $this->setEnctype();
         }
 
-        $s = '';
+        $s = cjoExtension::registerExtensionPoint('CJO_FORM_'.strtoupper($this->getName()).'_BEFORE', array('subject' => '', 'form' => $this));
+        
+        
         $s .= '<!-- cjoForm start -->' . "\r\n";
         $s .= '<div class="a22-cjoform">' . "\r\n";
         $s .= '  <form action="index.php" id="'. $this->name.'" name="'. $this->name.'" method="post"' . $this->enctype . ' accept-charset="' . $I18N->msg("htmlcharset") . '">' . "\r\n";
@@ -317,8 +319,8 @@ class cjoForm extends cjoFieldContainer {
         $s .= '  </form>' . "\r\n";
         $s .= '</div>' . "\r\n";
         $s .= '<!-- cjoForm end -->' . "\r\n";
-
-        return str_replace('id=""','',$s);
+        
+        $s = cjoExtension::registerExtensionPoint('CJO_FORM_'.strtoupper($this->getName()).'_AFTER', array('subject' => '', 'form' => $this));
     }
 
 
