@@ -128,7 +128,6 @@ class cjoExtension {
     public static function callFunction($function, $params) {
 
     	$func = '';
-
         
     	if (is_string($function) && strlen($function) > 0) {
     		// static class method

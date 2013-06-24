@@ -319,8 +319,8 @@ class cjoForm extends cjoFieldContainer {
         $s .= '  </form>' . "\r\n";
         $s .= '</div>' . "\r\n";
         $s .= '<!-- cjoForm end -->' . "\r\n";
-        
-        $s = cjoExtension::registerExtensionPoint('CJO_FORM_'.strtoupper($this->getName()).'_AFTER', array('subject' => '', 'form' => $this));
+
+        return cjoExtension::registerExtensionPoint('CJO_FORM_'.strtoupper($this->getName()).'_AFTER', array('subject' => $s, 'form' => $this));
     }
 
 
