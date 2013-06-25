@@ -97,7 +97,8 @@ if ($is_valid === true || !empty($posted['submit']['previous'])) {
     				case 'previous'	: 	$page = $pages[--$page_id];
     									break;
     				case 'send'		: 	$order_id = cjoShopCheckout::saveOrder($posted);
-    				                    cjoAssistance::redirectFE($success_page_id, false, array('order'=> md5($order_id)));
+										if ($order_id > 0)
+    				                    cjoAssistance::redirectFE($success_page_id, false, array('order'=> md5($order_id));
     									break;
     				case 'address2' :   if ($supply_address) $page = 'address2';
     									break;
