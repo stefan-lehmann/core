@@ -27,7 +27,7 @@ if ($CJO['CONTEJO']) return false;
 
 if (OOAddon::isAvailable('community')) {
 
-    cjoCommunityTemplate::signInNewsletterDefaults();
+    $this->setDefaults(cjoCommunityTemplate::signInNewsletterDefaults());
     
     if (!function_exists('cjo_performPostAction')) {
         function cjo_performPostAction(&$obj) {
