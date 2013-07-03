@@ -301,24 +301,30 @@ class cjoHtmlTemplate {
         global $CJO;
 
         $rendered = array();
+        $search_sections = array();
+        $html_buffer = array();
         $this->rendered_html = '';
 
         foreach (array_keys($this->tmpl_sections) as $section) {
             $search_sections[] = '<%'.$section.'%>';
         }
-
-        /**
-         * Removing of all unused placeholders
-         */
+        
+        foreach ($this->html_buffer as $key=>$section) {
+            if (isset($GLOBALS['CJO_ARTICLE_ID'])) {
+                $section = $this->replaceCommonVars($section);
+            }   
+            $section = $this->callFunctions($section);                
+            $section = preg_replace('/\\[\[[A-Z0-9_]*\]\]/','',$section);
+            $section = $this->parseConditions($section);
+            $this->html_buffer[$key] = $section;
+        }   
+        
+        foreach ($this->html_buffer as $key=>$section) {
+            $this->html_buffer[$key] = str_replace($search_sections, $this->html_buffer, $section);
+        }    
 
         $this->rendered_html = str_replace($search_sections, $this->html_buffer, array_shift($this->html_buffer));
-        if (isset($GLOBALS['CJO_ARTICLE_ID'])) {
-            $this->rendered_html = $this->replaceCommonVars($this->rendered_html);
-        }
-        $this->rendered_html = $this->callFunctions($this->rendered_html);                
-        $this->rendered_html = preg_replace('/\\[\[[A-Z0-9_]*\]\]/','',$this->rendered_html);
         $this->rendered_html = preg_replace('/\<%[A-Z0-9_]*%>/','',$this->rendered_html);
-        $this->rendered_html = $this->parseConditions($this->rendered_html);
 
         if (!$CJO['CONTEJO']) {
             $this->rendered_html = preg_replace("/[\r\n|\r|\n]{2,}/", "\r\n", $this->rendered_html);

@@ -9,9 +9,6 @@
 		        IF(![[HIDE_LEGEND]]){% 
 		       		<legend><span>CJO_VALUE[8]</span></legend>
 	   		    %}ENDIF
-		        IF([[HAS_ERRORS]]){% 
-	   		    <div class="all_errors"><%ERROR_MESSAGES%></div>
-	   		    %}ENDIF
                 <%FORM_ELEMENTS%>
 
             </fieldset>
@@ -39,6 +36,12 @@
 <p><b>!</b> [[ELEMENT_ERROR_MSG]].</p>
 
 [%FORM_ELEMENTS%]
+
+##
+
+   IF([[ELEMENT_TYPE_ERRORS]]){%
+		<div class="all_errors"><%ERROR_MESSAGES%></div>
+   %}ENDIF
 
 ##
 

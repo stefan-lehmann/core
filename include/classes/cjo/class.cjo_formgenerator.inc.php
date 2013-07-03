@@ -250,7 +250,11 @@ class cjoFormGenerator {
             $elements_out['element_title'][$i] = preg_replace('/\/[^\/]*$/', '', $elm['label']);
 
             switch($elm['type']){
-
+                
+                case "errors":
+                    $elements_out['element_type_errors'][$i]   = true;
+                    break;
+                    
                 case "headline":
                     $elements_out['element_type_headline'][$i] = true;
                     $elements_out['element_value'][$i]         = $elm['default'];
@@ -439,6 +443,13 @@ class cjoFormGenerator {
 		        
 		    $this->is_valid = !$this->has_errors;
 		}
+            
+        if (is_array($elements_out['element_type_errors'])) {
+            foreach (array_keys($elements_out['element_type_errors']) as $i) {
+                $elements_out['has_errors'][$i] = $this->has_errors;
+            }
+        }
+            
     }
     
     public function getFormeElmentsOut() {
