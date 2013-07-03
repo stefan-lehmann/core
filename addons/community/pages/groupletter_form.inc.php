@@ -66,7 +66,7 @@ if ($send_type != 'text') {
 	$fields['text']->addColAttribute('class', 'hide_me nl_text', 'join');
 }
 
-$qry = "SELECT CONCAT(name,' (ID=',id,')') AS name, id FROM ".TBL_TEMPLATES." ORDER BY prior";
+$qry = "SELECT CONCAT(name,' (ID=',id,')') AS name, id FROM ".TBL_TEMPLATES." WHERE active=1 AND ctypes!='' AND ctypes != '||' ORDER BY prior";
 $fields['template'] = new selectField('TEMPLATE', $I18N_10->msg('label_groupletter_template'));
 $fields['template']->addSQLOptions($qry);
 $fields['template']->addAttribute('size', '1');
