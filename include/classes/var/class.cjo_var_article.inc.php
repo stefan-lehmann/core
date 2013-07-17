@@ -73,7 +73,7 @@ class cjoVarArticle extends cjoVars {
                 break;
             case 'get_src' :
             case 'crop_auto' :
-            case 'strict' :                
+            case 'strict' :    
                 $args[$name] = (bool) $value;
                 break;
             case 'field' :
@@ -81,7 +81,7 @@ class cjoVarArticle extends cjoVars {
                 $args[$name] = (string) $value;
                 break;
         }
-
+        
         return parent::handleDefaultParam($varname, $args, $name, $value);
     }
 
@@ -189,8 +189,10 @@ class cjoVarArticle extends cjoVars {
             list ($template, $args)   = $this->extractArg('template', $args, $this->template_id);  
 
             $replace = 'CJO_ARTICLE[id='.$article_id.' ctype='.$ctype.' clang='.$clang.' template='.$template.']';
+            $count = OOArticle::countCtypeContent($article_id, $clang, $ctype);
 
             $content = str_replace($var.'['.$param_str.']', $replace, $content);
+            $content = str_replace($var.'_COUNT['.$param_str.']', $replace, $content);
         }
         return $content;
     }
@@ -198,34 +200,36 @@ class cjoVarArticle extends cjoVars {
     /**
      * Wert für die Ausgabe
      */
-    protected function matchParentsCtype($content, $article_id) {
+    protected function matchParentsCtype(& $content, $article_id) {
 
         global $CJO;
 
         $var     = 'CJO_PARENTS_CTYPE';
-        $matches = $this->getVarParams($content, $var);
         $clang   = $CJO['CUR_CLANG'];
+        $matches = $this->getVarParams($content, $var);
 
-       	$article = OOArticle::getArticleById($article_id);
-        $tree = cjoAssistance::toArray($CJO['START_ARTICLE_ID'].$article->_path.$article_id);
-        $tree = array_unique($tree);
-
-        krsort($tree);
-
-        $article_ids = array(); 
-
-        foreach($tree as $parent_id) {
-            $parent_article = OOArticle::getArticleById($parent_id);
-            $article_ids[0][] = $parent_id;
-            if ($parent_article->_template_id == $article->_template_id){
-                $article_ids[1][] = $parent_id;
+        if (!empty($matches)) {
+           	$article = OOArticle::getArticleById($article_id);
+            $tree = cjoAssistance::toArray($CJO['START_ARTICLE_ID'].$article->_path.$article_id);
+            $tree = array_unique($tree);
+    
+            krsort($tree);
+    
+            $article_ids = array(); 
+    
+            foreach($tree as $parent_id) {
+                $parent_article = OOArticle::getArticleById($parent_id);
+                $article_ids[0][] = $parent_id;
+                if ($parent_article->_template_id == $article->_template_id){
+                    $article_ids[1][] = $parent_id;
+                }
             }
         }
-
+        
         foreach ($matches as $match) {
 
             $replace = '';
-
+            $count   = 0;
             list ($param_str, $args)  = $match;
             list ($ctype, $args)      = $this->extractArg('ctype', $args, null);
             if ($ctype == null) {
@@ -233,7 +237,7 @@ class cjoVarArticle extends cjoVars {
             }
             list ($strict, $args)     = $this->extractArg('strict', $args, 1);            
             list ($template, $args)   = $this->extractArg('template', $args, $this->template_id);  
-            
+
             foreach($article_ids[$strict] as $id) {
 
                 $slice = OOArticleSlice::getFirstSliceForArticle($id, $clang);
@@ -242,6 +246,7 @@ class cjoVarArticle extends cjoVars {
                 {
                     if ($slice->_ctype == $ctype) {
                         $replace = 'CJO_ARTICLE[id='.$id.' ctype='.$ctype.' clang='.$clang.' template='.$template.']';
+                        $count = OOArticle::countCtypeContent($id, $clang, $ctype);
                         break 2;
                     }
                     $slice = $slice->getNextSlice();
@@ -249,8 +254,8 @@ class cjoVarArticle extends cjoVars {
                 }
             }
             $content = str_replace($var.'['.$param_str.']', $replace, $content);
+            $content = str_replace($var.'_COUNT['.$param_str.']', $count, $content);
         }
-
         return $content;
     }
 
@@ -369,7 +374,6 @@ class cjoVarArticle extends cjoVars {
            $content = str_replace('[['.$key.']]', $key, $content);
         }
         $content = preg_replace('/CJO_ARTICLE_FILE(?!\[)/', $article->getFile(), $content);
-
         return $content;
     }
 }

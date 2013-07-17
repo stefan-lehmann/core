@@ -229,7 +229,6 @@ class cjoChannelList {
                             LIMIT 1
                             )
                         OR (
-                        
                             SELECT id
                             FROM ".TBL_RADIO_CHANNELS."
                             WHERE packages = p.id

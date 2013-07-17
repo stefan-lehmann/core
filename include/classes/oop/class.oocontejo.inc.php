@@ -512,14 +512,18 @@ class OOContejo {
     }
 
     public function hasCtypeContent($ctype = -1) {
+        return $sql->countCtypeContent($this->_id, $this->_clang, $ctype) != 0 ? true : false;
+    }
+    
+    public static function countCtypeContent($article_id, $clang, $ctype = -1) {
 
         $ctype = (int) $ctype;
         $addsql = ($ctype != -1) ? " AND ctype='".$ctype."'" : "";
 
         $sql = new cjoSql();
-        $sql->setQuery("SELECT * FROM ".TBL_ARTICLES_SLICE." WHERE article_id ='".$this->_id."'".$addsql." LIMIT 1");
+        $sql->setQuery("SELECT id FROM ".TBL_ARTICLES_SLICE." WHERE article_id ='".$article_id."' AND clang='".$clang."'".$addsql);
 
-        return $sql->getRows() != 0 ? true : false;
+        return $sql->getRows();
     }
 
     /**
