@@ -208,10 +208,38 @@ class cjoChannelList {
         
         global $CJO;
 
-        $path = pathinfo(cjo_server('REQUEST_URI','string'));
-        
-        $article = OOArticle :: getArticleById($CJO['ARTICLE_ID']);
+        $path       = pathinfo(cjo_server('REQUEST_URI','string'));
+        $article    = OOArticle :: getArticleById($CJO['ARTICLE_ID']);
         $start_link = cjoRewrite::parseArticleName($article->getName()).'.'.$CJO['ARTICLE_ID'].'.'.$CJO['CUR_CLANG'].'.html';
+        $now        = time();
+        
+        $qry        = "SELECT name, CONCAT(id,':',symbol,'.".$CJO['ARTICLE_ID'].".".$CJO['CUR_CLANG'].".html') AS value 
+                        FROM ".TBL_CHANNELPACKAGES." p
+                        WHERE symbol NOT LIKE 'highlights'
+                        AND symbol NOT LIKE '%videothek'
+                        AND (
+                            selectable = 0 
+                        OR (
+                            SELECT id
+                            FROM ".TBL_TV_CHANNELS."
+                            WHERE packages = p.id
+                            AND STATUS =1
+                            AND online_from < ".$now."
+                            AND online_to > ".$now."
+                            LIMIT 1
+                            )
+                        OR (
+                        
+                            SELECT id
+                            FROM ".TBL_RADIO_CHANNELS."
+                            WHERE packages = p.id
+                            AND STATUS =1
+                            AND online_from < ".$now."
+                            AND online_to > ".$now."
+                            LIMIT 1
+                            )
+                        )
+                        ORDER BY prior";
 
         $select = new cjoSelect();
         $select->setMultiple(false);
@@ -225,11 +253,8 @@ class cjoChannelList {
         
         $select->addOption('[translate: filter_alles]','0:'.$start_link);
         $select->addOption('','');
-        $select->addSqlOptions("SELECT name, CONCAT(id,':',symbol,'.".$CJO['ARTICLE_ID'].".".$CJO['CUR_CLANG'].".html') AS value FROM ".TBL_CHANNELPACKAGES." 
-        						WHERE symbol 
-        						NOT LIKE 'highlights'
-        						AND symbol NOT LIKE '%videothek' 
-        						ORDER BY prior"); 
+        $select->addSqlOptions($qry); 
+        
         $temp = '';
         if (is_array($select->options[0])) {
             foreach($select->options[0] as $key=>$option) {
