@@ -31,16 +31,20 @@ class cjoChannelList {
         global $CJO;
         $x = 2000; 
         $y = 2000;
-        if ((int) $id > 0)
-            $x = ($CJO['ADDON']['settings'][self::$mypage]['offset_x'] * (int) $id * -1) + $CJO['ADDON']['settings'][self::$mypage]['offset_x'];
-            $y = ($CJO['ADDON']['settings'][self::$mypage]['offset_y'] * (int) $id * -1) + $CJO['ADDON']['settings'][self::$mypage]['offset_y'];
+        $id = (int) $id;
+        $num = $id <= 148 ? $id : $id-148;
+        
+        if ($num > 0)
+            $x = ($CJO['ADDON']['settings'][self::$mypage]['offset_x'] * $num * -1) + $CJO['ADDON']['settings'][self::$mypage]['offset_x'];
+            $y = ($CJO['ADDON']['settings'][self::$mypage]['offset_y'] * $num * -1) + $CJO['ADDON']['settings'][self::$mypage]['offset_y'];
         return $x.'px '.$y.'px';
     }
     
     public static function formatIcon($id){
         global $CJO;
         $css = 'background-position:'.self::getPosition($id);
-        return '<div class="channel_preview_small" style="'.$css.'"></div>';
+        $class = $id <= 148 ? '' : ' sprite2';
+        return '<div class="channel_preview_small'.$class.'" style="'.$css.'"></div>';
     }
     
     public static function formatPackages($package_ids){
@@ -327,6 +331,9 @@ class cjoChannelList {
         global $CJO;
         
         $file = $CJO['MEDIAFOLDER'].'/'.$CJO['ADDON']['settings'][self::$mypage][$item['type'].'_'.$type];
+        
+        if ($item['id'] > 148 ) $file = str_replace('sprite_', 'sprite2_', $file);
+        
         if (!file_exists($file)) return false;
         list($width, $height, $type, $attr) = getimagesize($file);
         

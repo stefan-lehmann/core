@@ -361,5 +361,8 @@ $list->show();
     background-image: url('<?php echo $CJO['MEDIAFOLDER'].'/'.$CJO['ADDON']['settings'][$mypage]['tv_sprite_small']; ?>');
     
 }
+.a22-cjolist-data .channel_preview_small.sprite2 {
+    background-image: url('<?php echo $CJO['MEDIAFOLDER'].'/'.str_replace('sprite_', 'sprite2_', $CJO['ADDON']['settings'][$mypage]['tv_sprite_small']); ?>');
+}
 -->
 </style>

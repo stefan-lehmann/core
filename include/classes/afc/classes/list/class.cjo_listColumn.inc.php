@@ -263,3 +263,4 @@ class cjoListColumn extends cjoListComponent {
 require_once $CJO['INCLUDE_PATH'].'/classes/afc/classes/list/columns/column.resultColumn.inc.php';
 require_once $CJO['INCLUDE_PATH'].'/classes/afc/classes/list/columns/column.staticColumn.inc.php';
 require_once $CJO['INCLUDE_PATH'].'/classes/afc/classes/list/columns/column.countColumn.inc.php';
+require_once $CJO['INCLUDE_PATH'].'/classes/afc/classes/list/columns/column.foreignColumn.inc.php';

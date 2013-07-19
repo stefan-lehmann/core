@@ -67,7 +67,9 @@ class cjoFormatter {
         global $I18N, $CJO;
 
         if ($value === null) return '';
-
+        
+        $format_type = trim(strtolower($format_type));
+        
         // Stringformatierung mit sprintf()
         if ($format_type == 'sprintf') {
             $value = self::_formatSprintf($value, $format);
