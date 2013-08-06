@@ -685,6 +685,7 @@ msg_iso_not = Bitte einen Ländercode auswählen!
 label_actions_connection = Actions
 label_add_module = Modul hinzufügen
 label_ctype_connection = Spalten-Zuordnung
+label_used = verwendet
 label_edit_module = Modul bearbeiten
 label_modul = Modul
 label_modul_actions = Modul-Actions

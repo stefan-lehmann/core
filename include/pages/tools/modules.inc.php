@@ -168,6 +168,10 @@ $cols['id']->setBodyAttributes('class="icon"');
 
 $cols['name'] = new resultColumn('name', $I18N->msg("label_name"));
 
+$cols['used'] = new foreignColumn('used', $I18N->msg("label_used"), "SELECT COUNT('id') as value FROM ".TBL_ARTICLES_SLICE." WHERE modultyp_id = %id%", 'sprintf', '%s &times;');
+$cols['used']->setBodyAttributes('style="text-align: center; color:#999"');
+$cols['used']->setHeadAttributes('style="text-align: center"');
+
 $cols['prio'] = new resultColumn('prior', $I18N->msg('label_prio'));
 $cols['prio']->setHeadAttributes('class="icon"');
 $cols['prio']->setBodyAttributes('class="icon dragHandle tablednd"');
@@ -196,6 +200,7 @@ for ($i=0;$i<$sql->getRows();$i++) {
     $sql->next();
 }
 $cols['actions'] = new resultColumn('actions', $I18N->msg("label_actions_connection"), 'replace_array', array($replace_actions,'%s', 'delimiter_in' => '|','delimiter_out' => ', ' ));
+
 
 // Bearbeiten link
 $img = '<img src="img/silk_icons/page_white_edit.png" title="'.$I18N->msg("button_edit").'" alt="'.$I18N->msg("button_edit").'" />';

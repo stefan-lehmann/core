@@ -977,7 +977,9 @@ class cjoArticle {
         $this->escapeContejoVars($content);
         
         foreach ($CJO['VARIABLES'] as $var) {
-
+            
+            $tmp = $content;
+            
             if ($this->mode == 'edit') {
 
                 if (($this->function == 'add' && $slice_id == '0') ||
@@ -1003,7 +1005,7 @@ class cjoArticle {
                 }
             }
             else {
-                $tmp = $var->getFEOutput($sql,$content);
+                $tmp = $var->getFEOutput($sql, $content);
             }
 
             // Rückgabewert nur auswerten wenn auch einer vorhanden ist

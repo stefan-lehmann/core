@@ -31,16 +31,20 @@ class cjoChannelList {
         global $CJO;
         $x = 2000; 
         $y = 2000;
-        if ((int) $id > 0)
-            $x = ($CJO['ADDON']['settings'][self::$mypage]['offset_x'] * (int) $id * -1) + $CJO['ADDON']['settings'][self::$mypage]['offset_x'];
-            $y = ($CJO['ADDON']['settings'][self::$mypage]['offset_y'] * (int) $id * -1) + $CJO['ADDON']['settings'][self::$mypage]['offset_y'];
+        $id = (int) $id;
+        $num = $id <= 148 ? $id : $id-148;
+        
+        if ($num > 0)
+            $x = ($CJO['ADDON']['settings'][self::$mypage]['offset_x'] * $num * -1) + $CJO['ADDON']['settings'][self::$mypage]['offset_x'];
+            $y = ($CJO['ADDON']['settings'][self::$mypage]['offset_y'] * $num * -1) + $CJO['ADDON']['settings'][self::$mypage]['offset_y'];
         return $x.'px '.$y.'px';
     }
     
     public static function formatIcon($id){
         global $CJO;
         $css = 'background-position:'.self::getPosition($id);
-        return '<div class="channel_preview_small" style="'.$css.'"></div>';
+        $class = $id <= 148 ? '' : ' sprite2';
+        return '<div class="channel_preview_small'.$class.'" style="'.$css.'"></div>';
     }
     
     public static function formatPackages($package_ids){
@@ -62,7 +66,7 @@ class cjoChannelList {
         $package['url'] = './'.$package['symbol'];
         
         if (!empty($package['media'])) 
-            $package['media'] = OOMedia::toThumbnail($package['media'],false,array('crop_num'=> '-'));
+            $package['media'] = OOMedia::toThumbnail($package['media'],false,array('width'=> '96'));
             
         return $package;
     }
@@ -208,10 +212,37 @@ class cjoChannelList {
         
         global $CJO;
 
-        $path = pathinfo(cjo_server('REQUEST_URI','string'));
-        
-        $article = OOArticle :: getArticleById($CJO['ARTICLE_ID']);
+        $path       = pathinfo(cjo_server('REQUEST_URI','string'));
+        $article    = OOArticle :: getArticleById($CJO['ARTICLE_ID']);
         $start_link = cjoRewrite::parseArticleName($article->getName()).'.'.$CJO['ARTICLE_ID'].'.'.$CJO['CUR_CLANG'].'.html';
+        $now        = time();
+        
+        $qry        = "SELECT name, CONCAT(id,':',symbol,'.".$CJO['ARTICLE_ID'].".".$CJO['CUR_CLANG'].".html') AS value 
+                        FROM ".TBL_CHANNELPACKAGES." p
+                        WHERE symbol NOT LIKE 'highlights'
+                        AND symbol NOT LIKE '%videothek'
+                        AND (
+                            selectable = 0 
+                        OR (
+                            SELECT id
+                            FROM ".TBL_TV_CHANNELS."
+                            WHERE packages = p.id
+                            AND STATUS =1
+                            AND online_from < ".$now."
+                            AND online_to > ".$now."
+                            LIMIT 1
+                            )
+                        OR (
+                            SELECT id
+                            FROM ".TBL_RADIO_CHANNELS."
+                            WHERE packages = p.id
+                            AND STATUS =1
+                            AND online_from < ".$now."
+                            AND online_to > ".$now."
+                            LIMIT 1
+                            )
+                        )
+                        ORDER BY prior";
 
         $select = new cjoSelect();
         $select->setMultiple(false);
@@ -225,11 +256,8 @@ class cjoChannelList {
         
         $select->addOption('[translate: filter_alles]','0:'.$start_link);
         $select->addOption('','');
-        $select->addSqlOptions("SELECT name, CONCAT(id,':',symbol,'.".$CJO['ARTICLE_ID'].".".$CJO['CUR_CLANG'].".html') AS value FROM ".TBL_CHANNELPACKAGES." 
-        						WHERE symbol 
-        						NOT LIKE 'highlights'
-        						AND symbol NOT LIKE '%videothek' 
-        						ORDER BY prior"); 
+        $select->addSqlOptions($qry); 
+        
         $temp = '';
         if (is_array($select->options[0])) {
             foreach($select->options[0] as $key=>$option) {
@@ -303,6 +331,9 @@ class cjoChannelList {
         global $CJO;
         
         $file = $CJO['MEDIAFOLDER'].'/'.$CJO['ADDON']['settings'][self::$mypage][$item['type'].'_'.$type];
+        
+        if ($item['id'] > 148 ) $file = str_replace('sprite_', 'sprite2_', $file);
+        
         if (!file_exists($file)) return false;
         list($width, $height, $type, $attr) = getimagesize($file);
         

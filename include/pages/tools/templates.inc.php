@@ -245,20 +245,24 @@ $cols['id']->setBodyAttributes('class="icon"');
 
 $cols['name'] = new resultColumn('name', $I18N->msg("label_name").' ');
 
+$cols['used'] = new foreignColumn('used', $I18N->msg("label_used"), "SELECT COUNT('id') as value FROM ".TBL_ARTICLES." WHERE template_id = %id%", 'sprintf', '%s &times;');
+$cols['used']->setBodyAttributes('style="text-align: center; color:#666"');
+$cols['used']->setHeadAttributes('style="text-align: center"');
+
 $cols['prio'] = new resultColumn('prior', $I18N->msg('label_prio'));
 $cols['prio']->setHeadAttributes('class="icon"');
 $cols['prio']->setBodyAttributes('class="icon dragHandle tablednd"');
 $cols['prio']->setBodyAttributes('title="'.$I18N->msg("label_change_prio").'"');
 $cols['prio']->addCondition('prior', array('!=', ''), '<strong>%s</strong>');
 
+$cols['ctypes'] = new resultColumn('ctypes', $I18N->msg("label_ctype_connection"), 'replace_array', array($CJO['CTYPE'],'%s', 'delimiter_in' => '|','delimiter_out' => ', ' ));
+$cols['ctypes']->setBodyAttributes('width="300"');
+
 $cols['active'] = new resultColumn('active', $I18N->msg("label_active"));
 $cols['active']->addCondition('active', 1, '<img src="img/silk_icons/accept.png" alt="true" />');
 $cols['active']->addCondition('active', 0, '&nbsp;');
 $cols['active']->setBodyAttributes('width="95" style="text-align: center"');
 $cols['active']->addOption(OPT_SORT);
-
-$cols['ctypes'] = new resultColumn('ctypes', $I18N->msg("label_ctype_connection"), 'replace_array', array($CJO['CTYPE'],'%s', 'delimiter_in' => '|','delimiter_out' => ', ' ));
-$cols['ctypes']->setBodyAttributes('width="300"');
 
 // Bearbeiten link
 $img = '<img src="img/silk_icons/page_white_edit.png" title="'.$I18N->msg("button_edit").'" alt="'.$I18N->msg("button_edit").'" />';
