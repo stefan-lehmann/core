@@ -163,6 +163,7 @@ if ($function == 'add' || $function == 'edit') {
 
     $cols['comment'] = new resultColumn('comment', $I18N->msg('label_category_comment'));
     $cols['comment']->setBodyAttributes('style="width: 45%"');
+    
     // Bearbeiten link
     $img = '<img src="img/silk_icons/page_white_edit.png" title="'.$I18N->msg("label_edit_category").'" alt="'.$I18N->msg("label_edit").'" />';
     $cols['edit'] = new staticColumn($img, $I18N->msg('label_functions'));

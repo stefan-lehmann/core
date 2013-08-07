@@ -66,7 +66,7 @@ class cjoChannelList {
         $package['url'] = './'.$package['symbol'];
         
         if (!empty($package['media'])) 
-            $package['media'] = OOMedia::toThumbnail($package['media'],false,array('crop_num'=> '-'));
+            $package['media'] = OOMedia::toThumbnail($package['media'],false,array('width'=> '96'));
             
         return $package;
     }

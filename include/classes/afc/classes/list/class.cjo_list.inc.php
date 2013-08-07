@@ -1042,9 +1042,9 @@ class cjoList {
                 $s .= '            <tr'.$rowAttributes.'>'."\r\n";
 
                 foreach($cells as $key=>$cell){
-                    if($cell['cell'] !== null){
+                   // if($cell['cell'] !== null){
                         $s .= '            	<td '.$cell['body'].'>'.($cell['cell'] != '' ? $cell['cell'] : '&nbsp;').'</td>'."\r\n";
-                    }
+                   // }
                 }
 
                 $s .= '            </tr>'."\r\n";

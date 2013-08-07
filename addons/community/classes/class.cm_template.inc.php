@@ -226,7 +226,7 @@ class cjoCommunityTemplate {
     		return $return;
     }
     
-    public static function confirmNewsletterSignIn() {
+    public static function confirmNewsletterSignIn($form = null) {
     
         global $CJO;
         
@@ -235,7 +235,11 @@ class cjoCommunityTemplate {
             $user_id = cjo_get('uid', 'int', 0, true);
             $akey = cjo_get('akey', 'int', 0, true);
         
-            return cjoCommunityUser::activateUser($user_id, $akey);
+            if (cjoCommunityUser::activateUser($user_id, $akey)) {
+                $form->sender_email = cjoCommunityUser::getUserEmail($user_id);
+                return true;
+            }
+            return false;
         }
     }   
     

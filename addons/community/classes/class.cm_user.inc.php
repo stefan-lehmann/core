@@ -421,6 +421,13 @@ class cjoCommunityUser {
     	return $user_ids;
     }
 
+    public static function getUserEmail($id) {
+
+        $sql = new cjoSql();
+        $sql->setQuery("SELECT email FROM ".TBL_COMMUNITY_USER." WHERE id='".$id."' LIMIT 1");
+        return $sql->getValue('email');
+    }
+    
     public static function getUsedEmails($user_id = false) {
 
         global $CJO;
