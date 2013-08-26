@@ -178,7 +178,6 @@ if ($form->validate()) {
     } 
 
     if ($form->valid_master) {
-        
         if (cjo_post('remove', 'bool')) {
             $remove = array_keys(cjo_post('remove', 'array'));
             foreach($remove as $key) {
@@ -204,13 +203,15 @@ if ($form->validate()) {
                       'message'       => array_values($_POST['message']),
                       'helptext'      => array_values($_POST['helptext']));
      
+        cjo_Debug($prio); 
         $prio = cjo_post('prio', 'array', array());    
         asort($prio);            
         $new_data = array();
-        
+        cjo_Debug($prio); 
         foreach($data as $field=>$values) {
           if (!isset($new_data[$field])) $new_data[$field] = array();
           foreach($prio as $key=>$value) {
+              
             if (empty($data['name'][$key])) continue;
               
             if ($data['field'][$key] != 'selectField') $data['options'][$key] = ''; else {
