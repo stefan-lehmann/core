@@ -184,7 +184,7 @@ class cjoXMLSitemap {
 
     private function buildEntry($entry) {
 
-       // if (strpos($this->_content, $entry['loc']) === false) return '';
+        if (strpos($this->_content, $entry['loc']) === false) return '';
 
         return sprintf("<url>\n%s%s%s%s%s</url>\n",
                 $this->buildLine('loc', $entry['loc']),
