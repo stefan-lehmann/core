@@ -31,7 +31,7 @@ $form->setEditMode(true);
 
 $fields['url'] = new textField('URL', $I18N_25->msg('label_url'));
 $fields['url']->addValidator('notEmpty', $I18N_25->msg('err_empty_url'), false);
-$fields['url']->addValidator('isUrl', $I18N_25->msg('err_no_url'), false);
+$fields['url']->addValidator('isURL', $I18N_25->msg('err_no_url'), false);
 
 $fields['idsite'] = new textField('IDSITE', $I18N_25->msg('label_idsite'));
 $fields['idsite']->addValidator('notEmptyOrNull', $I18N_25->msg('err_empty_idsite'));
