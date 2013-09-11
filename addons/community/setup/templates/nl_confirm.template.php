@@ -26,7 +26,7 @@
 if ($CJO['CONTEJO']) return false;
 
 if (OOAddon::isAvailable('community')) {
-    $this->is_valid = cjoCommunityTemplate::confirmNewsletterSignIn();
+    $this->is_valid = cjoCommunityTemplate::confirmNewsletterSignIn($this);
 } else {
     $this->addError($I18N_10->msg('msg_err_configure_settings', $CJO['BACKEND_PATH']));
 }
