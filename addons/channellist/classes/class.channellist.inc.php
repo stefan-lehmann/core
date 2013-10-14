@@ -443,6 +443,22 @@ class cjoChannelList {
         }
         return $content;
     }
+
+    public static function replaceCanonicalUrl($content) {
+        
+        global $CJO;
+        
+        if (!preg_match ('/[^\/]*(?=\.\d+\.\d+\.html)/i', cjo_server('REQUEST_URI', 'string'), $matches)) 
+            return $content;  
+        
+        $current_name = strtolower($matches[0]);
+        $url = $current_name.'.'.$CJO['ARTICLE_ID'].'.'.$CJO['CUR_CLANG'].'.html';
+        
+        return preg_replace('/<link[^>]+rel="canonical"[^>]+href="[^"]+"[^>]+>/i',
+                                '<link rel="canonical" href="'.$url.'" />',
+                                $content);
+        
+    }
     
     public static function replaceVars($params) {
 
@@ -461,6 +477,8 @@ class cjoChannelList {
     		
     	    $search = array_keys($replace);
         	$content = str_replace($search, $replace, $content);       	
+            
+            $content = self::replaceCanonicalUrl($content);
     	}
 
     	return $content;

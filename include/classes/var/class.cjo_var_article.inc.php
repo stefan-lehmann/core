@@ -191,8 +191,8 @@ class cjoVarArticle extends cjoVars {
             $replace = 'CJO_ARTICLE[id='.$article_id.' ctype='.$ctype.' clang='.$clang.' template='.$template.']';
             $count = OOArticle::countCtypeContent($article_id, $clang, $ctype);
 
-            $content = str_replace($var.'['.$param_str.']', $replace, $content);
             $content = str_replace($var.'_COUNT['.$param_str.']', $replace, $content);
+            $content = str_replace($var.'['.$param_str.']', $replace, $content);
         }
         return $content;
     }
@@ -253,8 +253,8 @@ class cjoVarArticle extends cjoVars {
 
                 }
             }
-            $content = str_replace($var.'['.$param_str.']', $replace, $content);
             $content = str_replace($var.'_COUNT['.$param_str.']', $count, $content);
+            $content = str_replace($var.'['.$param_str.']', $replace, $content);
         }
         return $content;
     }
@@ -336,7 +336,6 @@ class cjoVarArticle extends cjoVars {
         if (empty($this->template_id))
             $this->template_id = $article->getTemplateId();
         
-
         $search = array('CJO_ARTICLE_ID'            => $article->getId(),
                         'CJO_TEMPLATE_ID'           => $article->getTemplateId(),
                         'CJO_ARTICLE_PARENT_ID'     => $article->getParentId(),
