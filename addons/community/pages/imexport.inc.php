@@ -99,7 +99,7 @@ if (cjo_post('cjoform_delete_all_button', 'bool') &&
     $fields['divider']->addAttribute('size', '1');
     $fields['divider']->addAttribute('style', 'width: 90px;');
 
-    $divider = array(','=>',',';'=>';','\t'=>'{TAB}','\x20'=>'{SPACE}');
+    $divider = array(';'=>';', ','=>',' ,'\t'=>'{TAB}','\x20'=>'{SPACE}');
     foreach($divider as $key=>$value){
         $fields['divider']->addOption('&nbsp;'.$value,$key);
     }

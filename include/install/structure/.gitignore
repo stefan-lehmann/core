@@ -38,9 +38,11 @@ svn-commit*.tmp
 .buildpath
 .project
 .settings
+.sass-cache
 *.sublime-project
 *.sublime-workspace
 sftp-config.jsonc
 usage
 logs
 stats
+node_modules

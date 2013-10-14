@@ -512,7 +512,7 @@ class OOContejo {
     }
 
     public function hasCtypeContent($ctype = -1) {
-        return $sql->countCtypeContent($this->_id, $this->_clang, $ctype) != 0 ? true : false;
+        return $this->countCtypeContent($this->_id, $this->_clang, $ctype) != 0 ? true : false;
     }
     
     public static function countCtypeContent($article_id, $clang, $ctype = -1) {
