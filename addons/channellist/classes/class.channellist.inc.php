@@ -448,6 +448,8 @@ class cjoChannelList {
         
         global $CJO;
         
+		if (strpos('rel="canonical"', $content) === false) return $content;
+		
         if (!preg_match ('/[^\/]*(?=\.\d+\.\d+\.html)/i', cjo_server('REQUEST_URI', 'string'), $matches)) 
             return $content;  
         
