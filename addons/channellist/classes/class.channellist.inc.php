@@ -446,6 +446,7 @@ class cjoChannelList {
 
     private static function getDescription() {
         $description = str_replace('<',' <',self::$current['description']);
+        $description = str_replace(array("\r\n","\r","\n"), ' ', $description);
         $description = preg_replace('/ +/',' ', $description);
         $description = strip_tags($description);
         $description = substr($description, 0 , 157);
