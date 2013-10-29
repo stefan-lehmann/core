@@ -444,23 +444,14 @@ class cjoChannelList {
         return $content;
     }
 
-    public static function replaceCanonicalUrl($content) {
-        
-        global $CJO;
-        
-		if (strpos('rel="canonical"', $content) === false) return $content;
-		
-        if (!preg_match ('/[^\/]*(?=\.\d+\.\d+\.html)/i', cjo_server('REQUEST_URI', 'string'), $matches)) 
-            return $content;  
-        
-        $current_name = strtolower($matches[0]);
-        $url = $current_name.'.'.$CJO['ARTICLE_ID'].'.'.$CJO['CUR_CLANG'].'.html';
-        
-        return preg_replace('/<link[^>]+rel="canonical"[^>]+href="[^"]+"[^>]+>/i',
-                                '<link rel="canonical" href="'.$url.'" />',
-                                $content);
-        
+    private static function getDescription() {
+        $description = str_replace('<',' <',self::$current['description']);
+        $description = preg_replace('/ +/',' ', $description);
+        $description = strip_tags($description);
+        $description = substr($description, 0 , 157);
+        return $description.'...';
     }
+
     
     public static function replaceVars($params) {
 
@@ -476,11 +467,11 @@ class cjoChannelList {
     		$replace['VF_CHANNEL_TITLE[]'] = self::getChannelTitle();
     		$replace['VF_CHANNEL_TEXT[]'] = self::getChannelText();
     		$replace['VF_CHANNEL_GALLERY[]'] = self::getChannelGallery();
+            $replace['VF_CHANNEL_URL[]'] = self::$current['url'];
+            $replace['VF_CHANNEL_DESCRIPTION[]'] = self::getDescription();
     		
     	    $search = array_keys($replace);
-        	$content = str_replace($search, $replace, $content);       	
-            
-            $content = self::replaceCanonicalUrl($content);
+        	$content = str_replace($search, $replace, $content);    
     	}
 
     	return $content;
