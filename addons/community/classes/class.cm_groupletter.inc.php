@@ -610,7 +610,7 @@ class cjoGroupLetter {
             $text .= $line;
         }
 
-        $this->html = wordwrap( $html, 70, "\r\n" );
+        $this->html = wordwrap( $html, 240, "\r\n" );
         $this->text = $text;
         $this->embedImages();
     }

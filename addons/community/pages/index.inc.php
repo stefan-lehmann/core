@@ -29,9 +29,9 @@ $function  = cjo_request('function', 'string');
 $group_id  = cjo_request('group_id', 'int', 0);
 
 $subpages = new cjoSubPages($subpage, $mypage);
+$subpages->addPage( array('groupletter', 'title' => $I18N_10->msg('subtitle_groupletter')));
 $subpages->addPage( array('user', 'title' => $I18N_10->msg('subtitle_user'), 'query_str' => 'page=community&subpage=user&clang='.$clang.'&group_id='.$group_id));
 $subpages->addPage( array('groups', 'title' => $I18N_10->msg('subtitle_groups'), 'query_str' => 'page=community&subpage=groups&clang='.$clang.'&group_id='.$group_id));
-$subpages->addPage( array('groupletter', 'title' => $I18N_10->msg('subtitle_groupletter')));
 $subpages->addPage( array('archiv', 'title' => $I18N_10->msg('subtitle_archiv')));
 $subpages->addPage( array('imexport', 'title' => $I18N_10->msg('import_export')));
 $subpages->addPage( array('settings', 'title' => $I18N_10->msg('subtitle_settings')));
