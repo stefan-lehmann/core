@@ -289,11 +289,11 @@ class cjoOutput {
                                           
         $content = preg_replace("/&(?![\w|#]*?;)/", "&amp;", $content);         
         $content = preg_replace('/\[\[[^\[]+\]\]/','<!-- \0 -->', $content);
+        $content = str_replace('CJO_MEDIAFOLDER', $CJO['MEDIAFOLDER'], $content);
 
         $content = self::placeholdersToTextareas($content, $textareas);
         $content = self::placeholdersToScriptTags($content, $scripts);
 
-        $content = str_replace('CJO_MEDIAFOLDER', $CJO['MEDIAFOLDER'], $content);
         $content = str_replace('/./','/', $content);
         return $content;
     }

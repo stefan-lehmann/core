@@ -710,7 +710,7 @@ class cjoFormGenerator {
                 $element = strip_tags($element);
                 $element = trim($element);
                 if (strlen($element) > $longest)
-                    $longest = strlen($element);
+                    $longest = strlen($element)+2;
             }
      		foreach($this->elements_mail['element_label'] as $key=>$element) {
      		    if (empty($this->elements_mail['element_value'][$key])) continue;

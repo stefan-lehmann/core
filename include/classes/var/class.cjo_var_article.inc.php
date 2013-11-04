@@ -364,7 +364,6 @@ class cjoVarArticle extends cjoVars {
                         'CJO_START_ARTICLE_ID'      => $CJO['START_ARTICLE_ID'],
                         'CJO_NOTFOUND_ARTICLE_ID'   => $CJO['NOTFOUND_ARTICLE_ID'],
                         'CJO_HTDOCS_PATH'           => $CJO['HTDOCS_PATH'],
-                        'CJO_MEDIAFOLDER'           => $CJO['MEDIAFOLDER'],
                         'CJO_FRONTPAGE_PATH'        => $CJO['FRONTPAGE_PATH'],
                         'CJO_ADJUST_PATH'           => $CJO['ADJUST_PATH']);
                         
