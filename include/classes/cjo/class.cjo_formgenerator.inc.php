@@ -366,7 +366,7 @@ class cjoFormGenerator {
                     $elements_out['element_value'][$i] = $send_value ? $send_value : $elm['default'];
                     self::getFormSelectOptions($sel, $elm['values']);
                     $sel->setSelected($elements_out['element_value'][$i]);
-                    $sel->setSelectExtra('title="'.$elements_out['element_title'][$i].'"');                    
+                    $sel->setSelectExtra('title="'.strip_tags($elements_out['element_title'][$i]).'"');                    
                     $elements_out['element_select_out'][$i] = $sel->get();
 
                     $elements_mail['element_name'][$i] 	 	 = $elm['name'];
@@ -705,9 +705,26 @@ class cjoFormGenerator {
 			$this->mail_text .= $this->post_action['mail_body'];
      	}
      	else {
+     	    $longest = 0;
+            foreach($this->elements_mail['element_label'] as $key=>$element) {
+                $element = strip_tags($element);
+                $element = trim($element);
+                if (strlen($element) > $longest)
+                    $longest = strlen($element);
+            }
      		foreach($this->elements_mail['element_label'] as $key=>$element) {
      		    if (empty($this->elements_mail['element_value'][$key])) continue;
-                $this->mail_text .= ($element != '') ? "*".$element."*: " : "";
+                
+                if ($element != '') {
+                    $element = strip_tags($element);
+                    $element = trim($element);
+                    $element = strtoupper($element);
+                    $element = $element.':';
+                    $this->mail_text .= sprintf('%-'.$longest.'s', $element);
+                }
+                else {
+                    $this->mail_text .= $element;
+                }
                 $this->mail_text .= stripslashes($this->elements_mail['element_value'][$key])." \r\n";
             }
      	}
