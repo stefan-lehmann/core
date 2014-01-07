@@ -70,7 +70,7 @@ class cjoXMLSitemap {
                 
                 if (!OOArticle::isValid($article) || !$this->isSitemapArticle($article)) continue;
                 
-                $this->_entries[$article->getId().'_'.$clang_id] = array(
+                $this->_entries[$id.'_'.$clang_id] = array(
                                           'loc'         => $article->getUrl(),
                                           'priority'    => $this->getPriority($article, $level),
                                           'changefreq'  => $this->getChangefreq($article),
