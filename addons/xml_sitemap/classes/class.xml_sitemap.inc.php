@@ -67,7 +67,8 @@ class cjoXMLSitemap {
                 
                 if (!OOArticle::isValid($article) || !$this->isSitemapArticle($article)) continue;
                 
-                $this->_entries[] = array('loc'         => $article->getUrl(),
+                $this->_entries[$article->getUrl()] = array(
+                                          'loc'         => $article->getUrl(),
                                           'priority'    => $this->getPriority($article, $level),
                                           'changefreq'  => $this->getChangefreq($article),
                                           'lastmod'     => $article->getUpdateDate('%Y-%m-%d'),
