@@ -75,7 +75,7 @@ class cjoXMLSitemap {
                                           
                 if ($article->isStartPage() && $level < $this->_config['max_level']) {
                     $this->getEntries($article->getId(), ($level+1));
-                }                      
+                }              
             }
         }
     }
@@ -116,20 +116,18 @@ class cjoXMLSitemap {
     private function isSitemapArticle(&$article) {
         
         if ($article->getRedirect()) {
-            $article = OOArticle::getArticleById($article->getRedirect(), $article->getCLang());
+            $article = OOArticle::getArticleById($article->getRedirect(), $article->getCLang()); 
             
-            if (OOArticle::isValid($article) || !OOArticle::isOnline($article)) {
+            if (!OOArticle::isValid($article) || !OOArticle::isOnline($article)) {
                 return false;
             }
             else {
+                cjo_Debug($article);
                 return $this->isSitemapArticle($article);
             }
         }
-        
-        if (!$article->hasCtypeContent()) return false;
-        if (!$article->isNaviItem()) return false;
-        
-        return true;
+             
+        return $article->hasCtypeContent() && $article->isNaviItem();
     }
 
     private function generateValidationContent($articles) {
