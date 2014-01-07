@@ -65,20 +65,24 @@ class cjoXMLSitemap {
 
             foreach($articles as $article) {
                 
+                $startpage = $article->isStartPage();
+                $id = $article->getId();
+                
                 if (!OOArticle::isValid($article) || !$this->isSitemapArticle($article)) continue;
                 
-                $this->_entries[$article->getUrl()] = array(
+                $this->_entries[$article->getId().'_'.$clang_id] = array(
                                           'loc'         => $article->getUrl(),
                                           'priority'    => $this->getPriority($article, $level),
                                           'changefreq'  => $this->getChangefreq($article),
                                           'lastmod'     => $article->getUpdateDate('%Y-%m-%d'),
                                           'alternate'   => $this->getAlternate($article));
                                           
-                if ($article->isStartPage() && $level < $this->_config['max_level']) {
-                    $this->getEntries($article->getId(), ($level+1));
+                if ($startpage && $level < $this->_config['max_level']) {
+                    $this->getEntries($id, ($level+1));
                 }              
             }
         }
+        ksort($this->_entries,SORT_NUMERIC);
     }
 
     private function getAlternate($article) {
