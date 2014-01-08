@@ -82,7 +82,7 @@ CREATE TABLE IF NOT EXISTS `%TBL_21_ORDERS%` (
   `phone_nr` varchar(30) NOT NULL,
   `delivery_method` varchar(30) NOT NULL,
   `pay_method` varchar(30) NOT NULL,
-  `pay_data` varchar(50) NOT NULL,
+  `pay_data` varchar(255) NOT NULL,
   `pay_costs` varchar(10) NOT NULL,
   `total_price` varchar(10) NOT NULL,
   `delivery_cost` varchar(10) NOT NULL,
