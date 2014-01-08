@@ -51,7 +51,7 @@ class cjoShopBankAccount extends cjoShopPayment {
 	 * 												   or resultset(array)
 	 */
 	function __construct($value = null) {
-cjo_Debug($value); die();
+
 		if (is_array($value)) {
 			$this->bank_name 	= $value['bank_name'];
 			$this->account_id 	= $value['account_id'];

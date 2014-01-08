@@ -120,7 +120,7 @@ class cjoShopMail {
 		$total_sum       = cjoShopPrice::convToFloat($order_value);
 		$delivery_costs  = cjoShopPrice::convToFloat($delivery_costs);
 		$order_value     = $total_sum - $delivery_costs - $pay_object->getCosts();
-cjo_Debug($pay_object); die();
+
 		// replace wildcards by values
 		$replacements   = array( '%customer%' 		  => $customer,
 		                         '%email%'            => $mail_address,
