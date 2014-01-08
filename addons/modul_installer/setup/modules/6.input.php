@@ -31,11 +31,11 @@ if ("CJO_LINK_ID[1]" && (
     $CJO['CUR_CLANG'] != "CJO_VALUE[3]")) {
 
     $qry = "SELECT
-                sl.id AS `sl.id`, 
-                sl.re_article_slice_id AS `sl.re_article_slice_id`,
-                sl.ctype AS `sl.ctype`,  
-                sl.modultyp_id AS `sl.modultyp_id`, 
-                md.name AS `md.name`
+                sl.id as id, 
+                sl.re_article_slice_id as re_id,
+                sl.ctype as ctype, 
+                sl.modultyp_id as modultyp_id, 
+                md.name as name
             FROM
                 ".TBL_ARTICLES_SLICE." sl
             LEFT JOIN
@@ -54,13 +54,13 @@ if ("CJO_LINK_ID[1]" && (
 
     for ($i=0;$i<$sql->getRows();$i++){
 
-        $re_id = $sql->getValue("sl.re_article_slice_id");
+        $re_id = $sql->getValue("re_id");
 
-        $results['id'][$re_id]          = $sql->getValue("sl.id");
+        $results['id'][$re_id]          = $sql->getValue("id");
         $results['re_id'][$re_id]       = $re_id;
-        $results['ctype'][$re_id]       = $sql->getValue("sl.ctype");
-        $results['modul_id'][$re_id]    = $sql->getValue("sl.modultyp_id");
-        $results['modul_name'][$re_id]  = $sql->getValue("md.name");
+        $results['ctype'][$re_id]       = $sql->getValue("ctype");
+        $results['modul_id'][$re_id]    = $sql->getValue("modultyp_id");
+        $results['modul_name'][$re_id]  = $sql->getValue("modul_name");
         $sql->next();
     }
 
@@ -112,7 +112,7 @@ else {
 ?>
 
 <div class="settings">
-    <h2 class="no_bg_image">[translate: step1]</h2>
+    <h2 class="no_slide">[translate: step1]</h2>
     <input type="hidden" name="VALUE[1]" value="<?php echo $ctype; ?>" />
     <div class="formular">
         <label>[translate: select_article]</label>
@@ -122,7 +122,7 @@ else {
         <label>[translate: label_select_language]</label>
         <?php echo $clang_sel->get(); ?>
     </div>
-    <div class="formular">
+    <div class="formular last">
         <label>[translate: select_ctype]</label>
         <?php echo $ctype_sel->get(); ?>
     </div>
@@ -131,7 +131,7 @@ else {
 <?php if("CJO_LINK_ID[1]"){?>
 
     <div class="settings" style="margin-bottom:0;">
-        <h2 class="no_bg_image">[translate: step2]</h2>
+        <h2 class="no_slide">[translate: step2]</h2>
         <?php echo $output; ?>
     </div>
 
