@@ -14,6 +14,7 @@ msg_no_credit_card_number = Bitte geben Sie die Kartennummer an.
 msg_no_credit_card_owner_name = Bitte geben Sie den Namen des Karteninhabers an.
 msg_no_credit_card_provider = Bitte geben Sie das Kreditinstitut an.
 msg_no_expiration_date = Bitte wählen Sie ein Datum aus.
+shop_insert_paydata = Zahlungsdaten eingeben
 shop_err_length_eq_3 = Die CVS muss dreistellig sein.
 shop_get_credit_card_cvs = CVS-Nummer.
 shop_get_credit_card_expiration = Gültig bis
