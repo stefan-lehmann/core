@@ -55,8 +55,8 @@ $elements_in['type']		= 'text';
 $elements_in['name'] 		= 'account_id';
 $elements_in['label']		= $I18N_21->msg('shop_get_bank_account_id');
 $elements_in['default']		= isset($pay_object) ? $pay_object->getAccountId() : '';
-$elements_in['validate']	= 'not_empty|numeric';
-$elements_in['error_msg']	= $I18N_21->msg('msg_no_bank_account_number').'|'.$I18N_21->msg('shop_err_nums_only');
+$elements_in['validate']	= 'iban';
+$elements_in['error_msg']	= $I18N_21->msg('msg_no_bank_account_number');
 $elements_in['required']	= 1;
 $form_elements_in[]         = $elements_in;
 
@@ -66,8 +66,8 @@ $elements_in['type']		= 'text';
 $elements_in['name'] 		= 'bank_code';
 $elements_in['label']		= $I18N_21->msg('shop_get_bank_code');
 $elements_in['default']		= isset($pay_object) ? $pay_object->getBankCode() : '';
-$elements_in['validate']	= 'not_empty|numeric';
-$elements_in['error_msg']	= $I18N_21->msg('msg_no_bank_code').'|'.$I18N_21->msg('shop_err_nums_only');
+$elements_in['validate']	= 'bic';
+$elements_in['error_msg']	= $I18N_21->msg('msg_no_bank_code');
 $elements_in['required']	= 1;
 $form_elements_in[]         = $elements_in;
 

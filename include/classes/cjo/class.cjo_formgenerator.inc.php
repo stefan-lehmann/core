@@ -610,7 +610,13 @@ class cjoFormGenerator {
                 break;
             case 'not_empty_strict':
                 if (empty($value)) return $message;
-                break;                
+                break;   
+            case 'iban':    
+                if (empty($value) || !preg_match('/DE\d{2} \d{4} \d{4} \d{4} \d{4} \d{2}$|DE\d{20}/U',$value)) return $message;
+                break;  
+            case 'bic':    
+                if (empty($value) || !preg_match('/^[A-Z]{6}[A-Z0-9]{2}([A-Z0-9]{3})?$/',$value)) return $message;
+                break;         
             default:
                 if (trim($value) == '') return $message;
                 break;
