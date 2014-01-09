@@ -51,12 +51,12 @@ class cjoClientCache {
             $content = cjoOutput::replaceHTML5Tags($content);
         }
         
+        $content = cjoOutput::prettifyOutput($content);
+        
         if ($CJO['ADJUST_PATH']) {
             $content = preg_replace('#(?<!\.)'.preg_quote($CJO['HTDOCS_PATH']).'#', $CJO['ADJUST_PATH'],$content);
             $content = preg_replace('#(?<!\.)'.str_replace('/', '\\\/', preg_quote($CJO['HTDOCS_PATH'])).'#', str_replace('/', '\/', $CJO['ADJUST_PATH']),$content);
         }
-
-        $content = cjoOutput::prettifyOutput($content);
         
         // ----- EXTENSION POINT - keine Manipulation der Ausgaben ab hier (read only)
         cjoExtension::registerExtensionPoint('OUTPUT_FILTER_CACHE', $content, '', true);

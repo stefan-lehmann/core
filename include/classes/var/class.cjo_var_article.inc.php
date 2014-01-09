@@ -335,7 +335,6 @@ class cjoVarArticle extends cjoVars {
         
         if (empty($this->template_id))
             $this->template_id = $article->getTemplateId();
-        
 
         $search = array('CJO_ARTICLE_ID'            => $article->getId(),
                         'CJO_TEMPLATE_ID'           => $article->getTemplateId(),
@@ -366,7 +365,6 @@ class cjoVarArticle extends cjoVars {
                         'CJO_HTDOCS_PATH'           => $CJO['HTDOCS_PATH'],
                         'CJO_FRONTPAGE_PATH'        => $CJO['FRONTPAGE_PATH'],
                         'CJO_ADJUST_PATH'           => $CJO['ADJUST_PATH']);
-                        
 
         foreach($search as $key => $replace) {
            $content = preg_replace('/(?<!\[\[)'.preg_quote($key).'(?!\]\])/', $replace, $content); 
